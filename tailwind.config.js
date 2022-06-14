@@ -21,6 +21,13 @@ module.exports = {
     },
     extend: {
       colors: {
+        background: "#0B0B0B",
+        black: "#000000",
+        green: "#4ECE3D",
+        red: "#CA3737",
+        white: "#E9E9E9",
+        offWhite: "#C4C4C4",
+        yellow: "#FACA00",
         gray: {
           300: "#9A9A9A",
           400: "#888293",
@@ -28,15 +35,10 @@ module.exports = {
           600: "#0C0C0C",
           900: "#060706",
         },
-        background: "rgb(11,11,11)",
-        black: "rgb(0,0,0)",
-        green: "#4ECE3D",
-        red: "#CA3737",
-        white: "#E9E9E9",
-        offWhite: "#c4c4c4",
-        yellow: "#FACA00",
       },
       width: {
+        // @todo make sizes consistent
+        // @todo remove button specific naming
         128: "32rem", // 512 px
         112: "28rem", // 448 px
         104: "26rem", // 416 px
