@@ -1,5 +1,5 @@
 {
-  "name": "web-app",
+  "name": "sarco-webapp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -17,7 +17,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -34,7 +34,11 @@
       "last 1 safari version"
     ]
   },
+  "engines": {
+    "node": "17.4.0"
+  },
   "devDependencies": {
+    "autoprefixer": "^10.4.7",
     "eslint": "^8.17.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -43,6 +47,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
-    "prettier": "^2.7.0"
+    "postcss": "^8.4.14",
+    "prettier": "^2.7.0",
+    "tailwindcss": "^3.1.2"
   }
 }
