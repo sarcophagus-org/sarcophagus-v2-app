@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# Sarcophagus Interface
+[![Discord](https://img.shields.io/discord/753398645507883099?color=768AD4&label=discord)](https://discord.com/channels/753398645507883099/)
+[![Twitter](https://img.shields.io/twitter/follow/sarcophagusio?style=social)](https://twitter.com/sarcophagusio)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sarcophagus is a decentralized dead man's switch built on Ethereum and Arweave.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+This repository contains the React application that allows users to interact with the Sarcophagus smart contracts using a web browser and Ethereum wallet.
 
-### `npm start`
+## Prerequisites
+First, clone the repository
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+git clone ...
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+then, install the necessary dependencies:
 
-### `npm test`
+```
+npm install
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+At the time of this writing, the project currently uses Node v12.20.1. It is recommended to use `nvm use` in root directory to switch to the correct version of Node.
 
-### `npm run build`
+Finally, create `.env` in root directory and update your environment variables.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Community
+[![Discord](https://img.shields.io/discord/753398645507883099?color=768AD4&label=discord)](https://discord.com/channels/753398645507883099/)
+[![Twitter](https://img.shields.io/twitter/follow/sarcophagusio?style=social)](https://twitter.com/sarcophagusio)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+We can also be found on [Telegram](https://t.me/sarcophagusio).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Made with :skull: and proudly decentralized.
