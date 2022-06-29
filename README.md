@@ -25,7 +25,7 @@ npm install
 
 At the time of this writing, the project currently uses Node v17.4.0. It is recommended to use `nvm use` in root directory to switch to the correct version of Node.
 
-Also Windows users will need to add .npmrc file with the contents shell=powershell
+Also Windows users will need to add .npmrc file with the contents script-shell=powershell
 
 Finally, create `.env` in root directory and update your environment variables.
 
