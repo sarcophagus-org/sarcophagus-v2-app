@@ -31,7 +31,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "cross-env-shell REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-scripts start",
+    "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
