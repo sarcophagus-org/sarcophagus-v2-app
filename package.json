@@ -31,7 +31,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` react-scripts start",
+    "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.7",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "eslint": "^8.17.0",
     "eslint-config-airbnb": "^19.0.4",
