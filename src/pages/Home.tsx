@@ -20,7 +20,7 @@ import { useAccount } from 'wagmi';
 import { useSubmitTransaction } from '../lib/useSubmitTransactions';
 import { EmbalmerFacet__factory } from '../assets/typechain';
 import useFileEncryption from '../contexts/useFileEncryption';
-import { split, combine } from 'shamirs-secret-sharing-ts';
+import { split } from 'shamirs-secret-sharing-ts';
 
 interface Archaeolgist {
   archAddress: string;
@@ -32,7 +32,7 @@ interface Archaeolgist {
 
 function Home() {
   const [sarcophagusName, setSarcophagusName] = useState('');
-  const [recipientAddress, setRecipientAddress] = useState<string | null>(null);
+
   const [minimumNumberShards, setMinimumNumberShards] = useState(3);
   const [archaeologists, setArchaeologist] = useState<Archaeolgist[]>([]);
 
@@ -58,6 +58,7 @@ function Home() {
     setFile,
     recipientPublicKey,
     setRecipientPublicKey,
+    recipientAddress,
     fileEncryptedRecipient,
     setRandomPublicKey,
     doubleEncryptedFile,
@@ -154,14 +155,7 @@ function Home() {
                 />
               </FormLabel>
               <FormLabel>
-                Recipient
-                <Input
-                  id="recipientAddress"
-                  value={recipientAddress || ''}
-                  onChange={e => {
-                    setRecipientAddress(e.target.value);
-                  }}
-                />
+                Recipient Public Key
                 <Input
                   id="recipientPublicKey"
                   value={recipientPublicKey || ''}
@@ -173,10 +167,10 @@ function Home() {
 
               <Button
                 onClick={() => {
-                  setRecipientAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
-                  setRecipientPublicKey(
-                    '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5'
-                  );
+                  //                  setRecipientAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
+                  const yyy =
+                    '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
+                  setRecipientPublicKey(yyy);
                 }}
               >
                 Default Recipient
@@ -217,6 +211,7 @@ function Home() {
                 <Textarea value={doubleEncryptedFile?.toString()} />
               </FormLabel>
               <Box>sarcoId: {sarcoId}</Box>
+              <Box>Recipient Address: {recipientAddress}</Box>
               <Box>
                 Resurection TimeStamp: {resurrectionTime} {new Date(resurrectionTime).toString()}
               </Box>

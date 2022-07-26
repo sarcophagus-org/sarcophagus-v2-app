@@ -3,12 +3,10 @@ import { getDefaultWallets, RainbowKitProvider, darkTheme, Theme } from '@rainbo
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { merge } from 'lodash';
-import { ChakraProvider, HStack } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import Header from './components/Header';
 import Body from './components/Body';
-import { Routes, Route, BrowserRouter as Router, Link } from 'react-router-dom';
-import TestPage from './pages/FreeBondTestPage';
-import Home from './pages/Home';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.goerli, chain.hardhat],

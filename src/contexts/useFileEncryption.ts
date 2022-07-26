@@ -7,6 +7,7 @@ const useFileEncryption = () => {
   const [fileByteArray, setFileByteArrayArray] = useState<ArrayBuffer | string | null>(null);
   const [fileEncryptedRecipient, setFileEncryptedRecipient] = useState<Buffer | null>(null);
   const [recipientPublicKey, setRecipientPublicKey] = useState<string | null>(null);
+  const [recipientAddress, setRecipientAddress] = useState<string | null>(null);
   const [doubleEncryptedFile, setDoubleEncryptedFile] = useState<Buffer | null>(null);
   const [randomPublicKey, setRandomPublicKey] = useState<string>('');
 
@@ -22,24 +23,13 @@ const useFileEncryption = () => {
 
   const firstEncryption = useCallback(async () => {
     try {
-      //todo - rewrite verify public key to use less code and not substr
-      let formattedPublicKey;
-      if (recipientPublicKey?.substr(0, 4) !== '0x04') {
-        formattedPublicKey = '0x04' + recipientPublicKey;
-      }
-      const keyToUse = formattedPublicKey
-        ? formattedPublicKey
-        : recipientPublicKey
+      const formattedPublicKey = recipientPublicKey?.startsWith('0x04')
         ? recipientPublicKey
-        : '';
+        : '0x04' + recipientPublicKey;
 
-      const recipPubKeyBytes = hexToBytes(keyToUse, true).slice(1);
-      const encrypted = await encrypt(recipPubKeyBytes, fileByteArray as Buffer);
+      const recipientPublicKeyBytes = hexToBytes(formattedPublicKey, true).slice(1);
+      const encrypted = await encrypt(recipientPublicKeyBytes, fileByteArray as Buffer);
       setFileEncryptedRecipient(encrypted);
-
-      //   const hashedOnce = utils.keccak256(encrypted);
-      //   const hashedTwice = utils.keccak256(hashedOnce);
-      //   setAssetDoubleHash(utils.arrayify(hashedTwice));
     } catch (e) {
       console.error(e);
     }
@@ -54,6 +44,20 @@ const useFileEncryption = () => {
       console.error(e);
     }
   }, [fileEncryptedRecipient, randomPublicKey]);
+
+  useEffect(() => {
+    try {
+      const formattedPublicKey = recipientPublicKey?.startsWith('0x04')
+        ? recipientPublicKey
+        : '0x04' + recipientPublicKey;
+
+      setRecipientAddress(
+        formattedPublicKey ? utils.computeAddress(formattedPublicKey || '') : null
+      );
+    } catch {
+      setRecipientAddress(null);
+    }
+  }, [recipientPublicKey]);
 
   useEffect(() => {
     if (!file) return;
@@ -85,6 +89,7 @@ const useFileEncryption = () => {
     setFile,
     recipientPublicKey,
     setRecipientPublicKey,
+    recipientAddress,
     fileEncryptedRecipient,
     setRandomPublicKey,
     doubleEncryptedFile,

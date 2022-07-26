@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { ethers } from 'ethers';
 import { useSubmitTransaction } from '../lib/useSubmitTransactions';
 import { useContractRead, useContractWrite, useAccount } from 'wagmi';
