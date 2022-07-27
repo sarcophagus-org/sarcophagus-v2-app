@@ -1,16 +1,17 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-  ConnectButton,
-  darkTheme,
-  Theme,
-} from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider, darkTheme, Theme } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { merge } from 'lodash';
+import { ChakraProvider } from '@chakra-ui/react';
+import Header from './components/Header';
+import Body from './components/Body';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-const { chains, provider } = configureChains([chain.mainnet, chain.goerli], [publicProvider()]);
+const { chains, provider } = configureChains(
+  [chain.mainnet, chain.goerli, chain.hardhat],
+  [publicProvider()]
+);
 
 const walletConnectionTheme = merge(darkTheme(), {
   colors: {
@@ -31,15 +32,20 @@ const wagmiClient = createClient({
 
 function App() {
   return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider
-        chains={chains}
-        theme={walletConnectionTheme}
-      >
-        Sarcophagus v2 Web App
-        <ConnectButton />
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <ChakraProvider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider
+          chains={chains}
+          theme={walletConnectionTheme}
+          showRecentTransactions={true}
+        >
+          <Router>
+            <Header />
+            <Body />
+          </Router>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </ChakraProvider>
   );
 }
 export default App;

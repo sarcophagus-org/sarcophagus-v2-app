@@ -3,34 +3,33 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "^2.2.3",
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.11.39",
-    "@types/react": "^18.0.12",
-    "@types/react-dom": "^18.0.5",
     "arweave": "^1.11.4",
     "authereum": "^0.1.14",
-    "classnames": "^2.3.1",
     "ecies-geth": "^1.6.5",
     "ethers": "^5.6.9",
     "formik": "^2.2.9",
+    "framer-motion": "^6.4.3",
     "lodash": "^4.17.21",
     "numeral": "^2.0.6",
-    "react": "^18.1.0",
+    "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
-    "react-dom": "^18.1.0",
-    "react-dropzone": "^14.2.1",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.2",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "react-toastify": "^9.0.4",
+    "shamirs-secret-sharing-ts": "^1.0.2",
     "typescript": "^4.7.3",
     "wagmi": "^0.5.5",
-    "web-vitals": "^2.1.4",
-    "yup": "^0.32.11"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "browserslist": {
@@ -49,10 +48,9 @@
     "node": "17.4.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "autoprefixer": "^10.4.7",
+    "@types/node": "^16.11.39",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "eslint": "^8.17.0",
@@ -63,8 +61,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
-    "postcss": "^8.4.14",
     "prettier": "^2.7.0",
+    "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.1.2"
   }
 }
