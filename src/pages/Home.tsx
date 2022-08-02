@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   FormControl,
@@ -14,12 +14,15 @@ import {
   Box,
   Textarea,
   Text,
+  HStack,
 } from '@chakra-ui/react';
 import { ethers, utils, BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 import { useSubmitTransaction } from '../lib/useSubmitTransactions';
 import { EmbalmerFacet__factory } from '../assets/typechain';
 import useFileEncryption from '../contexts/useFileEncryption';
+import useEmbalmer from '../contexts/useEmbalmer';
+import useArchaeologistService from '../contexts/useArchaeologistService';
 import { split } from 'shamirs-secret-sharing-ts';
 
 interface Archaeolgist {
@@ -31,7 +34,12 @@ interface Archaeolgist {
 }
 
 function Home() {
-  const [sarcophagusName, setSarcophagusName] = useState('');
+  const { sarcophagi, updateSarcophagi } = useEmbalmer();
+  const { uploadArweaveFile, updateStatus, sendStatus } = useArchaeologistService();
+
+  const [sarcophagusName, setSarcophagusName] = useState('test');
+  const [currentArweaveTxId, setCurrentArweaveTxId] = useState('');
+  const [currentSarcoId, setCurrentSarcoId] = useState('');
 
   const [minimumNumberShards, setMinimumNumberShards] = useState(3);
   const [archaeologists, setArchaeologist] = useState<Archaeolgist[]>([]);
@@ -48,6 +56,24 @@ function Home() {
     '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
     '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
   ];
+
+  useEffect(() => {
+    updateStatus();
+    const interval = setInterval(() => {
+      updateStatus();
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  const truncateRegex = /^(0x[a-zA-Z0-9]{3})[a-zA-Z0-9]+([a-zA-Z0-9]{3})$/;
+  const truncateEthAddress = (address: string) => {
+    const match = address.match(truncateRegex);
+    if (!match) return address;
+    return `${match[1]}…${match[2]}`;
+  };
 
   const arweaveArchaeologist = unnamedAccounts[2];
 
@@ -68,13 +94,18 @@ function Home() {
     setFile(acceptedFiles[0]);
     const fr = new FileReader();
     fr.readAsText(acceptedFiles[0]);
-    fr.onload = () => console.log(fr.result);
+    //    fr.onload = () => console.log(fr.result);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  const { submit } = useSubmitTransaction({
+  const { submit: initialize } = useSubmitTransaction({
     functionName: 'initializeSarcophagus',
+    contractInterface: EmbalmerFacet__factory.abi,
+  });
+
+  const { submit: finalize } = useSubmitTransaction({
+    functionName: 'finalizeSarcophagus',
     contractInterface: EmbalmerFacet__factory.abi,
   });
 
@@ -115,7 +146,7 @@ function Home() {
     ]);
   }
 
-  function initializeSarcophagus() {
+  async function initializeSarcophagus() {
     const args = [
       sarcophagusName,
       archaeologists,
@@ -127,13 +158,32 @@ function Home() {
       minimumNumberShards,
       sarcoId,
     ];
-
     console.log('initializeSarcophagus args', args);
-    submit({
+    await initialize({
       args: args,
       toastText: 'Initialize Sarcophagus',
     });
+    const arweareTxId = await uploadArweaveFile(sarcoId, doubleEncryptedFile || Buffer.from(''));
+    setCurrentArweaveTxId(arweareTxId);
+    setCurrentSarcoId(sarcoId);
   }
+
+  function finalizeSarcophagus(sarcodId: string, arweareTxId: string) {
+    const args = [
+      sarcodId,
+      archaeologists
+        .filter(arch => arch.archAddress !== arweaveArchaeologist)
+        .map(arch => arch.archAddress),
+      arweaveArchaeologist,
+      arweareTxId,
+    ];
+    console.log('finalizeSarcophagus args', args);
+    finalize({
+      args: args,
+      toastText: 'Finalize Sarcophagus',
+    });
+  }
+
   return (
     <FormControl>
       <Tabs>
@@ -164,13 +214,11 @@ function Home() {
                   }}
                 />
               </FormLabel>
-
               <Button
                 onClick={() => {
-                  //                  setRecipientAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
-                  const yyy =
+                  const key =
                     '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
-                  setRecipientPublicKey(yyy);
+                  setRecipientPublicKey(key);
                 }}
               >
                 Default Recipient
@@ -215,9 +263,32 @@ function Home() {
               <Box>
                 Resurection TimeStamp: {resurrectionTime} {new Date(resurrectionTime).toString()}
               </Box>
+              <Button onClick={() => initializeSarcophagus()}>Submit</Button>
+              <HStack>
+                <Box>Current (sarcoId, arweaveId):</Box>
+                <Box>{currentSarcoId}</Box>
+                <Box>{currentArweaveTxId}</Box>
+                <Box>Status: {sendStatus.status}</Box>
+                <Box>Confimations: {sendStatus.confirmations}</Box>
+                <Box>
+                  <Button onClick={() => finalizeSarcophagus(currentSarcoId, currentArweaveTxId)}>
+                    Finalize
+                  </Button>
+                </Box>
+              </HStack>
+              <Button onClick={() => updateSarcophagi()}>Update Sarchophagi</Button>
+              {sarcophagi.map(s => (
+                <Box key={s.sarcoId}>
+                  <HStack>
+                    <Box>{truncateEthAddress(s.sarcoId)}</Box>
+                    <Box>{s.name}</Box>
+                    <Box>{s.state}</Box>
+                    <Box>{s.arweaveTxId}</Box>
+                    <Box>{s.confirmations}</Box>
+                  </HStack>
+                </Box>
+              ))}
             </VStack>
-
-            <Button onClick={() => initializeSarcophagus()}>Submit</Button>
           </TabPanel>
           <TabPanel>Page 2</TabPanel>
         </TabPanels>

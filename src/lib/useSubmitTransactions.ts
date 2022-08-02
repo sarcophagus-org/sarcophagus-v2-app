@@ -40,6 +40,7 @@ export function useSubmitTransaction(contractConfig: Omit<UseContractWriteArgs, 
           position: 'bottom-right',
         });
       }
+      console.log('settled');
     },
     onError(error) {
       toast({
@@ -53,9 +54,9 @@ export function useSubmitTransaction(contractConfig: Omit<UseContractWriteArgs, 
     ...writeConfig,
   });
 
-  function submit(config: { args?: any; toastText: string }) {
+  async function submit(config: { args?: any; toastText: string }) {
     toastText.current = config.toastText;
-    contractWrite.write({ args: config.args });
+    await contractWrite.writeAsync({ args: config.args });
   }
 
   return {

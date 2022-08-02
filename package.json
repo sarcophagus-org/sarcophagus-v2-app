@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.9.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
     "arweave": "^1.11.4",
+    "arweave-js": "^1.0.0",
     "authereum": "^0.1.14",
     "ecies-geth": "^1.6.5",
     "ethers": "^5.6.9",
