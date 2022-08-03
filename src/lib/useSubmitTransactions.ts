@@ -40,7 +40,6 @@ export function useSubmitTransaction(contractConfig: Omit<UseContractWriteArgs, 
           position: 'bottom-right',
         });
       }
-      console.log('settled');
     },
     onError(error) {
       toast({

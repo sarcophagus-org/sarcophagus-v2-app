@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useAccount, useContractRead, useContract, useProvider, useSigner } from 'wagmi';
 import { ViewStateFacet__factory, EmbalmerFacet__factory } from '../assets/typechain';
 import { ISarcophagus } from '../types/sarcophagi.interfaces';
-import useArchaeologistService from '../contexts/useArchaeologistService';
+import useArchaeologistService from './useArchaeologistService';
 
-const useEmbalmer = () => {
+const useSarcophagi = () => {
   const { address: embalmerAddress } = useAccount();
   const provider = useProvider();
   const signer = useSigner();
@@ -26,11 +26,8 @@ const useEmbalmer = () => {
   });
 
   async function updateSarcophagi() {
-    console.log(console.log(signer.refetch()));
-    console.log(signer.data);
     const results = await getEmbalmersarcophagi.refetch();
     const sarcoIds = (results.data as string[]) || [];
-    console.log('now2');
     const s = await Promise.all(
       sarcoIds.map(async id => {
         const res = await viewStateContract.getSarcophagus(id);
@@ -39,11 +36,10 @@ const useEmbalmer = () => {
         return { ...sarcophagus, confirmations: confirmations };
       })
     );
-    console.log(s);
-    setSarcophagi(s.reverse());
+    return setSarcophagi(s.reverse());
   }
 
   return { sarcophagi, updateSarcophagi };
 };
 
-export default useEmbalmer;
+export default useSarcophagi;

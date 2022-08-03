@@ -21,9 +21,10 @@ import { useAccount } from 'wagmi';
 import { useSubmitTransaction } from '../lib/useSubmitTransactions';
 import { EmbalmerFacet__factory } from '../assets/typechain';
 import useFileEncryption from '../contexts/useFileEncryption';
-import useEmbalmer from '../contexts/useEmbalmer';
+import useSarcophagi from '../contexts/useSarcophagi';
 import useArchaeologistService from '../contexts/useArchaeologistService';
 import { split } from 'shamirs-secret-sharing-ts';
+import { truncateAddress } from '../utils/truncateAddress';
 
 interface Archaeolgist {
   archAddress: string;
@@ -34,7 +35,7 @@ interface Archaeolgist {
 }
 
 function Home() {
-  const { sarcophagi, updateSarcophagi } = useEmbalmer();
+  const { sarcophagi, updateSarcophagi } = useSarcophagi();
   const { uploadArweaveFile, updateStatus, sendStatus } = useArchaeologistService();
 
   const [sarcophagusName, setSarcophagusName] = useState('test');
@@ -68,13 +69,6 @@ function Home() {
     };
   }, []);
 
-  const truncateRegex = /^(0x[a-zA-Z0-9]{3})[a-zA-Z0-9]+([a-zA-Z0-9]{3})$/;
-  const truncateEthAddress = (address: string) => {
-    const match = address.match(truncateRegex);
-    if (!match) return address;
-    return `${match[1]}…${match[2]}`;
-  };
-
   const arweaveArchaeologist = unnamedAccounts[2];
 
   const canBeTransferred = false;
@@ -94,7 +88,6 @@ function Home() {
     setFile(acceptedFiles[0]);
     const fr = new FileReader();
     fr.readAsText(acceptedFiles[0]);
-    //    fr.onload = () => console.log(fr.result);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
@@ -113,13 +106,10 @@ function Home() {
     const wallet = ethers.Wallet.createRandom();
     const signingKey = new utils.SigningKey(wallet.privateKey);
     const publicKey = signingKey.publicKey;
-    console.log(publicKey);
     setRandomPublicKey(publicKey);
 
     const secret = Buffer.from(wallet.privateKey);
     const shards = split(secret, { shares: 3, threshold: minimumNumberShards });
-
-    console.log('shards', shards);
 
     setArchaeologist([
       {
@@ -158,7 +148,6 @@ function Home() {
       minimumNumberShards,
       sarcoId,
     ];
-    console.log('initializeSarcophagus args', args);
     await initialize({
       args: args,
       toastText: 'Initialize Sarcophagus',
@@ -177,7 +166,6 @@ function Home() {
       arweaveArchaeologist,
       arweareTxId,
     ];
-    console.log('finalizeSarcophagus args', args);
     finalize({
       args: args,
       toastText: 'Finalize Sarcophagus',
@@ -280,7 +268,7 @@ function Home() {
               {sarcophagi.map(s => (
                 <Box key={s.sarcoId}>
                   <HStack>
-                    <Box>{truncateEthAddress(s.sarcoId)}</Box>
+                    <Box>{truncateAddress(s.sarcoId)}</Box>
                     <Box>{s.name}</Box>
                     <Box>{s.state}</Box>
                     <Box>{s.arweaveTxId}</Box>

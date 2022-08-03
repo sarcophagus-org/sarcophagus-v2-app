@@ -34,7 +34,6 @@ const useDepositFreeBond = () => {
 
   function hasSarcoTokenApproval() {
     getSarcoTokenAllowance();
-    console.log('sarcoTokenApprovalAmount', sarcoTokenApprovalAmount);
     return Number(sarcoTokenApprovalAmount || 0) > 0;
   }
 

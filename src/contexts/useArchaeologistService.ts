@@ -16,7 +16,7 @@ const useArchaeologistService = () => {
     status: '',
     confirmations: 0,
   });
-
+  //TODO: remove when archologist do the upload.
   const uploadArweaveFile = async (sarcoId: string, file: Buffer): Promise<string> => {
     const arweave = initArweave();
 
@@ -33,12 +33,6 @@ const useArchaeologistService = () => {
     };
 
     const address = await arweave.wallets.getAddress(key);
-    console.log(
-      'start upload for sarcophagus:',
-      address,
-      sarcoId,
-      await arweave.wallets.getBalance(address)
-    );
     const tx = await arweave.createTransaction({ data: file }, key);
     tx.addTag('Content-Type', 'plain/text');
     await arweave.transactions.sign(tx, key);
@@ -58,7 +52,6 @@ const useArchaeologistService = () => {
     const arweave = initArweave();
     const currentTextArweaveAddress = 'Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4';
     const txId = await arweave.wallets.getLastTransactionID(currentTextArweaveAddress);
-    console.log('txId:' + txId);
 
     const res = await arweave.transactions.getStatus(txId);
     if (res && res.status === 200) {
@@ -71,7 +64,6 @@ const useArchaeologistService = () => {
         });
       }
     }
-    console.log(res);
   };
 
   const getConfirmations = async (txId: string | undefined): Promise<number> => {
