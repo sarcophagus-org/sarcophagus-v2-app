@@ -7,3 +7,7 @@ export interface ChildrenOnly {
 export interface Archaeologist {
   account: string;
 }
+
+export interface Sarcophagus {
+  id: string;
+}
