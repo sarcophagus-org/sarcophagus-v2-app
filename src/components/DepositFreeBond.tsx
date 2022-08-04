@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, FormLabel, FormHelperText, Input } from '@chakra-ui/react';
 
-import useDepositFreeBond from '../contexts/useDepositFreeBond';
+import useDepositFreeBond from '../hooks/useDepositFreeBond';
 
 function DepositFreeBond() {
   const {

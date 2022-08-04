@@ -1,29 +1,29 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
 import {
-  FormControl,
-  Tabs,
-  TabList,
-  TabPanels,
-  TabPanel,
-  Tab,
-  Input,
-  FormLabel,
-  VStack,
-  Button,
   Box,
-  Textarea,
-  Text,
+  Button,
+  FormControl,
+  FormLabel,
   HStack,
+  Input,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  Textarea,
+  VStack,
 } from '@chakra-ui/react';
-import { ethers, utils, BigNumber } from 'ethers';
-import { useAccount } from 'wagmi';
-import { useSubmitTransaction } from '../lib/useSubmitTransactions';
-import { EmbalmerFacet__factory } from '../assets/typechain';
-import useFileEncryption from '../contexts/useFileEncryption';
-import useSarcophagi from '../contexts/useSarcophagi';
-import useArchaeologistService from '../contexts/useArchaeologistService';
+import { BigNumber, ethers, utils } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { split } from 'shamirs-secret-sharing-ts';
+import { useAccount } from 'wagmi';
+import useArchaeologistService from '../contexts/useArchaeologistService';
+import useSarcophagi from '../contexts/useSarcophagi';
+import useFileEncryption from '../hooks/useFileEncryption';
+import { useSubmitTransaction } from '../hooks/useSubmitTransactions';
+import { EmbalmerFacet__factory } from '../typechain';
 import { truncateAddress } from '../utils/truncateAddress';
 
 interface Archaeolgist {

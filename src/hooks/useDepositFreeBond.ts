@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import { useSubmitTransaction } from '../lib/useSubmitTransactions';
+import { useSubmitTransaction } from './useSubmitTransactions';
 import { useContractRead, useContractWrite, useAccount } from 'wagmi';
-import { SarcoTokenMock__factory, ArchaeologistFacet__factory } from '../assets/typechain';
+import { SarcoTokenMock__factory, ArchaeologistFacet__factory } from '../typechain';
 
 const useDepositFreeBond = () => {
   const [depositAmount, setDepositAmount] = useState('0');

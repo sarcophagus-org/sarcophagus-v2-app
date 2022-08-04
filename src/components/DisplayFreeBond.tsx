@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useContractRead, useContractEvent, useAccount } from 'wagmi';
-import { ArchaeologistFacet__factory, ViewStateFacet__factory } from '../assets/typechain';
+import { ArchaeologistFacet__factory, ViewStateFacet__factory } from '../typechain';
 
 function DisplayFreeBond() {
   const { address } = useAccount();
