@@ -1,7 +1,7 @@
 // import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useAccount, useContractRead, useContract, useProvider, useSigner } from 'wagmi';
-import { ViewStateFacet__factory, EmbalmerFacet__factory } from '../assets/typechain';
+import { ViewStateFacet__factory } from '../typechain';
 import { ISarcophagus } from '../types/sarcophagi.interfaces';
 import useArchaeologistService from './useArchaeologistService';
 

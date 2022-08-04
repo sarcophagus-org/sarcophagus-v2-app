@@ -1,5 +1,4 @@
 import { Box, Center, Flex, Text } from '@chakra-ui/react';
-import React from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
