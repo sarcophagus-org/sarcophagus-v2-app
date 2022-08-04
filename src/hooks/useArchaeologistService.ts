@@ -32,7 +32,6 @@ const useArchaeologistService = () => {
       qi: 'kS2AXYKfVKOdtNGiksIgs2YT4Pz-62rCeynyFlnUDc6E3eylzctLHhuWMRqWqnPwVPwnw2Fd6eUTOYZe82kVf9d0-XbeDtOOP6fS7HU30ICIvFrLTiaVEsLekUdQwoyC7s0xH99FZpdGJHzC7iNdlChybmrh4Ci5OyOLn_o8goNQBYWEXOgr6JgJLTh9BXvDEbNLLJ0JTZFQeLVqQeimPDSoAwBFCLBBwOd6CFOr5wTc9Pkt8cDrpcf9usU-61uu3Lr4-3PG4yUUQyphnDy84DgpUyuF5JNy0KgtuZaMMuAZJTb_gKN3IdLUHV9phqwrSKylLn-enGJ0f4FTpfcDEQ',
     };
 
-    const address = await arweave.wallets.getAddress(key);
     const tx = await arweave.createTransaction({ data: file }, key);
     tx.addTag('Content-Type', 'plain/text');
     await arweave.transactions.sign(tx, key);

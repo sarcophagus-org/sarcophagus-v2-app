@@ -19,9 +19,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { split } from 'shamirs-secret-sharing-ts';
 import { useAccount } from 'wagmi';
-import useArchaeologistService from '../contexts/useArchaeologistService';
-import useSarcophagi from '../contexts/useSarcophagi';
+import useArchaeologistService from '../hooks/useArchaeologistService';
 import useFileEncryption from '../hooks/useFileEncryption';
+import useSarcophagi from '../hooks/useSarcophagi';
 import { useSubmitTransaction } from '../hooks/useSubmitTransactions';
 import { EmbalmerFacet__factory } from '../typechain';
 import { truncateAddress } from '../utils/truncateAddress';
@@ -67,7 +67,7 @@ function Home() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [updateStatus]);
 
   const arweaveArchaeologist = unnamedAccounts[2];
 
@@ -84,11 +84,14 @@ function Home() {
     doubleEncryptedFile,
   } = useFileEncryption();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFile(acceptedFiles[0]);
-    const fr = new FileReader();
-    fr.readAsText(acceptedFiles[0]);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      setFile(acceptedFiles[0]);
+      const fr = new FileReader();
+      fr.readAsText(acceptedFiles[0]);
+    },
+    [setFile]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 

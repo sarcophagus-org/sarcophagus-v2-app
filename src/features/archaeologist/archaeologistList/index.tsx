@@ -2,7 +2,6 @@ import {
   Button,
   Checkbox,
   Flex,
-  Heading,
   Table,
   TableContainer,
   Tbody,
