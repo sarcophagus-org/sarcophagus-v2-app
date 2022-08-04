@@ -5,9 +5,9 @@ import { merge } from 'lodash';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import Body from './components/Body';
-import Header from './components/Header';
+import { Pages } from './pages';
 import { StoreProvider } from './store/StoreProvider';
+import { theme } from './theme';
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.goerli, chain.hardhat],
@@ -34,7 +34,7 @@ const wagmiClient = createClient({
 function App() {
   return (
     <StoreProvider>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider
             chains={chains}
@@ -42,8 +42,7 @@ function App() {
             showRecentTransactions={true}
           >
             <Router>
-              <Header />
-              <Body />
+              <Pages />
             </Router>
           </RainbowKitProvider>
         </WagmiConfig>
