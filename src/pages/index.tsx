@@ -1,4 +1,5 @@
 import { Box, Center, Flex, Text } from '@chakra-ui/react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
@@ -30,14 +31,22 @@ export function Pages() {
       height="98vh"
     >
       <DevNavbar>
-        {routes.map(route => (
-          <Link
-            key={route.path}
-            to={route.path}
-          >
-            <Text px={4}>{route.label}</Text>
-          </Link>
-        ))}
+        <Flex
+          justifyContent="space-between"
+          width="100%"
+        >
+          <Flex alignItems="center">
+            {routes.map(route => (
+              <Link
+                key={route.path}
+                to={route.path}
+              >
+                <Text px={4}>{route.label}</Text>
+              </Link>
+            ))}
+          </Flex>
+          <ConnectButton />
+        </Flex>
       </DevNavbar>
       <Center
         flex={1}
