@@ -1,4 +1,4 @@
-import { Box, Center, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
@@ -26,7 +26,10 @@ export function Pages() {
   ];
 
   return (
-    <React.Fragment>
+    <Flex
+      direction="column"
+      height="98vh"
+    >
       <DevNavbar>
         {routes.map(route => (
           <Link
@@ -37,11 +40,15 @@ export function Pages() {
           </Link>
         ))}
       </DevNavbar>
-      <Center>
+      <Center
+        flex={1}
+        alignItems="start"
+      >
         <Box
           width="50%"
           minWidth={900}
           pt={8}
+          height="100%"
         >
           <Routes>
             {routes.map(route => (
@@ -54,6 +61,6 @@ export function Pages() {
           </Routes>
         </Box>
       </Center>
-    </React.Fragment>
+    </Flex>
   );
 }

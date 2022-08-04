@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 
 export interface ChildrenOnly {
@@ -5,7 +6,13 @@ export interface ChildrenOnly {
 }
 
 export interface Archaeologist {
-  account: string;
+  privateKey: string;
+  publicKey: string;
+  address: string;
+  bounty: BigNumber;
+  diggingFee: BigNumber;
+  isArweaver: boolean;
+  feePerByte: BigNumber;
 }
 
 export interface Sarcophagus {

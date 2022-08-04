@@ -25,7 +25,6 @@ import useFileEncryption from '../hooks/useFileEncryption';
 import { useSubmitTransaction } from '../hooks/useSubmitTransactions';
 import { EmbalmerFacet__factory } from '../typechain';
 import { truncateAddress } from '../utils/truncateAddress';
-import { ArchaeologistList } from '../features/archaeologist/components/ArchaeologistList';
 
 interface Archaeolgist {
   archAddress: string;
@@ -205,7 +204,7 @@ function Home() {
               </FormLabel>
               <Button
                 variant="solid"
-                bg="teal"
+                bg="grey"
                 onClick={() => {
                   const key =
                     '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
@@ -240,7 +239,7 @@ function Home() {
               <Text>Number of Archeologist (n): {archaeologists.length}</Text>
               <Button
                 variant="solid"
-                bg="teal"
+                bg="grey"
                 onClick={() => {
                   secondEncryptAndGenerateShards();
                 }}
@@ -285,15 +284,13 @@ function Home() {
 
             <Button
               variant="solid"
-              bg="teal"
+              bg="grey"
               onClick={() => initializeSarcophagus()}
             >
               Submit
             </Button>
           </TabPanel>
-          <TabPanel>
-            <ArchaeologistList />
-          </TabPanel>
+          <TabPanel></TabPanel>
         </TabPanels>
       </Tabs>
     </FormControl>
