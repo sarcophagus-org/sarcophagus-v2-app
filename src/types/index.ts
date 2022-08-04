@@ -6,7 +6,7 @@ export interface ChildrenOnly {
 }
 
 export interface Archaeologist {
-  privateKey: string;
+  privateKey: string; // TODO: Remove this later
   publicKey: string;
   address: string;
   bounty: BigNumber;
@@ -15,6 +15,7 @@ export interface Archaeologist {
   feePerByte: BigNumber;
 }
 
+// Temporary
 export interface Sarcophagus {
   id: string;
 }
