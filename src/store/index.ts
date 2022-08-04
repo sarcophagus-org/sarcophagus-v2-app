@@ -41,10 +41,12 @@ export const initialState: RootState = {
   sarcophagusState: sarcophagusInitialState,
 };
 
-export const storeReducer = (
+export function storeReducer(
   state: RootState,
   action: ArchaeologistActions | SarcophagusActions
-): RootState => ({
-  archaeologistState: archaeologistReducer(state.archaeologistState, action),
-  sarcophagusState: sarcophagusReducer(state.sarcophagusState, action),
-});
+): RootState {
+  return {
+    archaeologistState: archaeologistReducer(state.archaeologistState, action),
+    sarcophagusState: sarcophagusReducer(state.sarcophagusState, action),
+  };
+}

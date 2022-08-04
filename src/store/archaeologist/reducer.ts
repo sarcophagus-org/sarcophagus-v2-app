@@ -10,7 +10,10 @@ export const archaeologistInitialState: ArchaeologistState = {
   archaeologists: [],
 };
 
-export const archaeologistReducer = (state: ArchaeologistState, action: Actions) => {
+export function archaeologistReducer(
+  state: ArchaeologistState,
+  action: Actions
+): ArchaeologistState {
   switch (action.type) {
     case ActionType.StoreArchaeologists:
       const archaeologists = action.payload.archaeologists;
@@ -19,4 +22,4 @@ export const archaeologistReducer = (state: ArchaeologistState, action: Actions)
     default:
       return state;
   }
-};
+}

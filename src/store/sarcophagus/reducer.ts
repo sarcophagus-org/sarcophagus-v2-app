@@ -12,7 +12,7 @@ export const sarcophagusInitialState: SarcophagusState = {
   value: '',
 };
 
-export const sarcophagusReducer = (state: SarcophagusState, action: Actions) => {
+export function sarcophagusReducer(state: SarcophagusState, action: Actions): SarcophagusState {
   switch (action.type) {
     case ActionType.UpdateValue:
       const value = action.payload.value;
@@ -21,4 +21,4 @@ export const sarcophagusReducer = (state: SarcophagusState, action: Actions) => 
     default:
       return state;
   }
-};
+}

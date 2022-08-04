@@ -12,11 +12,13 @@ type SarcophagusPayload = {
   };
 };
 
-export const updateValue = (value: string): SarcophagusActions => ({
-  type: ActionType.UpdateValue,
-  payload: {
-    value,
-  },
-});
+export function updateValue(value: string): SarcophagusActions {
+  return {
+    type: ActionType.UpdateValue,
+    payload: {
+      value,
+    },
+  };
+}
 
 export type SarcophagusActions = ActionMap<SarcophagusPayload>[keyof ActionMap<SarcophagusPayload>];

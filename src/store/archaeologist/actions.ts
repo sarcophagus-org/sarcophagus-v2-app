@@ -13,12 +13,14 @@ type ArchaeologistPayload = {
   };
 };
 
-export const storeArchaeologists = (archaeologists: Archaeologist[]): ArchaeologistActions => ({
-  type: ActionType.StoreArchaeologists,
-  payload: {
-    archaeologists,
-  },
-});
+export function storeArchaeologists(archaeologists: Archaeologist[]): ArchaeologistActions {
+  return {
+    type: ActionType.StoreArchaeologists,
+    payload: {
+      archaeologists,
+    },
+  };
+}
 
 export type ArchaeologistActions =
   ActionMap<ArchaeologistPayload>[keyof ActionMap<ArchaeologistPayload>];
