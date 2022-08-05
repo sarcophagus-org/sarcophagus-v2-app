@@ -8,6 +8,8 @@ import { publicProvider } from 'wagmi/providers/public';
 import { Pages } from './pages';
 import { StoreProvider } from './store/StoreProvider';
 import { theme } from './theme';
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from './components/ErrorFallback';
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.goerli, chain.hardhat],
@@ -35,17 +37,19 @@ function App() {
   return (
     <StoreProvider>
       <ChakraProvider theme={theme}>
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider
-            chains={chains}
-            theme={walletConnectionTheme}
-            showRecentTransactions={true}
-          >
-            <Router>
-              <Pages />
-            </Router>
-          </RainbowKitProvider>
-        </WagmiConfig>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider
+              chains={chains}
+              theme={walletConnectionTheme}
+              showRecentTransactions={true}
+            >
+              <Router>
+                <Pages />
+              </Router>
+            </RainbowKitProvider>
+          </WagmiConfig>
+        </ErrorBoundary>
       </ChakraProvider>
     </StoreProvider>
   );
