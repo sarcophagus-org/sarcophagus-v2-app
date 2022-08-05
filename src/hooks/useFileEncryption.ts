@@ -6,7 +6,9 @@ const useFileEncryption = () => {
   const [file, setFile] = useState<File | null>(null);
   const [fileByteArray, setFileByteArrayArray] = useState<ArrayBuffer | string | null>(null);
   const [fileEncryptedRecipient, setFileEncryptedRecipient] = useState<Buffer | null>(null);
-  const [recipientPublicKey, setRecipientPublicKey] = useState<string | null>(null);
+  const [recipientPublicKey, setRecipientPublicKey] = useState<string | null>(
+    '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5'
+  );
   const [recipientAddress, setRecipientAddress] = useState<string | null>(null);
   const [doubleEncryptedFile, setDoubleEncryptedFile] = useState<Buffer | null>(null);
   const [randomPublicKey, setRandomPublicKey] = useState<string>('');

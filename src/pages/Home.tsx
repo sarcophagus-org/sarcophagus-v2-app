@@ -19,7 +19,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { split } from 'shamirs-secret-sharing-ts';
 import { useAccount } from 'wagmi';
-import useArchaeologistService from '../hooks/useArchaeologistService';
+import useArweaveService from '../hooks/useArweaveService';
 import useFileEncryption from '../hooks/useFileEncryption';
 import useSarcophagi from '../hooks/useSarcophagi';
 import { useSubmitTransaction } from '../hooks/useSubmitTransactions';
@@ -36,7 +36,7 @@ interface Archaeolgist {
 
 function Home() {
   const { sarcophagi, updateSarcophagi } = useSarcophagi();
-  const { uploadArweaveFile, updateStatus, sendStatus } = useArchaeologistService();
+  const { uploadArweaveFile, updateStatus, sendStatus } = useArweaveService();
 
   const [sarcophagusName, setSarcophagusName] = useState('test');
   const [currentArweaveTxId, setCurrentArweaveTxId] = useState('');
@@ -46,11 +46,6 @@ function Home() {
   const [archaeologists, setArchaeologist] = useState<Archaeolgist[]>([]);
 
   const { address: embalmerAddress } = useAccount();
-  const currentTimestamp = Date.now();
-  const resurrectionTime = currentTimestamp + 7 * 24 * 60 * 60 * 1000;
-  const maxResurrectionInterval = resurrectionTime;
-
-  const sarcoId = utils.id(embalmerAddress + currentTimestamp.toString());
 
   const unnamedAccounts = [
     '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
@@ -59,15 +54,14 @@ function Home() {
   ];
 
   useEffect(() => {
-    updateStatus();
     const interval = setInterval(() => {
-      updateStatus();
+      updateStatus(currentArweaveTxId);
     }, 5000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [updateStatus]);
+  }, [currentArweaveTxId]);
 
   const arweaveArchaeologist = unnamedAccounts[2];
 
@@ -140,24 +134,29 @@ function Home() {
   }
 
   async function initializeSarcophagus() {
+    const currentTimestamp = Date.now();
+    const resurrectionTime = currentTimestamp + 7 * 24 * 60 * 60 * 1000;
+    const sarcoId = utils.id(embalmerAddress + currentTimestamp.toString());
+    setCurrentSarcoId(sarcoId);
     const args = [
-      sarcophagusName,
+      sarcoId,
+      {
+        name: sarcophagusName,
+        recipient: recipientAddress,
+        resurrectionTime: resurrectionTime,
+        canBeTransferred: canBeTransferred,
+        minShards: minimumNumberShards,
+      },
       archaeologists,
       arweaveArchaeologist,
-      recipientAddress,
-      resurrectionTime,
-      maxResurrectionInterval,
-      canBeTransferred,
-      minimumNumberShards,
-      sarcoId,
     ];
     await initialize({
       args: args,
       toastText: 'Initialize Sarcophagus',
     });
-    const arweareTxId = await uploadArweaveFile(sarcoId, doubleEncryptedFile || Buffer.from(''));
+
+    const arweareTxId = await uploadArweaveFile(doubleEncryptedFile || Buffer.from(''));
     setCurrentArweaveTxId(arweareTxId);
-    setCurrentSarcoId(sarcoId);
   }
 
   function finalizeSarcophagus(sarcodId: string, arweareTxId: string) {
@@ -184,7 +183,10 @@ function Home() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <VStack align="left">
+            <VStack
+              align="left"
+              spacing={4}
+            >
               <FormLabel>
                 Sarcophagus Name
                 <Input
@@ -205,19 +207,10 @@ function Home() {
                   }}
                 />
               </FormLabel>
-              <Button
-                variant="solid"
-                bg="grey"
-                onClick={() => {
-                  const key =
-                    '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
-                  setRecipientPublicKey(key);
-                }}
-              >
-                Default Recipient
-              </Button>
               <Box
                 border="2px"
+                minH={100}
+                m="9px"
                 {...getRootProps()}
               >
                 <input {...getInputProps()} />
@@ -253,23 +246,27 @@ function Home() {
                 Second Encrypted File
                 <Textarea value={doubleEncryptedFile?.toString()} />
               </FormLabel>
-              <Box>sarcoId: {sarcoId}</Box>
-              <Box>Recipient Address: {recipientAddress}</Box>
-              <Box>
-                Resurection TimeStamp: {resurrectionTime} {new Date(resurrectionTime).toString()}
-              </Box>
               <Button
                 variant="solid"
                 bg="grey"
                 onClick={() => initializeSarcophagus()}
               >
-                Submit
+                Initialize Sarcophagus
               </Button>
-              <HStack>
-                <Box>Current (sarcoId, arweaveId):</Box>
-                <Box>{currentSarcoId}</Box>
-                <Box>{currentArweaveTxId}</Box>
-                <Box>Status: {sendStatus.status}</Box>
+              <VStack
+                align="left"
+                border="2px"
+              >
+                <Box>Sarco Id: {currentSarcoId}</Box>
+                <Box>Arweave Tx Id: {currentArweaveTxId}</Box>
+                <Box>
+                  Status:{' '}
+                  {sendStatus.status === 'Pending'
+                    ? 'Waiting for Arweave TX to confirm'
+                    : sendStatus.status === 'Success'
+                    ? 'Arweave TX upload successful'
+                    : sendStatus.status}
+                </Box>
                 <Box>Confimations: {sendStatus.confirmations}</Box>
                 <Box>
                   <Button
@@ -277,10 +274,10 @@ function Home() {
                     bg="grey"
                     onClick={() => finalizeSarcophagus(currentSarcoId, currentArweaveTxId)}
                   >
-                    Finalize
+                    Download File and Verify
                   </Button>
                 </Box>
-              </HStack>
+              </VStack>
               <Button
                 variant="solid"
                 bg="grey"
@@ -294,8 +291,6 @@ function Home() {
                     <Box>{truncateAddress(s.sarcoId)}</Box>
                     <Box>{s.name}</Box>
                     <Box>{s.state}</Box>
-                    <Box>{s.arweaveTxId}</Box>
-                    <Box>{s.confirmations}</Box>
                   </HStack>
                 </Box>
               ))}

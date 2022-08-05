@@ -11,13 +11,13 @@ const initArweave = () => {
   });
 };
 
-const useArchaeologistService = () => {
+const useArweaveService = () => {
   const [sendStatus, setStatus] = useState<{ status: string; confirmations: number }>({
     status: '',
     confirmations: 0,
   });
   //TODO: remove when archologist do the upload.
-  const uploadArweaveFile = async (sarcoId: string, file: Buffer): Promise<string> => {
+  const uploadArweaveFile = async (file: Buffer): Promise<string> => {
     const arweave = initArweave();
 
     const key = {
@@ -47,12 +47,10 @@ const useArchaeologistService = () => {
     return tx.id;
   };
 
-  const updateStatus = async () => {
+  const updateStatus = async (arweareTxId: string) => {
     const arweave = initArweave();
-    const currentTextArweaveAddress = 'Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4';
-    const txId = await arweave.wallets.getLastTransactionID(currentTextArweaveAddress);
 
-    const res = await arweave.transactions.getStatus(txId);
+    const res = await arweave.transactions.getStatus(arweareTxId);
     if (res && res.status === 200) {
       if ((res.confirmed as unknown as string) === 'Pending') {
         setStatus({ status: 'Pending', confirmations: 0 });
@@ -62,6 +60,8 @@ const useArchaeologistService = () => {
           confirmations: res.confirmed?.number_of_confirmations || 0,
         });
       }
+    } else {
+      setStatus({ status: 'unknown', confirmations: 0 });
     }
   };
 
@@ -81,4 +81,4 @@ const useArchaeologistService = () => {
 
   return { uploadArweaveFile, updateStatus, sendStatus, getConfirmations };
 };
-export default useArchaeologistService;
+export default useArweaveService;
