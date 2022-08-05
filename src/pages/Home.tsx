@@ -23,7 +23,7 @@ import useArchaeologistService from '../hooks/useArchaeologistService';
 import useFileEncryption from '../hooks/useFileEncryption';
 import useSarcophagi from '../hooks/useSarcophagi';
 import { useSubmitTransaction } from '../hooks/useSubmitTransactions';
-import { EmbalmerFacet__factory } from '../typechain';
+import { EmbalmerFacet } from '../abi/EmbalmerFacet';
 import { truncateAddress } from '../utils/truncateAddress';
 
 interface Archaeolgist {
@@ -97,12 +97,12 @@ function Home() {
 
   const { submit: initialize } = useSubmitTransaction({
     functionName: 'initializeSarcophagus',
-    contractInterface: EmbalmerFacet__factory.abi,
+    contractInterface: EmbalmerFacet.abi,
   });
 
   const { submit: finalize } = useSubmitTransaction({
     functionName: 'finalizeSarcophagus',
-    contractInterface: EmbalmerFacet__factory.abi,
+    contractInterface: EmbalmerFacet.abi,
   });
 
   function secondEncryptAndGenerateShards() {
@@ -258,7 +258,13 @@ function Home() {
               <Box>
                 Resurection TimeStamp: {resurrectionTime} {new Date(resurrectionTime).toString()}
               </Box>
-              <Button onClick={() => initializeSarcophagus()}>Submit</Button>
+              <Button
+                variant="solid"
+                bg="grey"
+                onClick={() => initializeSarcophagus()}
+              >
+                Submit
+              </Button>
               <HStack>
                 <Box>Current (sarcoId, arweaveId):</Box>
                 <Box>{currentSarcoId}</Box>
@@ -266,12 +272,22 @@ function Home() {
                 <Box>Status: {sendStatus.status}</Box>
                 <Box>Confimations: {sendStatus.confirmations}</Box>
                 <Box>
-                  <Button onClick={() => finalizeSarcophagus(currentSarcoId, currentArweaveTxId)}>
+                  <Button
+                    variant="solid"
+                    bg="grey"
+                    onClick={() => finalizeSarcophagus(currentSarcoId, currentArweaveTxId)}
+                  >
                     Finalize
                   </Button>
                 </Box>
               </HStack>
-              <Button onClick={() => updateSarcophagi()}>Update Sarchophagi</Button>
+              <Button
+                variant="solid"
+                bg="grey"
+                onClick={() => updateSarcophagi()}
+              >
+                Update Sarchophagi
+              </Button>
               {sarcophagi.map(s => (
                 <Box key={s.sarcoId}>
                   <HStack>

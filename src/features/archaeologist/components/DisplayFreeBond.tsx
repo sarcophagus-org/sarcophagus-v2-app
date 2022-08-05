@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { useContractRead, useContractEvent, useAccount } from 'wagmi';
-import { ArchaeologistFacet__factory, ViewStateFacet__factory } from '../../../typechain';
+import { ArchaeologistFacet } from '../../../abi/ArchaeologistFacet';
+import { ViewStateFacet } from '../../../abi/ViewStateFacet';
 
 function DisplayFreeBond() {
   const { address } = useAccount();
@@ -12,14 +13,14 @@ function DisplayFreeBond() {
     refetch,
   } = useContractRead({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ViewStateFacet__factory.abi,
+    contractInterface: ViewStateFacet.abi,
     functionName: 'getFreeBond',
     args: [address],
   });
 
   useContractEvent({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ArchaeologistFacet__factory.abi,
+    contractInterface: ArchaeologistFacet.abi,
     eventName: 'DepositFreeBond',
     listener: () => refetch(),
   });
