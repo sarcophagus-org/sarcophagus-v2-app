@@ -1,15 +1,15 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { darkTheme, getDefaultWallets, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
+import * as Sentry from '@sentry/react';
 import { merge } from 'lodash';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
+import { ErrorFallback } from './components/ErrorFallback';
 import { Pages } from './pages';
 import { StoreProvider } from './store/StoreProvider';
 import { theme } from './theme';
-import { ErrorFallback } from './components/ErrorFallback';
-import * as Sentry from '@sentry/react';
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.goerli, chain.hardhat],
