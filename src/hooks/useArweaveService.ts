@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Arweave from 'arweave';
+import { decrypt } from 'ecies-geth';
+import { utils } from 'ethers';
 
 const initArweave = () => {
   return Arweave.init({
@@ -16,6 +18,30 @@ const useArweaveService = () => {
     status: '',
     confirmations: 0,
   });
+
+  const downloadArweaveFile = async (
+    arweaveTxId: string,
+    privateKey: string,
+    originalFile: ArrayBuffer
+  ): Promise<boolean> => {
+    const arweave = initArweave();
+    const data = await arweave.transactions.getData(arweaveTxId, { decode: true });
+    const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
+
+    const outerDecrypt = await decrypt(privateKeyAsBytes, Buffer.from(data as string));
+
+    const innerDecrypt = await decrypt(
+      Buffer.from(
+        utils.arrayify('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') // TODO: innerDecrypt using default address and private key for testing instead of real recipient
+      ),
+      outerDecrypt
+    );
+
+    const fileBytes = Buffer.from(new Uint8Array(originalFile));
+
+    return innerDecrypt.toString() === fileBytes.toString();
+  };
+
   //TODO: remove when archologist do the upload.
   const uploadArweaveFile = async (file: Buffer): Promise<string> => {
     const arweave = initArweave();
@@ -51,34 +77,22 @@ const useArweaveService = () => {
     const arweave = initArweave();
 
     const res = await arweave.transactions.getStatus(arweareTxId);
-    if (res && res.status === 200) {
+    if (res && res.status === 200 && res.confirmed !== null) {
       if ((res.confirmed as unknown as string) === 'Pending') {
         setStatus({ status: 'Pending', confirmations: 0 });
       } else {
         setStatus({
           status: 'Success',
-          confirmations: res.confirmed?.number_of_confirmations || 0,
+          confirmations: res.confirmed.number_of_confirmations || 0,
         });
       }
+    } else if (res.status === 404) {
+      setStatus({ status: 'Not enough AR tokens', confirmations: 0 });
     } else {
       setStatus({ status: 'unknown', confirmations: 0 });
     }
   };
 
-  const getConfirmations = async (txId: string | undefined): Promise<number> => {
-    if (!txId) return 0;
-    const arweave = initArweave();
-    const res = await arweave.transactions.getStatus(txId);
-    if (res && res.status === 200) {
-      if ((res.confirmed as unknown as string) === 'Pending') {
-        return 0;
-      } else {
-        return res.confirmed?.number_of_confirmations || 0;
-      }
-    }
-    return 0;
-  };
-
-  return { uploadArweaveFile, updateStatus, sendStatus, getConfirmations };
+  return { uploadArweaveFile, updateStatus, sendStatus, downloadArweaveFile };
 };
 export default useArweaveService;

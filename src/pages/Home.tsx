@@ -17,7 +17,7 @@ import {
 import { BigNumber, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { split } from 'shamirs-secret-sharing-ts';
+import { split, combine } from 'shamirs-secret-sharing-ts';
 import { useAccount } from 'wagmi';
 import useArweaveService from '../hooks/useArweaveService';
 import useFileEncryption from '../hooks/useFileEncryption';
@@ -36,14 +36,15 @@ interface Archaeolgist {
 
 function Home() {
   const { sarcophagi, updateSarcophagi } = useSarcophagi();
-  const { uploadArweaveFile, updateStatus, sendStatus } = useArweaveService();
+  const { uploadArweaveFile, updateStatus, sendStatus, downloadArweaveFile } = useArweaveService();
 
   const [sarcophagusName, setSarcophagusName] = useState('test');
   const [currentArweaveTxId, setCurrentArweaveTxId] = useState('');
   const [currentSarcoId, setCurrentSarcoId] = useState('');
-
-  const [minimumNumberShards, setMinimumNumberShards] = useState(3);
+  const [currentShards, setCurrentShards] = useState<any>([]);
+  const [minimumNumberShards, setMinimumNumberShards] = useState(2); //TODO: minimumNumberShards set to 2 for testing. evaluate for production
   const [archaeologists, setArchaeologist] = useState<Archaeolgist[]>([]);
+  const [isDownloadVerified, setIsDownloadVerified] = useState(false);
 
   const { address: embalmerAddress } = useAccount();
 
@@ -76,13 +77,12 @@ function Home() {
     fileEncryptedRecipient,
     setRandomPublicKey,
     doubleEncryptedFile,
+    fileByteArray,
   } = useFileEncryption();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       setFile(acceptedFiles[0]);
-      const fr = new FileReader();
-      fr.readAsText(acceptedFiles[0]);
     },
     [setFile]
   );
@@ -107,6 +107,7 @@ function Home() {
 
     const secret = Buffer.from(wallet.privateKey);
     const shards = split(secret, { shares: 3, threshold: minimumNumberShards });
+    setCurrentShards(shards);
 
     setArchaeologist([
       {
@@ -159,19 +160,11 @@ function Home() {
     setCurrentArweaveTxId(arweareTxId);
   }
 
-  function finalizeSarcophagus(sarcodId: string, arweareTxId: string) {
-    const args = [
-      sarcodId,
-      archaeologists
-        .filter(arch => arch.archAddress !== arweaveArchaeologist)
-        .map(arch => arch.archAddress),
-      arweaveArchaeologist,
-      arweareTxId,
-    ];
-    finalize({
-      args: args,
-      toastText: 'Finalize Sarcophagus',
-    });
+  async function downloadAndVerify() {
+    const privateKey = combine(currentShards).toString();
+    const isVerify =
+      !!fileByteArray && (await downloadArweaveFile(currentArweaveTxId, privateKey, fileByteArray));
+    setIsDownloadVerified(isVerify);
   }
 
   return (
@@ -272,10 +265,11 @@ function Home() {
                   <Button
                     variant="solid"
                     bg="grey"
-                    onClick={() => finalizeSarcophagus(currentSarcoId, currentArweaveTxId)}
+                    onClick={() => downloadAndVerify()}
                   >
                     Download File and Verify
                   </Button>
+                  <Text>Status: {isDownloadVerified ? 'Verify' : 'Not Verify'}</Text>
                 </Box>
               </VStack>
               <Button
