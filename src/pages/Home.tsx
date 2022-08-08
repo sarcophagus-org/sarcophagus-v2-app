@@ -68,7 +68,7 @@ function Home() {
     return () => {
       clearInterval(interval);
     };
-  }, [currentArweaveTxId]);
+  }, [currentArweaveTxId, updateStatus]);
 
   const arweaveArchaeologist = unnamedAccounts[2];
 
