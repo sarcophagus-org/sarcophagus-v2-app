@@ -36,7 +36,13 @@ interface Archaeolgist {
 
 function Home() {
   const { sarcophagi, updateSarcophagi } = useSarcophagi();
-  const { uploadArweaveFile, updateStatus, sendStatus, downloadArweaveFile } = useArweaveService();
+  const {
+    uploadArweaveFile,
+    updateStatus,
+    getTransactionStatusMessage,
+    getConfirmations,
+    isArweaveFileValid,
+  } = useArweaveService();
 
   const [sarcophagusName, setSarcophagusName] = useState('test');
   const [currentArweaveTxId, setCurrentArweaveTxId] = useState('');
@@ -91,11 +97,6 @@ function Home() {
 
   const { submit: initialize } = useSubmitTransaction({
     functionName: 'initializeSarcophagus',
-    contractInterface: EmbalmerFacet.abi,
-  });
-
-  const { submit: finalize } = useSubmitTransaction({
-    functionName: 'finalizeSarcophagus',
     contractInterface: EmbalmerFacet.abi,
   });
 
@@ -156,14 +157,14 @@ function Home() {
       toastText: 'Initialize Sarcophagus',
     });
 
-    const arweareTxId = await uploadArweaveFile(doubleEncryptedFile || Buffer.from(''));
-    setCurrentArweaveTxId(arweareTxId);
+    const arweaveTxId = await uploadArweaveFile(doubleEncryptedFile || Buffer.from(''));
+    setCurrentArweaveTxId(arweaveTxId);
   }
 
   async function downloadAndVerify() {
     const privateKey = combine(currentShards).toString();
     const isVerify =
-      !!fileByteArray && (await downloadArweaveFile(currentArweaveTxId, privateKey, fileByteArray));
+      !!fileByteArray && (await isArweaveFileValid(currentArweaveTxId, privateKey, fileByteArray));
     setIsDownloadVerified(isVerify);
   }
 
@@ -252,15 +253,8 @@ function Home() {
               >
                 <Box>Sarco Id: {currentSarcoId}</Box>
                 <Box>Arweave Tx Id: {currentArweaveTxId}</Box>
-                <Box>
-                  Status:{' '}
-                  {sendStatus.status === 'Pending'
-                    ? 'Waiting for Arweave TX to confirm'
-                    : sendStatus.status === 'Success'
-                    ? 'Arweave TX upload successful'
-                    : sendStatus.status}
-                </Box>
-                <Box>Confimations: {sendStatus.confirmations}</Box>
+                <Box>Status: {getTransactionStatusMessage()}</Box>
+                <Box>Confimations: {getConfirmations()}</Box>
                 <Box>
                   <Button
                     variant="solid"

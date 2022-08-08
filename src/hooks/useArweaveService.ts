@@ -13,17 +13,22 @@ const initArweave = () => {
   });
 };
 
+export enum ArweaveTxStatus {
+  PENDING,
+  SUCCESS,
+  FAIL,
+}
+
 const useArweaveService = () => {
-  const [sendStatus, setStatus] = useState<{ status: string; confirmations: number }>({
-    status: '',
+  const [transactionStatus, setTransactionStatus] = useState<{
+    status: ArweaveTxStatus | null;
+    confirmations: number;
+  }>({
+    status: null,
     confirmations: 0,
   });
 
-  const downloadArweaveFile = async (
-    arweaveTxId: string,
-    privateKey: string,
-    originalFile: ArrayBuffer
-  ): Promise<boolean> => {
+  const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string) => {
     const arweave = initArweave();
     const data = await arweave.transactions.getData(arweaveTxId, { decode: true });
     const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
@@ -36,10 +41,18 @@ const useArweaveService = () => {
       ),
       outerDecrypt
     );
+    return innerDecrypt;
+  };
 
+  const isArweaveFileValid = async (
+    arweaveTxId: string,
+    privateKey: string,
+    originalFile: ArrayBuffer
+  ): Promise<boolean> => {
+    const decryptedFile = await fetchAndDecryptArweaveFile(arweaveTxId, privateKey);
     const fileBytes = Buffer.from(new Uint8Array(originalFile));
 
-    return innerDecrypt.toString() === fileBytes.toString();
+    return decryptedFile.toString() === fileBytes.toString();
   };
 
   //TODO: remove when archologist do the upload.
@@ -73,26 +86,47 @@ const useArweaveService = () => {
     return tx.id;
   };
 
-  const updateStatus = async (arweareTxId: string) => {
+  const updateStatus = async (arweaveTxId: string) => {
     const arweave = initArweave();
 
-    const res = await arweave.transactions.getStatus(arweareTxId);
-    if (res && res.status === 200 && res.confirmed !== null) {
+    const res = await arweave.transactions.getStatus(arweaveTxId);
+    if (res && res.confirmed && res.status === 200) {
       if ((res.confirmed as unknown as string) === 'Pending') {
-        setStatus({ status: 'Pending', confirmations: 0 });
+        setTransactionStatus({ status: ArweaveTxStatus.PENDING, confirmations: 0 });
       } else {
-        setStatus({
-          status: 'Success',
+        setTransactionStatus({
+          status: ArweaveTxStatus.SUCCESS,
           confirmations: res.confirmed.number_of_confirmations || 0,
         });
       }
-    } else if (res.status === 404) {
-      setStatus({ status: 'Not enough AR tokens', confirmations: 0 });
     } else {
-      setStatus({ status: 'unknown', confirmations: 0 });
+      setTransactionStatus({ status: ArweaveTxStatus.FAIL, confirmations: 0 });
     }
   };
 
-  return { uploadArweaveFile, updateStatus, sendStatus, downloadArweaveFile };
+  const getTransactionStatusMessage = (): string => {
+    switch (transactionStatus.status) {
+      case null:
+        return 'Status not set';
+      case ArweaveTxStatus.SUCCESS:
+        return 'Arweave TX upload successful';
+      case ArweaveTxStatus.PENDING:
+        return 'Waiting for Arweave TX to confirm';
+      case ArweaveTxStatus.FAIL:
+        return 'Transaction failed';
+    }
+  };
+
+  const getConfirmations = (): number => {
+    return transactionStatus.confirmations;
+  };
+
+  return {
+    uploadArweaveFile,
+    updateStatus,
+    getTransactionStatusMessage,
+    getConfirmations,
+    isArweaveFileValid,
+  };
 };
 export default useArweaveService;
