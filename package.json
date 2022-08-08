@@ -7,6 +7,8 @@
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
+    "@sentry/react": "^7.8.1",
+    "@sentry/tracing": "^7.8.1",
     "arweave": "^1.11.4",
     "arweave-js": "^1.0.0",
     "authereum": "^0.1.14",

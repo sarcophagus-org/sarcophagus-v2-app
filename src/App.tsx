@@ -1,10 +1,12 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { darkTheme, getDefaultWallets, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
+import * as Sentry from '@sentry/react';
 import { merge } from 'lodash';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
+import { ErrorFallback } from './components/ErrorFallback';
 import { Pages } from './pages';
 import { StoreProvider } from './store/StoreProvider';
 import { theme } from './theme';
@@ -35,17 +37,19 @@ function App() {
   return (
     <StoreProvider>
       <ChakraProvider theme={theme}>
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider
-            chains={chains}
-            theme={walletConnectionTheme}
-            showRecentTransactions={true}
-          >
-            <Router>
-              <Pages />
-            </Router>
-          </RainbowKitProvider>
-        </WagmiConfig>
+        <Sentry.ErrorBoundary fallback={ErrorFallback}>
+          <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider
+              chains={chains}
+              theme={walletConnectionTheme}
+              showRecentTransactions={true}
+            >
+              <Router>
+                <Pages />
+              </Router>
+            </RainbowKitProvider>
+          </WagmiConfig>
+        </Sentry.ErrorBoundary>
       </ChakraProvider>
     </StoreProvider>
   );

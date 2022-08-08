@@ -1,9 +1,10 @@
-import { Button } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useSelector } from '../../../store';
-import { formatAddress } from '../../../utils/helpers';
 
 export function SubmitMock() {
+  const toast = useToast();
+
   const selectedArchaeologists = useSelector(s => s.archaeologistState.selectedArchaeologists);
   const archaeologistsRequired = useSelector(s => s.archaeologistState.archaeologistsRequired);
 
@@ -15,11 +16,11 @@ export function SubmitMock() {
 
   function handleSubmit() {
     const archCount = selectedArchaeologists.length;
-    alert(
-      `DEV MESSAGE \n\n${archCount} archaeologists selected requiring ${archaeologistsRequired} of ${archCount} to unwrap.\n\n Selected Archaeologists:\n${selectedArchaeologists
-        .map(x => formatAddress(x))
-        .join('\n')}`
-    );
+    toast({
+      title: 'Fake submitted fake archaeologists!',
+      description: `${archCount} archaeologists selected requiring ${archaeologistsRequired} of ${archCount} to unwrap.`,
+      status: 'success',
+    });
   }
 
   return (
