@@ -1,29 +1,29 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
 import {
-  FormControl,
-  Tabs,
-  TabList,
-  TabPanels,
-  TabPanel,
-  Tab,
-  Input,
-  FormLabel,
-  VStack,
-  Button,
   Box,
-  Textarea,
-  Text,
+  Button,
+  FormControl,
+  FormLabel,
   HStack,
+  Input,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  Textarea,
+  VStack,
 } from '@chakra-ui/react';
-import { ethers, utils, BigNumber } from 'ethers';
-import { useAccount } from 'wagmi';
-import { useSubmitTransaction } from '../lib/useSubmitTransactions';
-import { EmbalmerFacet__factory } from '../assets/typechain';
-import useFileEncryption from '../contexts/useFileEncryption';
-import useSarcophagi from '../contexts/useSarcophagi';
-import useArchaeologistService from '../contexts/useArchaeologistService';
+import { BigNumber, ethers, utils } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { split } from 'shamirs-secret-sharing-ts';
+import { useAccount } from 'wagmi';
+import useArchaeologistService from '../hooks/useArchaeologistService';
+import useFileEncryption from '../hooks/useFileEncryption';
+import useSarcophagi from '../hooks/useSarcophagi';
+import { useSubmitTransaction } from '../hooks/useSubmitTransactions';
+import { EmbalmerFacet__factory } from '../typechain';
 import { truncateAddress } from '../utils/truncateAddress';
 
 interface Archaeolgist {
@@ -67,7 +67,7 @@ function Home() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [updateStatus]);
 
   const arweaveArchaeologist = unnamedAccounts[2];
 
@@ -84,11 +84,14 @@ function Home() {
     doubleEncryptedFile,
   } = useFileEncryption();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFile(acceptedFiles[0]);
-    const fr = new FileReader();
-    fr.readAsText(acceptedFiles[0]);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      setFile(acceptedFiles[0]);
+      const fr = new FileReader();
+      fr.readAsText(acceptedFiles[0]);
+    },
+    [setFile]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -203,6 +206,8 @@ function Home() {
                 />
               </FormLabel>
               <Button
+                variant="solid"
+                bg="grey"
                 onClick={() => {
                   const key =
                     '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
@@ -236,6 +241,8 @@ function Home() {
               </FormLabel>
               <Text>Number of Archeologist (n): {archaeologists.length}</Text>
               <Button
+                variant="solid"
+                bg="grey"
                 onClick={() => {
                   secondEncryptAndGenerateShards();
                 }}
@@ -277,8 +284,16 @@ function Home() {
                 </Box>
               ))}
             </VStack>
+
+            <Button
+              variant="solid"
+              bg="grey"
+              onClick={() => initializeSarcophagus()}
+            >
+              Submit
+            </Button>
           </TabPanel>
-          <TabPanel>Page 2</TabPanel>
+          <TabPanel></TabPanel>
         </TabPanels>
       </Tabs>
     </FormControl>

@@ -1,12 +1,13 @@
+import { ChakraProvider } from '@chakra-ui/react';
+import { darkTheme, getDefaultWallets, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider, darkTheme, Theme } from '@rainbow-me/rainbowkit';
+import { merge } from 'lodash';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { merge } from 'lodash';
-import { ChakraProvider } from '@chakra-ui/react';
-import Header from './components/Header';
-import Body from './components/Body';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Pages } from './pages';
+import { StoreProvider } from './store/StoreProvider';
+import { theme } from './theme';
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.goerli, chain.hardhat],
@@ -32,20 +33,21 @@ const wagmiClient = createClient({
 
 function App() {
   return (
-    <ChakraProvider>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider
-          chains={chains}
-          theme={walletConnectionTheme}
-          showRecentTransactions={true}
-        >
-          <Router>
-            <Header />
-            <Body />
-          </Router>
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </ChakraProvider>
+    <StoreProvider>
+      <ChakraProvider theme={theme}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider
+            chains={chains}
+            theme={walletConnectionTheme}
+            showRecentTransactions={true}
+          >
+            <Router>
+              <Pages />
+            </Router>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </ChakraProvider>
+    </StoreProvider>
   );
 }
 export default App;

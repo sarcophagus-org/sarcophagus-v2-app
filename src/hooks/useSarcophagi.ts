@@ -1,14 +1,13 @@
 // import { ethers } from 'ethers';
 import { useState } from 'react';
-import { useAccount, useContractRead, useContract, useProvider, useSigner } from 'wagmi';
-import { ViewStateFacet__factory, EmbalmerFacet__factory } from '../assets/typechain';
+import { useAccount, useContract, useContractRead, useProvider } from 'wagmi';
+import { ViewStateFacet__factory } from '../typechain';
 import { ISarcophagus } from '../types/sarcophagi.interfaces';
 import useArchaeologistService from './useArchaeologistService';
 
 const useSarcophagi = () => {
   const { address: embalmerAddress } = useAccount();
   const provider = useProvider();
-  const signer = useSigner();
   const [sarcophagi, setSarcophagi] = useState<ISarcophagus[]>([]);
   const { getConfirmations } = useArchaeologistService();
 

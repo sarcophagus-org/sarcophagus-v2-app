@@ -1,8 +1,8 @@
 import { VStack } from '@chakra-ui/react';
-import DepositFreeBond from '../components/DepositFreeBond';
-import DisplayFreeBond from '../components/DisplayFreeBond';
+import DepositFreeBond from '../features/archaeologist/components/DepositFreeBond';
+import DisplayFreeBond from '../features/archaeologist/components/DisplayFreeBond';
 
-function FreeBondTestPage() {
+export function FreeBondTestPage() {
   return (
     <VStack>
       <DepositFreeBond />
@@ -10,5 +10,3 @@ function FreeBondTestPage() {
     </VStack>
   );
 }
-
-export default FreeBondTestPage;
