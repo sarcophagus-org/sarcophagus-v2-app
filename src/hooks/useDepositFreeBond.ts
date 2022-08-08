@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { ethers } from 'ethers';
 import { useSubmitTransaction } from './useSubmitTransactions';
 import { useContractRead, useContractWrite, useAccount } from 'wagmi';
-import { SarcoTokenMock__factory, ArchaeologistFacet__factory } from '../typechain';
+import { SarcoTokenMock } from '../abi/SarcoTokenMock';
+import { ArchaeologistFacet } from '../abi/ArchaeologistFacet';
 
 const useDepositFreeBond = () => {
   const [depositAmount, setDepositAmount] = useState('0');
 
   const { submit } = useSubmitTransaction({
     functionName: 'depositFreeBond',
-    contractInterface: ArchaeologistFacet__factory.abi,
+    contractInterface: ArchaeologistFacet.abi,
   });
 
   function depositFreeBond() {
@@ -20,14 +21,14 @@ const useDepositFreeBond = () => {
 
   const { data: sarcoTokenApprovalAmount, refetch: getSarcoTokenAllowance } = useContractRead({
     addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
-    contractInterface: SarcoTokenMock__factory.abi,
+    contractInterface: SarcoTokenMock.abi,
     functionName: 'allowance',
     args: [address, process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS],
   });
 
   const { write: approveSarcoToken } = useContractWrite({
     addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
-    contractInterface: SarcoTokenMock__factory.abi,
+    contractInterface: SarcoTokenMock.abi,
     functionName: 'approve',
     args: [process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS, ethers.constants.MaxUint256],
   });

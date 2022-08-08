@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Arweave from 'arweave';
+import { decrypt } from 'ecies-geth';
+import { utils } from 'ethers';
 
 const initArweave = () => {
   return Arweave.init({
@@ -11,13 +13,50 @@ const initArweave = () => {
   });
 };
 
-const useArchaeologistService = () => {
-  const [sendStatus, setStatus] = useState<{ status: string; confirmations: number }>({
-    status: '',
+export enum ArweaveTxStatus {
+  PENDING,
+  SUCCESS,
+  FAIL,
+}
+
+const useArweaveService = () => {
+  const [transactionStatus, setTransactionStatus] = useState<{
+    status: ArweaveTxStatus | null;
+    confirmations: number;
+  }>({
+    status: null,
     confirmations: 0,
   });
+
+  const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string) => {
+    const arweave = initArweave();
+    const data = await arweave.transactions.getData(arweaveTxId, { decode: true });
+    const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
+
+    const outerDecrypt = await decrypt(privateKeyAsBytes, Buffer.from(data as string));
+
+    const innerDecrypt = await decrypt(
+      Buffer.from(
+        utils.arrayify('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') // TODO: innerDecrypt using default address and private key for testing instead of real recipient
+      ),
+      outerDecrypt
+    );
+    return innerDecrypt;
+  };
+
+  const isArweaveFileValid = async (
+    arweaveTxId: string,
+    privateKey: string,
+    originalFile: ArrayBuffer
+  ): Promise<boolean> => {
+    const decryptedFile = await fetchAndDecryptArweaveFile(arweaveTxId, privateKey);
+    const fileBytes = Buffer.from(new Uint8Array(originalFile));
+
+    return decryptedFile.toString() === fileBytes.toString();
+  };
+
   //TODO: remove when archologist do the upload.
-  const uploadArweaveFile = async (sarcoId: string, file: Buffer): Promise<string> => {
+  const uploadArweaveFile = async (file: Buffer): Promise<string> => {
     const arweave = initArweave();
 
     const key = {
@@ -47,38 +86,47 @@ const useArchaeologistService = () => {
     return tx.id;
   };
 
-  const updateStatus = async () => {
+  const updateStatus = async (arweaveTxId: string) => {
     const arweave = initArweave();
-    const currentTextArweaveAddress = 'Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4';
-    const txId = await arweave.wallets.getLastTransactionID(currentTextArweaveAddress);
 
-    const res = await arweave.transactions.getStatus(txId);
-    if (res && res.status === 200) {
+    const res = await arweave.transactions.getStatus(arweaveTxId);
+    if (res && res.confirmed && res.status === 200) {
       if ((res.confirmed as unknown as string) === 'Pending') {
-        setStatus({ status: 'Pending', confirmations: 0 });
+        setTransactionStatus({ status: ArweaveTxStatus.PENDING, confirmations: 0 });
       } else {
-        setStatus({
-          status: 'Success',
-          confirmations: res.confirmed?.number_of_confirmations || 0,
+        setTransactionStatus({
+          status: ArweaveTxStatus.SUCCESS,
+          confirmations: res.confirmed.number_of_confirmations || 0,
         });
       }
+    } else {
+      setTransactionStatus({ status: ArweaveTxStatus.FAIL, confirmations: 0 });
     }
   };
 
-  const getConfirmations = async (txId: string | undefined): Promise<number> => {
-    if (!txId) return 0;
-    const arweave = initArweave();
-    const res = await arweave.transactions.getStatus(txId);
-    if (res && res.status === 200) {
-      if ((res.confirmed as unknown as string) === 'Pending') {
-        return 0;
-      } else {
-        return res.confirmed?.number_of_confirmations || 0;
-      }
+  const getTransactionStatusMessage = (): string => {
+    switch (transactionStatus.status) {
+      case null:
+        return 'Status not set';
+      case ArweaveTxStatus.SUCCESS:
+        return 'Arweave TX upload successful';
+      case ArweaveTxStatus.PENDING:
+        return 'Waiting for Arweave TX to confirm';
+      case ArweaveTxStatus.FAIL:
+        return 'Transaction failed';
     }
-    return 0;
   };
 
-  return { uploadArweaveFile, updateStatus, sendStatus, getConfirmations };
+  const getConfirmations = (): number => {
+    return transactionStatus.confirmations;
+  };
+
+  return {
+    uploadArweaveFile,
+    updateStatus,
+    getTransactionStatusMessage,
+    getConfirmations,
+    isArweaveFileValid,
+  };
 };
-export default useArchaeologistService;
+export default useArweaveService;

@@ -1,25 +1,23 @@
 // import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useAccount, useContract, useContractRead, useProvider } from 'wagmi';
-import { ViewStateFacet__factory } from '../typechain';
+import { ViewStateFacet } from '../abi/ViewStateFacet';
 import { ISarcophagus } from '../types/sarcophagi.interfaces';
-import useArchaeologistService from './useArchaeologistService';
 
 const useSarcophagi = () => {
   const { address: embalmerAddress } = useAccount();
   const provider = useProvider();
   const [sarcophagi, setSarcophagi] = useState<ISarcophagus[]>([]);
-  const { getConfirmations } = useArchaeologistService();
 
   const viewStateContract = useContract({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ViewStateFacet__factory.abi,
+    contractInterface: ViewStateFacet.abi,
     signerOrProvider: provider,
   });
 
   const getEmbalmersarcophagi = useContractRead({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ViewStateFacet__factory.abi,
+    contractInterface: ViewStateFacet.abi,
     functionName: 'getEmbalmersarcophagi',
     args: [embalmerAddress],
   });
@@ -31,8 +29,7 @@ const useSarcophagi = () => {
       sarcoIds.map(async id => {
         const res = await viewStateContract.getSarcophagus(id);
         const sarcophagus = { ...(res as ISarcophagus), sarcoId: id };
-        const confirmations = await getConfirmations(sarcophagus.arweaveTxId);
-        return { ...sarcophagus, confirmations: confirmations };
+        return { ...sarcophagus };
       })
     );
     return setSarcophagi(s.reverse());
