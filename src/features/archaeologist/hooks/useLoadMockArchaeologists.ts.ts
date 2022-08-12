@@ -13,7 +13,7 @@ export function useLoadMockArchaeologists() {
     if (archaeologists.length === 0) {
       try {
         dispatch(startLoad());
-        const mockArchaeologists = await generateMockArchaeologists(10);
+        const mockArchaeologists = await generateMockArchaeologists(3);
 
         dispatch(storeArchaeologists(mockArchaeologists));
       } catch (error) {
