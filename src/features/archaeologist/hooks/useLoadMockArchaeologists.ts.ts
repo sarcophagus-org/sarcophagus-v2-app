@@ -2,7 +2,7 @@ import { useAsyncEffect } from '../../../hooks/useAsyncEffect';
 import { useDispatch, useSelector } from '../../../store';
 import { startLoad, stopLoad } from '../../../store/app/actions';
 import { storeArchaeologists } from '../../../store/archaeologist/actions';
-import { generateMockArchaeologists } from '../../../utils/generateMockArchaeologists';
+import { generateMockArchaeologists } from 'lib/utils/generateMockArchaeologists';
 
 export function useLoadMockArchaeologists() {
   const dispatch = useDispatch();

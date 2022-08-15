@@ -2,7 +2,8 @@ import { useToast } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useContractWrite } from 'wagmi';
 import { UseContractWriteArgs } from 'wagmi/dist/declarations/src/hooks/contracts/useContractWrite';
-import { formatToastMessage } from '../utils/helpers';
+import { formatToastMessage } from 'lib/utils/helpers';
+import { useNetworkConfig } from 'lib/config';
 
 type UseSubmitTransactionsArgs = UseContractWriteArgs & {
   toastDescription?: string;
@@ -18,10 +19,11 @@ export function useSubmitTransaction(
   const toastDuration = 5000;
 
   const toast = useToast();
+  const networkConfig = useNetworkConfig();
   const addRecentTransaction = useAddRecentTransaction();
 
   const { writeAsync } = useContractWrite({
-    addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
+    addressOrName: networkConfig.diamondDeployAddress,
     onSuccess(data) {
       toast({
         title: 'Successful Transaction',

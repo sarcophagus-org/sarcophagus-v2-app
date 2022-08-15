@@ -1,5 +1,5 @@
-import { EmbalmerFacet } from '../../abi/EmbalmerFacet';
-import { SignatureWithAccount } from '../../types';
+import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
+import { SignatureWithAccount } from 'types';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
 interface FinalizeSarcophagusArgs {

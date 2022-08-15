@@ -1,7 +1,7 @@
 import { darkTheme, getDefaultWallets, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
 import { chain as chainList, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { NetworkConfigProvider } from '../config/NetworkConfigProvider';
+import { NetworkConfigProvider } from 'lib/config/NetworkConfigProvider';
 import { merge } from 'lodash';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {

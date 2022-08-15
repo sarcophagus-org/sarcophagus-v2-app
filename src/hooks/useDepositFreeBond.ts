@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArchaeologistFacet } from '../abi/ArchaeologistFacet';
+import { ArchaeologistFacet } from 'lib/abi/ArchaeologistFacet';
 import { useAllowance } from './sarcoToken/useAllowance';
 import { useApprove } from './sarcoToken/useApprove';
 import { useSubmitTransaction } from './useSubmitTransactions';

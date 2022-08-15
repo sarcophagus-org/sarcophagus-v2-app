@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import { EmbalmerFacet } from '../../abi/EmbalmerFacet';
-import { ContractArchaeologist } from '../../types';
+import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
+import { ContractArchaeologist } from 'types';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
 interface InitializeSarcophagusArgs {

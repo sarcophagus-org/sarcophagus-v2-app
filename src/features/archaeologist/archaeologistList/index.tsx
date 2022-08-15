@@ -18,7 +18,7 @@ import {
   selectArchaeologist,
   setSelectedArchaeologists,
 } from '../../../store/archaeologist/actions';
-import { formatAddress } from '../../../utils/helpers';
+import { formatAddress } from 'lib/utils/helpers';
 import { useLoadMockArchaeologists } from '../hooks/useLoadMockArchaeologists.ts';
 import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
 import { GenerateArchaeologists } from './GenerateArchaeologists';

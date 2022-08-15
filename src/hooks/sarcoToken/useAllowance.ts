@@ -1,14 +1,16 @@
 import { useAccount, useContractRead } from 'wagmi';
-import { SarcoToken } from '../../abi/SarcoToken';
+import { SarcoToken } from 'lib/abi/SarcoToken';
+import { useNetworkConfig } from 'lib/config';
 
 export function useAllowance() {
   const { address } = useAccount();
+  const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
-    addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
+    addressOrName: networkConfig.sarcoTokenAddress,
     contractInterface: SarcoToken.abi,
     functionName: 'allowance',
-    args: [address, process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS],
+    args: [address, networkConfig.diamondDeployAddress],
   });
 
   return { allowance: data };
