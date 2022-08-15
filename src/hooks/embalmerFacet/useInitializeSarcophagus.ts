@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
-import { EmbalmerFacetABI } from '../../abis/EmbalmerFacet';
+import { EmbalmerFacet } from '../../abi/EmbalmerFacet';
+import { ContractArchaeologist } from '../../types';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
-// TODO: Remove any
 interface InitializeSarcophagusArgs {
   sarcoId: string;
   name: string;
@@ -10,8 +10,8 @@ interface InitializeSarcophagusArgs {
   resurrectionTime: number;
   canBeTransferred: boolean;
   minShards: number;
-  archaeologists: any[];
-  arweaveArchaeologist: any;
+  archaeologists: ContractArchaeologist[];
+  arweaveArchaeologist: ContractArchaeologist;
 }
 
 export function useInitializeSarcophagus({
@@ -28,7 +28,7 @@ export function useInitializeSarcophagus({
   const transactionDescription = 'Initialize sarcophagus';
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacetABI,
+    contractInterface: EmbalmerFacet.abi,
     functionName: 'initializeSarcophagus',
     args: [
       ethers.utils.formatBytes32String(sarcoId),

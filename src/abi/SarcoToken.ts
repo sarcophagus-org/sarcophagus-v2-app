@@ -1,4 +1,4 @@
-export const SarcoTokenMock = {
+export const SarcoToken = {
   abi: [
     {
       inputs: [],

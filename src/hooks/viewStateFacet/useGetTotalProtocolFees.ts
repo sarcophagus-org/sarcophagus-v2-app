@@ -1,12 +1,12 @@
 import { useContractRead } from 'wagmi';
-import { ViewStateFacetABI } from '../../abis/ViewStateFacet';
+import { ViewStateFacet } from '../../abi/ViewStateFacet';
 
 export function useGetTotalProtocolFees() {
   const { data } = useContractRead({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ViewStateFacetABI,
+    contractInterface: ViewStateFacet.abi,
     functionName: 'getProtocolFeeAmount',
   });
 
-  return { protocolFeeAmount: data };
+  return data;
 }

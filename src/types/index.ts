@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, Signature } from 'ethers';
 import { ReactNode } from 'react';
 
 export interface ChildrenOnly {
@@ -13,6 +13,18 @@ export interface Archaeologist {
   diggingFee: BigNumber;
   isArweaver: boolean;
   feePerByte: BigNumber;
+}
+
+export interface ContractArchaeologist {
+  archAddress: string;
+  storageFee: BigNumber;
+  diggingFee: BigNumber;
+  bounty: BigNumber;
+  hashedShard: string;
+}
+
+export interface SignatureWithAccount extends Signature {
+  account: string;
 }
 
 // Temporary
