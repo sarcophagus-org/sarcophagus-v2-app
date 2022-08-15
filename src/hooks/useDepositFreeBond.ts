@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArchaeologistFacetABI } from '../abis/ArchaeologistFacet';
+import { ArchaeologistFacet } from '../abi/ArchaeologistFacet';
 import { useAllowance } from './sarcoToken/useAllowance';
 import { useApprove } from './sarcoToken/useApprove';
 import { useSubmitTransaction } from './useSubmitTransactions';
@@ -8,7 +8,7 @@ const useDepositFreeBond = () => {
   const [depositAmount, setDepositAmount] = useState('0');
 
   const { submit: depositFreeBond } = useSubmitTransaction({
-    contractInterface: ArchaeologistFacetABI,
+    contractInterface: ArchaeologistFacet.abi,
     functionName: 'depositFreeBond',
     args: [depositAmount],
     toastDescription: `Deposited ${depositAmount} free bond`,

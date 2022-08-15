@@ -1,4 +1,4 @@
-import { EmbalmerFacetABI } from '../../abis/EmbalmerFacet';
+import { EmbalmerFacet } from '../../abi/EmbalmerFacet';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
 interface RewrapSarcophagusArgs {
@@ -11,7 +11,7 @@ export function useRewrapSarcophagus({ sarcoId, resurrectionTime }: RewrapSarcop
   const transactionDescription = 'Rewrap sarcophagus';
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacetABI,
+    contractInterface: EmbalmerFacet.abi,
     functionName: 'rewrapSarcophagus',
     args: [sarcoId, resurrectionTime],
     toastDescription,

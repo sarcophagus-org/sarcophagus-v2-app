@@ -1,13 +1,13 @@
 import { useContractRead } from 'wagmi';
-import { ViewStateFacetABI } from '../../abis/ViewStateFacet';
+import { ViewStateFacet } from '../../abi/ViewStateFacet';
 
 export function useGetCursedBond({ archaeologist }: { archaeologist: string }) {
   const { data } = useContractRead({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ViewStateFacetABI,
+    contractInterface: ViewStateFacet.abi,
     functionName: 'getCursedBond',
     args: [archaeologist],
   });
 
-  return { embalmerSarcophagi: data };
+  return data;
 }

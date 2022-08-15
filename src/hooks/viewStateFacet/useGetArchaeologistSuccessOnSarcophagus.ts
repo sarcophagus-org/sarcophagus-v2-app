@@ -1,5 +1,5 @@
 import { useContractRead } from 'wagmi';
-import { ViewStateFacetABI } from '../../abis/ViewStateFacet';
+import { ViewStateFacet } from '../../abi/ViewStateFacet';
 
 export function useGetArchaeologistSuccessOnSarcophagus({
   archaeologist,
@@ -10,10 +10,10 @@ export function useGetArchaeologistSuccessOnSarcophagus({
 }) {
   const { data } = useContractRead({
     addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    contractInterface: ViewStateFacetABI,
+    contractInterface: ViewStateFacet.abi,
     functionName: 'getArchaeologistSuccessOnSarcophagus',
     args: [archaeologist, sarcoId],
   });
 
-  return { archaeologistSuccessesOnSarcophagus: data };
+  return data;
 }

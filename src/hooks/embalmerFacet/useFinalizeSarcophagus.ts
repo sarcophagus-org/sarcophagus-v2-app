@@ -1,11 +1,11 @@
-import { EmbalmerFacetABI } from '../../abis/EmbalmerFacet';
+import { EmbalmerFacet } from '../../abi/EmbalmerFacet';
+import { SignatureWithAccount } from '../../types';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
-// TODO: Remove any
 interface FinalizeSarcophagusArgs {
   sarcoId: string;
-  archeaologistSignatures: any[];
-  arweaveArchaeologistSignature: any;
+  archeaologistSignatures: SignatureWithAccount[];
+  arweaveArchaeologistSignature: SignatureWithAccount;
   arweaveTxId: string;
 }
 
@@ -19,7 +19,7 @@ export function useFinalizeSarcophagus({
   const transactionDescription = 'Finalize sarcophagus';
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacetABI,
+    contractInterface: EmbalmerFacet.abi,
     functionName: 'finalizeSarcophagus',
     args: [sarcoId, archeaologistSignatures, arweaveArchaeologistSignature, arweaveTxId],
     toastDescription,

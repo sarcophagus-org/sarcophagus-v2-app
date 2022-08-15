@@ -298,6 +298,11 @@ export const ViewStateFacet = {
               type: 'uint256',
             },
             {
+              internalType: 'uint256',
+              name: 'diggingFeesPaid',
+              type: 'uint256',
+            },
+            {
               internalType: 'bytes32',
               name: 'doubleHashedShard',
               type: 'bytes32',
