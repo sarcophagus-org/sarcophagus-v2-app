@@ -15,3 +15,7 @@ export function formatAddress(address: string): string {
 export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export function formatToastMessage(message: string, length: number = 125): string {
+  return message.length > length ? message.slice(0, length) + '...' : message;
+}
