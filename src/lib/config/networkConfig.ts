@@ -8,5 +8,3 @@ export const AllNetworkConfigs: { [chainId: number]: NetworkConfig } = {
   5: gorliNetworkConfig,
   31337: hardhatNetworkConfig,
 };
-
-//export const networkConfig = AllNetworkConfigs[chain.id];

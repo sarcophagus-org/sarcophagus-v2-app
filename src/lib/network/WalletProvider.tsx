@@ -1,7 +1,7 @@
 import { darkTheme, getDefaultWallets, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
 import { chain as chainList, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { ConfigProvider } from '../config/ConfigProvider';
+import { NetworkConfigProvider } from '../config/NetworkConfigProvider';
 import { merge } from 'lodash';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
@@ -29,7 +29,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <ConfigProvider>
+      <NetworkConfigProvider>
         <RainbowKitProvider
           chains={chains}
           theme={walletConnectionTheme}
@@ -40,7 +40,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         >
           {children}
         </RainbowKitProvider>
-      </ConfigProvider>
+      </NetworkConfigProvider>
     </WagmiConfig>
   );
 }
