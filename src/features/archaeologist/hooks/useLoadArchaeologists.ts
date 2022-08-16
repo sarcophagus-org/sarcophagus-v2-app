@@ -22,7 +22,10 @@ export function useLoadArchaeologists() {
         return;
       }
 
-      await initialisePeerDiscovery(await browserNode);
+      await initialisePeerDiscovery(
+        await browserNode,
+        (discoveredArchs: Archaeologist[]) => dispatch(storeArchaeologists(discoveredArchs))
+      );
 
       dispatch(storeArchaeologists(archaeologists));
     } catch (error) {

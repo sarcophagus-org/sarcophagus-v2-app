@@ -1,4 +1,7 @@
+import { solidityKeccak256 } from 'ethers/lib/utils';
 import { Libp2p } from 'libp2p';
+import { Archaeologist } from 'types';
+
 if (!process.env.REACT_APP_BOOTSTRAP_NODE_LIST) {
   throw Error('REACT_APP_BOOTSTRAP_NODE_LIST not set in .env');
 }
@@ -7,12 +10,15 @@ if (!process.env.REACT_APP_SIGNAL_SERVER_LIST) {
   throw Error('REACT_APP_SIGNAL_SERVER_LIST not set in .env');
 }
 
-export async function initialisePeerDiscovery(browserNode: Libp2p) {
+const discoveredPeers: string[] = [];
+const discoveredArchs: Record<string, Archaeologist> = {};
+
+const archEnvConfigTopic = 'env-config';
+
+export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (archs: Archaeologist[]) => void) {
   if (browserNode.isStarted()) return;
 
   const idTruncateLimit = 5;
-
-  const discoveredPeers: string[] = [];
 
   const nodeId = browserNode.peerId.toString();
   console.log(`starting browser node with id: ${nodeId.slice(nodeId.length - idTruncateLimit)}`);
@@ -44,9 +50,28 @@ export async function initialisePeerDiscovery(browserNode: Libp2p) {
     const msg = new TextDecoder().decode(evt.detail.data);
     const sourceId = evt.detail.from.toString();
     console.log(`from ${sourceId.slice(sourceId.length - idTruncateLimit)}: ${msg}`);
+
+    if (evt.detail.topic === archEnvConfigTopic) {
+      const archConfigJson: Record<string, any> = JSON.parse(msg);
+      const archAddress = solidityKeccak256(['string'], [archConfigJson.encryptionPublicKey]);
+
+      const newArch = {
+        publicKey: archConfigJson.encryptionPublicKey,
+        address: archAddress,
+        bounty: archConfigJson.minBounty,
+        diggingFee: archConfigJson.minDiggingFees,
+        isArweaver: archConfigJson.isArweaver,
+        feePerByte: archConfigJson.feePerByte,
+        maxResurrectionTime: archConfigJson.maxResurrectionTime,
+      };
+
+      discoveredArchs[archAddress] = newArch;
+
+      setArchs(Object.values(discoveredArchs));
+    }
   });
 
-  browserNode.pubsub.subscribe('env-config');
+  browserNode.pubsub.subscribe(archEnvConfigTopic);
 
   return browserNode;
 }

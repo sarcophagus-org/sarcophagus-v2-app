@@ -21,7 +21,6 @@ import {
 import { formatAddress } from 'lib/utils/helpers';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
-import { GenerateArchaeologists } from './GenerateArchaeologists';
 import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
 import { SubmitMock } from './SubmitMock';
 
@@ -50,7 +49,6 @@ export function ArchaeologistList() {
       direction="column"
       height="100%"
     >
-      <GenerateArchaeologists />
       <RequiredArchaeologistsPicker />
       <ArchaeologistsWarnings />
       <Button
