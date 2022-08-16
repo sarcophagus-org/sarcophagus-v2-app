@@ -27,18 +27,6 @@ export interface SignatureWithAccount extends Signature {
   account: string;
 }
 
-export interface ContractArchaeologist {
-  archAddress: string;
-  storageFee: BigNumber;
-  diggingFee: BigNumber;
-  bounty: BigNumber;
-  hashedShard: string;
-}
-
-export interface SignatureWithAccount extends Signature {
-  account: string;
-}
-
 // Temporary
 export interface Sarcophagus {
   id: string;
