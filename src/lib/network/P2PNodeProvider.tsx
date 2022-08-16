@@ -1,6 +1,6 @@
 import { Libp2p, createLibp2p } from 'libp2p';
 import { createContext } from 'react';
-import { nodeConfig } from 'store/app/node_config';
+import { nodeConfig } from 'lib/utils/node_config';
 
 export const LibP2pContext = createContext<Promise<Libp2p> | undefined>(undefined);
 
