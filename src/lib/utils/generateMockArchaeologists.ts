@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
-import { Archaeologist } from '../types';
+import { Archaeologist } from '../../types';
 import { sleep } from './helpers';
 
 // Generates a random number between two numbers

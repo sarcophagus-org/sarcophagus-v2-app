@@ -1,4 +1,4 @@
-import { EmbalmerFacet } from '../../abi/EmbalmerFacet';
+import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
 interface RewrapSarcophagusArgs {

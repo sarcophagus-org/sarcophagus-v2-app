@@ -1,13 +1,16 @@
 import { ethers } from 'ethers';
 import { useContractWrite } from 'wagmi';
-import { SarcoToken } from '../../abi/SarcoToken';
+import { SarcoToken } from 'lib/abi/SarcoToken';
+import { useNetworkConfig } from 'lib/config';
 
 export function useApprove() {
+  const networkConfig = useNetworkConfig();
+
   const { write } = useContractWrite({
-    addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
+    addressOrName: networkConfig.sarcoTokenAddress,
     contractInterface: SarcoToken.abi,
     functionName: 'approve',
-    args: [process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS, ethers.constants.MaxUint256],
+    args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
   });
 
   return { approve: write };

@@ -1,5 +1,6 @@
 import { useContractRead } from 'wagmi';
-import { ViewStateFacet } from '../../abi/ViewStateFacet';
+import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
+import { useNetworkConfig } from 'lib/config';
 
 export function useGetArchaeologistSuccessOnSarcophagus({
   archaeologist,
@@ -8,8 +9,10 @@ export function useGetArchaeologistSuccessOnSarcophagus({
   archaeologist: string;
   sarcoId: string;
 }) {
+  const networkConfig = useNetworkConfig();
+
   const { data } = useContractRead({
-    addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
+    addressOrName: networkConfig.diamondDeployAddress,
     contractInterface: ViewStateFacet.abi,
     functionName: 'getArchaeologistSuccessOnSarcophagus',
     args: [archaeologist, sarcoId],

@@ -15,7 +15,7 @@ import {
   setSelectedArchaeologists,
   storeArchaeologists,
 } from '../../../store/archaeologist/actions';
-import { generateMockArchaeologists } from '../../../utils/generateMockArchaeologists';
+import { generateMockArchaeologists } from 'lib/utils/generateMockArchaeologists';
 
 /**
  * Only used for generating mock archaeologists
