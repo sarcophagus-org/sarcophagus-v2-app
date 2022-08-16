@@ -1,10 +1,10 @@
 import { NetworkConfig } from './networkConfigType';
 import { mainnetNetworkConfig } from './mainnet';
-import { gorliNetworkConfig } from './gorli';
+import { goerliNetworkConfig } from './goerli';
 import { hardhatNetworkConfig } from './hardhat';
 
 export const AllNetworkConfigs: { [chainId: number]: NetworkConfig } = {
   1: mainnetNetworkConfig,
-  5: gorliNetworkConfig,
+  5: goerliNetworkConfig,
   31337: hardhatNetworkConfig,
 };

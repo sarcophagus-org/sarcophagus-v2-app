@@ -7,7 +7,7 @@ export function useApprove() {
   const networkConfig = useNetworkConfig();
 
   const { write } = useContractWrite({
-    addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
+    addressOrName: networkConfig.sarcoTokenAddress,
     contractInterface: SarcoToken.abi,
     functionName: 'approve',
     args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
