@@ -19,17 +19,16 @@ import {
   setSelectedArchaeologists,
 } from '../../../store/archaeologist/actions';
 import { formatAddress } from 'lib/utils/helpers';
-import { useLoadMockArchaeologists } from '../hooks/useLoadMockArchaeologists.ts';
+import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
-import { GenerateArchaeologists } from './GenerateArchaeologists';
 import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
 import { SubmitMock } from './SubmitMock';
+import { ethers } from 'ethers';
 
 export function ArchaeologistList() {
   const dispatch = useDispatch();
 
-  // TODO: Replace this with real version to load real archaeologists
-  useLoadMockArchaeologists();
+  useLoadArchaeologists();
 
   const archaeologists = useSelector(s => s.archaeologistState.archaeologists);
   const selectedArchaeologists = useSelector(s => s.archaeologistState.selectedArchaeologists);
@@ -51,7 +50,6 @@ export function ArchaeologistList() {
       direction="column"
       height="100%"
     >
-      <GenerateArchaeologists />
       <RequiredArchaeologistsPicker />
       <ArchaeologistsWarnings />
       <Button
@@ -95,10 +93,10 @@ export function ArchaeologistList() {
                       <Text>{arch.isArweaver.toString()}</Text>
                     </Td>
                     <Td isNumeric>
-                      <Text>{arch.diggingFee.toString()} SARCO</Text>
+                      <Text>{ethers.utils.formatEther(arch.diggingFee)} SARCO</Text>
                     </Td>
                     <Td isNumeric>
-                      <Text>{arch.bounty.toString()} SARCO</Text>
+                      <Text>{ethers.utils.formatEther(arch.bounty)} SARCO</Text>
                     </Td>
                   </Tr>
                 ))}

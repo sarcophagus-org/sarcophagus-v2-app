@@ -8,6 +8,7 @@ import { StoreProvider } from './store/StoreProvider';
 import { WalletProvider } from 'lib/network/WalletProvider';
 import { theme } from './theme';
 import { Pages } from './pages';
+import { P2PNodeProvider } from 'lib/network/P2PNodeProvider';
 
 function App() {
   return (
@@ -15,9 +16,11 @@ function App() {
       <ChakraProvider theme={theme}>
         <Sentry.ErrorBoundary fallback={ErrorFallback}>
           <WalletProvider>
-            <Router>
-              <Pages />
-            </Router>
+            <P2PNodeProvider>
+              <Router>
+                <Pages />
+              </Router>
+            </P2PNodeProvider>
           </WalletProvider>
         </Sentry.ErrorBoundary>
       </ChakraProvider>

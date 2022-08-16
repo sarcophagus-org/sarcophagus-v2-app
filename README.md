@@ -27,7 +27,7 @@ At the time of this writing, the project currently uses Node v17.4.0. It is reco
 
 Also Windows users will need to add .npmrc file with the contents script-shell=powershell
 
-Finally, create `.env` in root directory and update your environment variables.
+Finally, copy `.env.example` into `.env` in root directory and update your environment variables.
 
 To use local version of Arweave:
 

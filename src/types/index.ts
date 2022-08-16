@@ -6,13 +6,13 @@ export interface ChildrenOnly {
 }
 
 export interface Archaeologist {
-  privateKey: string; // TODO: Remove this later
   publicKey: string;
   address: string;
   bounty: BigNumber;
   diggingFee: BigNumber;
   isArweaver: boolean;
   feePerByte: BigNumber;
+  maxResurrectionTime: number;
 }
 
 export interface ContractArchaeologist {

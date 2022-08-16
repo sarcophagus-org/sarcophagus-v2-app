@@ -1,0 +1,77 @@
+import { solidityKeccak256 } from 'ethers/lib/utils';
+import { Libp2p } from 'libp2p';
+import { Archaeologist } from 'types';
+
+if (!process.env.REACT_APP_BOOTSTRAP_NODE_LIST) {
+  throw Error('REACT_APP_BOOTSTRAP_NODE_LIST not set in .env');
+}
+
+if (!process.env.REACT_APP_SIGNAL_SERVER_LIST) {
+  throw Error('REACT_APP_SIGNAL_SERVER_LIST not set in .env');
+}
+
+const discoveredPeers: string[] = [];
+const discoveredArchs: Record<string, Archaeologist> = {};
+
+const archEnvConfigTopic = 'env-config';
+
+export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (archs: Archaeologist[]) => void) {
+  if (browserNode.isStarted()) return;
+
+  const idTruncateLimit = 5;
+
+  const nodeId = browserNode.peerId.toString();
+  console.log(`starting browser node with id: ${nodeId.slice(nodeId.length - idTruncateLimit)}`);
+  await browserNode.start();
+
+
+  // Listen for new peers
+  browserNode.addEventListener('peer:discovery', (evt) => {
+    const peerId = evt.detail.id.toString();
+
+    if (discoveredPeers.find((p) => p === peerId) === undefined) {
+      discoveredPeers.push(peerId);
+      console.log(`${nodeId.slice(nodeId.length - idTruncateLimit)} discovered: ${peerId.slice(peerId.length - idTruncateLimit)}`);
+    }
+  });
+
+
+  // Listen for peers connecting
+  browserNode.connectionManager.addEventListener('peer:connect', async (evt) => {
+    // TODO: will need to track all connected nodes, and set this value
+    // based on user input
+    // selectedArweaveConn = evt.detail;
+
+    const peerId = evt.detail.remotePeer.toString();
+    console.log(`Connection established to: ${peerId.slice(peerId.length - idTruncateLimit)}`);
+  });
+
+  browserNode.pubsub.addEventListener('message', (evt) => {
+    const msg = new TextDecoder().decode(evt.detail.data);
+    const sourceId = evt.detail.from.toString();
+    console.log(`from ${sourceId.slice(sourceId.length - idTruncateLimit)}: ${msg}`);
+
+    if (evt.detail.topic === archEnvConfigTopic) {
+      const archConfigJson: Record<string, any> = JSON.parse(msg);
+      const archAddress = solidityKeccak256(['string'], [archConfigJson.encryptionPublicKey]);
+
+      const newArch = {
+        publicKey: archConfigJson.encryptionPublicKey,
+        address: archAddress,
+        bounty: archConfigJson.minBounty,
+        diggingFee: archConfigJson.minDiggingFees,
+        isArweaver: archConfigJson.isArweaver,
+        feePerByte: archConfigJson.feePerByte,
+        maxResurrectionTime: archConfigJson.maxResurrectionTime,
+      };
+
+      discoveredArchs[archAddress] = newArch;
+
+      setArchs(Object.values(discoveredArchs));
+    }
+  });
+
+  browserNode.pubsub.subscribe(archEnvConfigTopic);
+
+  return browserNode;
+}
