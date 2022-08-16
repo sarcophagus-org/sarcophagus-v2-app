@@ -19,7 +19,7 @@ import {
   setSelectedArchaeologists,
 } from '../../../store/archaeologist/actions';
 import { formatAddress } from 'lib/utils/helpers';
-import { useLoadMockArchaeologists } from '../hooks/useLoadMockArchaeologists.ts';
+import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
 import { GenerateArchaeologists } from './GenerateArchaeologists';
 import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
@@ -28,8 +28,7 @@ import { SubmitMock } from './SubmitMock';
 export function ArchaeologistList() {
   const dispatch = useDispatch();
 
-  // TODO: Replace this with real version to load real archaeologists
-  useLoadMockArchaeologists();
+  useLoadArchaeologists();
 
   const archaeologists = useSelector(s => s.archaeologistState.archaeologists);
   const selectedArchaeologists = useSelector(s => s.archaeologistState.selectedArchaeologists);
