@@ -23,6 +23,7 @@ import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
 import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
 import { SubmitMock } from './SubmitMock';
+import { ethers } from 'ethers';
 
 export function ArchaeologistList() {
   const dispatch = useDispatch();
@@ -92,10 +93,10 @@ export function ArchaeologistList() {
                       <Text>{arch.isArweaver.toString()}</Text>
                     </Td>
                     <Td isNumeric>
-                      <Text>{arch.diggingFee.toString()} SARCO</Text>
+                      <Text>{ethers.utils.formatEther(arch.diggingFee)} SARCO</Text>
                     </Td>
                     <Td isNumeric>
-                      <Text>{arch.bounty.toString()} SARCO</Text>
+                      <Text>{ethers.utils.formatEther(arch.bounty)} SARCO</Text>
                     </Td>
                   </Tr>
                 ))}
