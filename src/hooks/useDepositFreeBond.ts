@@ -1,48 +1,31 @@
 import { useState } from 'react';
-import { ethers } from 'ethers';
+import { ArchaeologistFacet } from 'lib/abi/ArchaeologistFacet';
+import { useAllowance } from './sarcoToken/useAllowance';
+import { useApprove } from './sarcoToken/useApprove';
 import { useSubmitTransaction } from './useSubmitTransactions';
-import { useContractRead, useContractWrite, useAccount } from 'wagmi';
-import { SarcoTokenMock } from '../abi/SarcoTokenMock';
-import { ArchaeologistFacet } from '../abi/ArchaeologistFacet';
 
 const useDepositFreeBond = () => {
   const [depositAmount, setDepositAmount] = useState('0');
 
-  const { submit } = useSubmitTransaction({
-    functionName: 'depositFreeBond',
+  const { submit: depositFreeBond } = useSubmitTransaction({
     contractInterface: ArchaeologistFacet.abi,
+    functionName: 'depositFreeBond',
+    args: [depositAmount],
+    toastDescription: `Deposited ${depositAmount} free bond`,
   });
 
-  function depositFreeBond() {
-    submit({ args: [depositAmount], toastText: 'Deposit Free Bond' });
-  }
-
-  const { address } = useAccount();
-
-  const { data: sarcoTokenApprovalAmount, refetch: getSarcoTokenAllowance } = useContractRead({
-    addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
-    contractInterface: SarcoTokenMock.abi,
-    functionName: 'allowance',
-    args: [address, process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS],
-  });
-
-  const { write: approveSarcoToken } = useContractWrite({
-    addressOrName: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '',
-    contractInterface: SarcoTokenMock.abi,
-    functionName: 'approve',
-    args: [process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS, ethers.constants.MaxUint256],
-  });
+  const { allowance } = useAllowance();
+  const { approve } = useApprove();
 
   function hasSarcoTokenApproval() {
-    getSarcoTokenAllowance();
-    return Number(sarcoTokenApprovalAmount || 0) > 0;
+    return allowance?.gt(0);
   }
 
   return {
     depositAmount,
     setDepositAmount,
     depositFreeBond,
-    approveSarcoToken,
+    approveSarcoToken: approve,
     hasSarcoTokenApproval,
   };
 };

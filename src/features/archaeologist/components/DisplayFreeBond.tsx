@@ -1,10 +1,12 @@
 import { Box } from '@chakra-ui/react';
 import { useContractRead, useContractEvent, useAccount } from 'wagmi';
-import { ArchaeologistFacet } from '../../../abi/ArchaeologistFacet';
-import { ViewStateFacet } from '../../../abi/ViewStateFacet';
+import { ArchaeologistFacet } from 'lib/abi/ArchaeologistFacet';
+import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
+import { useNetworkConfig } from 'lib/config';
 
 function DisplayFreeBond() {
   const { address } = useAccount();
+  const networkConfig = useNetworkConfig();
 
   const {
     data: amount,
@@ -12,14 +14,14 @@ function DisplayFreeBond() {
     //    error,
     refetch,
   } = useContractRead({
-    addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
+    addressOrName: networkConfig.diamondDeployAddress,
     contractInterface: ViewStateFacet.abi,
     functionName: 'getFreeBond',
     args: [address],
   });
 
   useContractEvent({
-    addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
+    addressOrName: networkConfig.diamondDeployAddress,
     contractInterface: ArchaeologistFacet.abi,
     eventName: 'DepositFreeBond',
     listener: () => refetch(),

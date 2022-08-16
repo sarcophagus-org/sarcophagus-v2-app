@@ -1,64 +1,57 @@
-import { useContractWrite } from 'wagmi';
+import { useToast } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useToast, ToastId } from '@chakra-ui/react';
-import { useRef } from 'react';
-
+import { useContractWrite } from 'wagmi';
 import { UseContractWriteArgs } from 'wagmi/dist/declarations/src/hooks/contracts/useContractWrite';
+import { formatToastMessage } from 'lib/utils/helpers';
+import { useNetworkConfig } from 'lib/config';
 
-export function useSubmitTransaction(contractConfig: Omit<UseContractWriteArgs, 'addressOrName'>) {
-  const writeConfig = {
-    addressOrName: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '',
-    ...contractConfig,
-  };
+type UseSubmitTransactionsArgs = UseContractWriteArgs & {
+  toastDescription?: string;
+  transactionDescription?: string;
+};
 
-  const pendingToastId = useRef<ToastId | undefined>();
-  const toastText = useRef<string>();
+export function useSubmitTransaction(
+  contractConfig: Omit<UseSubmitTransactionsArgs, 'addressOrName'>
+) {
+  // Constants
+  const defaultSuccessToast = 'Transaction submitted';
+  const defaultTransactionDescription = 'Unknown transaction submitted';
+  const toastDuration = 5000;
+
   const toast = useToast();
-
+  const networkConfig = useNetworkConfig();
   const addRecentTransaction = useAddRecentTransaction();
 
-  const contractWrite = useContractWrite({
+  const { writeAsync } = useContractWrite({
+    addressOrName: networkConfig.diamondDeployAddress,
     onSuccess(data) {
-      pendingToastId.current = toast({
-        title: 'Pending transaction',
-        description: toastText.current,
+      toast({
+        title: 'Successful Transaction',
+        description: contractConfig.toastDescription || defaultSuccessToast,
         status: 'success',
-        duration: null,
+        duration: toastDuration,
         isClosable: true,
         position: 'bottom-right',
       });
-      addRecentTransaction({ hash: data.hash, description: 'deposit free bonds' });
-    },
-    onSettled(data, error) {
-      if (pendingToastId.current) toast.close(pendingToastId.current);
-      if (!error) {
-        toast({
-          title: 'Completed transaction',
-          description: toastText.current,
-          status: 'success',
-          isClosable: true,
-          position: 'bottom-right',
-        });
-      }
+      addRecentTransaction({
+        hash: data.hash,
+        description: contractConfig.transactionDescription || defaultTransactionDescription,
+      });
     },
     onError(error) {
+      // TODO: Add a click to see more button on the toast message
       toast({
         title: 'Error',
-        description: error.message,
+        description: formatToastMessage(error.message),
         status: 'error',
         isClosable: true,
         position: 'bottom-right',
       });
     },
-    ...writeConfig,
+    ...contractConfig,
   });
 
-  async function submit(config: { args?: any; toastText: string }) {
-    toastText.current = config.toastText;
-    await contractWrite.writeAsync({ args: config.args });
-  }
-
   return {
-    submit,
+    submit: writeAsync,
   };
 }
