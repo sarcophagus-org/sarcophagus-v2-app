@@ -5,6 +5,7 @@ import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { FreeBondTestPage } from './FreeBondTestPage';
+import { LookupPublicKeyTestPage } from './LookupPublicKeyTestPage';
 
 export function Pages() {
   const routes = [
@@ -22,6 +23,11 @@ export function Pages() {
       path: '/free-bond-test',
       element: <FreeBondTestPage />,
       label: 'Free Bond Test',
+    },
+    {
+      path: '/lookup-public-key-test',
+      element: <LookupPublicKeyTestPage />,
+      label: 'Lookup Public Key',
     },
   ];
 
