@@ -12,9 +12,9 @@ if (!process.env.REACT_APP_SIGNAL_SERVER_LIST) {
   throw Error('REACT_APP_SIGNAL_SERVER_LIST not set in .env');
 }
 
-const discoveredPeers: string[] = [];
-const discoveredArchs: Record<string, Archaeologist> = {};
-const nodeConnections: Record<string, any> = {};
+const discoveredPeers: string[] = []; // addresses
+const discoveredArchs: Record<string, Archaeologist> = {}; // maps arch addresses to Archaeologist objects
+const nodeConnections: Record<string, any> = {}; // maps peer ids to connections to them
 
 const archEnvConfigTopic = 'env-config';
 
@@ -48,6 +48,12 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 
   browserNode.pubsub.addEventListener('message', (evt) => {
     const msg = new TextDecoder().decode(evt.detail.data);
+    if (msg.startsWith('signatures')) {
+      console.log('got sign off');
+      console.log(msg);
+      return;
+    }
+
     const sourceId = evt.detail.from.toString();
     console.log(`from ${sourceId.slice(sourceId.length - idTruncateLimit)}: ${msg}`);
 
