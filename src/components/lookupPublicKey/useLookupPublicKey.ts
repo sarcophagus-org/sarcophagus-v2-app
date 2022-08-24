@@ -15,7 +15,7 @@ export enum LookupPublicKeyStatus {
 }
 
 const etherscanEndpoint = 'https://api.etherscan.io/api';
-const etherscanApikey = 'KJZI2B4F3RXBWN6YJMACXARJ5YBEK9WMJV';
+const etherscanApikey = process.env.REACT_APP_ETHERSCAN_APIKEY;
 const getParameters =
   'module=account&action=txlist&startblock=0&endblock=99999999&page=1&offset=1000&sort=asc';
 
@@ -61,8 +61,6 @@ export function useLookupPublicKey() {
 
     const publicKey = ethers.utils.recoverPublicKey(msgHash, signature);
 
-    console.log(transactionOut, ethers.utils.computeAddress(publicKey));
-
     return ethers.utils.computeAddress(publicKey) == transactionIn.from ? publicKey : undefined;
   }
 
@@ -104,11 +102,10 @@ export function useLookupPublicKey() {
       //we can only resolve a public key when the 'from' transaction matches the given address
       if (transaction.from.toLowerCase() === address.toLowerCase()) {
         const publicKey = await recoverPublicKeyFromTransaction(transaction);
-        // if (publicKey) {
-        //   setLookupStatus(LookupPublicKeyStatus.SUCCESS);
-        //   return publicKey;
-        // }
-        //        console.log(transaction, publicKey);
+        if (publicKey) {
+          setLookupStatus(LookupPublicKeyStatus.SUCCESS);
+          return publicKey;
+        }
       }
     }
 
