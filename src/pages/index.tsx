@@ -4,6 +4,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
+import { ArweaveTestPage } from './ArweaveTestPage';
 import { FreeBondTestPage } from './FreeBondTestPage';
 
 export function Pages() {
@@ -22,6 +23,11 @@ export function Pages() {
       path: '/free-bond-test',
       element: <FreeBondTestPage />,
       label: 'Free Bond Test',
+    },
+    {
+      path: '/arweave',
+      element: <ArweaveTestPage />,
+      label: 'Arweave Test',
     },
   ];
 
