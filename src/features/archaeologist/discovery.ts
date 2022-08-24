@@ -1,6 +1,8 @@
 import { solidityKeccak256 } from 'ethers/lib/utils';
 import { Libp2p } from 'libp2p';
 import { Archaeologist } from 'types';
+import { pipe } from 'it-pipe';
+import { pushable } from 'it-pushable';
 
 if (!process.env.REACT_APP_BOOTSTRAP_NODE_LIST) {
   throw Error('REACT_APP_BOOTSTRAP_NODE_LIST not set in .env');
@@ -12,6 +14,7 @@ if (!process.env.REACT_APP_SIGNAL_SERVER_LIST) {
 
 const discoveredPeers: string[] = [];
 const discoveredArchs: Record<string, Archaeologist> = {};
+const nodeConnections: Record<string, any> = {};
 
 const archEnvConfigTopic = 'env-config';
 
@@ -38,11 +41,8 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 
   // Listen for peers connecting
   browserNode.connectionManager.addEventListener('peer:connect', async (evt) => {
-    // TODO: will need to track all connected nodes, and set this value
-    // based on user input
-    // selectedArweaveConn = evt.detail;
-
     const peerId = evt.detail.remotePeer.toString();
+    nodeConnections[peerId] = evt.detail;
     console.log(`Connection established to: ${peerId.slice(peerId.length - idTruncateLimit)}`);
   });
 
@@ -63,6 +63,7 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
         isArweaver: archConfigJson.isArweaver,
         feePerByte: archConfigJson.feePerByte,
         maxResurrectionTime: archConfigJson.maxResurrectionTime,
+        connection: nodeConnections[sourceId],
       };
 
       discoveredArchs[archAddress] = newArch;
@@ -74,4 +75,31 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
   browserNode.pubsub.subscribe(archEnvConfigTopic);
 
   return browserNode;
+}
+
+
+export async function confirmArweaveTransaction(data: { archAddress: string, arweaveTxId: string, unencryptedShardHash: string }) {
+  const { archAddress, arweaveTxId, unencryptedShardHash } = data;
+  try {
+    const archConnection = discoveredArchs[archAddress].connection;
+
+    if (!archConnection) throw new Error('No connection to archaeologist');
+
+    const outboundMsg = JSON.stringify({
+      arweaveTxId,
+      unencryptedShardHash,
+    });
+
+    const outboundStream = pushable({});
+    outboundStream.push(new TextEncoder().encode(outboundMsg));
+
+    const { stream } = await archConnection.newStream('/validate-arweave');
+
+    pipe(
+      outboundStream,
+      stream,
+    );
+  } catch (err) {
+    console.error(`Error in peer conn listener: ${err}`);
+  }
 }
