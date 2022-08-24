@@ -1,9 +1,8 @@
 import { VStack, Heading, Input, FormLabel, Button, Text } from '@chakra-ui/react';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useLookupPublicKey, LookupPublicKeyStatus } from './useLookupPublicKey';
 
 export function LookupPublicKey() {
-  console.log('rerender');
   const [address, setAddress] = useState('');
   const [publicKey, setPublicKey] = useState('');
 
