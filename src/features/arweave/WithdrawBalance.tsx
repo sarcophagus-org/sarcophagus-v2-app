@@ -44,10 +44,6 @@ export function WithdrawBalance() {
     return !bundlr || isWithdrawing;
   }
 
-  function isInputError() {
-    return parseFloat(amount) > parseFloat(balance);
-  }
-
   return (
     <Flex
       mt={6}
@@ -65,7 +61,6 @@ export function WithdrawBalance() {
           <NumberInput
             mt={1}
             value={amount}
-            color={isInputError() ? 'error' : 'default'}
             onChange={handleChangeAmount}
             isDisabled={isInputDisabled()}
           >
