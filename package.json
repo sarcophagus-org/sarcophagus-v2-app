@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bundlr-network/client": "^0.8.0",
+    "@bundlr-network/client": "^0.7.6",
     "@chainsafe/libp2p-noise": "^6.2.0",
     "@chakra-ui/react": "^2.2.3",
     "@emotion/react": "^11.9.3",
