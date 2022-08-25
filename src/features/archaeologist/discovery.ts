@@ -48,9 +48,8 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 
   browserNode.pubsub.addEventListener('message', (evt) => {
     const msg = new TextDecoder().decode(evt.detail.data);
-    if (msg.startsWith('signatures')) {
-      console.log('got sign off');
-      console.log(msg);
+    if (msg.startsWith('signature')) {
+      console.log('signature', msg);
       return;
     }
 

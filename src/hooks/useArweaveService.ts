@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Arweave from 'arweave';
-import { decrypt } from 'ecies-geth';
-import { utils } from 'ethers';
+import { decrypt, encrypt } from 'ecies-geth';
+import { ethers, utils } from 'ethers';
+import { hexlify } from 'ethers/lib/utils';
 
 const initArweave = () => {
   return Arweave.init({
@@ -27,6 +28,11 @@ const useArweaveService = () => {
     status: null,
     confirmations: 0,
   });
+
+  const encryptShard = async (shard: string, publicKey: string) => {
+    const encrypted = await encrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(shard));
+    return hexlify(encrypted);
+  };
 
   const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string) => {
     const arweave = initArweave();
@@ -127,6 +133,7 @@ const useArweaveService = () => {
     getTransactionStatusMessage,
     getConfirmations,
     isArweaveFileValid,
+    encryptShard,
   };
 };
 export default useArweaveService;
