@@ -62,7 +62,7 @@ const useArweaveService = () => {
   };
 
   //TODO: remove when archologist do the upload.
-  const uploadArweaveFile = async (file: Buffer): Promise<string> => {
+  const uploadArweaveFile = async (file: string | Buffer): Promise<string> => {
     const arweave = initArweave();
 
     const key = {
