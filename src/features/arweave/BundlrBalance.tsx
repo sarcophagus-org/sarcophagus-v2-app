@@ -3,6 +3,9 @@ import { useNetwork } from 'wagmi';
 import { useBundlr } from './hooks/useBundlr';
 import { useGetBalance } from './hooks/useGetBalance';
 
+/**
+ * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
+ */
 export function BundlrBalance() {
   const { chain } = useNetwork();
   const balance = useGetBalance();

@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { readFileDataAsBase64 } from '../../lib/utils/helpers';
 import { useBundlr } from './hooks/useBundlr';
 
+/**
+ * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
+ */
 export function UploadFile() {
   const [file, setFile] = useState<File | null>(null);
   const { uploadFile, isConnected } = useBundlr();

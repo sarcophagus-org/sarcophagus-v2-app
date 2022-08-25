@@ -4,6 +4,10 @@ import { mainnetNetworkConfig } from '../../lib/config/mainnet';
 import { maticNetworkConfig } from '../../lib/config/matic';
 import { useBundlr } from './hooks/useBundlr';
 
+/**
+ * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
+ * Use wagmi native selector for network selection
+ */
 export function NetworkSelector() {
   const { switchNetwork, isLoading, pendingChainId } = useSwitchNetwork();
   const { disconnectFromBundlr } = useBundlr();

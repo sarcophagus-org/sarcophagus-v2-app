@@ -11,6 +11,9 @@ import { useState } from 'react';
 import { useBundlr } from './hooks/useBundlr';
 import { useGetBalance } from './hooks/useGetBalance';
 
+/**
+ * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
+ */
 export function WithdrawBalance() {
   const { bundlr, withdraw, isWithdrawing } = useBundlr();
   const balance = useGetBalance();

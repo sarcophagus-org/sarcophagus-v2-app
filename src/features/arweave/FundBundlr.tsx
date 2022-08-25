@@ -3,6 +3,9 @@ import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useBundlr } from './hooks/useBundlr';
 
+/**
+ * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
+ */
 export function FundBundlr() {
   const defaultAmount = '0.1';
   const { bundlr, fund, isFunding } = useBundlr();
