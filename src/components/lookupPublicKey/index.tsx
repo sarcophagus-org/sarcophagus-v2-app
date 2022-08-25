@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useLookupPublicKey, LookupPublicKeyStatus } from './useLookupPublicKey';
 
 const LookupPublicKeyStatusMessageMap = new Map([
-  [null, ''].
+  [null, ''],
   [LookupPublicKeyStatus.SUCCESS, 'Successfully retrieved public key'],
   [LookupPublicKeyStatus.ERROR, 'Error retrieving public key'],
   [LookupPublicKeyStatus.NO_TRANSACTIONS, 'No transactions available, cannot lookup public key'],
