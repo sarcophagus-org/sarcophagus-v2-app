@@ -84,10 +84,10 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 }
 
 
-export async function confirmArweaveTransaction(data: { archAddress: string, arweaveTxId: string, unencryptedShardHash: string }) {
-  const { archAddress, arweaveTxId, unencryptedShardHash } = data;
+export async function confirmArweaveTransaction(data: { arch: Archaeologist, arweaveTxId: string, unencryptedShardHash: string }) {
+  const { arch, arweaveTxId, unencryptedShardHash } = data;
   try {
-    const archConnection = discoveredArchs[archAddress].connection;
+    const archConnection = discoveredArchs[arch.address].connection;
 
     if (!archConnection) throw new Error('No connection to archaeologist');
 
