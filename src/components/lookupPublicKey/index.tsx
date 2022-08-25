@@ -2,32 +2,22 @@ import { VStack, Heading, Input, FormLabel, Button, Text } from '@chakra-ui/reac
 import { useState } from 'react';
 import { useLookupPublicKey, LookupPublicKeyStatus } from './useLookupPublicKey';
 
+const LookupPublicKeyStatusMessageMap = new Map([
+  [null, ''].
+  [LookupPublicKeyStatus.SUCCESS, 'Successfully retrieved public key'],
+  [LookupPublicKeyStatus.ERROR, 'Error retrieving public key'],
+  [LookupPublicKeyStatus.NO_TRANSACTIONS, 'No transactions available, cannot lookup public key'],
+  [LookupPublicKeyStatus.LOADING, 'Loading...'],
+  [LookupPublicKeyStatus.INVALID_ADDRESS, 'Invalid address'],
+  [LookupPublicKeyStatus.NOT_CONNECTED, 'Wallet not connected'],
+  [LookupPublicKeyStatus.WRONG_NETWORK, 'Wallet connected non-supported network'],
+]);
+
 export function LookupPublicKey() {
   const [address, setAddress] = useState('');
   const [publicKey, setPublicKey] = useState('');
 
   const { lookupPublicKey, lookupStatus } = useLookupPublicKey();
-
-  const getLookupStatusMessage = (status: LookupPublicKeyStatus | null): string => {
-    switch (status) {
-      case LookupPublicKeyStatus.SUCCESS:
-        return 'Successfully retrieved public key';
-      case LookupPublicKeyStatus.ERROR:
-        return 'Error retrieving public key';
-      case LookupPublicKeyStatus.NO_TRANSACTIONS:
-        return 'No transactions available, cannot lookup public key';
-      case LookupPublicKeyStatus.LOADING:
-        return 'Loading...';
-      case LookupPublicKeyStatus.INVALID_ADDRESS:
-        return 'Invalid address';
-      case LookupPublicKeyStatus.NOT_CONNECTED:
-        return 'Wallet not connected';
-      case LookupPublicKeyStatus.WRONG_NETWORK:
-        return 'Wallet connected to incorrect network';
-      default:
-        return '';
-    }
-  };
 
   async function handleOnClick(): Promise<void> {
     const pk = await lookupPublicKey(address);
@@ -50,7 +40,7 @@ export function LookupPublicKey() {
       >
         Submit
       </Button>
-      <Text>Status:{getLookupStatusMessage(lookupStatus)}</Text>
+      <Text>Status:{LookupPublicKeyStatusMessageMap.get(lookupStatus)}</Text>
       <Text>Public Key:{publicKey}</Text>
     </VStack>
   );
