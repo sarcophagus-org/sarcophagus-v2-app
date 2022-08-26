@@ -73,8 +73,6 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
   });
 
   browserNode.pubsub.subscribe(archEnvConfigTopic);
-
-  return browserNode;
 }
 
 

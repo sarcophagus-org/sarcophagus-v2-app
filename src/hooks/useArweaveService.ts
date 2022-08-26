@@ -29,12 +29,12 @@ const useArweaveService = () => {
     confirmations: 0,
   });
 
-  const encryptShard = async (shard: string, publicKey: string) => {
+  const encryptShard = async (shard: string, publicKey: string): Promise<string> => {
     const encrypted = await encrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(shard));
     return hexlify(encrypted);
   };
 
-  const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string) => {
+  const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string): Promise<Buffer> => {
     const arweave = initArweave();
     const data = await arweave.transactions.getData(arweaveTxId, { decode: true });
     const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
