@@ -1,20 +1,14 @@
-import { darkTheme, getDefaultWallets, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { NetworkConfigProvider } from 'lib/config/NetworkConfigProvider';
 import { chain as chainList, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { NetworkConfigProvider } from 'lib/config/NetworkConfigProvider';
-import { merge } from 'lodash';
+import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
     [chainList.mainnet, chainList.goerli, chainList.hardhat, chainList.polygon],
     [publicProvider()]
   );
-
-  const walletConnectionTheme = merge(darkTheme(), {
-    colors: {
-      accentColor: '#C4C4C4',
-    },
-  } as Theme);
 
   const { connectors } = getDefaultWallets({
     appName: 'Sarcophagus v2',
