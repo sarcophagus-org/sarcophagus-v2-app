@@ -4,7 +4,7 @@ import { ActionMap } from '../ActionMap';
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
-  StoreArchaeologists = 'ARCHAEOLOGIST_GET_ARCHAEOLOGISTS',
+  StoreArchaeologists = 'ARCHAEOLOGIST_STORE_ARCHAEOLOGISTS',
   SetArchaeologistsRequired = 'ARCHAEOLOGIST_SET_ARCHAEOLOGISTS_REQUIRED',
   SetSelectedArchaeologists = 'ARCHAEOLOGIST_SET_SELECTED_ARCHAEOLOGISTS',
   SelectArchaeologist = 'ARCHAEOLOGIST_SELECT_ARCHAEOLOGIST',

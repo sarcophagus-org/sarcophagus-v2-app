@@ -19,3 +19,24 @@ export function sleep(ms: number): Promise<void> {
 export function formatToastMessage(message: string, length: number = 125): string {
   return message.length > length ? message.slice(0, length) + '...' : message;
 }
+
+/**
+ * Returns base64 data of a given File object
+ * @param file The File object
+ * @returns Base64 data as a buffer
+ */
+export function readFileDataAsBase64(file: File): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      resolve(event.target?.result as Buffer);
+    };
+
+    reader.onerror = err => {
+      reject(err);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}

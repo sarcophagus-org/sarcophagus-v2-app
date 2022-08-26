@@ -4,4 +4,5 @@ export interface NetworkConfig {
   networkShortName: string;
   sarcoTokenAddress: string;
   diamondDeployAddress: string;
+  bundlrCurrencyName?: string;
 }
