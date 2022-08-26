@@ -31,7 +31,7 @@ export function DownloadFile() {
         href={`https://arweave.net/${txId}`}
         style={{ textDecoration: 'none' }}
       >
-        <Button colorScheme="blue">Download</Button>
+        <Button>Download</Button>
       </Link>
     </Flex>
   );

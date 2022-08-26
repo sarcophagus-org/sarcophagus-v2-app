@@ -55,7 +55,6 @@ export function NetworkSelector() {
           <Button
             mt={1}
             width={100}
-            colorScheme="blue"
             disabled={chain?.id === ethChainId}
             isLoading={isLoading && pendingChainId === ethChainId}
             onClick={handleClickEthereum}
@@ -77,7 +76,6 @@ export function NetworkSelector() {
           <Button
             mt={1}
             width={100}
-            colorScheme="blue"
             disabled={chain?.id === maticChainId}
             isLoading={isLoading && pendingChainId === maticChainId}
             onClick={handleClickMatic}

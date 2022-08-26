@@ -30,7 +30,6 @@ export function BundlrConnect() {
       </Text>
       <Flex align="center">
         <Button
-          backgroundColor={isConnected ? 'gray.500' : 'blue.500'}
           width={150}
           mt={3}
           onClick={handleClickButton}

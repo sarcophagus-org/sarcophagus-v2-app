@@ -6,17 +6,11 @@ export function DevNavbar({ children }: { children: React.ReactNode }) {
     <Flex
       width="100%"
       height={50}
-      backgroundColor="#202226"
-      boxShadow={'0px 0px 10px rgba(0, 0, 0, 0.5)'}
+      backgroundColor="brand.900"
       alignItems="center"
       px={4}
     >
-      <Text
-        pr={4}
-        color="#777"
-      >
-        DEV NAVBAR
-      </Text>
+      <Text pr={4}>DEV NAVBAR</Text>
       {children}
     </Flex>
   );

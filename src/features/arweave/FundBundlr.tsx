@@ -60,7 +60,6 @@ export function FundBundlr() {
           </NumberInput>
           <Button
             ml={3}
-            colorScheme="blue"
             disabled={fundButtonDisabled()}
             onClick={handleFund}
             isLoading={isFunding}
