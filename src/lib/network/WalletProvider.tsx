@@ -6,7 +6,7 @@ import { merge } from 'lodash';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
-    [chainList.mainnet, chainList.goerli, chainList.hardhat],
+    [chainList.mainnet, chainList.goerli, chainList.hardhat, chainList.polygon],
     [publicProvider()]
   );
 
