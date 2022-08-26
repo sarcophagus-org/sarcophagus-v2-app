@@ -1,7 +1,7 @@
 import { extendTheme, withDefaultColorScheme } from '@chakra-ui/react';
 import { colors } from './colors';
-import { Button, withDefaultButtonVariant } from './components/Button';
-import { Heading } from './components/Heading';
+import { components } from './components';
+import { withDefaultButtonVariant } from './components/Button';
 import { fonts } from './fonts';
 import { styles } from './styles';
 
@@ -9,10 +9,7 @@ const overrides = {
   fonts,
   colors,
   styles,
-  components: {
-    Button,
-    Heading,
-  },
+  components,
 };
 
 const withDefaults = [withDefaultColorScheme({ colorScheme: 'brand' }), withDefaultButtonVariant];
