@@ -32,4 +32,9 @@ export const colors = {
     800: '#25222a',
     900: '#0d0a12',
   },
+
+  error: '#c88484',
+  warning: '#c8c884',
+  success: '#84c884',
+  info: '#84bcc8',
 };

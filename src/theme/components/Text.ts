@@ -9,6 +9,7 @@ export const Text = {
   },
   baseStyle: {
     fontWeight: 400,
+    fontSize: 14,
   },
   defaultProps: {
     variant: 'primary',

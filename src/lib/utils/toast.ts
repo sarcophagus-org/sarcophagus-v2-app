@@ -7,6 +7,38 @@ import { formatToastMessage } from './helpers';
 const duration = 5000;
 const position = 'bottom-right';
 
+export const infoSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is some info',
+  status: 'info',
+  duration,
+  position,
+});
+
+export const successSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is a success',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const warningSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is a warning',
+  status: 'warning',
+  duration,
+  position,
+});
+
+export const errorSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is an error',
+  status: 'error',
+  duration,
+  position,
+});
+
 export const connectStart = (): UseToastOptions => ({
   title: 'Attempting to Connect',
   description: 'Attempting to connect to the Bundlr node...',
@@ -73,7 +105,7 @@ export const withdrawStart = (): UseToastOptions => ({
 
 export const withdrawSuccess = (): UseToastOptions => ({
   title: 'Withdraw Successful!',
-  description: 'Successfully withdrew funds from Bundrl node',
+  description: 'Successfully withdrew funds from Bundlr node',
   status: 'success',
   duration,
   position,
@@ -97,7 +129,7 @@ export const uploadStart = (): UseToastOptions => ({
 
 export const uploadSuccess = (): UseToastOptions => ({
   title: 'Upload Successful!',
-  description: 'Successful uploaded file to Bundr node',
+  description: 'Successful uploaded file to Bundlr node',
   status: 'success',
   duration,
   position,

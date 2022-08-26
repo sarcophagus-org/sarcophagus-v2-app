@@ -7,6 +7,9 @@ export const Button = {
       bg: 'brand.950',
       _hover: {
         bg: 'brand.800',
+        _disabled: {
+          bg: 'brand.950',
+        },
       },
       _active: {
         bg: 'brand.700',

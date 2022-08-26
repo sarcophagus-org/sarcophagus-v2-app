@@ -1,4 +1,13 @@
-import { Button, Flex, Heading, NumberInput, NumberInputField, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Flex,
+  Heading,
+  NumberInput,
+  NumberInputField,
+  Text,
+} from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useBundlr } from './hooks/useBundlr';
@@ -35,14 +44,12 @@ export function FundBundlr() {
         direction="column"
         maxWidth={800}
       >
-        <Text
-          fontSize="sm"
-          color="goldenrod"
-          as="b"
-        >
-          WARNING: This does not use testnet. You will be funding the bundlr node with real
-          currency.
-        </Text>
+        <Alert status="warning">
+          <AlertIcon color="warning" />
+          <Text color="warning">
+            This does not use testnet. You will be funding the bundlr node with real currency.
+          </Text>
+        </Alert>
       </Flex>
       <Flex
         mt={3}
