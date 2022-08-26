@@ -6,6 +6,7 @@ import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { ArweaveTestPage } from './ArweaveTestPage';
 import { FreeBondTestPage } from './FreeBondTestPage';
+import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
   const routes = [
@@ -28,6 +29,11 @@ export function Pages() {
       path: '/arweave',
       element: <ArweaveTestPage />,
       label: 'Arweave Test',
+    },
+    {
+      path: '/theme-test',
+      element: <ThemeTestPage />,
+      label: 'Theme Test',
     },
   ];
 
