@@ -13,6 +13,7 @@ export interface Archaeologist {
   isArweaver: boolean;
   feePerByte: BigNumber;
   maxResurrectionTime: number;
+  connection?: any;
 }
 
 export interface ContractArchaeologist {

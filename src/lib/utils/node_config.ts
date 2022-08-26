@@ -1,9 +1,7 @@
-
 import { Noise } from '@chainsafe/libp2p-noise';
 import { Mplex } from '@libp2p/mplex';
 import { Bootstrap } from '@libp2p/bootstrap';
 import { KadDHT } from '@libp2p/kad-dht';
-import { WebSockets } from '@libp2p/websockets';
 import { WebRTCStar } from '@libp2p/webrtc-star';
 
 import { FloodSub } from '@libp2p/floodsub';
@@ -25,7 +23,6 @@ export const nodeConfig = {
     })
   },
   transports: [
-    new WebSockets(),
     webRtcStar
   ],
   connectionEncryption: [

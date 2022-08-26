@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Arweave from 'arweave';
-import { decrypt } from 'ecies-geth';
-import { utils } from 'ethers';
+import { decrypt, encrypt } from 'ecies-geth';
+import { ethers, utils } from 'ethers';
+import { hexlify } from 'ethers/lib/utils';
 
 const initArweave = () => {
   return Arweave.init({
@@ -28,7 +29,12 @@ const useArweaveService = () => {
     confirmations: 0,
   });
 
-  const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string) => {
+  const encryptShard = async (shard: string, publicKey: string): Promise<string> => {
+    const encrypted = await encrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(shard));
+    return hexlify(encrypted);
+  };
+
+  const fetchAndDecryptArweaveFile = async (arweaveTxId: string, privateKey: string): Promise<Buffer> => {
     const arweave = initArweave();
     const data = await arweave.transactions.getData(arweaveTxId, { decode: true });
     const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
@@ -56,7 +62,7 @@ const useArweaveService = () => {
   };
 
   //TODO: remove when archologist do the upload.
-  const uploadArweaveFile = async (file: Buffer): Promise<string> => {
+  const uploadArweaveFile = async (file: string | Buffer): Promise<string> => {
     const arweave = initArweave();
 
     const key = {
@@ -127,6 +133,7 @@ const useArweaveService = () => {
     getTransactionStatusMessage,
     getConfirmations,
     isArweaveFileValid,
+    encryptShard,
   };
 };
 export default useArweaveService;

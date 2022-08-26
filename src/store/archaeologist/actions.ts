@@ -19,13 +19,13 @@ type ArchaeologistPayload = {
     archaeologistsRequired: number;
   };
   [ActionType.SetSelectedArchaeologists]: {
-    selectedArchaeologists: string[];
+    selectedArchaeologists: Archaeologist[];
   };
   [ActionType.SelectArchaeologist]: {
-    address: string;
+    arch: Archaeologist;
   };
   [ActionType.DeselectArchaeologist]: {
-    address: string;
+    arch: Archaeologist;
   };
 };
 
@@ -47,7 +47,7 @@ export function setArchaeologistsRequired(archaeologistsRequired: number): Archa
   };
 }
 
-export function setSelectedArchaeologists(selectedArchaeologists: string[]): ArchaeologistActions {
+export function setSelectedArchaeologists(selectedArchaeologists: Archaeologist[]): ArchaeologistActions {
   return {
     type: ActionType.SetSelectedArchaeologists,
     payload: {
@@ -56,20 +56,20 @@ export function setSelectedArchaeologists(selectedArchaeologists: string[]): Arc
   };
 }
 
-export function selectArchaeologist(address: string): ArchaeologistActions {
+export function selectArchaeologist(arch: Archaeologist): ArchaeologistActions {
   return {
     type: ActionType.SelectArchaeologist,
     payload: {
-      address,
+      arch,
     },
   };
 }
 
-export function deselectArchaeologist(address: string): ArchaeologistActions {
+export function deselectArchaeologist(arch: Archaeologist): ArchaeologistActions {
   return {
     type: ActionType.DeselectArchaeologist,
     payload: {
-      address,
+      arch,
     },
   };
 }

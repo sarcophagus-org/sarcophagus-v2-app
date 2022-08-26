@@ -5,7 +5,7 @@ import { ActionType } from './actions';
 export interface ArchaeologistState {
   archaeologists: Archaeologist[];
   archaeologistsRequired: number;
-  selectedArchaeologists: string[];
+  selectedArchaeologists: Archaeologist[];
 }
 
 export const archaeologistInitialState: ArchaeologistState = {
@@ -34,14 +34,14 @@ export function archaeologistReducer(
     case ActionType.SelectArchaeologist:
       return {
         ...state,
-        selectedArchaeologists: [...state.selectedArchaeologists, action.payload.address],
+        selectedArchaeologists: [...state.selectedArchaeologists, action.payload.arch],
       };
 
     case ActionType.DeselectArchaeologist:
       return {
         ...state,
         selectedArchaeologists: state.selectedArchaeologists.filter(
-          a => a !== action.payload.address
+          a => a !== action.payload.arch
         ),
       };
     default:

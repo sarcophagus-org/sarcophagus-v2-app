@@ -24,6 +24,7 @@ import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
 import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
 import { SubmitMock } from './SubmitMock';
 import { ethers } from 'ethers';
+import { Archaeologist } from 'types';
 
 export function ArchaeologistList() {
   const dispatch = useDispatch();
@@ -33,11 +34,11 @@ export function ArchaeologistList() {
   const archaeologists = useSelector(s => s.archaeologistState.archaeologists);
   const selectedArchaeologists = useSelector(s => s.archaeologistState.selectedArchaeologists);
 
-  function handleCheckArchaeologist(address: string) {
-    if (selectedArchaeologists.includes(address)) {
-      dispatch(deselectArchaeologist(address));
+  function handleCheckArchaeologist(arch: Archaeologist) {
+    if (selectedArchaeologists.includes(arch)) {
+      dispatch(deselectArchaeologist(arch));
     } else {
-      dispatch(selectArchaeologist(address));
+      dispatch(selectArchaeologist(arch));
     }
   }
 
@@ -81,9 +82,9 @@ export function ArchaeologistList() {
                     <Td>
                       <Flex>
                         <Checkbox
-                          isChecked={selectedArchaeologists.includes(arch.address)}
+                          isChecked={selectedArchaeologists.includes(arch)}
                           onChange={() => {
-                            handleCheckArchaeologist(arch.address);
+                            handleCheckArchaeologist(arch);
                           }}
                         />
                         <Text ml={3}>{formatAddress(arch.address)}</Text>
