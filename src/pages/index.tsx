@@ -7,6 +7,7 @@ import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { ArweaveTestPage } from './ArweaveTestPage';
 import { FreeBondTestPage } from './FreeBondTestPage';
 import { RecoverPublicKeyTestPage } from './RecoverPublicKeyTestPage';
+import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
   const routes = [
@@ -34,6 +35,11 @@ export function Pages() {
       path: '/recover-public-key-test',
       element: <RecoverPublicKeyTestPage />,
       label: 'Recover Public Key Test',
+    },
+    {
+      path: '/theme-test',
+      element: <ThemeTestPage />,
+      label: 'Theme Test',
     },
   ];
 
