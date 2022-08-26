@@ -1,3 +1,4 @@
+import { Alert } from './Alert';
 import { Button } from './Button';
 import { Divider } from './Divider';
 import { FormLabel } from './FormLabel';
@@ -10,6 +11,8 @@ export const components = {
   Heading,
   Text,
   Input,
+  NumberInput: Input,
   FormLabel,
   Divider,
+  Alert,
 };

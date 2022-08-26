@@ -1,4 +1,5 @@
 import { ComponentStyleConfig } from '@chakra-ui/react';
+import { styles } from '../styles';
 
 export const Input: ComponentStyleConfig = {
   variants: {
@@ -9,6 +10,11 @@ export const Input: ComponentStyleConfig = {
         borderRadius: 0,
         borderColor: 'brand.950',
         marginTop: 1,
+        fontSize: styles.global.body.fontSize,
+        _disabled: {
+          borderColor: 'brand.300',
+          color: 'brand.300',
+        },
       },
     },
   },
