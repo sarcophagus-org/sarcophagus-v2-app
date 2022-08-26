@@ -1,20 +1,22 @@
 // Contains all the colors used by the sarcophagus app
 
 export const colors = {
-  // Colors from white to black
+  // Main brand colors
+  // Colors from black to white, lowest number being the darkest and highest number being the
+  // lightest
   brand: {
-    0: '#ffffff',
-    50: '#f2f2f2',
-    100: '#d9d9d9',
-    200: '#bfbfbf',
-    300: '#a6a6a6',
-    400: '#8c8c8c',
-    500: '#737373',
-    600: '#595959',
-    700: '#404040',
-    800: '#262626',
-    900: '#0d0d0d',
-    950: '#000000',
+    0: '#000000',
+    50: '#0d0d0d',
+    100: '#262626',
+    200: '#404040',
+    300: '#595959',
+    400: '#737373',
+    500: '#8c8c8c',
+    600: '#a6a6a6',
+    700: '#bfbfbf',
+    800: '#d9d9d9',
+    900: '#f2f2f2',
+    950: '#ffffff',
   },
 
   // Violet colors for some borders and some secondary text. Only a couple of these are used.
