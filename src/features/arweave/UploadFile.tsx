@@ -42,7 +42,6 @@ export function UploadFile() {
         <Button
           mt={3}
           width={200}
-          colorScheme="blue"
           disabled={!isConnected}
           onClick={handleUpload}
         >

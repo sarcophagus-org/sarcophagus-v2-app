@@ -72,14 +72,12 @@ export function WithdrawBalance() {
         <Button
           ml={3}
           variant="link"
-          colorScheme="blue"
           onClick={handleClickMax}
         >
           Max
         </Button>
         <Button
           ml={3}
-          colorScheme="blue"
           onClick={handleWithdrawAmount}
           disabled={isButtonDisabled()}
           isLoading={isWithdrawing}
