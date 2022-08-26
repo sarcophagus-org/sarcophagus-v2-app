@@ -1,6 +1,6 @@
 import { Box, Center, Flex, Text } from '@chakra-ui/react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Link, Route, Routes } from 'react-router-dom';
+import { ConnectWalletButton } from '../components/ConnectWalletButton';
 import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
@@ -53,11 +53,18 @@ export function Pages() {
                 key={route.path}
                 to={route.path}
               >
-                <Text px={4}>{route.label}</Text>
+                <Text
+                  color="brand.500"
+                  px={4}
+                >
+                  {route.label}
+                </Text>
               </Link>
             ))}
           </Flex>
-          <ConnectButton />
+        </Flex>
+        <Flex my={3}>
+          <ConnectWalletButton />
         </Flex>
       </DevNavbar>
       <Center
