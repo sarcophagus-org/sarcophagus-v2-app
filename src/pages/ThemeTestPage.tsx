@@ -1,4 +1,14 @@
-import { VStack, Text, Heading, Button } from '@chakra-ui/react';
+import {
+  VStack,
+  Text,
+  Heading,
+  Button,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  Divider,
+} from '@chakra-ui/react';
 
 export function ThemeTestPage() {
   return (
@@ -6,10 +16,13 @@ export function ThemeTestPage() {
       align="left"
       spacing={6}
     >
-      {/* <Heading style={{ fontSize: 24 }}>Header test</Heading> */}
-      <Heading>This is a Header</Heading>
+      {/* Text */}
+      <Heading>This is a Heading</Heading>
       <Text>This is some primary text</Text>
       <Text variant="secondary">This is some secondary text</Text>
+      <Divider />
+
+      {/* Buttons */}
       <Button w={200}>Clicky Button</Button>
       <Button
         w={200}
@@ -17,6 +30,25 @@ export function ThemeTestPage() {
       >
         Clicky Link
       </Button>
+
+      {/* Form */}
+      <FormControl>
+        <FormLabel>Input Label</FormLabel>
+        <Input />
+      </FormControl>
+
+      <Box
+        border="1px"
+        py={12}
+      >
+        <Text align="center">Thing with a solid border</Text>
+      </Box>
+      <Box
+        border="1px dashed"
+        py={12}
+      >
+        <Text align="center">Thing with a dashed border</Text>
+      </Box>
     </VStack>
   );
 }

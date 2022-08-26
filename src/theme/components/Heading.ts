@@ -4,6 +4,7 @@ export const Heading: ComponentStyleConfig = {
   sizes: {
     lg: {
       fontSize: 24,
+      fontWeight: 400,
     },
   },
   defaultProps: {
