@@ -48,13 +48,8 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 
   browserNode.pubsub.addEventListener('message', (evt) => {
     const msg = new TextDecoder().decode(evt.detail.data);
-    if (msg.startsWith('signature')) {
-      console.log('signature', msg);
-      return;
-    }
 
     const sourceId = evt.detail.from.toString();
-    console.log(`from ${sourceId.slice(sourceId.length - idTruncateLimit)}: ${msg}`);
 
     if (evt.detail.topic === archEnvConfigTopic) {
       const archConfigJson: Record<string, any> = JSON.parse(msg);
@@ -83,8 +78,8 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 }
 
 
-export async function confirmArweaveTransaction(data: { arch: Archaeologist, arweaveTxId: string, unencryptedShardHash: string }) {
-  const { arch, arweaveTxId, unencryptedShardHash } = data;
+export async function confirmArweaveTransaction(arg: { arch: Archaeologist, arweaveTxId: string, unencryptedShardHash: string }) {
+  const { arch, arweaveTxId, unencryptedShardHash } = arg;
   try {
     const archConnection = discoveredArchs[arch.address].connection;
 
@@ -103,6 +98,12 @@ export async function confirmArweaveTransaction(data: { arch: Archaeologist, arw
     pipe(
       outboundStream,
       stream,
+      async (source) => {
+        for await (const data of source) {
+          const dataStr = new TextDecoder().decode(data as BufferSource | undefined);
+          console.log('dataStr', dataStr);
+        }
+      }
     );
   } catch (err) {
     console.error(`Error in peer conn listener: ${err}`);
