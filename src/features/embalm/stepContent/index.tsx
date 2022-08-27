@@ -1,23 +1,36 @@
-import { UploadPayload } from 'features/embalm/stepContent/steps/UploadPayload';
-import { StepName } from 'store/embalm/reducer';
+import { Button, Text, VStack } from '@chakra-ui/react';
 import { useSelector } from 'store/index';
-import { CreateRecipientKeypair } from './steps/CreateRecipientKeypair';
-import { NameSarcophagus } from './steps/NameSarcophagus';
-import { SelectArchaeologists } from './steps/SelectArchaeologists';
-import { SetArchaeologistBounties } from './steps/SetArchaeologistBounties';
-import { SetResurrectionDate } from './steps/SetResurrectionDate';
+import { Step, steps } from '../stepNavigator/steps';
 
-const stepMap: { [key: string]: JSX.Element } = {
-  [StepName.NameSarcophagusAndAddRecipient]: <NameSarcophagus />,
-  [StepName.UploadPayload]: <UploadPayload />,
-  [StepName.CreateRecipientKeypair]: <CreateRecipientKeypair />,
-  [StepName.SetResurrectionDate]: <SetResurrectionDate />,
-  [StepName.SetArchaeologistBounties]: <SetArchaeologistBounties />,
-  [StepName.SelectArchaeologists]: <SelectArchaeologists />,
-};
+function getStep(id: string): Step | undefined {
+  return steps.find(x => x.id === id);
+}
 
 export function StepContent() {
-  const currentStep = useSelector(x => x.embalmState.currentStep);
+  const currentStepId = useSelector(x => x.embalmState.currentStepId);
+  const step = getStep(currentStepId);
 
-  return stepMap[currentStep];
+  function handleClickPrev() {
+    //
+  }
+
+  function handleClickNext() {
+    //
+  }
+
+  return (
+    <VStack
+      direction="column"
+      mx={12}
+    >
+      <Button
+        variant="link"
+        onClick={handleClickPrev}
+      >
+        {'< Prev'}
+      </Button>
+      <Text>Step 2/X</Text>
+      {step && step.component()}
+    </VStack>
+  );
 }

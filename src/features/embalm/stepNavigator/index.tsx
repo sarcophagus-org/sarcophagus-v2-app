@@ -1,6 +1,6 @@
 import { VStack } from '@chakra-ui/react';
-import { StepName } from 'store/embalm/reducer';
 import { StepElement } from './stepElement';
+import { steps } from './steps';
 import { useStepNavigator } from './useStepNavigator';
 
 /**
@@ -11,43 +11,9 @@ import { useStepNavigator } from './useStepNavigator';
 export function StepNavigator() {
   const { selectStep, calculateStatusOfCurrentStep } = useStepNavigator();
 
-  // Keep in mind that these steps are likely to change
-  const steps = [
-    {
-      id: StepName.NameSarcophagusAndAddRecipient,
-      title: '1. Name Sarcophagus and add recipient',
-      subTitle: 'Room for brief helper sentence',
-    },
-    {
-      id: StepName.UploadPayload,
-      title: '2. Upload your payload',
-      subTitle: 'Room for brief helper sentence',
-    },
-    {
-      id: StepName.CreateRecipientKeypair,
-      title: '3. Create recipient keypair',
-      subTitle: 'Room for brief helper sentence',
-    },
-    {
-      id: StepName.SetResurrectionDate,
-      title: '4. Set resurrection date',
-      subTitle: 'Room for brief helper sentence',
-    },
-    {
-      id: StepName.SetArchaeologistBounties,
-      title: '5. Set archaeologist bounties',
-      subTitle: 'Room for brief helper sentence',
-    },
-    {
-      id: StepName.SelectArchaeologists,
-      title: '6. Select archaeologists',
-      subTitle: 'Room for brief helper sentence',
-    },
-  ];
-
-  function handleClickStep(step: StepName) {
+  function handleClickStep(id: string) {
     // Set the current step in the store
-    selectStep(step);
+    selectStep(id);
   }
 
   return (
@@ -60,7 +26,7 @@ export function StepNavigator() {
         <StepElement
           key={step.id}
           title={step.title}
-          subTitle={step.subTitle}
+          subTitle={step.subtitle}
           status={calculateStatusOfCurrentStep(step.id)}
           onClickStep={() => handleClickStep(step.id)}
         />
