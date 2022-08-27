@@ -1,17 +1,18 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { StepMap } from 'features/embalm/stepNavigator/steps';
 import { updateStepStatus } from 'store/embalm/actions';
-import { StepName, StepStatus } from 'store/embalm/reducer';
+import { StepStatus } from 'store/embalm/reducer';
 import { useDispatch } from 'store/index';
 
 export function SetResurrectionDate() {
   const dispatch = useDispatch();
 
   function handleComplete() {
-    dispatch(updateStepStatus(StepName.SetResurrectionDate, StepStatus.Complete));
+    dispatch(updateStepStatus(StepMap.SetResurrectionDate.id, StepStatus.Complete));
   }
 
   function handleStart() {
-    dispatch(updateStepStatus(StepName.SetResurrectionDate, StepStatus.Started));
+    dispatch(updateStepStatus(StepMap.SetResurrectionDate.id, StepStatus.Started));
   }
 
   return (

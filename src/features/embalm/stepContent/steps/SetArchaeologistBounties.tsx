@@ -1,17 +1,18 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { StepMap } from 'features/embalm/stepNavigator/steps';
 import { updateStepStatus } from 'store/embalm/actions';
-import { StepName, StepStatus } from 'store/embalm/reducer';
+import { StepStatus } from 'store/embalm/reducer';
 import { useDispatch } from 'store/index';
 
 export function SetArchaeologistBounties() {
   const dispatch = useDispatch();
 
   function handleComplete() {
-    dispatch(updateStepStatus(StepName.SetArchaeologistBounties, StepStatus.Complete));
+    dispatch(updateStepStatus(StepMap.SetArchaeologistBounties.id, StepStatus.Complete));
   }
 
   function handleStart() {
-    dispatch(updateStepStatus(StepName.SetArchaeologistBounties, StepStatus.Started));
+    dispatch(updateStepStatus(StepMap.SetArchaeologistBounties.id, StepStatus.Started));
   }
 
   return (

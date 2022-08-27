@@ -1,5 +1,5 @@
 import { ActionMap } from '../ActionMap';
-import { StepName, StepStatus } from './reducer';
+import { StepStatus } from './reducer';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -10,28 +10,28 @@ export enum ActionType {
 
 type EmbalmPayload = {
   [ActionType.GoToStep]: {
-    name: StepName;
+    id: string;
   };
   [ActionType.UpdateStepStatus]: {
-    name: StepName;
+    id: string;
     status: StepStatus;
   };
 };
 
-export function goToStep(name: StepName): EmbalmActions {
+export function goToStep(id: string): EmbalmActions {
   return {
     type: ActionType.GoToStep,
     payload: {
-      name,
+      id,
     },
   };
 }
 
-export function updateStepStatus(name: StepName, status: StepStatus): EmbalmActions {
+export function updateStepStatus(id: string, status: StepStatus): EmbalmActions {
   return {
     type: ActionType.UpdateStepStatus,
     payload: {
-      name,
+      id,
       status,
     },
   };
