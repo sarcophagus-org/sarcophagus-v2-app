@@ -11,7 +11,7 @@ export function DevNavbar({ children }: { children: React.ReactNode }) {
 
   return (
     <Flex
-      height="70px"
+      minHeight="70px"
       backgroundColor="brand.50"
       alignItems="center"
       px={6}
