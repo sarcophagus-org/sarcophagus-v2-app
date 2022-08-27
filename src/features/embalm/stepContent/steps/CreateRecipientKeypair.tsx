@@ -8,7 +8,7 @@ export function CreateRecipientKeypair() {
   const dispatch = useDispatch();
 
   function handleComplete() {
-    dispatch(updateStepStatus(StepMap.CreateRecientyPair.id, StepStatus.Complete));
+    dispatch(updateStepStatus(StepMap.CreateRecipientKeypair.id, StepStatus.Complete));
   }
 
   function handleStart() {
