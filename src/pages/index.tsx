@@ -1,16 +1,22 @@
-import { Box, Center, Flex, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { ConnectWalletButton } from '../components/ConnectWalletButton';
 import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { ArweaveTestPage } from './ArweaveTestPage';
+import { EmbalmPage } from './EmbalmPage';
 import { FreeBondTestPage } from './FreeBondTestPage';
 import { RecoverPublicKeyTestPage } from './RecoverPublicKeyTestPage';
 import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
   const routes = [
+    {
+      path: '/embalm',
+      element: <EmbalmPage />,
+      label: 'Embalm',
+    },
     {
       path: '/',
       element: <Home />,
@@ -46,8 +52,10 @@ export function Pages() {
   return (
     <Flex
       direction="column"
-      height="98vh"
+      height="100vh"
+      overflow="hidden"
     >
+      {/* NavBar */}
       <DevNavbar>
         <Flex
           justifyContent="space-between"
@@ -73,27 +81,22 @@ export function Pages() {
           <ConnectWalletButton />
         </Flex>
       </DevNavbar>
-      <Center
+
+      {/* App Content */}
+      <Flex
         flex={1}
-        alignItems="start"
+        overflow="auto"
       >
-        <Box
-          width="50%"
-          minWidth={900}
-          pt={8}
-          height="100%"
-        >
-          <Routes>
-            {routes.map(route => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-          </Routes>
-        </Box>
-      </Center>
+        <Routes>
+          {routes.map(route => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.element}
+            />
+          ))}
+        </Routes>
+      </Flex>
     </Flex>
   );
 }
