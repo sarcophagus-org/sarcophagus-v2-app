@@ -1,3 +1,4 @@
+import { steps } from 'features/embalm/stepNavigator/steps';
 import { ActionMap } from '../ActionMap';
 import { StepStatus } from './reducer';
 
@@ -19,6 +20,16 @@ type EmbalmPayload = {
 };
 
 export function goToStep(id: string): EmbalmActions {
+  return {
+    type: ActionType.GoToStep,
+    payload: {
+      id,
+    },
+  };
+}
+
+export function goToStepByIndex(index: number): EmbalmActions {
+  const id = steps[index].id;
   return {
     type: ActionType.GoToStep,
     payload: {
