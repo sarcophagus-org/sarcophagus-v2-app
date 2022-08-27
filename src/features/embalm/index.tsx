@@ -1,5 +1,5 @@
 import { Flex, Heading } from '@chakra-ui/react';
-import { EmbalmContent } from 'features/embalm/embalmContent';
+import { StepContent } from 'features/embalm/stepContent';
 import { StepNavigator } from './stepNavigator';
 
 export function Embalm() {
@@ -31,7 +31,7 @@ export function Embalm() {
 
         {/* Right side container */}
         <Flex flex={1}>
-          <EmbalmContent />
+          <StepContent />
         </Flex>
       </Flex>
     </Flex>

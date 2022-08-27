@@ -1,4 +1,4 @@
-import { UploadPayload } from 'features/embalm/embalmContent/steps/UploadPayload';
+import { UploadPayload } from 'features/embalm/stepContent/steps/UploadPayload';
 import { StepName } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
 import { CreateRecipientKeypair } from './steps/CreateRecipientKeypair';
@@ -16,7 +16,7 @@ const stepMap: { [key: string]: JSX.Element } = {
   [StepName.SelectArchaeologists]: <SelectArchaeologists />,
 };
 
-export function EmbalmContent() {
+export function StepContent() {
   const currentStep = useSelector(x => x.embalmState.currentStep);
 
   return stepMap[currentStep];
