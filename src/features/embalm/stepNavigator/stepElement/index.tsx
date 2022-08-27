@@ -4,12 +4,12 @@ import { StepStatusIndicator } from './StepStatusIndicator';
 
 interface NavigationItemProps {
   title: string;
-  subTitle: string;
+  index: number;
   status: StepStatus;
   onClickStep: () => void;
 }
 
-export function StepElement({ title, subTitle, status, onClickStep }: NavigationItemProps) {
+export function StepElement({ title, index, status, onClickStep }: NavigationItemProps) {
   return (
     <Flex
       onClick={onClickStep}
@@ -19,19 +19,15 @@ export function StepElement({ title, subTitle, status, onClickStep }: Navigation
         textDecoration: 'underline',
       }}
     >
-      <StepStatusIndicator status={status} />
+      <StepStatusIndicator
+        status={status}
+        index={index}
+      />
       <Flex
         ml={6}
         direction="column"
       >
         <Text noOfLines={1}>{title}</Text>
-        <Text
-          noOfLines={1}
-          variant="secondary"
-          mt={1}
-        >
-          {subTitle}
-        </Text>
       </Flex>
     </Flex>
   );

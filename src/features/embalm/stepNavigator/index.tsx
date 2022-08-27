@@ -26,7 +26,7 @@ export function StepNavigator() {
         <StepElement
           key={step.id}
           title={step.title}
-          subTitle={step.subtitle}
+          index={step.index}
           status={calculateStatusOfCurrentStep(step.id)}
           onClickStep={() => handleClickStep(step.id)}
         />
