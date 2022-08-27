@@ -20,7 +20,7 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         justifyContent="center"
         color="brand.0"
       >
-        {index}
+        {index + 1}
       </Flex>
     ),
     [StepStatus.Started]: (
@@ -33,7 +33,7 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         align="center"
         justifyContent="center"
       >
-        {index}
+        {index + 1}
       </Flex>
     ),
     [StepStatus.NotStarted]: (
@@ -46,7 +46,7 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         align="center"
         justifyContent="center"
       >
-        {index}
+        {index + 1}
       </Flex>
     ),
   };
