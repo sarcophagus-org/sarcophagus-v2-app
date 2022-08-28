@@ -24,14 +24,10 @@ export function StepContent() {
       <Button
         variant="link"
         width="fit-content"
+        disabled={currentStep.index === 0}
         onClick={handleClickPrev}
       >
-        <Text
-          fontSize="lg"
-          color="brand.500"
-        >
-          {'< Prev'}
-        </Text>
+        <Text fontSize="lg">{'< Prev'}</Text>
       </Button>
       <Text fontSize="lg">
         Step {currentStep.index + 1}/{stepCount}
