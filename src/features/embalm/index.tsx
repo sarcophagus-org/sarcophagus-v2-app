@@ -22,12 +22,15 @@ export function Embalm() {
         width="100%"
       >
         {/* Left side container */}
-        <Flex
-          width="30%"
-          minWidth={350}
-        >
+        <Flex w={375}>
           <StepNavigator />
         </Flex>
+
+        {/* Space between */}
+        <Flex
+          minWidth={100}
+          w="10%"
+        />
 
         {/* Right side container */}
         <Flex flex={1}>

@@ -40,3 +40,13 @@ export function readFileDataAsBase64(file: File): Promise<Buffer> {
     reader.readAsDataURL(file);
   });
 }
+
+/**
+ * Remove an item from an array
+ */
+export function removeFromArray<T>(array: T[], value: T) {
+  const index = array.indexOf(value);
+  if (index > -1) {
+    array.splice(index, 1);
+  }
+}

@@ -1,5 +1,6 @@
 import { Button, Flex, Text, VStack } from '@chakra-ui/react';
-import { steps } from '../stepNavigator/steps';
+import { StepMap, steps } from '../stepNavigator/steps';
+import { useStepNavigator } from '../stepNavigator/useStepNavigator';
 import { useStepContent } from './useStepContent';
 
 export function StepContent() {
@@ -18,7 +19,6 @@ export function StepContent() {
     <VStack
       direction="column"
       align="left"
-      mx={12}
       spacing={4}
     >
       <Button
