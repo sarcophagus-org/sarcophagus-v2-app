@@ -1,4 +1,12 @@
-import { Flex, Text } from '@chakra-ui/react';
+import {
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Center,
+  Flex,
+  Text,
+} from '@chakra-ui/react';
 import { StepStatus } from 'store/embalm/reducer';
 import { StepStatusIndicator } from './StepStatusIndicator';
 
@@ -7,28 +15,65 @@ interface NavigationItemProps {
   index: number;
   status: StepStatus;
   onClickStep: () => void;
+  onClickExpand?: () => void;
 }
 
-export function StepElement({ title, index, status, onClickStep }: NavigationItemProps) {
+export function StepElement({
+  title,
+  index,
+  status,
+  onClickStep,
+  onClickExpand,
+}: NavigationItemProps) {
+  function handleClickExpand(e: React.MouseEvent<HTMLDivElement>) {
+    // Prevents the step from being selected
+    e.stopPropagation();
+    onClickExpand?.();
+  }
+
   return (
-    <Flex
-      onClick={onClickStep}
+    <AccordionItem
       opacity={status === StepStatus.NotStarted ? 0.5 : 1}
-      cursor="pointer"
-      _hover={{
-        textDecoration: 'underline',
-      }}
+      border="none"
+      mb={3}
     >
-      <StepStatusIndicator
-        status={status}
-        index={index}
-      />
-      <Flex
-        ml={6}
-        direction="column"
+      <AccordionButton
+        px={0}
+        justifyContent="space-between"
+        cursor="default"
       >
-        <Text noOfLines={1}>{title}</Text>
-      </Flex>
-    </Flex>
+        <Flex
+          onClick={onClickStep}
+          cursor="pointer"
+          _hover={{
+            textDecoration: 'underline',
+          }}
+        >
+          <StepStatusIndicator
+            status={status}
+            index={index}
+          />
+          <Text
+            align="left"
+            ml={3}
+          >
+            {title}
+          </Text>
+        </Flex>
+        <Center
+          h="24px"
+          w="24px"
+          borderRadius={100}
+          onClick={handleClickExpand}
+          cursor="pointer"
+          _hover={{
+            backgroundColor: 'brand.100',
+          }}
+        >
+          <AccordionIcon color="brand.300" />
+        </Center>
+      </AccordionButton>
+      <AccordionPanel>Hello?</AccordionPanel>
+    </AccordionItem>
   );
 }

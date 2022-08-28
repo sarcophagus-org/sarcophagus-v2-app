@@ -1,4 +1,3 @@
-import { steps } from 'features/embalm/stepNavigator/steps';
 import { ActionMap } from '../ActionMap';
 import { StepStatus } from './reducer';
 
@@ -7,6 +6,8 @@ import { StepStatus } from './reducer';
 export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
+  ToggleStep = 'EMBALM_TOGGLE_STEP',
+  SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
 }
 
 type EmbalmPayload = {
@@ -17,19 +18,15 @@ type EmbalmPayload = {
     id: string;
     status: StepStatus;
   };
+  [ActionType.ToggleStep]: {
+    id: string;
+  };
+  [ActionType.SetExpandedStepIndices]: {
+    indices: number[];
+  };
 };
 
 export function goToStep(id: string): EmbalmActions {
-  return {
-    type: ActionType.GoToStep,
-    payload: {
-      id,
-    },
-  };
-}
-
-export function goToStepByIndex(index: number): EmbalmActions {
-  const id = steps[index].id;
   return {
     type: ActionType.GoToStep,
     payload: {
@@ -48,4 +45,21 @@ export function updateStepStatus(id: string, status: StepStatus): EmbalmActions 
   };
 }
 
+export function toggleStep(id: string): EmbalmActions {
+  return {
+    type: ActionType.ToggleStep,
+    payload: {
+      id,
+    },
+  };
+}
+
+export function setExpandedStepIndices(indices: number[]): EmbalmActions {
+  return {
+    type: ActionType.SetExpandedStepIndices,
+    payload: {
+      indices,
+    },
+  };
+}
 export type EmbalmActions = ActionMap<EmbalmPayload>[keyof ActionMap<EmbalmPayload>];
