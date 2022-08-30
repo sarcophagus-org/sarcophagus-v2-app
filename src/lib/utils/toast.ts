@@ -110,3 +110,35 @@ export const uploadFailure = (errorMessage: string): UseToastOptions => ({
   duration,
   position,
 });
+
+export const recoverPublicKeyFailure = (errorMessage: string): UseToastOptions => ({
+  title: 'Public Key Failed',
+  description: formatToastMessage(errorMessage),
+  status: 'error',
+  duration: null,
+  position,
+});
+
+export const recoverPublicKeyInvalidAddress = (): UseToastOptions => ({
+  title: 'Invalid Address',
+  description: 'Given input in not a valid etherum address',
+  status: 'warning',
+  duration,
+  position,
+});
+
+export const recoverPublicKeySuccess = (): UseToastOptions => ({
+  title: 'Recover Public Key Successful!',
+  description: 'Successfully recovered public key from address',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const recoverPublicKeyNoTransactions = (): UseToastOptions => ({
+  title: 'No Transactions',
+  description: 'This address has no transaction in which to recover the pubilc key',
+  status: 'warning',
+  duration,
+  position,
+});
