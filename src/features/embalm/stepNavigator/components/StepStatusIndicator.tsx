@@ -10,8 +10,8 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
   const stepStatusMap = {
     [StepStatus.Complete]: (
       <Flex
-        h="24px"
-        w="24px"
+        h="20px"
+        w="20px"
         border="1px solid"
         borderColor="brand.950"
         backgroundColor="brand.950"
@@ -25,8 +25,8 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
     ),
     [StepStatus.Started]: (
       <Flex
-        h="24px"
-        w="24px"
+        h="20px"
+        w="20px"
         border="1px solid"
         borderColor="brand.950"
         borderRadius={100}
@@ -38,8 +38,8 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
     ),
     [StepStatus.NotStarted]: (
       <Flex
-        h="24px"
-        w="24px"
+        h="20px"
+        w="20px"
         border="1px solid"
         borderColor="brand.950"
         borderRadius={100}

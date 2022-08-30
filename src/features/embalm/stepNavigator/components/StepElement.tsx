@@ -7,28 +7,29 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { StepStatus } from 'store/embalm/reducer';
+import React, { ReactNode } from 'react';
+import { Step, StepStatus } from 'store/embalm/reducer';
+import { useStepNavigator } from '../hooks/useStepNavigator';
 import { StepStatusIndicator } from './StepStatusIndicator';
 
-interface NavigationItemProps {
+interface StepProps {
   title: string;
-  index: number;
-  status: StepStatus;
-  onClickStep: () => void;
-  onClickExpand?: () => void;
+  step: Step;
+  children: ReactNode;
 }
 
-export function StepElement({
-  title,
-  index,
-  status,
-  onClickStep,
-  onClickExpand,
-}: NavigationItemProps) {
+export function StepElement({ title, step, children }: StepProps) {
+  const { getStatus, selectStep, toggleStep } = useStepNavigator();
+  const status = getStatus(step);
+
+  function handleSelect() {
+    selectStep(step);
+  }
+
   function handleClickExpand(e: React.MouseEvent<HTMLDivElement>) {
-    // Prevents the step from being selected
+    // Prevent the selection of the step
     e.stopPropagation();
-    onClickExpand?.();
+    toggleStep(step);
   }
 
   return (
@@ -43,7 +44,7 @@ export function StepElement({
         cursor="default"
       >
         <Flex
-          onClick={onClickStep}
+          onClick={handleSelect}
           cursor="pointer"
           _hover={{
             textDecoration: 'underline',
@@ -51,7 +52,7 @@ export function StepElement({
         >
           <StepStatusIndicator
             status={status}
-            index={index}
+            index={step}
           />
           <Text
             align="left"
@@ -73,7 +74,7 @@ export function StepElement({
           <AccordionIcon color="brand.300" />
         </Center>
       </AccordionButton>
-      <AccordionPanel>Hello?</AccordionPanel>
+      <AccordionPanel mx={5}>{children}</AccordionPanel>
     </AccordionItem>
   );
 }

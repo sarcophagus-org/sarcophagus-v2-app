@@ -1,5 +1,5 @@
 import { ActionMap } from '../ActionMap';
-import { StepStatus } from './reducer';
+import { Step, StepStatus } from './reducer';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -8,48 +8,61 @@ export enum ActionType {
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
+  SetName = 'EMBALM_SET_NAME',
+  SetRecipientKey = 'EMBALM_SET_RECIPIENT_KEY',
+  SetPayloadPath = 'EMBALM_SET_PAYLOAD_PATH',
 }
 
 type EmbalmPayload = {
   [ActionType.GoToStep]: {
-    id: string;
+    step: Step;
   };
   [ActionType.UpdateStepStatus]: {
-    id: string;
+    step: Step;
     status: StepStatus;
   };
   [ActionType.ToggleStep]: {
-    id: string;
+    step: Step;
   };
   [ActionType.SetExpandedStepIndices]: {
     indices: number[];
   };
+  [ActionType.SetName]: {
+    name: string;
+  };
+  [ActionType.SetRecipientKey]: {
+    key: string;
+  };
+  [ActionType.SetPayloadPath]: {
+    path: string;
+    size?: number;
+  };
 };
 
-export function goToStep(id: string): EmbalmActions {
+export function goToStep(step: Step): EmbalmActions {
   return {
     type: ActionType.GoToStep,
     payload: {
-      id,
+      step,
     },
   };
 }
 
-export function updateStepStatus(id: string, status: StepStatus): EmbalmActions {
+export function updateStepStatus(step: Step, status: StepStatus): EmbalmActions {
   return {
     type: ActionType.UpdateStepStatus,
     payload: {
-      id,
+      step,
       status,
     },
   };
 }
 
-export function toggleStep(id: string): EmbalmActions {
+export function toggleStep(step: Step): EmbalmActions {
   return {
     type: ActionType.ToggleStep,
     payload: {
-      id,
+      step,
     },
   };
 }
@@ -62,4 +75,33 @@ export function setExpandedStepIndices(indices: number[]): EmbalmActions {
     },
   };
 }
+
+export function setName(name: string): EmbalmActions {
+  return {
+    type: ActionType.SetName,
+    payload: {
+      name,
+    },
+  };
+}
+
+export function setRecipientKey(key: string): EmbalmActions {
+  return {
+    type: ActionType.SetRecipientKey,
+    payload: {
+      key,
+    },
+  };
+}
+
+export function setPayloadPath(path: string, size?: number): EmbalmActions {
+  return {
+    type: ActionType.SetPayloadPath,
+    payload: {
+      path,
+      size,
+    },
+  };
+}
+
 export type EmbalmActions = ActionMap<EmbalmPayload>[keyof ActionMap<EmbalmPayload>];

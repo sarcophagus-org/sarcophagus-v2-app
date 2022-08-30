@@ -1,18 +1,17 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
-import { StepMap } from 'features/embalm/stepNavigator/steps';
 import { updateStepStatus } from 'store/embalm/actions';
-import { StepStatus } from 'store/embalm/reducer';
+import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch } from 'store/index';
 
 export function InitializeSarcophagus() {
   const dispatch = useDispatch();
 
   function handleComplete() {
-    dispatch(updateStepStatus(StepMap.InitializeSarcophagus.id, StepStatus.Complete));
+    dispatch(updateStepStatus(Step.InitializeSarophagus, StepStatus.Complete));
   }
 
   function handleStart() {
-    dispatch(updateStepStatus(StepMap.InitializeSarcophagus.id, StepStatus.Started));
+    dispatch(updateStepStatus(Step.InitializeSarophagus, StepStatus.Started));
   }
 
   return (

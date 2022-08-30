@@ -1,4 +1,3 @@
-import { StepMap, steps } from 'features/embalm/stepNavigator/steps';
 import { removeFromArray } from 'lib/utils/helpers';
 import { Actions } from '..';
 import { ActionType } from './actions';
@@ -9,25 +8,41 @@ export enum StepStatus {
   Started = 'started',
 }
 
-export interface EmbalmState {
-  // The current step in the embalm process
-  currentStepId: string;
+export enum Step {
+  NameSarcophagus = 0,
+  UploadPayload = 1,
+  CreateRecipientKeypair = 2,
+  SetResurrection = 3,
+  SelectArchaeologists = 4,
+  InitializeSarophagus = 5,
+  FinalizeSarcophagus = 6,
+}
 
-  // A mapping of steps to step statuses
-  stepStatuses: { [key: string]: StepStatus };
+export interface EmbalmState {
+  currentStep: Step;
+  stepStatuses: { [key: number]: StepStatus };
   expandedStepIndices: number[];
+  name: string;
+  recipientPublicKey: string;
+  payloadPath: string;
+  payloadSize: number;
 }
 
 export const embalmInitialState: EmbalmState = {
-  currentStepId: steps[0].id,
-
-  // Initialize a mapping with each step from steps
-  stepStatuses: steps.reduce((acc, step) => ({ ...acc, [step.id]: StepStatus.NotStarted }), {}),
-  expandedStepIndices: [],
+  currentStep: Step.NameSarcophagus,
+  stepStatuses: Object.keys(Step).reduce(
+    (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
+    {}
+  ),
+  expandedStepIndices: [Step.NameSarcophagus],
+  name: '',
+  recipientPublicKey: '',
+  payloadPath: '',
+  payloadSize: 0,
 };
 
-function toggleStep(state: EmbalmState, id: string): EmbalmState {
-  const index = StepMap[id].index;
+function toggleStep(state: EmbalmState, step: Step): EmbalmState {
+  const index = step.valueOf();
   const expandedStepIndicesCopy = state.expandedStepIndices.slice();
   if (!expandedStepIndicesCopy.includes(index)) {
     expandedStepIndicesCopy.push(index);
@@ -40,18 +55,27 @@ function toggleStep(state: EmbalmState, id: string): EmbalmState {
 export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState {
   switch (action.type) {
     case ActionType.GoToStep:
-      return { ...state, currentStepId: action.payload.id };
+      return { ...state, currentStep: action.payload.step };
 
     case ActionType.UpdateStepStatus:
       const newStepStatuses = Object.assign({}, state.stepStatuses);
-      newStepStatuses[action.payload.id] = action.payload.status;
+      newStepStatuses[action.payload.step] = action.payload.status;
       return { ...state, stepStatuses: newStepStatuses };
 
     case ActionType.ToggleStep:
-      return toggleStep(state, action.payload.id);
+      return toggleStep(state, action.payload.step);
 
     case ActionType.SetExpandedStepIndices:
       return { ...state, expandedStepIndices: action.payload.indices };
+
+    case ActionType.SetName:
+      return { ...state, name: action.payload.name };
+
+    case ActionType.SetRecipientKey:
+      return { ...state, recipientPublicKey: action.payload.key };
+
+    case ActionType.SetPayloadPath:
+      return { ...state, payloadPath: action.payload.path, payloadSize: action.payload.size || 0 };
 
     default:
       return state;

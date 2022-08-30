@@ -1,18 +1,17 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
-import { StepMap } from 'features/embalm/stepNavigator/steps';
 import { updateStepStatus } from 'store/embalm/actions';
-import { StepStatus } from 'store/embalm/reducer';
+import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch } from 'store/index';
 
 export function CreateRecipientKeypair() {
   const dispatch = useDispatch();
 
   function handleComplete() {
-    dispatch(updateStepStatus(StepMap.CreateRecipientKeypair.id, StepStatus.Complete));
+    dispatch(updateStepStatus(Step.CreateRecipientKeypair, StepStatus.Complete));
   }
 
   function handleStart() {
-    dispatch(updateStepStatus(StepMap.CreateRecipientKeypair.id, StepStatus.Started));
+    dispatch(updateStepStatus(Step.CreateRecipientKeypair, StepStatus.Started));
   }
 
   return (
