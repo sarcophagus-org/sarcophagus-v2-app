@@ -1,18 +1,23 @@
-import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
-import { StepMap } from 'features/embalm/stepNavigator/steps';
-import { updateStepStatus } from 'store/embalm/actions';
-import { StepStatus } from 'store/embalm/reducer';
-import { useDispatch } from 'store/index';
+import { Button, Flex, Heading, Input, Text, VStack } from '@chakra-ui/react';
+import React, { createRef } from 'react';
+import { setPayloadPath } from 'store/embalm/actions';
+import { useDispatch, useSelector } from 'store/index';
 
 export function UploadPayload() {
   const dispatch = useDispatch();
+  const { payloadPath } = useSelector(x => x.embalmState);
+  const fileInput = createRef<HTMLInputElement>();
 
-  function handleComplete() {
-    dispatch(updateStepStatus(StepMap.UploadPayload.id, StepStatus.Complete));
+  function handleClickButton() {
+    if (fileInput.current) {
+      fileInput.current.click();
+    }
   }
 
-  function handleStart() {
-    dispatch(updateStepStatus(StepMap.UploadPayload.id, StepStatus.Started));
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const path = e.target.value;
+    const size = e.target.files?.[0].size;
+    dispatch(setPayloadPath(path, size));
   }
 
   return (
@@ -25,14 +30,17 @@ export function UploadPayload() {
         align="left"
         spacing={6}
       >
-        <Flex direction="column">
-          <Button onClick={handleStart}>Start</Button>
-          <Text variant="secondary">Simulate a form that has been started but not completed</Text>
+        <Flex>
+          <Text>File:</Text>
+          <Text ml={3}>{payloadPath}</Text>
         </Flex>
-        <Flex direction="column">
-          <Button onClick={handleComplete}>Complete</Button>
-          <Text variant="secondary">Simulate a complete form</Text>
-        </Flex>
+        <Button onClick={handleClickButton}>Choose File</Button>
+        <Input
+          hidden
+          onChange={handleFileChange}
+          ref={fileInput}
+          type="file"
+        />
       </VStack>
     </VStack>
   );

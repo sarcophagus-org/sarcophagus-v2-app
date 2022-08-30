@@ -1,8 +1,17 @@
-import { Accordion } from '@chakra-ui/react';
-import { useEffect } from 'react';
-import { StepElement } from './stepElement';
-import { steps } from './steps';
-import { useStepNavigator } from './useStepNavigator';
+import { bytesToSize } from 'lib/utils/helpers';
+import { Step } from 'store/embalm/reducer';
+import { useSelector } from 'store/index';
+import { RequirementVariantA } from './components/RequirementVariantA';
+import { Requirements } from './components/Requirements';
+import { RequirementVariantB } from './components/RequirementVariantB';
+import { StepElement } from './components/StepElement';
+import { StepsContainer } from './components/StepsContainer';
+import { useFormEffects } from './hooks/useFormEffects';
+
+export enum StepId {
+  NameSarcophagus,
+  UploadPayload,
+}
 
 /**
  * The embalm step navigator.
@@ -10,34 +19,100 @@ import { useStepNavigator } from './useStepNavigator';
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { expandedIndices, selectStep, toggleStep, calculateStatusOfCurrentStep } =
-    useStepNavigator();
+  const { name, recipientPublicKey, payloadSize } = useSelector(x => x.embalmState);
 
-  function handleClickStep(id: string) {
-    // Set the current step in the store
-    selectStep(id);
-  }
-
-  function handleExpand(id: string) {
-    toggleStep(id);
-  }
+  // Side effects for when the form changes, like updating the step status when a form value changes
+  useFormEffects();
 
   return (
-    <Accordion
-      index={expandedIndices}
-      allowMultiple
-      w="100%"
-    >
-      {steps.map(step => (
-        <StepElement
-          key={step.id}
-          title={step.title}
-          index={step.index}
-          status={calculateStatusOfCurrentStep(step.id)}
-          onClickStep={() => handleClickStep(step.id)}
-          onClickExpand={() => handleExpand(step.id)}
-        />
-      ))}
-    </Accordion>
+    <StepsContainer>
+      <StepElement
+        step={Step.NameSarcophagus}
+        title="Name and recipient"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="Name"
+            value={name}
+          />
+          <RequirementVariantB
+            title="Recipient public key"
+            filled={!!recipientPublicKey}
+          />
+        </Requirements>
+      </StepElement>
+
+      <StepElement
+        step={Step.UploadPayload}
+        title="Upload Payload"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="Payload"
+            value={payloadSize !== 0 ? bytesToSize(payloadSize) : ''}
+          />
+        </Requirements>
+      </StepElement>
+
+      <StepElement
+        step={Step.CreateRecipientKeypair}
+        title="Create Recipient Keypair"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="WIP"
+            value=""
+          />
+        </Requirements>
+      </StepElement>
+
+      <StepElement
+        step={Step.SetResurrection}
+        title="Set Resurrections"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="WIP"
+            value=""
+          />
+        </Requirements>
+      </StepElement>
+
+      <StepElement
+        step={Step.SelectArchaeologists}
+        title="Select Archaeologists"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="WIP"
+            value=""
+          />
+        </Requirements>
+      </StepElement>
+
+      <StepElement
+        step={Step.InitializeSarophagus}
+        title="Initialize Sarcophagus"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="WIP"
+            value=""
+          />
+        </Requirements>
+      </StepElement>
+
+      <StepElement
+        step={Step.FinalizeSarcophagus}
+        title="Finalize Sarcophagus"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="WIP"
+            value=""
+          />
+        </Requirements>
+      </StepElement>
+    </StepsContainer>
   );
 }

@@ -1,39 +1,41 @@
-import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
-import { StepMap } from 'features/embalm/stepNavigator/steps';
-import { updateStepStatus } from 'store/embalm/actions';
-import { StepStatus } from 'store/embalm/reducer';
-import { useDispatch } from 'store/index';
+import { FormControl, FormLabel, Heading, Input, VStack } from '@chakra-ui/react';
+import React from 'react';
+import { setName, setRecipientKey } from 'store/embalm/actions';
+import { useDispatch, useSelector } from 'store/index';
 
 export function NameSarcophagus() {
   const dispatch = useDispatch();
+  const { name, recipientPublicKey } = useSelector(x => x.embalmState);
 
-  function handleComplete() {
-    dispatch(updateStepStatus(StepMap.NameSarcophagus.id, StepStatus.Complete));
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    dispatch(setName(value));
   }
 
-  function handleStart() {
-    dispatch(updateStepStatus(StepMap.NameSarcophagus.id, StepStatus.Started));
+  function handleRecipientKeyChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    dispatch(setRecipientKey(value));
   }
 
   return (
     <VStack
       spacing={9}
       align="left"
+      w="100%"
     >
       <Heading>Name sarcophagus</Heading>
-      <VStack
-        align="left"
-        spacing={6}
-      >
-        <Flex direction="column">
-          <Button onClick={handleStart}>Start</Button>
-          <Text variant="secondary">Simulate a form that has been started but not completed</Text>
-        </Flex>
-        <Flex direction="column">
-          <Button onClick={handleComplete}>Complete</Button>
-          <Text variant="secondary">Simulate a complete form</Text>
-        </Flex>
-      </VStack>
+      <FormControl>
+        <FormLabel>Name</FormLabel>
+        <Input
+          onChange={handleNameChange}
+          value={name}
+        />
+        <FormLabel mt={6}>Recipient Public Key</FormLabel>
+        <Input
+          onChange={handleRecipientKeyChange}
+          value={recipientPublicKey}
+        />
+      </FormControl>
     </VStack>
   );
 }
