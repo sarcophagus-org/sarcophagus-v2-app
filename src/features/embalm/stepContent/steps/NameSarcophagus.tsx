@@ -1,20 +1,19 @@
-import { FormControl, FormLabel, Heading, Input, VStack } from '@chakra-ui/react';
+import { FormControl, FormLabel, Heading, Input, Text, VStack } from '@chakra-ui/react';
+import { maxSarcophagusNameLength } from 'lib/constants';
 import React from 'react';
-import { setName, setRecipientKey } from 'store/embalm/actions';
+import { setName } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
 export function NameSarcophagus() {
   const dispatch = useDispatch();
-  const { name, recipientPublicKey } = useSelector(x => x.embalmState);
+  const { name } = useSelector(x => x.embalmState);
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
+    if (value.length > maxSarcophagusNameLength) {
+      return;
+    }
     dispatch(setName(value));
-  }
-
-  function handleRecipientKeyChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
-    dispatch(setRecipientKey(value));
   }
 
   return (
@@ -23,18 +22,20 @@ export function NameSarcophagus() {
       align="left"
       w="100%"
     >
-      <Heading>Name sarcophagus</Heading>
+      <Heading>Name your sarcophagus</Heading>
       <FormControl>
         <FormLabel>Name</FormLabel>
         <Input
           onChange={handleNameChange}
           value={name}
+          maxLength={maxSarcophagusNameLength}
         />
-        <FormLabel mt={6}>Recipient Public Key</FormLabel>
-        <Input
-          onChange={handleRecipientKeyChange}
-          value={recipientPublicKey}
-        />
+        <Text
+          mt={3}
+          textAlign="center"
+        >
+          Your Sarcophagus will be public on the blockchain.
+        </Text>
       </FormControl>
     </VStack>
   );

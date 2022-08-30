@@ -1,5 +1,6 @@
 import { CheckCircleIcon } from '@chakra-ui/icons';
 import { Flex, Text } from '@chakra-ui/react';
+import React from 'react';
 
 interface RequirementVariantAProps {
   title: string;
@@ -13,7 +14,7 @@ interface RequirementVariantAProps {
  *
  * Sarcophagus Name: Corporate Blackmail
  */
-export function RequirementVariantA({ title, value }: RequirementVariantAProps) {
+function RequirementVariantA({ title, value }: RequirementVariantAProps) {
   const valid = value.trim().length > 0;
 
   return (
@@ -47,3 +48,5 @@ export function RequirementVariantA({ title, value }: RequirementVariantAProps) 
     </Flex>
   );
 }
+
+export default React.memo(RequirementVariantA);
