@@ -1,5 +1,6 @@
 import { CheckCircleIcon } from '@chakra-ui/icons';
 import { Flex, Text } from '@chakra-ui/react';
+import React from 'react';
 
 interface RequirementVariantBProps {
   title: string;
@@ -10,7 +11,7 @@ interface RequirementVariantBProps {
  * Requirement variant B
  * Contains just a title
  */
-export function RequirementVariantB({ title, filled }: RequirementVariantBProps) {
+function RequirementVariantB({ title, filled }: RequirementVariantBProps) {
   return (
     <Flex align="top">
       <CheckCircleIcon
@@ -29,3 +30,5 @@ export function RequirementVariantB({ title, filled }: RequirementVariantBProps)
     </Flex>
   );
 }
+
+export default React.memo(RequirementVariantB);

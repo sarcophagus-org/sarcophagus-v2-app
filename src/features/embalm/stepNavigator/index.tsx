@@ -1,12 +1,11 @@
 import { bytesToSize } from 'lib/utils/helpers';
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
-import { RequirementVariantA } from './components/RequirementVariantA';
 import { Requirements } from './components/Requirements';
-import { RequirementVariantB } from './components/RequirementVariantB';
+import RequirementVariantA from './components/RequirementVariantA';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
-import { useFormEffects } from './hooks/useFormEffects';
+import { useSetStatuses } from './hooks/useSetStatuses';
 
 export enum StepId {
   NameSarcophagus,
@@ -19,25 +18,21 @@ export enum StepId {
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, recipientPublicKey, payloadSize } = useSelector(x => x.embalmState);
+  const { name, payloadSize } = useSelector(x => x.embalmState);
 
   // Side effects for when the form changes, like updating the step status when a form value changes
-  useFormEffects();
+  useSetStatuses();
 
   return (
     <StepsContainer>
       <StepElement
         step={Step.NameSarcophagus}
-        title="Name and recipient"
+        title="Name your sarcophagus"
       >
         <Requirements>
           <RequirementVariantA
             title="Name"
             value={name}
-          />
-          <RequirementVariantB
-            title="Recipient public key"
-            filled={!!recipientPublicKey}
           />
         </Requirements>
       </StepElement>

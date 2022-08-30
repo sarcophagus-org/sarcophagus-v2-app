@@ -20,25 +20,25 @@ export enum Step {
 
 export interface EmbalmState {
   currentStep: Step;
-  stepStatuses: { [key: number]: StepStatus };
   expandedStepIndices: number[];
   name: string;
-  recipientPublicKey: string;
   payloadPath: string;
   payloadSize: number;
+  recipientPublicKey: string;
+  stepStatuses: { [key: number]: StepStatus };
 }
 
 export const embalmInitialState: EmbalmState = {
   currentStep: Step.NameSarcophagus,
+  expandedStepIndices: [Step.NameSarcophagus],
+  name: '',
+  payloadPath: '',
+  payloadSize: 0,
+  recipientPublicKey: '',
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  expandedStepIndices: [Step.NameSarcophagus],
-  name: '',
-  recipientPublicKey: '',
-  payloadPath: '',
-  payloadSize: 0,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
