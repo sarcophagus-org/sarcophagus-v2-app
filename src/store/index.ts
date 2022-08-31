@@ -17,12 +17,6 @@ import {
   sarcophagusReducer,
   SarcophagusState,
 } from './sarcophagus/reducer';
-import { CreateSarcophagusActions } from './createSarcophagus/actions';
-import {
-  createSarcophagusInitialState,
-  createSarcophagusReducer,
-  CreateSarcophagusState,
-} from './createSarcophagus/reducer';
 
 export type Actions =
   | AppActions

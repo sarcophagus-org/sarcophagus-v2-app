@@ -23,7 +23,7 @@ export interface EmbalmState {
   expandedStepIndices: number[];
   file: File | null;
   name: string;
-  recipientPublicKey: string;
+  publicKey: string | null;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
 }
@@ -33,7 +33,7 @@ export const embalmInitialState: EmbalmState = {
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
   name: '',
-  recipientPublicKey: '',
+  publicKey: null,
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
@@ -71,8 +71,8 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetName:
       return { ...state, name: action.payload.name };
 
-    case ActionType.SetRecipientKey:
-      return { ...state, recipientPublicKey: action.payload.key };
+    case ActionType.SetPublicKey:
+      return { ...state, publicKey: action.payload.publicKey };
 
     case ActionType.SetFile:
       return { ...state, file: action.payload.file };

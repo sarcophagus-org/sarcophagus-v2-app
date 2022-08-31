@@ -85,7 +85,7 @@ const getParameters =
 export function useRecoverPublicKey() {
   const toast = useToast();
   const dispatch = useDispatch();
-  const publicKey = useSelector(x => x.createSarcophagusState.publicKey);
+  const publicKey = useSelector(x => x.embalmState.publicKey);
 
   const [isLoading, setIsLoading] = useState(false);
 

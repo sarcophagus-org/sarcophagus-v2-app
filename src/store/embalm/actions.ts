@@ -8,7 +8,7 @@ export enum ActionType {
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALME_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
-  SetRecipientKey = 'EMBALM_SET_RECIPIENT_KEY',
+  SetPublicKey = 'CREATE_SARCO_SET_PUBLIC_KEY_ID',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -19,7 +19,7 @@ type EmbalmPayload = {
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
-  [ActionType.SetRecipientKey]: { key: string };
+  [ActionType.SetPublicKey]: { publicKey: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -71,11 +71,11 @@ export function setName(name: string): EmbalmActions {
   };
 }
 
-export function setRecipientKey(key: string): EmbalmActions {
+export function setPublicKey(publicKey: string): EmbalmActions {
   return {
-    type: ActionType.SetRecipientKey,
+    type: ActionType.SetPublicKey,
     payload: {
-      key,
+      publicKey,
     },
   };
 }
