@@ -9,10 +9,6 @@ export function RecoverPublicKey() {
 
   const { recoverPublicKey, isLoading } = useRecoverPublicKey();
 
-  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
-    dispatch(setRecipientAddress(e.target.value));
-  }
-
   async function handleOnClick(): Promise<void> {
     if (recipientAddress !== '') await recoverPublicKey(recipientAddress);
   }

@@ -12,6 +12,7 @@ import {
   recoverPublicKeyNoTransactions,
 } from 'lib/utils/toast';
 import { setPublicKey } from 'store/embalm/actions';
+import { toUnicode } from 'punycode';
 
 /**
  * returns a public key from a transaction
@@ -120,6 +121,10 @@ export function useRecoverPublicKey() {
               ethers.utils.computeAddress(recoveredPublicKey).toLowerCase() == address.toLowerCase()
             ) {
               dispatch(setPublicKey(recoveredPublicKey));
+
+              //TODO: remove log, this is just for testing
+              console.log('recovered public key', recoveredPublicKey);
+
               toast(recoverPublicKeySuccess());
               return;
             }
