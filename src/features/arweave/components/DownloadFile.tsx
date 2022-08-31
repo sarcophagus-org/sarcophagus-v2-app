@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
-import { useBundlr } from './hooks/useBundlr';
+import { useBundlr } from '../hooks/useBundlr';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
@@ -31,7 +31,7 @@ export function DownloadFile() {
         href={`https://arweave.net/${txId}`}
         style={{ textDecoration: 'none' }}
       >
-        <Button colorScheme="blue">Download</Button>
+        <Button>Download</Button>
       </Link>
     </Flex>
   );

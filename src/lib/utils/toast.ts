@@ -2,10 +2,44 @@
 // All toast message parameters are defined in this file
 
 import { UseToastOptions } from '@chakra-ui/react';
+import { maxFileSize } from 'lib/constants';
+import prettyBytes from 'pretty-bytes';
 import { formatToastMessage } from './helpers';
 
 const duration = 5000;
 const position = 'bottom-right';
+
+export const infoSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is some info',
+  status: 'info',
+  duration,
+  position,
+});
+
+export const successSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is a success',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const warningSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is a warning',
+  status: 'warning',
+  duration,
+  position,
+});
+
+export const errorSample = (): UseToastOptions => ({
+  title: 'Toast message',
+  description: 'This is an error',
+  status: 'error',
+  duration,
+  position,
+});
 
 export const connectStart = (): UseToastOptions => ({
   title: 'Attempting to Connect',
@@ -73,7 +107,7 @@ export const withdrawStart = (): UseToastOptions => ({
 
 export const withdrawSuccess = (): UseToastOptions => ({
   title: 'Withdraw Successful!',
-  description: 'Successfully withdrew funds from Bundrl node',
+  description: 'Successfully withdrew funds from Bundlr node',
   status: 'success',
   duration,
   position,
@@ -97,7 +131,7 @@ export const uploadStart = (): UseToastOptions => ({
 
 export const uploadSuccess = (): UseToastOptions => ({
   title: 'Upload Successful!',
-  description: 'Successful uploaded file to Bundr node',
+  description: 'Successful uploaded file to Bundlr node',
   status: 'success',
   duration,
   position,
@@ -107,6 +141,22 @@ export const uploadFailure = (errorMessage: string): UseToastOptions => ({
   title: 'Upload failed',
   description: formatToastMessage(errorMessage),
   status: 'error',
+  duration,
+  position,
+});
+
+export const fileTooBig = (): UseToastOptions => ({
+  title: 'File too big',
+  description: `Your file size must not exceed ${prettyBytes(maxFileSize)}.`,
+  status: 'error',
+  duration,
+  position,
+});
+
+export const payloadSaveSuccess = (): UseToastOptions => ({
+  title: 'Payload saved',
+  description: 'Your payload has been saved for a later step.',
+  status: 'success',
   duration,
   position,
 });

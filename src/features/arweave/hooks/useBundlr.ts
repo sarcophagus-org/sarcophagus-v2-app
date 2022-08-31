@@ -43,6 +43,7 @@ export function useBundlr() {
   const [isFunding, setIsFunding] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
 
   // Get the name of the currency that bundlr will understand
   const currency = AllNetworkConfigs[chain?.id || 1].bundlrCurrencyName || 'ethereum';
@@ -147,6 +148,12 @@ export function useBundlr() {
     [bundlr, dispatch, toast]
   );
 
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    }
+  }
+
   return {
     bundlr,
     txId,
@@ -159,5 +166,7 @@ export function useBundlr() {
     fund,
     withdraw,
     uploadFile,
+    file,
+    handleFileChange,
   };
 }

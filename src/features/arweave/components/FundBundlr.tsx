@@ -1,7 +1,16 @@
-import { Button, Flex, Heading, NumberInput, NumberInputField, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Flex,
+  Heading,
+  NumberInput,
+  NumberInputField,
+  Text,
+} from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useState } from 'react';
-import { useBundlr } from './hooks/useBundlr';
+import { useBundlr } from '../hooks/useBundlr';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
@@ -35,14 +44,12 @@ export function FundBundlr() {
         direction="column"
         maxWidth={800}
       >
-        <Text
-          fontSize="sm"
-          color="goldenrod"
-          as="b"
-        >
-          WARNING: This does not use testnet. You will be funding the bundlr node with real
-          currency.
-        </Text>
+        <Alert status="warning">
+          <AlertIcon color="warning" />
+          <Text color="warning">
+            This does not use testnet. You will be funding the bundlr node with real currency.
+          </Text>
+        </Alert>
       </Flex>
       <Flex
         mt={3}
@@ -60,7 +67,6 @@ export function FundBundlr() {
           </NumberInput>
           <Button
             ml={3}
-            colorScheme="blue"
             disabled={fundButtonDisabled()}
             onClick={handleFund}
             isLoading={isFunding}

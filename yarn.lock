@@ -1320,6 +1320,20 @@
   dependencies:
     "@chakra-ui/utils" "2.0.8"
 
+"@chakra-ui/icon@3.0.9":
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icon/-/icon-3.0.9.tgz#ba127d9eefd727f62e9bce07a23eca39ae506744"
+  integrity sha512-P2Pwm/za6m1W1oqL2kGHH6XrrymsBjqYAFwOW2lB5Q6mI1e+RYe/iMxDoPSLHMYhqdfH7vyib/ffE3Vv3a5oTA==
+  dependencies:
+    "@chakra-ui/shared-utils" "2.0.1"
+
+"@chakra-ui/icons@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-2.0.9.tgz#35edcf9c61b8e158a5d03aeda6bd4e756960dfc7"
+  integrity sha512-6xvV2rC8wATgfnRH+fC9mi0nLcgKjhHKO29lV1pGioVI0yWK0dqc//zjcyBhMMpW5ABnSfig7ujVBf3op/Syzg==
+  dependencies:
+    "@chakra-ui/icon" "3.0.9"
+
 "@chakra-ui/image@2.0.9":
   version "2.0.9"
   resolved "https://registry.npmjs.org/@chakra-ui/image/-/image-2.0.9.tgz"
@@ -1595,6 +1609,11 @@
   dependencies:
     "@chakra-ui/form-control" "2.0.8"
     "@chakra-ui/utils" "2.0.8"
+
+"@chakra-ui/shared-utils@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/shared-utils/-/shared-utils-2.0.1.tgz#41e314e42c96039e8ffb265e73145cf755813ab4"
+  integrity sha512-NXDBl/u4wrSNp0ON5R3r3evkRurrAz2yuO7neooaG+O5HEenVouGqm4CsXd6lUAPmjwiGzA0LQFNCt0Hj92dXg==
 
 "@chakra-ui/skeleton@2.0.13":
   version "2.0.13"
@@ -2602,6 +2621,11 @@
     "@ethersproject/logger" "^5.6.0"
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.1"
+
+"@fontsource/roboto-mono@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-mono/-/roboto-mono-4.5.8.tgz#f3a48195528b10e154c98365671de14e27605bdb"
+  integrity sha512-AW44UkbQD0w1CT5mzDbsvhGZ6/bb0YmZzoELj6Sx8vcVEzcbYGUdt2Dtl5zqlOuYMWQFY1mniwWyVv+Bm/lVxw==
 
 "@humanwhocodes/config-array@^0.10.4":
   version "0.10.4"
@@ -8658,7 +8682,7 @@ file-entry-cache@^6.0.1:
 
 file-loader@^6.2.0:
   version "6.2.0"
-  resolved "https://registry.npmjs.org/file-loader/-/file-loader-6.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/file-loader/-/file-loader-6.2.0.tgz#baef7cf8e1840df325e4390b4484879480eebe4d"
   integrity sha512-qo3glqyTa61Ytg4u73GultjHGjdRyig3tG6lPtyX/jOEJvHif9uB0/OCI2Kif6ctF3caQTW2G5gym21oAsI4pw==
   dependencies:
     loader-utils "^2.0.0"
@@ -12872,6 +12896,11 @@ pretty-bytes@^5.3.0, pretty-bytes@^5.4.1:
   version "5.6.0"
   resolved "https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-5.6.0.tgz"
   integrity sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==
+
+pretty-bytes@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.0.0.tgz#928be2ad1f51a2e336add8ba764739f9776a8140"
+  integrity sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==
 
 pretty-error@^4.0.0:
   version "4.0.0"
