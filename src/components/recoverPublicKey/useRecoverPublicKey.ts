@@ -93,6 +93,7 @@ export function useRecoverPublicKey() {
 
   const recoverPublicKey = useCallback(
     async (address: string) => {
+      dispatch(setPublicKey(''));
       try {
         setIsLoading(true);
         if (!ethers.utils.isAddress(address)) {

@@ -11,7 +11,7 @@ export enum StepStatus {
 export enum Step {
   NameSarcophagus = 0,
   UploadPayload = 1,
-  CreateRecipientKeypair = 2,
+  SetRecipientPublicKey = 2,
   SetResurrection = 3,
   SelectArchaeologists = 4,
   InitializeSarophagus = 5,
@@ -23,9 +23,10 @@ export interface EmbalmState {
   expandedStepIndices: number[];
   file: File | null;
   name: string;
-  publicKey: string | null;
+  publicKey: string;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
+  recipientAddress: string;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -33,12 +34,13 @@ export const embalmInitialState: EmbalmState = {
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
   name: '',
-  publicKey: null,
+  publicKey: '',
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
   uploadPrice: '',
+  recipientAddress: '',
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -79,6 +81,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetUploadPrice:
       return { ...state, uploadPrice: action.payload.price };
+
+    case ActionType.SetRecipientAddress:
+      return { ...state, recipientAddress: action.payload.address };
 
     default:
       return state;

@@ -1,35 +1,38 @@
-import { VStack, Heading, Input, FormLabel, Button, Text } from '@chakra-ui/react';
-import { useState } from 'react';
+import { VStack, Input, Button } from '@chakra-ui/react';
 import { useRecoverPublicKey } from './useRecoverPublicKey';
+import { setRecipientAddress } from 'store/embalm/actions';
+import { useDispatch, useSelector } from 'store/index';
 
 export function RecoverPublicKey() {
-  const [address, setAddress] = useState('');
+  const dispatch = useDispatch();
+  const { recipientAddress } = useSelector(x => x.embalmState);
 
-  const { recoverPublicKey, publicKey, isLoading } = useRecoverPublicKey();
+  const { recoverPublicKey, isLoading } = useRecoverPublicKey();
+
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    dispatch(setRecipientAddress(e.target.value));
+  }
 
   async function handleOnClick(): Promise<void> {
-    await recoverPublicKey(address);
+    if (recipientAddress !== '') await recoverPublicKey(recipientAddress);
   }
 
   return (
     <VStack align="left">
-      <Heading>Lookup Public Key</Heading>
-      <FormLabel>Etherum Address</FormLabel>
       <Input
         placeholder="0x0..."
-        onChange={e => setAddress(e.currentTarget.value)}
-        value={address}
+        onChange={e => dispatch(setRecipientAddress(e.target.value))}
+        value={recipientAddress}
         disabled={isLoading}
       />
       <Button
         background="gray"
-        width={20}
         onClick={handleOnClick}
         isLoading={isLoading}
+        w="190px"
       >
-        Submit
+        Lookup Public Key
       </Button>
-      <Text>Public Key:{publicKey}</Text>
     </VStack>
   );
 }
