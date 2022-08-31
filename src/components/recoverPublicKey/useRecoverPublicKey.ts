@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useProvider } from 'wagmi';
 import { useDispatch, useSelector } from 'store/index';
-import { setPublicKey } from 'store/createSarcophagus/actions';
 import { useToast } from '@chakra-ui/react';
 import {
   recoverPublicKeyFailure,
@@ -12,6 +11,7 @@ import {
   recoverPublicKeySuccess,
   recoverPublicKeyNoTransactions,
 } from 'lib/utils/toast';
+import { setPublicKey } from 'store/embalm/actions';
 
 /**
  * returns a public key from a transaction
