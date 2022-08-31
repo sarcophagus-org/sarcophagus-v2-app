@@ -12,7 +12,6 @@ import {
   recoverPublicKeyNoTransactions,
 } from 'lib/utils/toast';
 import { setPublicKey } from 'store/embalm/actions';
-import { toUnicode } from 'punycode';
 
 /**
  * returns a public key from a transaction
