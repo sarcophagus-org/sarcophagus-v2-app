@@ -36,8 +36,8 @@ export function StepContent() {
       direction="column"
       align="left"
       spacing={4}
-      w="50%"
       minWidth={500}
+      w="100%"
     >
       <Button
         variant="link"

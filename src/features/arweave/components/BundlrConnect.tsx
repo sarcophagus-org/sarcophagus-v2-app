@@ -1,5 +1,5 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
-import { useBundlr } from './hooks/useBundlr';
+import { useBundlr } from '../hooks/useBundlr';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality

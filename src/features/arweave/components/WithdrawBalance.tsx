@@ -8,8 +8,8 @@ import {
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useState } from 'react';
-import { useBundlr } from './hooks/useBundlr';
-import { useGetBalance } from './hooks/useGetBalance';
+import { useBundlr } from '../hooks/useBundlr';
+import { useGetBalance } from '../hooks/useGetBalance';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality

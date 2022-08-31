@@ -1,47 +1,75 @@
-import { Button, Flex, Heading, Input, Text, VStack } from '@chakra-ui/react';
-import React, { createRef } from 'react';
-import { setPayloadPath } from 'store/embalm/actions';
-import { useDispatch, useSelector } from 'store/index';
+import { Flex, Heading, Input, Link, Text, VStack } from '@chakra-ui/react';
+import { Alert } from 'components/Alert';
+import { FileDragAndDrop } from '../components/FileDragAndDrop';
+import { useUploadPayload } from '../hooks/useUploadPayload';
 
 export function UploadPayload() {
-  const dispatch = useDispatch();
-  const { payloadPath } = useSelector(x => x.embalmState);
-  const fileInput = createRef<HTMLInputElement>();
+  const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
 
-  function handleClickButton() {
-    if (fileInput.current) {
-      fileInput.current.click();
+  function handleClickFilePicker() {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const path = e.target.value;
-    const size = e.target.files?.[0].size;
-    dispatch(setPayloadPath(path, size));
+    const newFile = e.target.files?.[0];
+    handleSetFile(newFile);
+  }
+
+  async function handleFileDrop(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!e.dataTransfer) return;
+    const newFile = e.dataTransfer.files[0];
+    handleSetFile(newFile);
   }
 
   return (
-    <VStack
-      spacing={9}
-      align="left"
+    <Flex
+      w="100%"
+      direction="column"
     >
-      <Heading>Upload payload</Heading>
-      <VStack
-        align="left"
-        spacing={6}
-      >
-        <Flex>
-          <Text>File:</Text>
-          <Text ml={3}>{payloadPath}</Text>
-        </Flex>
-        <Button onClick={handleClickButton}>Choose File</Button>
-        <Input
-          hidden
-          onChange={handleFileChange}
-          ref={fileInput}
-          type="file"
-        />
-      </VStack>
-    </VStack>
+      <Heading>Upload your payload</Heading>
+      <Text mt={4}>Your payload (corpse) will be wrapped in a later step.</Text>
+      <Flex h={12} />
+      {error && (
+        <Alert
+          mb={3}
+          status="error"
+        >
+          {error}
+        </Alert>
+      )}
+      <FileDragAndDrop handleFileDrop={handleFileDrop}>
+        {file ? (
+          <VStack spacing={3}>
+            <Text>{file.name}</Text>
+            <Link
+              textDecor="underline"
+              onClick={handleClickFilePicker}
+            >
+              Upload a different file
+            </Link>
+          </VStack>
+        ) : (
+          <Text>
+            Drag and drop or{' '}
+            <Link
+              textDecor="underline"
+              onClick={handleClickFilePicker}
+            >
+              browse files
+            </Link>
+          </Text>
+        )}
+      </FileDragAndDrop>
+      <Input
+        hidden
+        onChange={handleFileChange}
+        ref={fileInputRef}
+        type="file"
+      />
+    </Flex>
   );
 }

@@ -5,7 +5,9 @@ import { StepNavigator } from './stepNavigator';
 export function Embalm() {
   return (
     <Flex
-      mx="84px"
+      ml="84px"
+      w="65%"
+      minWidth="500px"
       direction="column"
       height="100%"
     >
@@ -22,7 +24,10 @@ export function Embalm() {
         width="100%"
       >
         {/* Left side container */}
-        <Flex w={375}>
+        <Flex
+          minWidth={375}
+          maxWidth={375}
+        >
           <StepNavigator />
         </Flex>
 

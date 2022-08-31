@@ -5,38 +5,24 @@ import { Step, StepStatus } from './reducer';
 // unexpected behavior.
 export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
-  UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  ToggleStep = 'EMBALM_TOGGLE_STEP',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
+  SetFile = 'EMBALME_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
   SetRecipientKey = 'EMBALM_SET_RECIPIENT_KEY',
-  SetPayloadPath = 'EMBALM_SET_PAYLOAD_PATH',
+  SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
+  ToggleStep = 'EMBALM_TOGGLE_STEP',
+  UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
 }
 
 type EmbalmPayload = {
-  [ActionType.GoToStep]: {
-    step: Step;
-  };
-  [ActionType.UpdateStepStatus]: {
-    step: Step;
-    status: StepStatus;
-  };
-  [ActionType.ToggleStep]: {
-    step: Step;
-  };
-  [ActionType.SetExpandedStepIndices]: {
-    indices: number[];
-  };
-  [ActionType.SetName]: {
-    name: string;
-  };
-  [ActionType.SetRecipientKey]: {
-    key: string;
-  };
-  [ActionType.SetPayloadPath]: {
-    path: string;
-    size?: number;
-  };
+  [ActionType.GoToStep]: { step: Step };
+  [ActionType.SetExpandedStepIndices]: { indices: number[] };
+  [ActionType.SetFile]: { file: File };
+  [ActionType.SetName]: { name: string };
+  [ActionType.SetRecipientKey]: { key: string };
+  [ActionType.SetUploadPrice]: { price: string };
+  [ActionType.ToggleStep]: { step: Step };
+  [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -94,12 +80,20 @@ export function setRecipientKey(key: string): EmbalmActions {
   };
 }
 
-export function setPayloadPath(path: string, size?: number): EmbalmActions {
+export function setFile(file: File): EmbalmActions {
   return {
-    type: ActionType.SetPayloadPath,
+    type: ActionType.SetFile,
     payload: {
-      path,
-      size,
+      file,
+    },
+  };
+}
+
+export function setUploadPrice(price: string): EmbalmActions {
+  return {
+    type: ActionType.SetUploadPrice,
+    payload: {
+      price,
     },
   };
 }

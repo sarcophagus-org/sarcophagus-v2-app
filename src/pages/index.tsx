@@ -83,7 +83,10 @@ export function Pages() {
       </DevNavbar>
 
       {/* App Content */}
-      <Flex flex={1}>
+      <Flex
+        flex={1}
+        overflow="auto"
+      >
         <Routes>
           {routes.map(route => (
             <Route

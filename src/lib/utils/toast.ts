@@ -2,6 +2,8 @@
 // All toast message parameters are defined in this file
 
 import { UseToastOptions } from '@chakra-ui/react';
+import { maxFileSize } from 'lib/constants';
+import prettyBytes from 'pretty-bytes';
 import { formatToastMessage } from './helpers';
 
 const duration = 5000;
@@ -139,6 +141,22 @@ export const uploadFailure = (errorMessage: string): UseToastOptions => ({
   title: 'Upload failed',
   description: formatToastMessage(errorMessage),
   status: 'error',
+  duration,
+  position,
+});
+
+export const fileTooBig = (): UseToastOptions => ({
+  title: 'File too big',
+  description: `Your file size must not exceed ${prettyBytes(maxFileSize)}.`,
+  status: 'error',
+  duration,
+  position,
+});
+
+export const payloadSaveSuccess = (): UseToastOptions => ({
+  title: 'Payload saved',
+  description: 'Your payload has been saved for a later step.',
+  status: 'success',
   duration,
   position,
 });

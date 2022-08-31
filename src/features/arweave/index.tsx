@@ -1,12 +1,12 @@
-import { Divider, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Heading, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
-import { BundlrBalance } from './BundlrBalance';
-import { BundlrConnect } from './BundlrConnect';
-import { DownloadFile } from './DownloadFile';
-import { FundBundlr } from './FundBundlr';
-import { NetworkSelector } from './NetworkSelector';
-import { UploadFile } from './UploadFile';
-import { WithdrawBalance } from './WithdrawBalance';
+import { BundlrBalance } from './components/BundlrBalance';
+import { BundlrConnect } from './components/BundlrConnect';
+import { DownloadFile } from './components/DownloadFile';
+import { FundBundlr } from './components/FundBundlr';
+import { NetworkSelector } from './components/NetworkSelector';
+import { UploadFile } from './components/UploadFile';
+import { WithdrawBalance } from './components/WithdrawBalance';
 
 /**
  * A temporary component that contains the necessary functionality for devs to test the Arweave
@@ -19,7 +19,11 @@ export function Arweave() {
   const { isConnected } = useAccount();
 
   return (
-    <Flex direction="column">
+    <Flex
+      direction="column"
+      ml="72px"
+      mt="48px"
+    >
       <Heading size="lg">Arweave Test</Heading>
       <Text
         mt={3}
@@ -44,6 +48,7 @@ export function Arweave() {
           <UploadFile />
           <Divider mt={6} />
           <DownloadFile />
+          <Divider mt={6} />
         </>
       ) : (
         <Text

@@ -1,8 +1,8 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
-import { mainnetNetworkConfig } from '../../lib/config/mainnet';
-import { maticNetworkConfig } from '../../lib/config/matic';
-import { useBundlr } from './hooks/useBundlr';
+import { mainnetNetworkConfig } from '../../../lib/config/mainnet';
+import { maticNetworkConfig } from '../../../lib/config/matic';
+import { useBundlr } from '../hooks/useBundlr';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality

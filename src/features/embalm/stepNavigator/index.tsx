@@ -1,4 +1,4 @@
-import { bytesToSize } from 'lib/utils/helpers';
+import prettyBytes from 'pretty-bytes';
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
 import { Requirements } from './components/Requirements';
@@ -18,7 +18,7 @@ export enum StepId {
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, payloadSize } = useSelector(x => x.embalmState);
+  const { name, file } = useSelector(x => x.embalmState);
 
   // Side effects for when the form changes, like updating the step status when a form value changes
   useSetStatuses();
@@ -44,7 +44,7 @@ export function StepNavigator() {
         <Requirements>
           <RequirementVariantA
             title="Payload"
-            value={payloadSize !== 0 ? bytesToSize(payloadSize) : ''}
+            value={file ? prettyBytes(file.size) : ''}
           />
         </Requirements>
       </StepElement>

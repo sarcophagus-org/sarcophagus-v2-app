@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Center, Flex, HStack } from '@chakra-ui/react';
 import { Embalm } from '../features/embalm';
 
 export function EmbalmPage() {
