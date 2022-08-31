@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Heading, Text } from '@chakra-ui/react';
+import { Divider, Flex, Heading, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 import { BundlrBalance } from './components/BundlrBalance';
 import { BundlrConnect } from './components/BundlrConnect';
