@@ -26,7 +26,6 @@ export function useUploadPrice() {
       const price = await bundlr.getPrice(file.size);
       if (!price) return;
       const convertedPrice = bundlr.utils.unitConverter(price);
-      console.log('difference');
       dispatch(setUploadPrice(convertedPrice.toString()));
     })();
   }, [bundlr, dispatch, file]);
