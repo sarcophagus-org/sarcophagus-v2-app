@@ -114,7 +114,7 @@ export function useRecoverPublicKey() {
           const transaction = await provider.getTransaction(response.data.result[index].hash);
 
           //we can only resolve a public key when the 'from' transaction matches the given address
-          if (transaction.from.toLowerCase() === address.toLowerCase()) {
+          if (transaction.from && transaction.from.toLowerCase() === address.toLowerCase()) {
             const recoveredPublicKey = await getPublicKeyFromTransactionResponse(transaction);
             if (
               ethers.utils.computeAddress(recoveredPublicKey).toLowerCase() == address.toLowerCase()
