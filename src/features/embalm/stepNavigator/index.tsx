@@ -1,16 +1,13 @@
 import prettyBytes from 'pretty-bytes';
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
+import { useGetBalance } from '../stepContent/hooks/useGetBalance';
 import { Requirements } from './components/Requirements';
 import RequirementVariantA from './components/RequirementVariantA';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
 import { useSetStatuses } from './hooks/useSetStatuses';
-
-export enum StepId {
-  NameSarcophagus,
-  UploadPayload,
-}
+import { useUploadPrice } from './hooks/useUploadPrice';
 
 /**
  * The embalm step navigator.
@@ -19,8 +16,10 @@ export enum StepId {
  */
 export function StepNavigator() {
   const { name, file } = useSelector(x => x.embalmState);
+  const { isFunding } = useSelector(x => x.bundlrState);
+  const { balance, formattedBalance } = useGetBalance();
+  const { uploadPrice } = useUploadPrice();
 
-  // Side effects for when the form changes, like updating the step status when a form value changes
   useSetStatuses();
 
   return (
@@ -33,6 +32,7 @@ export function StepNavigator() {
           <RequirementVariantA
             title="Name"
             value={name}
+            valid={name.length > 0}
           />
         </Requirements>
       </StepElement>
@@ -45,18 +45,21 @@ export function StepNavigator() {
           <RequirementVariantA
             title="Payload"
             value={file ? prettyBytes(file.size) : ''}
+            valid={!!file}
           />
         </Requirements>
       </StepElement>
 
       <StepElement
-        step={Step.CreateRecipientKeypair}
-        title="Create Recipient Keypair"
+        step={Step.FundBundlr}
+        title="Fund Arweave Bundlr"
+        isLoading={isFunding}
       >
         <Requirements>
           <RequirementVariantA
-            title="WIP"
-            value=""
+            title="Bundlr balance"
+            value={formattedBalance}
+            valid={parseFloat(balance) > parseFloat(uploadPrice)}
           />
         </Requirements>
       </StepElement>
@@ -69,6 +72,7 @@ export function StepNavigator() {
           <RequirementVariantA
             title="WIP"
             value=""
+            valid={false}
           />
         </Requirements>
       </StepElement>
@@ -81,6 +85,7 @@ export function StepNavigator() {
           <RequirementVariantA
             title="WIP"
             value=""
+            valid={false}
           />
         </Requirements>
       </StepElement>
@@ -93,6 +98,7 @@ export function StepNavigator() {
           <RequirementVariantA
             title="WIP"
             value=""
+            valid={false}
           />
         </Requirements>
       </StepElement>
@@ -105,6 +111,7 @@ export function StepNavigator() {
           <RequirementVariantA
             title="WIP"
             value=""
+            valid={false}
           />
         </Requirements>
       </StepElement>

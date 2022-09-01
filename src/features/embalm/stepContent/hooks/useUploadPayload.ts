@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'store/index';
 
 export function useUploadPayload() {
   const dispatch = useDispatch();
-  const { file } = useSelector(x => x.embalmState);
+  const { file, uploadPrice } = useSelector(x => x.embalmState);
   const fileInputRef = createRef<HTMLInputElement>();
   const [error, setError] = useState<string | null>('');
   const toast = useToast();
@@ -31,5 +31,6 @@ export function useUploadPayload() {
     file,
     fileInputRef,
     handleSetFile,
+    uploadPrice,
   };
 }

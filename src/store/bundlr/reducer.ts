@@ -5,12 +5,16 @@ import { ActionType } from './actions';
 export interface BundlrState {
   isConnected: boolean;
   bundlr: WebBundlr | null;
+  balance: string;
+  isFunding: boolean;
   txId: string | null;
 }
 
 export const bundlrInitialState: BundlrState = {
   isConnected: false,
   bundlr: null,
+  balance: '',
+  isFunding: false,
   txId: null,
 };
 
@@ -25,6 +29,12 @@ export function bundlrReducer(state: BundlrState, action: Actions): BundlrState 
     case ActionType.SetBundlr:
       const bundlr = action.payload.bundlr;
       return { ...state, bundlr };
+
+    case ActionType.SetBalance:
+      return { ...state, balance: action.payload.balance };
+
+    case ActionType.SetIsFunding:
+      return { ...state, isFunding: action.payload.isFunding };
 
     case ActionType.SetTxId:
       const txId = action.payload.txId;

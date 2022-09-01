@@ -1,10 +1,15 @@
 import { Flex, Heading, Input, Link, Text, VStack } from '@chakra-ui/react';
 import { Alert } from 'components/Alert';
+import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
+import prettyBytes from 'pretty-bytes';
+import { useSelector } from 'store/index';
 import { FileDragAndDrop } from '../components/FileDragAndDrop';
 import { useUploadPayload } from '../hooks/useUploadPayload';
 
 export function UploadPayload() {
   const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
+  const { formattedUploadPrice } = useUploadPrice();
+  const isConnected = useSelector(x => x.bundlrState.isConnected);
 
   function handleClickFilePicker() {
     if (fileInputRef.current) {
@@ -45,6 +50,11 @@ export function UploadPayload() {
         {file ? (
           <VStack spacing={3}>
             <Text>{file.name}</Text>
+            <Text>Size: {prettyBytes(file.size)}</Text>
+            <Text>
+              {"Bundlr's upload price: "}
+              {isConnected ? formattedUploadPrice : 'Not connected to the Bundlr'}
+            </Text>
             <Link
               textDecor="underline"
               onClick={handleClickFilePicker}

@@ -1,11 +1,13 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
-import { useBundlr } from '../hooks/useBundlr';
+import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
+import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
  */
 export function BundlrConnect() {
-  const { bundlr, isConnected, connectToBundlr, disconnectFromBundlr } = useBundlr();
+  const { bundlr, isConnected } = useBundlr();
+  const { connectToBundlr, disconnectFromBundlr } = useBundlrSession();
 
   function handleClickButton() {
     if (isConnected) {

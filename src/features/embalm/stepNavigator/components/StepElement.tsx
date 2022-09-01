@@ -5,6 +5,7 @@ import {
   AccordionPanel,
   Center,
   Flex,
+  Spinner,
   Text,
 } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
@@ -16,9 +17,10 @@ interface StepProps {
   title: string;
   step: Step;
   children: ReactNode;
+  isLoading?: boolean;
 }
 
-export function StepElement({ title, step, children }: StepProps) {
+export function StepElement({ title, step, children, isLoading }: StepProps) {
   const { getStatus, selectStep, toggleStep } = useStepNavigator();
   const status = getStatus(step);
 
@@ -44,11 +46,12 @@ export function StepElement({ title, step, children }: StepProps) {
         cursor="default"
       >
         <Flex
-          onClick={handleSelect}
+          align="center"
           cursor="pointer"
           _hover={{
             textDecoration: 'underline',
           }}
+          onClick={handleSelect}
         >
           <StepStatusIndicator
             status={status}
@@ -60,6 +63,12 @@ export function StepElement({ title, step, children }: StepProps) {
           >
             {title}
           </Text>
+          {isLoading && (
+            <Spinner
+              ml={3}
+              size="xs"
+            />
+          )}
         </Flex>
         <Center
           h="24px"

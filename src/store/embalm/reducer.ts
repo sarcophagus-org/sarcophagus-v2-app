@@ -11,11 +11,12 @@ export enum StepStatus {
 export enum Step {
   NameSarcophagus = 0,
   UploadPayload = 1,
-  CreateRecipientKeypair = 2,
-  SetResurrection = 3,
-  SelectArchaeologists = 4,
-  InitializeSarophagus = 5,
-  FinalizeSarcophagus = 6,
+  FundBundlr = 2,
+  CreateRecipientKeypair = 3,
+  SetResurrection = 4,
+  SelectArchaeologists = 5,
+  InitializeSarophagus = 6,
+  FinalizeSarcophagus = 7,
 }
 
 export interface EmbalmState {

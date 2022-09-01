@@ -1,13 +1,14 @@
 import { Button, Flex, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
+import { useStepContent } from './hooks/useStepContent';
 import { CreateRecipientKeypair } from './steps/CreateRecipientKeypair';
 import { FinalizeSarcophagus } from './steps/FinalizeSarcophagus';
+import { FundBundlr } from './steps/FundBundlr';
 import { InitializeSarcophagus } from './steps/InitializeSarcophagus';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';
 import { SetResurrectionDate } from './steps/SetResurrectionDate';
 import { UploadPayload } from './steps/UploadPayload';
-import { useStepContent } from './hooks/useStepContent';
 
 export function StepContent() {
   const { currentStep, stepCount, goToPrev, goToNext } = useStepContent();
@@ -16,6 +17,7 @@ export function StepContent() {
   const contentMap: { [key: number]: JSX.Element } = {
     [Step.NameSarcophagus]: <NameSarcophagus />,
     [Step.UploadPayload]: <UploadPayload />,
+    [Step.FundBundlr]: <FundBundlr />,
     [Step.CreateRecipientKeypair]: <CreateRecipientKeypair />,
     [Step.SetResurrection]: <SetResurrectionDate />,
     [Step.SelectArchaeologists]: <SelectArchaeologists />,

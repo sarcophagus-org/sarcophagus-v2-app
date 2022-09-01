@@ -6,7 +6,7 @@ import { Step, StepStatus } from './reducer';
 export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
-  SetFile = 'EMBALME_SET_FILE',
+  SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
   SetPublicKey = 'CREATE_SARCO_SET_PUBLIC_KEY_ID',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
