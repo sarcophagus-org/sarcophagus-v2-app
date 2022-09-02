@@ -59,7 +59,7 @@
   },
   "scripts": {
     "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
@@ -68,9 +68,9 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ],
     "development": [
       "last 1 chrome version",
