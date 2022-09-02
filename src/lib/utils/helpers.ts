@@ -78,3 +78,13 @@ export function formatResurrection(resurrection: number) {
   if (resurrection === 0) return '0 seconds';
   return moment.duration(resurrection).humanize({ d: 7, w: 4 });
 }
+
+export function formatLargeNumber(num: string): string {
+  if (num.length > 9) {
+    return parseInt(num).toExponential(4);
+  } else if (num.length <= 9 && num.length > 4) {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  } else {
+    return num;
+  }
+}

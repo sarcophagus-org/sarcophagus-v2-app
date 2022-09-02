@@ -21,8 +21,16 @@ export function validatePublicKey(key: string) {
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
-  const { name, file, stepStatuses, publicKey, outerPrivateKey, outerPublicKey, resurrection } =
-    useSelector(x => x.embalmState);
+  const {
+    diggingFees,
+    file,
+    name,
+    outerPrivateKey,
+    outerPublicKey,
+    publicKey,
+    resurrection,
+    stepStatuses,
+  } = useSelector(x => x.embalmState);
   const isConnected = useSelector(x => x.bundlrState.isConnected);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
@@ -31,6 +39,7 @@ export function useSetStatuses() {
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
   const resurrectionsStatus = stepStatuses[Step.Resurrections];
+  const diggingFeesStatus = stepStatuses[Step.SetDiggingFees];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
@@ -88,6 +97,16 @@ export function useSetStatuses() {
     }
   }
 
+  function diggingFeesEffect() {
+    if (parseInt(diggingFees) > 0) {
+      dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Complete));
+    } else {
+      if (diggingFeesStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Started));
+      }
+    }
+  }
+
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
   useEffect(fundBundlrEffect, [
@@ -107,4 +126,5 @@ export function useSetStatuses() {
     resurrection,
     resurrectionsStatus,
   ]);
+  useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
 }

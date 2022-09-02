@@ -5,32 +5,34 @@ import { Step, StepStatus } from './reducer';
 // unexpected behavior.
 export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
+  SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
-  SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetName = 'EMBALM_SET_NAME',
+  SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetPublicKey = 'EMBALM_SET_PUBLIC_KEY_ID',
+  SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
 }
 
 type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
+  [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetPublicKey]: { publicKey: string };
+  [ActionType.SetRecipientAddress]: { address: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
-  [ActionType.SetRecipientAddress]: { address: string };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -57,6 +59,15 @@ export function toggleStep(step: Step): EmbalmActions {
     type: ActionType.ToggleStep,
     payload: {
       step,
+    },
+  };
+}
+
+export function setDiggingFees(diggingFees: string): EmbalmActions {
+  return {
+    type: ActionType.SetDiggingFees,
+    payload: {
+      diggingFees,
     },
   };
 }

@@ -16,34 +16,35 @@ export enum Step {
   SetRecipientPublicKey = 3,
   CreateEncryptionKeypair = 4,
   Resurrections = 5,
-  SelectArchaeologists = 6,
-  InitializeSarophagus = 7,
-  FinalizeSarcophagus = 8,
+  SetDiggingFees = 6,
 }
 
 export interface EmbalmState {
   currentStep: Step;
+  diggingFees: string;
   expandedStepIndices: number[];
   file: File | null;
   name: string;
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
   publicKey: string;
+  recipientAddress: string;
   resurrection: number;
   resurrectionRadioValue: string;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
-  recipientAddress: string;
 }
 
 export const embalmInitialState: EmbalmState = {
   currentStep: Step.NameSarcophagus,
+  diggingFees: '',
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
   name: '',
   outerPrivateKey: null,
   outerPublicKey: null,
   publicKey: '',
+  recipientAddress: '',
   resurrection: 0,
   resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
   stepStatuses: Object.keys(Step).reduce(
@@ -51,7 +52,6 @@ export const embalmInitialState: EmbalmState = {
     {}
   ),
   uploadPrice: '',
-  recipientAddress: '',
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -77,6 +77,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.ToggleStep:
       return toggleStep(state, action.payload.step);
+
+    case ActionType.SetDiggingFees:
+      return { ...state, diggingFees: action.payload.diggingFees };
 
     case ActionType.SetExpandedStepIndices:
       return { ...state, expandedStepIndices: action.payload.indices };

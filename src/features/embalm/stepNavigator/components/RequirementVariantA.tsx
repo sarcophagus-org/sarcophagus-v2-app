@@ -1,11 +1,11 @@
 import { CheckCircleIcon } from '@chakra-ui/icons';
 import { Flex, Text } from '@chakra-ui/react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 interface RequirementVariantAProps {
   title: string;
-  value: string;
   valid: boolean;
+  children?: ReactNode;
 }
 
 /**
@@ -15,7 +15,7 @@ interface RequirementVariantAProps {
  *
  * Sarcophagus Name: Corporate Blackmail
  */
-function RequirementVariantA({ title, value, valid }: RequirementVariantAProps) {
+function RequirementVariantA({ title, valid, children }: RequirementVariantAProps) {
   return (
     <Flex align="top">
       <CheckCircleIcon
@@ -41,7 +41,7 @@ function RequirementVariantA({ title, value, valid }: RequirementVariantAProps) 
           noOfLines={1}
           textOverflow="ellipsis"
         >
-          {value}
+          {children}
         </Text>
       </Flex>
     </Flex>

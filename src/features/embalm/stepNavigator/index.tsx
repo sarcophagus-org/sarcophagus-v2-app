@@ -1,5 +1,6 @@
+import { Image } from '@chakra-ui/react';
 import { minimumResurrection } from 'lib/constants';
-import { formatResurrection } from 'lib/utils/helpers';
+import { formatLargeNumber, formatResurrection } from 'lib/utils/helpers';
 import prettyBytes from 'pretty-bytes';
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
@@ -9,8 +10,8 @@ import RequirementVariantA from './components/RequirementVariantA';
 import RequirementVariantB from './components/RequirementVariantB';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
-import { useUploadPrice } from './hooks/useUploadPrice';
 import { useSetStatuses, validatePublicKey } from './hooks/useSetStatuses';
+import { useUploadPrice } from './hooks/useUploadPrice';
 
 export enum StepId {
   NameSarcophagus,
@@ -23,9 +24,8 @@ export enum StepId {
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, file, publicKey, outerPublicKey, outerPrivateKey, resurrection } = useSelector(
-    x => x.embalmState
-  );
+  const { name, file, publicKey, outerPublicKey, outerPrivateKey, resurrection, diggingFees } =
+    useSelector(x => x.embalmState);
   const { isFunding } = useSelector(x => x.bundlrState);
   const { balance, formattedBalance } = useGetBalance();
   const { uploadPrice } = useUploadPrice();
@@ -41,9 +41,10 @@ export function StepNavigator() {
         <Requirements>
           <RequirementVariantA
             title="Name"
-            value={name}
             valid={name.length > 0}
-          />
+          >
+            {name}
+          </RequirementVariantA>
         </Requirements>
       </StepElement>
 
@@ -54,9 +55,10 @@ export function StepNavigator() {
         <Requirements>
           <RequirementVariantA
             title="Payload"
-            value={file ? prettyBytes(file.size) : ''}
             valid={!!file}
-          />
+          >
+            {file ? prettyBytes(file.size) : ''}
+          </RequirementVariantA>
         </Requirements>
       </StepElement>
 
@@ -68,9 +70,10 @@ export function StepNavigator() {
         <Requirements>
           <RequirementVariantA
             title="Bundlr balance"
-            value={formattedBalance}
             valid={parseFloat(balance) > parseFloat(uploadPrice)}
-          />
+          >
+            {formattedBalance}
+          </RequirementVariantA>
         </Requirements>
       </StepElement>
 
@@ -104,9 +107,30 @@ export function StepNavigator() {
         <Requirements>
           <RequirementVariantA
             title="First rewrap"
-            value={`${formatResurrection(resurrection)} from now`}
             valid={resurrection >= minimumResurrection}
-          />
+          >
+            {formatResurrection(resurrection)}
+          </RequirementVariantA>
+        </Requirements>
+      </StepElement>
+      <StepElement
+        step={Step.SetDiggingFees}
+        title="Set Digging Fees"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="Digging fees"
+            valid={parseInt(diggingFees) > 0}
+          >
+            <Image
+              w="18px"
+              h="18px"
+              mr="0.5rem"
+              src="sarco-token-icon.png"
+              float="left"
+            />
+            {formatLargeNumber(diggingFees)}
+          </RequirementVariantA>
         </Requirements>
       </StepElement>
     </StepsContainer>
