@@ -9,7 +9,6 @@ export const Input: ComponentStyleConfig = {
         border: '1px',
         borderRadius: 0,
         borderColor: 'brand.950',
-        marginTop: 1,
         fontSize: styles.global.body.fontSize,
         _disabled: {
           borderColor: 'brand.300',

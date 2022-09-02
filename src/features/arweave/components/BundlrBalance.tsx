@@ -1,14 +1,14 @@
 import { Flex, Text } from '@chakra-ui/react';
+import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useNetwork } from 'wagmi';
-import { useBundlr } from '../hooks/useBundlr';
-import { useGetBalance } from '../hooks/useGetBalance';
+import { useGetBalance } from '../../embalm/stepContent/hooks/useGetBalance';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
  */
 export function BundlrBalance() {
   const { chain } = useNetwork();
-  const balance = useGetBalance();
+  const { balance } = useGetBalance();
   const { isConnected } = useBundlr();
 
   return (

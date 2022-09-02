@@ -8,9 +8,8 @@ import {
   NumberInputField,
   Text,
 } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useState } from 'react';
-import { useBundlr } from '../hooks/useBundlr';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
@@ -25,8 +24,7 @@ export function FundBundlr() {
   }
 
   async function handleFund() {
-    const parsedAmount = ethers.utils.parseUnits(amount);
-    await fund(parsedAmount);
+    await fund(amount);
   }
 
   function fundButtonDisabled() {

@@ -192,3 +192,26 @@ export const recoverPublicKeyNoTransactions = (): UseToastOptions => ({
   duration,
   position,
 });
+
+export const generateOuterKeys = (): UseToastOptions => ({
+  title: 'Keys generated',
+  description: 'A new pair of encryption keys have been generated.',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const generateOuterKeysFailure = (errorMessage: string): UseToastOptions => ({
+  title: 'Failed to generate keys',
+  description: formatToastMessage(errorMessage),
+  status: 'error',
+  duration,
+  position,
+});
+
+export const copiedToClipboard = (): UseToastOptions => ({
+  title: 'Text copied to clipboard',
+  status: 'info',
+  duration,
+  position,
+});

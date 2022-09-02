@@ -6,7 +6,8 @@ import { Step, StepStatus } from './reducer';
 export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
-  SetFile = 'EMBALME_SET_FILE',
+  SetFile = 'EMBALM_SET_FILE',
+  SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetName = 'EMBALM_SET_NAME',
   SetPublicKey = 'CREATE_SARCO_SET_PUBLIC_KEY_ID',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
@@ -20,6 +21,7 @@ type EmbalmPayload = {
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
+  [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetPublicKey]: { publicKey: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
@@ -69,6 +71,16 @@ export function setName(name: string): EmbalmActions {
     type: ActionType.SetName,
     payload: {
       name,
+    },
+  };
+}
+
+export function setOuterLayerKeys(privateKey: string, publicKey: string): EmbalmActions {
+  return {
+    type: ActionType.SetOuterLayerKeys,
+    payload: {
+      privateKey,
+      publicKey,
     },
   };
 }

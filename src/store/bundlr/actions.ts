@@ -7,18 +7,18 @@ export enum ActionType {
   Connect = 'BUNDLR_CONNECT',
   Disconnect = 'BUNDLR_DISCONNECT',
   SetBundlr = 'BUNDLR_SET',
+  SetBalance = 'EMBALM_SET_BALANCE',
+  SetIsFunding = 'EMBALM_SET_IS_FUNDING',
   SetTxId = 'BUNDLR_SET_TX_ID',
 }
 
 type BundlrPayload = {
   [ActionType.Connect]: {};
   [ActionType.Disconnect]: {};
-  [ActionType.SetBundlr]: {
-    bundlr: WebBundlr | null;
-  };
-  [ActionType.SetTxId]: {
-    txId: string;
-  };
+  [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
+  [ActionType.SetBalance]: { balance: string };
+  [ActionType.SetIsFunding]: { isFunding: boolean };
+  [ActionType.SetTxId]: { txId: string };
 };
 
 export function connect(): BundlrActions {
@@ -40,6 +40,24 @@ export function setBundlr(bundlr: WebBundlr | null): BundlrActions {
     type: ActionType.SetBundlr,
     payload: {
       bundlr,
+    },
+  };
+}
+
+export function setBalance(balance: string): BundlrActions {
+  return {
+    type: ActionType.SetBalance,
+    payload: {
+      balance,
+    },
+  };
+}
+
+export function setIsFunding(isFunding: boolean): BundlrActions {
+  return {
+    type: ActionType.SetIsFunding,
+    payload: {
+      isFunding,
     },
   };
 }

@@ -1,7 +1,9 @@
+import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEffect } from 'react';
 import { updateStepStatus } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
+import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 
 export function validatePublicKey(key: string) {
@@ -18,10 +20,16 @@ export function validatePublicKey(key: string) {
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
-  const { name, file, publicKey, stepStatuses } = useSelector(x => x.embalmState);
+  const { name, file, stepStatuses, publicKey, outerPrivateKey, outerPublicKey } = useSelector(
+    x => x.embalmState
+  );
+  const isConnected = useSelector(x => x.bundlrState.isConnected);
+  const { uploadPrice } = useUploadPrice();
+  const { balance } = useGetBalance();
 
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
+  const fundBundlrStatus = stepStatuses[Step.FundBundlr];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
@@ -44,6 +52,22 @@ export function useSetStatuses() {
     }
   }
 
+  function fundBundlrEffect() {
+    if (isConnected && parseFloat(balance) > parseFloat(uploadPrice)) {
+      dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
+    } else {
+      if (fundBundlrStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Started));
+      }
+    }
+  }
+
+  function createEncryptionKeypairEffect() {
+    if (!!outerPrivateKey && !!outerPublicKey) {
+      dispatch(updateStepStatus(Step.CreateEncryptionKeypair, StepStatus.Complete));
+    }
+  }
+
   function setPublicKeyEffect() {
     dispatch(
       updateStepStatus(
@@ -57,5 +81,14 @@ export function useSetStatuses() {
 
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
+  useEffect(fundBundlrEffect, [
+    balance,
+    dispatch,
+    file,
+    fundBundlrStatus,
+    isConnected,
+    uploadPrice,
+  ]);
+  useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setPublicKeyEffect, [dispatch, publicKey]);
 }

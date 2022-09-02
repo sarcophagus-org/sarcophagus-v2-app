@@ -1,8 +1,8 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 import { mainnetNetworkConfig } from '../../../lib/config/mainnet';
 import { maticNetworkConfig } from '../../../lib/config/matic';
-import { useBundlr } from '../hooks/useBundlr';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
@@ -10,7 +10,7 @@ import { useBundlr } from '../hooks/useBundlr';
  */
 export function NetworkSelector() {
   const { switchNetwork, isLoading, pendingChainId } = useSwitchNetwork();
-  const { disconnectFromBundlr } = useBundlr();
+  const { disconnectFromBundlr } = useBundlrSession();
   const { chain } = useNetwork();
   const ethChainId = Number(mainnetNetworkConfig.chainId);
   const maticChainId = Number(maticNetworkConfig.chainId);

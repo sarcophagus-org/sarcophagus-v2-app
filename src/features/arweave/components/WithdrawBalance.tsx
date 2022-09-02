@@ -7,16 +7,16 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useState } from 'react';
-import { useBundlr } from '../hooks/useBundlr';
-import { useGetBalance } from '../hooks/useGetBalance';
+import { useGetBalance } from '../../embalm/stepContent/hooks/useGetBalance';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
  */
 export function WithdrawBalance() {
   const { bundlr, withdraw, isWithdrawing } = useBundlr();
-  const balance = useGetBalance();
+  const { balance } = useGetBalance();
   const [amount, setAmount] = useState('');
 
   function handleChangeAmount(valueAsString: string) {

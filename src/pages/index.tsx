@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
+import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Link, Route, Routes } from 'react-router-dom';
-import { ConnectWalletButton } from '../components/ConnectWalletButton';
 import { DevNavbar } from '../components/DevNavbar';
 import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';

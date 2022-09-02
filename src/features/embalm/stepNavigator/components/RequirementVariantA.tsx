@@ -5,6 +5,7 @@ import React from 'react';
 interface RequirementVariantAProps {
   title: string;
   value: string;
+  valid: boolean;
 }
 
 /**
@@ -14,9 +15,7 @@ interface RequirementVariantAProps {
  *
  * Sarcophagus Name: Corporate Blackmail
  */
-function RequirementVariantA({ title, value }: RequirementVariantAProps) {
-  const valid = value.trim().length > 0;
-
+function RequirementVariantA({ title, value, valid }: RequirementVariantAProps) {
   return (
     <Flex align="top">
       <CheckCircleIcon

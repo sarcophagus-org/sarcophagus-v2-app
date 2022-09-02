@@ -4,26 +4,26 @@ import React from 'react';
 
 interface RequirementVariantBProps {
   title: string;
-  filled: boolean;
+  valid: boolean;
 }
 
 /**
  * Requirement variant B
  * Contains just a title
  */
-function RequirementVariantB({ title, filled }: RequirementVariantBProps) {
+function RequirementVariantB({ title, valid }: RequirementVariantBProps) {
   return (
     <Flex align="top">
       <CheckCircleIcon
         w="1rem"
         h="1rem"
-        color={filled ? 'brand.950' : 'brand.400'}
+        color={valid ? 'brand.950' : 'brand.400'}
         mt={1}
       />
       <Text
         noOfLines={1}
         mx={3}
-        color={filled ? 'brand.950' : 'brand.400'}
+        color={valid ? 'brand.950' : 'brand.400'}
       >
         {title}
       </Text>
