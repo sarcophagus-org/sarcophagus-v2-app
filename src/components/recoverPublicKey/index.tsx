@@ -14,7 +14,10 @@ export function RecoverPublicKey() {
   }
 
   return (
-    <VStack align="left">
+    <VStack
+      align="left"
+      spacing={6}
+    >
       <Input
         placeholder="0x0..."
         onChange={e => dispatch(setRecipientAddress(e.target.value))}

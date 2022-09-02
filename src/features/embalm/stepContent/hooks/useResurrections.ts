@@ -136,8 +136,10 @@ export function useResurrections() {
           .humanize()} or more in the future.`
       );
     } else if (resurrection < 0) {
+      // Not possible through the UI (unless someone modifies the dom) but just in case
       setError('Resurrection must not be in the past.');
     } else {
+      setError(null);
     }
   }, [isFocused, resurrection]);
 

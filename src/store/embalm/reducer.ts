@@ -12,8 +12,8 @@ export enum StepStatus {
 export enum Step {
   NameSarcophagus = 0,
   UploadPayload = 1,
-  SetRecipientPublicKey = 2,
-  FundBundlr = 3,
+  FundBundlr = 2,
+  SetRecipientPublicKey = 3,
   CreateEncryptionKeypair = 4,
   Resurrections = 5,
   SelectArchaeologists = 6,
