@@ -7,8 +7,13 @@ import RequirementVariantA from './components/RequirementVariantA';
 import RequirementVariantB from './components/RequirementVariantB';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
-import { useSetStatuses } from './hooks/useSetStatuses';
 import { useUploadPrice } from './hooks/useUploadPrice';
+import { useSetStatuses, validatePublicKey } from './hooks/useSetStatuses';
+
+export enum StepId {
+  NameSarcophagus,
+  UploadPayload,
+}
 
 /**
  * The embalm step navigator.
@@ -16,7 +21,9 @@ import { useUploadPrice } from './hooks/useUploadPrice';
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, file, outerPublicKey, outerPrivateKey } = useSelector(x => x.embalmState);
+  const { name, file, publicKey, outerPublicKey, outerPrivateKey } = useSelector(
+    x => x.embalmState
+  );
   const { isFunding } = useSelector(x => x.bundlrState);
   const { balance, formattedBalance } = useGetBalance();
   const { uploadPrice } = useUploadPrice();
@@ -66,14 +73,13 @@ export function StepNavigator() {
       </StepElement>
 
       <StepElement
-        step={Step.CreateRecipientKeypair}
-        title="Create Recipient Keypair"
+        step={Step.SetRecipientPublicKey}
+        title="Set Recipient Public Key"
       >
         <Requirements>
-          <RequirementVariantA
-            title="WIP"
-            value=""
-            valid={false}
+          <RequirementVariantB
+            title="Public Key"
+            valid={validatePublicKey(publicKey)}
           />
         </Requirements>
       </StepElement>

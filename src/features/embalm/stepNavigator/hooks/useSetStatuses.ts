@@ -4,13 +4,23 @@ import { updateStepStatus } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
+import { ethers } from 'ethers';
+
+export function validatePublicKey(key: string) {
+  try {
+    ethers.utils.computePublicKey(key);
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
 
 /**
  * A hook that sets the statuses of the steps when their form elements are modified
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
-  const { name, file, stepStatuses, outerPrivateKey, outerPublicKey } = useSelector(
+  const { name, file, stepStatuses, publicKey, outerPrivateKey, outerPublicKey } = useSelector(
     x => x.embalmState
   );
   const isConnected = useSelector(x => x.bundlrState.isConnected);
@@ -56,6 +66,13 @@ export function useSetStatuses() {
     if (!!outerPrivateKey && !!outerPublicKey) {
       dispatch(updateStepStatus(Step.CreateEncryptionKeypair, StepStatus.Complete));
     }
+  function setPublicKeyEffect() {
+    dispatch(
+      updateStepStatus(
+        Step.SetRecipientPublicKey,
+        validatePublicKey(publicKey) ? StepStatus.Complete : StepStatus.NotStarted
+      )
+    );
   }
 
   // TODO: Build effects for each other step
@@ -71,4 +88,5 @@ export function useSetStatuses() {
     uploadPrice,
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
+  useEffect(setPublicKeyEffect, [dispatch, publicKey]);
 }

@@ -13,6 +13,7 @@ export enum ActionType {
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
+  SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
 }
 
 type EmbalmPayload = {
@@ -25,6 +26,7 @@ type EmbalmPayload = {
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
+  [ActionType.SetRecipientAddress]: { address: string };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -106,6 +108,15 @@ export function setUploadPrice(price: string): EmbalmActions {
     type: ActionType.SetUploadPrice,
     payload: {
       price,
+    },
+  };
+}
+
+export function setRecipientAddress(address: string): EmbalmActions {
+  return {
+    type: ActionType.SetRecipientAddress,
+    payload: {
+      address,
     },
   };
 }

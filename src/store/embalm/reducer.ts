@@ -11,13 +11,13 @@ export enum StepStatus {
 export enum Step {
   NameSarcophagus = 0,
   UploadPayload = 1,
-  FundBundlr = 2,
-  CreateRecipientKeypair = 3,
+  SetRecipientPublicKey = 2,
+  FundBundlr = 3,
   CreateEncryptionKeypair = 4,
-  SetResurrection = 5,
-  SelectArchaeologists = 6,
-  InitializeSarophagus = 7,
-  FinalizeSarcophagus = 8,
+  SetResurrection = 6,
+  SelectArchaeologists = 7,
+  InitializeSarophagus = 8,
+  FinalizeSarcophagus = 9,
 }
 
 export interface EmbalmState {
@@ -27,9 +27,10 @@ export interface EmbalmState {
   name: string;
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
-  publicKey: string | null;
+  publicKey: string;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
+  recipientAddress: string;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -39,12 +40,13 @@ export const embalmInitialState: EmbalmState = {
   name: '',
   outerPrivateKey: null,
   outerPublicKey: null,
-  publicKey: null,
+  publicKey: '',
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
   uploadPrice: '',
+  recipientAddress: '',
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -92,6 +94,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetUploadPrice:
       return { ...state, uploadPrice: action.payload.price };
+
+    case ActionType.SetRecipientAddress:
+      return { ...state, recipientAddress: action.payload.address };
 
     default:
       return state;

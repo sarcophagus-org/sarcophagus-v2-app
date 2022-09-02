@@ -165,7 +165,7 @@ export const recoverPublicKeyFailure = (errorMessage: string): UseToastOptions =
   title: 'Public Key Failed',
   description: formatToastMessage(errorMessage),
   status: 'error',
-  duration: null,
+  duration,
   position,
 });
 
