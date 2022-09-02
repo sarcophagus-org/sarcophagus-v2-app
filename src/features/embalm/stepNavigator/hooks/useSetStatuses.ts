@@ -66,6 +66,8 @@ export function useSetStatuses() {
     if (!!outerPrivateKey && !!outerPublicKey) {
       dispatch(updateStepStatus(Step.CreateEncryptionKeypair, StepStatus.Complete));
     }
+  }
+
   function setPublicKeyEffect() {
     dispatch(
       updateStepStatus(
