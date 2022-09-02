@@ -3,9 +3,10 @@ import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
 import { Requirements } from './components/Requirements';
 import RequirementVariantA from './components/RequirementVariantA';
+import RequirementVariantB from './components/RequirementVariantB';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
-import { useSetStatuses } from './hooks/useSetStatuses';
+import { useSetStatuses, validatePublicKey } from './hooks/useSetStatuses';
 
 export enum StepId {
   NameSarcophagus,
@@ -18,7 +19,7 @@ export enum StepId {
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, file } = useSelector(x => x.embalmState);
+  const { name, file, publicKey } = useSelector(x => x.embalmState);
 
   // Side effects for when the form changes, like updating the step status when a form value changes
   useSetStatuses();
@@ -50,13 +51,13 @@ export function StepNavigator() {
       </StepElement>
 
       <StepElement
-        step={Step.CreateRecipientKeypair}
-        title="Create Recipient Keypair"
+        step={Step.SetRecipientPublicKey}
+        title="Set Recipient Public Key"
       >
         <Requirements>
-          <RequirementVariantA
-            title="WIP"
-            value=""
+          <RequirementVariantB
+            title="Public Key"
+            filled={validatePublicKey(publicKey)}
           />
         </Requirements>
       </StepElement>

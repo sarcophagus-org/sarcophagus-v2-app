@@ -93,6 +93,7 @@ export function useRecoverPublicKey() {
 
   const recoverPublicKey = useCallback(
     async (address: string) => {
+      dispatch(setPublicKey(''));
       try {
         setIsLoading(true);
         if (!ethers.utils.isAddress(address)) {
@@ -113,12 +114,16 @@ export function useRecoverPublicKey() {
           const transaction = await provider.getTransaction(response.data.result[index].hash);
 
           //we can only resolve a public key when the 'from' transaction matches the given address
-          if (transaction.from.toLowerCase() === address.toLowerCase()) {
+          if (transaction.from && transaction.from.toLowerCase() === address.toLowerCase()) {
             const recoveredPublicKey = await getPublicKeyFromTransactionResponse(transaction);
             if (
               ethers.utils.computeAddress(recoveredPublicKey).toLowerCase() == address.toLowerCase()
             ) {
               dispatch(setPublicKey(recoveredPublicKey));
+
+              //TODO: remove log, this is just for testing
+              console.log('recovered public key', recoveredPublicKey);
+
               toast(recoverPublicKeySuccess());
               return;
             }

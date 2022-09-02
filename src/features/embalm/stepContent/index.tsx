@@ -1,6 +1,6 @@
 import { Button, Flex, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
-import { CreateRecipientKeypair } from './steps/CreateRecipientKeypair';
+import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { FinalizeSarcophagus } from './steps/FinalizeSarcophagus';
 import { InitializeSarcophagus } from './steps/InitializeSarcophagus';
 import { NameSarcophagus } from './steps/NameSarcophagus';
@@ -16,7 +16,7 @@ export function StepContent() {
   const contentMap: { [key: number]: JSX.Element } = {
     [Step.NameSarcophagus]: <NameSarcophagus />,
     [Step.UploadPayload]: <UploadPayload />,
-    [Step.CreateRecipientKeypair]: <CreateRecipientKeypair />,
+    [Step.SetRecipientPublicKey]: <SetRecipientPublicKey />,
     [Step.SetResurrection]: <SetResurrectionDate />,
     [Step.SelectArchaeologists]: <SelectArchaeologists />,
     [Step.InitializeSarophagus]: <InitializeSarcophagus />,
