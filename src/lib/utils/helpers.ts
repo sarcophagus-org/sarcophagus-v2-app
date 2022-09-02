@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 /**
  * Formats an address into a more readable format
  * Replaces the middle with "..." and uppercases it
@@ -49,4 +51,30 @@ export function removeFromArray<T>(array: T[], value: T) {
   if (index > -1) {
     array.splice(index, 1);
   }
+}
+
+// Approximately 1 month
+export function convertMonthsToMs(num: number) {
+  return num * 2_629_746_000;
+}
+
+export function convertWeeksToMs(num: number) {
+  return num * 604_800_000;
+}
+
+export function convertDaysToMs(num: number) {
+  return num * 86_400_000;
+}
+
+export function convertHoursToMs(num: number) {
+  return num * 3_600_000;
+}
+
+export function convertMinutesToMs(num: number) {
+  return num * 60_000;
+}
+
+export function formatResurrection(resurrection: number) {
+  if (resurrection === 0) return '0 seconds';
+  return moment.duration(resurrection).humanize({ d: 7, w: 4 });
 }

@@ -1,4 +1,5 @@
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
+import { minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
 import { updateStepStatus } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
@@ -20,9 +21,8 @@ export function validatePublicKey(key: string) {
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
-  const { name, file, stepStatuses, publicKey, outerPrivateKey, outerPublicKey } = useSelector(
-    x => x.embalmState
-  );
+  const { name, file, stepStatuses, publicKey, outerPrivateKey, outerPublicKey, resurrection } =
+    useSelector(x => x.embalmState);
   const isConnected = useSelector(x => x.bundlrState.isConnected);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
@@ -30,6 +30,7 @@ export function useSetStatuses() {
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
+  const resurrectionsStatus = stepStatuses[Step.Resurrections];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
@@ -77,7 +78,15 @@ export function useSetStatuses() {
     );
   }
 
-  // TODO: Build effects for each other step
+  function resurrectionsEffect() {
+    if (resurrection >= minimumResurrection) {
+      dispatch(updateStepStatus(Step.Resurrections, StepStatus.Complete));
+    } else {
+      if (resurrectionsStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.Resurrections, StepStatus.Started));
+      }
+    }
+  }
 
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
@@ -91,4 +100,11 @@ export function useSetStatuses() {
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setPublicKeyEffect, [dispatch, publicKey]);
+  useEffect(resurrectionsEffect, [
+    dispatch,
+    outerPrivateKey,
+    outerPublicKey,
+    resurrection,
+    resurrectionsStatus,
+  ]);
 }

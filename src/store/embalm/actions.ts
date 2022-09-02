@@ -9,7 +9,9 @@ export enum ActionType {
   SetFile = 'EMBALM_SET_FILE',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetName = 'EMBALM_SET_NAME',
-  SetPublicKey = 'CREATE_SARCO_SET_PUBLIC_KEY_ID',
+  SetPublicKey = 'EMBALM_SET_PUBLIC_KEY_ID',
+  SetResurrection = 'EMBALM_SET_RESURRECTION',
+  SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -23,6 +25,8 @@ type EmbalmPayload = {
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetPublicKey]: { publicKey: string };
+  [ActionType.SetResurrection]: { resurrection: number };
+  [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -99,6 +103,24 @@ export function setFile(file: File): EmbalmActions {
     type: ActionType.SetFile,
     payload: {
       file,
+    },
+  };
+}
+
+export function setResurrection(resurrection: number): EmbalmActions {
+  return {
+    type: ActionType.SetResurrection,
+    payload: {
+      resurrection,
+    },
+  };
+}
+
+export function setResurrectionRadioValue(value: string): EmbalmActions {
+  return {
+    type: ActionType.SetResurrectionRadioValue,
+    payload: {
+      value,
     },
   };
 }

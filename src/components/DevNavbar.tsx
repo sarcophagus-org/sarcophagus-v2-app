@@ -18,7 +18,7 @@ export function DevNavbar({ children }: { children: React.ReactNode }) {
     >
       <Image
         onClick={handleClickLogo}
-        src="/sarcophagus-logo.png"
+        src="sarcophagus-logo.png"
         cursor="pointer"
         mr={6}
       />

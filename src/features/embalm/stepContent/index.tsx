@@ -8,7 +8,7 @@ import { FundBundlr } from './steps/FundBundlr';
 import { InitializeSarcophagus } from './steps/InitializeSarcophagus';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';
-import { SetResurrectionDate } from './steps/SetResurrectionDate';
+import { Resurrections } from './steps/Resurrections';
 import { UploadPayload } from './steps/UploadPayload';
 
 export function StepContent() {
@@ -21,7 +21,7 @@ export function StepContent() {
     [Step.FundBundlr]: <FundBundlr />,
     [Step.SetRecipientPublicKey]: <SetRecipientPublicKey />,
     [Step.CreateEncryptionKeypair]: <CreateEncryptionKeypair />,
-    [Step.SetResurrection]: <SetResurrectionDate />,
+    [Step.Resurrections]: <Resurrections />,
     [Step.SelectArchaeologists]: <SelectArchaeologists />,
     [Step.InitializeSarophagus]: <InitializeSarcophagus />,
     [Step.FinalizeSarcophagus]: <FinalizeSarcophagus />,

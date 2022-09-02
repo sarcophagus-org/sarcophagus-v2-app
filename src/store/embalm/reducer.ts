@@ -1,3 +1,4 @@
+import { ResurrectionRadioValue } from 'features/embalm/stepContent/steps/Resurrections';
 import { removeFromArray } from 'lib/utils/helpers';
 import { Actions } from '..';
 import { ActionType } from './actions';
@@ -14,10 +15,10 @@ export enum Step {
   SetRecipientPublicKey = 2,
   FundBundlr = 3,
   CreateEncryptionKeypair = 4,
-  SetResurrection = 6,
-  SelectArchaeologists = 7,
-  InitializeSarophagus = 8,
-  FinalizeSarcophagus = 9,
+  Resurrections = 5,
+  SelectArchaeologists = 6,
+  InitializeSarophagus = 7,
+  FinalizeSarcophagus = 8,
 }
 
 export interface EmbalmState {
@@ -28,6 +29,8 @@ export interface EmbalmState {
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
   publicKey: string;
+  resurrection: number;
+  resurrectionRadioValue: string;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
   recipientAddress: string;
@@ -41,6 +44,8 @@ export const embalmInitialState: EmbalmState = {
   outerPrivateKey: null,
   outerPublicKey: null,
   publicKey: '',
+  resurrection: 0,
+  resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
@@ -91,6 +96,12 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetFile:
       return { ...state, file: action.payload.file };
+
+    case ActionType.SetResurrection:
+      return { ...state, resurrection: action.payload.resurrection };
+
+    case ActionType.SetResurrectionRadioValue:
+      return { ...state, resurrectionRadioValue: action.payload.value };
 
     case ActionType.SetUploadPrice:
       return { ...state, uploadPrice: action.payload.price };

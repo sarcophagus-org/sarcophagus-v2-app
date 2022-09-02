@@ -1,3 +1,5 @@
+import { minimumResurrection } from 'lib/constants';
+import { formatResurrection } from 'lib/utils/helpers';
 import prettyBytes from 'pretty-bytes';
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
@@ -21,7 +23,7 @@ export enum StepId {
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, file, publicKey, outerPublicKey, outerPrivateKey } = useSelector(
+  const { name, file, publicKey, outerPublicKey, outerPrivateKey, resurrection } = useSelector(
     x => x.embalmState
   );
   const { isFunding } = useSelector(x => x.bundlrState);
@@ -92,6 +94,18 @@ export function StepNavigator() {
           <RequirementVariantB
             title="Key pair generated"
             valid={!!outerPublicKey && !!outerPrivateKey}
+          />
+        </Requirements>
+      </StepElement>
+      <StepElement
+        step={Step.Resurrections}
+        title="Resurrections"
+      >
+        <Requirements>
+          <RequirementVariantA
+            title="First rewrap"
+            value={`${formatResurrection(resurrection)} from now`}
+            valid={resurrection >= minimumResurrection}
           />
         </Requirements>
       </StepElement>
