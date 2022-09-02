@@ -10,7 +10,9 @@ import { useUploadPrice } from './useUploadPrice';
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
-  const { name, file, stepStatuses } = useSelector(x => x.embalmState);
+  const { name, file, stepStatuses, outerPrivateKey, outerPublicKey } = useSelector(
+    x => x.embalmState
+  );
   const isConnected = useSelector(x => x.bundlrState.isConnected);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
@@ -50,6 +52,12 @@ export function useSetStatuses() {
     }
   }
 
+  function createEncryptionKeypairEffect() {
+    if (!!outerPrivateKey && !!outerPublicKey) {
+      dispatch(updateStepStatus(Step.CreateEncryptionKeypair, StepStatus.Complete));
+    }
+  }
+
   // TODO: Build effects for each other step
 
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
@@ -62,4 +70,5 @@ export function useSetStatuses() {
     isConnected,
     uploadPrice,
   ]);
+  useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
 }

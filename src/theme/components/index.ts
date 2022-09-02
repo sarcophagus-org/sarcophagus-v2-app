@@ -5,6 +5,7 @@ import { FormLabel } from './FormLabel';
 import { Heading } from './Heading';
 import { Input } from './Input';
 import { Text } from './Text';
+import { Textarea } from './Textarea';
 
 export const components = {
   Button,
@@ -15,4 +16,5 @@ export const components = {
   FormLabel,
   Divider,
   Alert,
+  Textarea,
 };

@@ -2,6 +2,7 @@ import { Button, Flex, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateRecipientKeypair } from './steps/CreateRecipientKeypair';
+import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
 import { FinalizeSarcophagus } from './steps/FinalizeSarcophagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { InitializeSarcophagus } from './steps/InitializeSarcophagus';
@@ -19,6 +20,7 @@ export function StepContent() {
     [Step.UploadPayload]: <UploadPayload />,
     [Step.FundBundlr]: <FundBundlr />,
     [Step.CreateRecipientKeypair]: <CreateRecipientKeypair />,
+    [Step.CreateEncryptionKeypair]: <CreateEncryptionKeypair />,
     [Step.SetResurrection]: <SetResurrectionDate />,
     [Step.SelectArchaeologists]: <SelectArchaeologists />,
     [Step.InitializeSarophagus]: <InitializeSarcophagus />,

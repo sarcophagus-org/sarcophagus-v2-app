@@ -4,6 +4,7 @@ import { useSelector } from 'store/index';
 import { useGetBalance } from '../stepContent/hooks/useGetBalance';
 import { Requirements } from './components/Requirements';
 import RequirementVariantA from './components/RequirementVariantA';
+import RequirementVariantB from './components/RequirementVariantB';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
 import { useSetStatuses } from './hooks/useSetStatuses';
@@ -15,7 +16,7 @@ import { useUploadPrice } from './hooks/useUploadPrice';
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, file } = useSelector(x => x.embalmState);
+  const { name, file, outerPublicKey, outerPrivateKey } = useSelector(x => x.embalmState);
   const { isFunding } = useSelector(x => x.bundlrState);
   const { balance, formattedBalance } = useGetBalance();
   const { uploadPrice } = useUploadPrice();
@@ -65,8 +66,8 @@ export function StepNavigator() {
       </StepElement>
 
       <StepElement
-        step={Step.SetResurrection}
-        title="Set Resurrections"
+        step={Step.CreateRecipientKeypair}
+        title="Create Recipient Keypair"
       >
         <Requirements>
           <RequirementVariantA
@@ -78,40 +79,13 @@ export function StepNavigator() {
       </StepElement>
 
       <StepElement
-        step={Step.SelectArchaeologists}
-        title="Select Archaeologists"
+        step={Step.CreateEncryptionKeypair}
+        title="Create Encryption Keypair"
       >
         <Requirements>
-          <RequirementVariantA
-            title="WIP"
-            value=""
-            valid={false}
-          />
-        </Requirements>
-      </StepElement>
-
-      <StepElement
-        step={Step.InitializeSarophagus}
-        title="Initialize Sarcophagus"
-      >
-        <Requirements>
-          <RequirementVariantA
-            title="WIP"
-            value=""
-            valid={false}
-          />
-        </Requirements>
-      </StepElement>
-
-      <StepElement
-        step={Step.FinalizeSarcophagus}
-        title="Finalize Sarcophagus"
-      >
-        <Requirements>
-          <RequirementVariantA
-            title="WIP"
-            value=""
-            valid={false}
+          <RequirementVariantB
+            title="Key pair generated"
+            valid={!!outerPublicKey && !!outerPrivateKey}
           />
         </Requirements>
       </StepElement>
