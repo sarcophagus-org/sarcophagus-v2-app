@@ -1,5 +1,5 @@
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
-import { minimumResurrection } from 'lib/constants';
+import { maxTotalArchaeologists, minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
 import { updateStepStatus } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
@@ -16,6 +16,17 @@ export function validatePublicKey(key: string) {
   return true;
 }
 
+export function validateTotalArchaeologists(total: string): boolean {
+  const totalAsNumber = parseInt(total);
+  return totalAsNumber <= maxTotalArchaeologists && totalAsNumber > 0 && !isNaN(totalAsNumber);
+}
+
+export function validateRequiredArchaeologists(required: string, total: string): boolean {
+  const totalAsNumber = parseInt(total);
+  const requiredAsNumber = parseInt(required);
+  return requiredAsNumber <= totalAsNumber && requiredAsNumber > 0 && !isNaN(requiredAsNumber);
+}
+
 /**
  * A hook that sets the statuses of the steps when their form elements are modified
  */
@@ -28,8 +39,10 @@ export function useSetStatuses() {
     outerPrivateKey,
     outerPublicKey,
     publicKey,
+    requiredArchaeologists,
     resurrection,
     stepStatuses,
+    totalArchaeologists,
   } = useSelector(x => x.embalmState);
   const isConnected = useSelector(x => x.bundlrState.isConnected);
   const { uploadPrice } = useUploadPrice();
@@ -40,6 +53,7 @@ export function useSetStatuses() {
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
   const resurrectionsStatus = stepStatuses[Step.Resurrections];
   const diggingFeesStatus = stepStatuses[Step.SetDiggingFees];
+  const totalRequiredArchaeologistsStatus = stepStatuses[Step.TotalRequiredArchaeologists];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
@@ -107,6 +121,19 @@ export function useSetStatuses() {
     }
   }
 
+  function totalRequiredArchaeologistsEffect() {
+    if (
+      validateRequiredArchaeologists(requiredArchaeologists, totalArchaeologists) &&
+      validateTotalArchaeologists(totalArchaeologists)
+    ) {
+      dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Complete));
+    } else {
+      if (totalRequiredArchaeologistsStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Started));
+      }
+    }
+  }
+
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
   useEffect(fundBundlrEffect, [
@@ -127,4 +154,10 @@ export function useSetStatuses() {
     resurrectionsStatus,
   ]);
   useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
+  useEffect(totalRequiredArchaeologistsEffect, [
+    dispatch,
+    requiredArchaeologists,
+    totalArchaeologists,
+    totalRequiredArchaeologistsStatus,
+  ]);
 }

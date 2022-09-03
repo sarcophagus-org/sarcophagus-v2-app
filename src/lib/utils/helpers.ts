@@ -74,9 +74,9 @@ export function convertMinutesToMs(num: number) {
   return num * 60_000;
 }
 
-export function formatResurrection(resurrection: number) {
-  if (resurrection === 0) return '0 seconds';
-  return moment.duration(resurrection).humanize({ d: 7, w: 4 });
+export function humanizeDuration(duration: number) {
+  if (duration === 0) return '0 seconds';
+  return moment.duration(duration).humanize({ d: 7, w: 4 });
 }
 
 export function formatLargeNumber(num: string): string {
@@ -87,4 +87,24 @@ export function formatLargeNumber(num: string): string {
   } else {
     return num;
   }
+}
+
+export function removeNonIntChars(value: string): string {
+  return (
+    value
+      .replace(/[-\.\+e]/g, '')
+      // .replace(/e/g, '')
+      .trim()
+  );
+}
+
+export function removeLeadingZeroes(value: string): string {
+  while (value.charAt(0) === '0' && value.charAt(1) !== '') {
+    value = value.substring(1);
+  }
+  return value;
+}
+
+export function zeroIfEmpty(value: string): string {
+  return value.trim() === '' ? '0' : value;
 }

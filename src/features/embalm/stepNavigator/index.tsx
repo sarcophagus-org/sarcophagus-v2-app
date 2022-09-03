@@ -1,16 +1,21 @@
-import { Image } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { minimumResurrection } from 'lib/constants';
-import { formatLargeNumber, formatResurrection } from 'lib/utils/helpers';
+import { formatLargeNumber, humanizeDuration, zeroIfEmpty } from 'lib/utils/helpers';
 import prettyBytes from 'pretty-bytes';
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
 import { useGetBalance } from '../stepContent/hooks/useGetBalance';
+import Requirement from './components/Requirement';
 import { Requirements } from './components/Requirements';
-import RequirementVariantA from './components/RequirementVariantA';
-import RequirementVariantB from './components/RequirementVariantB';
+import { SarcoAmount } from './components/SarcoAmount';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
-import { useSetStatuses, validatePublicKey } from './hooks/useSetStatuses';
+import {
+  useSetStatuses,
+  validatePublicKey,
+  validateRequiredArchaeologists,
+  validateTotalArchaeologists,
+} from './hooks/useSetStatuses';
 import { useUploadPrice } from './hooks/useUploadPrice';
 
 export enum StepId {
@@ -24,8 +29,17 @@ export enum StepId {
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { name, file, publicKey, outerPublicKey, outerPrivateKey, resurrection, diggingFees } =
-    useSelector(x => x.embalmState);
+  const {
+    diggingFees,
+    file,
+    name,
+    outerPrivateKey,
+    outerPublicKey,
+    publicKey,
+    requiredArchaeologists,
+    resurrection,
+    totalArchaeologists,
+  } = useSelector(x => x.embalmState);
   const { isFunding } = useSelector(x => x.bundlrState);
   const { balance, formattedBalance } = useGetBalance();
   const { uploadPrice } = useUploadPrice();
@@ -39,12 +53,7 @@ export function StepNavigator() {
         title="Name your sarcophagus"
       >
         <Requirements>
-          <RequirementVariantA
-            title="Name"
-            valid={name.length > 0}
-          >
-            {name}
-          </RequirementVariantA>
+          <Requirement valid={name.length > 0}>Name: {name}</Requirement>
         </Requirements>
       </StepElement>
 
@@ -53,12 +62,7 @@ export function StepNavigator() {
         title="Upload Payload"
       >
         <Requirements>
-          <RequirementVariantA
-            title="Payload"
-            valid={!!file}
-          >
-            {file ? prettyBytes(file.size) : ''}
-          </RequirementVariantA>
+          <Requirement valid={!!file}>Payload: {file ? prettyBytes(file.size) : ''}</Requirement>
         </Requirements>
       </StepElement>
 
@@ -68,12 +72,9 @@ export function StepNavigator() {
         isLoading={isFunding}
       >
         <Requirements>
-          <RequirementVariantA
-            title="Bundlr balance"
-            valid={parseFloat(balance) > parseFloat(uploadPrice)}
-          >
-            {formattedBalance}
-          </RequirementVariantA>
+          <Requirement valid={parseFloat(balance) > parseFloat(uploadPrice)}>
+            Bundlr balance: <Text variant="seoncdary">{formattedBalance}</Text>
+          </Requirement>
         </Requirements>
       </StepElement>
 
@@ -82,10 +83,7 @@ export function StepNavigator() {
         title="Set Recipient Public Key"
       >
         <Requirements>
-          <RequirementVariantB
-            title="Public Key"
-            valid={validatePublicKey(publicKey)}
-          />
+          <Requirement valid={validatePublicKey(publicKey)}>Recipient Public Key</Requirement>
         </Requirements>
       </StepElement>
 
@@ -94,10 +92,9 @@ export function StepNavigator() {
         title="Create Encryption Keypair"
       >
         <Requirements>
-          <RequirementVariantB
-            title="Key pair generated"
-            valid={!!outerPublicKey && !!outerPrivateKey}
-          />
+          <Requirement valid={!!outerPublicKey && !!outerPrivateKey}>
+            Key pair generated
+          </Requirement>
         </Requirements>
       </StepElement>
       <StepElement
@@ -105,12 +102,9 @@ export function StepNavigator() {
         title="Resurrections"
       >
         <Requirements>
-          <RequirementVariantA
-            title="First rewrap"
-            valid={resurrection >= minimumResurrection}
-          >
-            {formatResurrection(resurrection)}
-          </RequirementVariantA>
+          <Requirement valid={resurrection >= minimumResurrection}>
+            First rewrap: {humanizeDuration(resurrection)}
+          </Requirement>
         </Requirements>
       </StepElement>
       <StepElement
@@ -118,19 +112,25 @@ export function StepNavigator() {
         title="Set Digging Fees"
       >
         <Requirements>
-          <RequirementVariantA
-            title="Digging fees"
-            valid={parseInt(diggingFees) > 0}
+          <Requirement valid={parseInt(diggingFees) > 0}>
+            <SarcoAmount>{zeroIfEmpty(formatLargeNumber(diggingFees))}</SarcoAmount>
+            {/* <SarcoAmount>{diggingFees !== '' ? formatLargeNumber(diggingFees) : '0'}</SarcoAmount> */}
+          </Requirement>
+        </Requirements>
+      </StepElement>
+      <StepElement
+        step={Step.TotalRequiredArchaeologists}
+        title="Total/Required Archaeologists"
+      >
+        <Requirements>
+          <Requirement valid={validateTotalArchaeologists(totalArchaeologists)}>
+            {zeroIfEmpty(totalArchaeologists)} Archaeologists Total
+          </Requirement>
+          <Requirement
+            valid={validateRequiredArchaeologists(requiredArchaeologists, totalArchaeologists)}
           >
-            <Image
-              w="18px"
-              h="18px"
-              mr="0.5rem"
-              src="sarco-token-icon.png"
-              float="left"
-            />
-            {formatLargeNumber(diggingFees)}
-          </RequirementVariantA>
+            {zeroIfEmpty(requiredArchaeologists)} to unwrap
+          </Requirement>
         </Requirements>
       </StepElement>
     </StepsContainer>

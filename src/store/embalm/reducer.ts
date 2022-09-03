@@ -17,6 +17,7 @@ export enum Step {
   CreateEncryptionKeypair = 4,
   Resurrections = 5,
   SetDiggingFees = 6,
+  TotalRequiredArchaeologists = 7,
 }
 
 export interface EmbalmState {
@@ -31,13 +32,15 @@ export interface EmbalmState {
   recipientAddress: string;
   resurrection: number;
   resurrectionRadioValue: string;
+  requiredArchaeologists: string;
   stepStatuses: { [key: number]: StepStatus };
+  totalArchaeologists: string;
   uploadPrice: string;
 }
 
 export const embalmInitialState: EmbalmState = {
   currentStep: Step.NameSarcophagus,
-  diggingFees: '',
+  diggingFees: '0',
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
   name: '',
@@ -47,10 +50,12 @@ export const embalmInitialState: EmbalmState = {
   recipientAddress: '',
   resurrection: 0,
   resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
+  requiredArchaeologists: '0',
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
+  totalArchaeologists: '0',
   uploadPrice: '',
 };
 
@@ -102,6 +107,12 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetResurrection:
       return { ...state, resurrection: action.payload.resurrection };
+
+    case ActionType.SetTotalArchaeologists:
+      return { ...state, totalArchaeologists: action.payload.count };
+
+    case ActionType.SetRequiredArchaeologists:
+      return { ...state, requiredArchaeologists: action.payload.count };
 
     case ActionType.SetResurrectionRadioValue:
       return { ...state, resurrectionRadioValue: action.payload.value };

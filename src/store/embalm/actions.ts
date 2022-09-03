@@ -14,6 +14,8 @@ export enum ActionType {
   SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
+  SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
+  SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -28,8 +30,10 @@ type EmbalmPayload = {
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetPublicKey]: { publicKey: string };
   [ActionType.SetRecipientAddress]: { address: string };
+  [ActionType.SetRequiredArchaeologists]: { count: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
+  [ActionType.SetTotalArchaeologists]: { count: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -132,6 +136,24 @@ export function setResurrectionRadioValue(value: string): EmbalmActions {
     type: ActionType.SetResurrectionRadioValue,
     payload: {
       value,
+    },
+  };
+}
+
+export function setRequiredArchaeologists(count: string): EmbalmActions {
+  return {
+    type: ActionType.SetRequiredArchaeologists,
+    payload: {
+      count,
+    },
+  };
+}
+
+export function setTotalArchaeologists(count: string): EmbalmActions {
+  return {
+    type: ActionType.SetTotalArchaeologists,
+    payload: {
+      count,
     },
   };
 }

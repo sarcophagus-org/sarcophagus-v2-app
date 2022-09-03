@@ -7,6 +7,7 @@ import { NameSarcophagus } from './steps/NameSarcophagus';
 import { Resurrections } from './steps/Resurrections';
 import { SetDiggingFees } from './steps/SetDiggingFees';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
+import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
 
 export function StepContent() {
@@ -21,6 +22,7 @@ export function StepContent() {
     [Step.CreateEncryptionKeypair]: <CreateEncryptionKeypair />,
     [Step.Resurrections]: <Resurrections />,
     [Step.SetDiggingFees]: <SetDiggingFees />,
+    [Step.TotalRequiredArchaeologists]: <TotalRequiredArchaegologists />,
   };
 
   function handleClickPrev() {

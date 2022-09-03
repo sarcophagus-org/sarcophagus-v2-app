@@ -8,7 +8,12 @@ import {
   NumberInputField,
   Text,
 } from '@chakra-ui/react';
-import { formatLargeNumber, formatResurrection } from 'lib/utils/helpers';
+import {
+  formatLargeNumber,
+  humanizeDuration,
+  removeLeadingZeroes,
+  removeNonIntChars,
+} from 'lib/utils/helpers';
 import { setDiggingFees } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
@@ -17,19 +22,17 @@ export function SetDiggingFees() {
   const { diggingFees, resurrection } = useSelector(x => x.embalmState);
 
   function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
-    // Must not be negative
-    if (valueAsNumber < 0) return;
+    valueAsString = removeNonIntChars(valueAsString);
+    valueAsString = removeLeadingZeroes(valueAsString);
 
-    // Must not be too big
+    if (valueAsNumber < 0) {
+      valueAsString = '0';
+      valueAsNumber = 0;
+    }
+
     if (valueAsString.length > 18) return;
 
-    // Must not be an empty string
-    if (valueAsString.trim() === '') valueAsString = '0';
-
-    // No decimals or dashes
-    const parsedValue = parseInt(valueAsString.replace(/[-\.]/g, ''));
-
-    dispatch(setDiggingFees(parsedValue.toString()));
+    dispatch(setDiggingFees(valueAsString));
   }
 
   return (
@@ -85,7 +88,7 @@ export function SetDiggingFees() {
         </Flex>
         <Text>due on each rewrap.</Text>
       </Flex>
-      <Text mt={3}>First rewrap is {formatResurrection(resurrection)} from now.</Text>
+      <Text mt={3}>First rewrap is {humanizeDuration(resurrection)} from now.</Text>
     </Flex>
   );
 }
