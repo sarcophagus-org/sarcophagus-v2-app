@@ -90,12 +90,7 @@ export function formatLargeNumber(num: string): string {
 }
 
 export function removeNonIntChars(value: string): string {
-  return (
-    value
-      .replace(/[-\.\+e]/g, '')
-      // .replace(/e/g, '')
-      .trim()
-  );
+  return value.replace(/[-\.\+e]/g, '').trim();
 }
 
 export function removeLeadingZeroes(value: string): string {
