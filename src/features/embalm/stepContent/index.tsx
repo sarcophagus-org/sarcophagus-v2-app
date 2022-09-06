@@ -2,13 +2,12 @@ import { Button, Flex, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
-import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
-import { FinalizeSarcophagus } from './steps/FinalizeSarcophagus';
 import { FundBundlr } from './steps/FundBundlr';
-import { InitializeSarcophagus } from './steps/InitializeSarcophagus';
 import { NameSarcophagus } from './steps/NameSarcophagus';
-import { SelectArchaeologists } from './steps/SelectArchaeologists';
-import { SetResurrectionDate } from './steps/SetResurrectionDate';
+import { Resurrections } from './steps/Resurrections';
+import { SetDiggingFees } from './steps/SetDiggingFees';
+import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
+import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
 
 export function StepContent() {
@@ -21,10 +20,9 @@ export function StepContent() {
     [Step.FundBundlr]: <FundBundlr />,
     [Step.SetRecipientPublicKey]: <SetRecipientPublicKey />,
     [Step.CreateEncryptionKeypair]: <CreateEncryptionKeypair />,
-    [Step.SetResurrection]: <SetResurrectionDate />,
-    [Step.SelectArchaeologists]: <SelectArchaeologists />,
-    [Step.InitializeSarophagus]: <InitializeSarcophagus />,
-    [Step.FinalizeSarcophagus]: <FinalizeSarcophagus />,
+    [Step.Resurrections]: <Resurrections />,
+    [Step.SetDiggingFees]: <SetDiggingFees />,
+    [Step.TotalRequiredArchaeologists]: <TotalRequiredArchaegologists />,
   };
 
   function handleClickPrev() {

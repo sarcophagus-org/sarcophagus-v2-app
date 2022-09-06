@@ -15,7 +15,17 @@ export function FileDragAndDrop(props: FileUploaderProps) {
   function handleDragEnter(e: DragEvent) {
     e.preventDefault();
     e.stopPropagation();
-    setIsHovering(true);
+
+    // Ensure that the enter event triggers after the leave event.
+    // The reason for this is we want the isHovering state to be true even when the drag event
+    // enters the child and leaves the parent.
+    // For example: When the mouse drags over a child element (like the link to pick a file), the
+    // enter event triggers for the link element and then the leave event triggers for the parent
+    // component, which sets the isHovering state to false. By making sure the enter event triggers
+    // after the leave event, the isHovering state will remain true.
+    setTimeout(() => {
+      setIsHovering(true);
+    }, 0);
   }
 
   function handleDragLeave(e: DragEvent) {

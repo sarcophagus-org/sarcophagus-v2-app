@@ -5,28 +5,38 @@ import { Step, StepStatus } from './reducer';
 // unexpected behavior.
 export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
+  SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
-  SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetName = 'EMBALM_SET_NAME',
-  SetPublicKey = 'CREATE_SARCO_SET_PUBLIC_KEY_ID',
+  SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
+  SetPublicKey = 'EMBALM_SET_PUBLIC_KEY_ID',
+  SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
+  SetResurrection = 'EMBALM_SET_RESURRECTION',
+  SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
+  SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
+  SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
 }
 
 type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
+  [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetPublicKey]: { publicKey: string };
+  [ActionType.SetRecipientAddress]: { address: string };
+  [ActionType.SetRequiredArchaeologists]: { count: string };
+  [ActionType.SetResurrection]: { resurrection: number };
+  [ActionType.SetResurrectionRadioValue]: { value: string };
+  [ActionType.SetTotalArchaeologists]: { count: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
-  [ActionType.SetRecipientAddress]: { address: string };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -53,6 +63,15 @@ export function toggleStep(step: Step): EmbalmActions {
     type: ActionType.ToggleStep,
     payload: {
       step,
+    },
+  };
+}
+
+export function setDiggingFees(diggingFees: string): EmbalmActions {
+  return {
+    type: ActionType.SetDiggingFees,
+    payload: {
+      diggingFees,
     },
   };
 }
@@ -99,6 +118,42 @@ export function setFile(file: File): EmbalmActions {
     type: ActionType.SetFile,
     payload: {
       file,
+    },
+  };
+}
+
+export function setResurrection(resurrection: number): EmbalmActions {
+  return {
+    type: ActionType.SetResurrection,
+    payload: {
+      resurrection,
+    },
+  };
+}
+
+export function setResurrectionRadioValue(value: string): EmbalmActions {
+  return {
+    type: ActionType.SetResurrectionRadioValue,
+    payload: {
+      value,
+    },
+  };
+}
+
+export function setRequiredArchaeologists(count: string): EmbalmActions {
+  return {
+    type: ActionType.SetRequiredArchaeologists,
+    payload: {
+      count,
+    },
+  };
+}
+
+export function setTotalArchaeologists(count: string): EmbalmActions {
+  return {
+    type: ActionType.SetTotalArchaeologists,
+    payload: {
+      count,
     },
   };
 }

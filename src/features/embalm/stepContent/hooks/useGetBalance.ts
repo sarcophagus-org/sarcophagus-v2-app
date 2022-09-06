@@ -1,5 +1,5 @@
 import { useAsyncEffect } from 'hooks/useAsyncEffect';
-import { uploadPriceDecimals } from 'lib/constants';
+import { bundlrBalanceDecimals } from 'lib/constants';
 import { useMemo } from 'react';
 import { setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -15,7 +15,7 @@ export function useGetBalance() {
   const formattedBalance = useMemo(
     () =>
       isConnected
-        ? `${parseFloat(balance).toFixed(uploadPriceDecimals)} ${chain?.nativeCurrency?.name}`
+        ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${chain?.nativeCurrency?.name}`
         : '',
     [balance, chain, isConnected]
   );

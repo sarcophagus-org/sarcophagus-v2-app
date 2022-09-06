@@ -1,4 +1,5 @@
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
+import { maxTotalArchaeologists, minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
 import { updateStepStatus } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
@@ -15,14 +16,34 @@ export function validatePublicKey(key: string) {
   return true;
 }
 
+export function validateTotalArchaeologists(total: string): boolean {
+  const totalAsNumber = parseInt(total);
+  return totalAsNumber <= maxTotalArchaeologists && totalAsNumber > 0 && !isNaN(totalAsNumber);
+}
+
+export function validateRequiredArchaeologists(required: string, total: string): boolean {
+  const totalAsNumber = parseInt(total);
+  const requiredAsNumber = parseInt(required);
+  return requiredAsNumber <= totalAsNumber && requiredAsNumber > 0 && !isNaN(requiredAsNumber);
+}
+
 /**
  * A hook that sets the statuses of the steps when their form elements are modified
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
-  const { name, file, stepStatuses, publicKey, outerPrivateKey, outerPublicKey } = useSelector(
-    x => x.embalmState
-  );
+  const {
+    diggingFees,
+    file,
+    name,
+    outerPrivateKey,
+    outerPublicKey,
+    publicKey,
+    requiredArchaeologists,
+    resurrection,
+    stepStatuses,
+    totalArchaeologists,
+  } = useSelector(x => x.embalmState);
   const isConnected = useSelector(x => x.bundlrState.isConnected);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
@@ -30,6 +51,9 @@ export function useSetStatuses() {
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
+  const resurrectionsStatus = stepStatuses[Step.Resurrections];
+  const diggingFeesStatus = stepStatuses[Step.SetDiggingFees];
+  const totalRequiredArchaeologistsStatus = stepStatuses[Step.TotalRequiredArchaeologists];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
@@ -77,7 +101,38 @@ export function useSetStatuses() {
     );
   }
 
-  // TODO: Build effects for each other step
+  function resurrectionsEffect() {
+    if (resurrection >= minimumResurrection) {
+      dispatch(updateStepStatus(Step.Resurrections, StepStatus.Complete));
+    } else {
+      if (resurrectionsStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.Resurrections, StepStatus.Started));
+      }
+    }
+  }
+
+  function diggingFeesEffect() {
+    if (parseInt(diggingFees) > 0) {
+      dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Complete));
+    } else {
+      if (diggingFeesStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Started));
+      }
+    }
+  }
+
+  function totalRequiredArchaeologistsEffect() {
+    if (
+      validateRequiredArchaeologists(requiredArchaeologists, totalArchaeologists) &&
+      validateTotalArchaeologists(totalArchaeologists)
+    ) {
+      dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Complete));
+    } else {
+      if (totalRequiredArchaeologistsStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Started));
+      }
+    }
+  }
 
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
@@ -91,4 +146,18 @@ export function useSetStatuses() {
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setPublicKeyEffect, [dispatch, publicKey]);
+  useEffect(resurrectionsEffect, [
+    dispatch,
+    outerPrivateKey,
+    outerPublicKey,
+    resurrection,
+    resurrectionsStatus,
+  ]);
+  useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
+  useEffect(totalRequiredArchaeologistsEffect, [
+    dispatch,
+    requiredArchaeologists,
+    totalArchaeologists,
+    totalRequiredArchaeologistsStatus,
+  ]);
 }

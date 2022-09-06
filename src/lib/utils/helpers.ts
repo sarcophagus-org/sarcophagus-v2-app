@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 /**
  * Formats an address into a more readable format
  * Replaces the middle with "..." and uppercases it
@@ -49,4 +51,55 @@ export function removeFromArray<T>(array: T[], value: T) {
   if (index > -1) {
     array.splice(index, 1);
   }
+}
+
+// Approximately 1 month
+export function convertMonthsToMs(num: number) {
+  return num * 2_629_746_000;
+}
+
+export function convertWeeksToMs(num: number) {
+  return num * 604_800_000;
+}
+
+export function convertDaysToMs(num: number) {
+  return num * 86_400_000;
+}
+
+export function convertHoursToMs(num: number) {
+  return num * 3_600_000;
+}
+
+export function convertMinutesToMs(num: number) {
+  return num * 60_000;
+}
+
+export function humanizeDuration(duration: number) {
+  if (duration === 0) return '0 seconds';
+  return moment.duration(duration).humanize({ d: 7, w: 4 });
+}
+
+export function formatLargeNumber(num: string): string {
+  if (num.length > 9) {
+    return parseInt(num).toExponential(4);
+  } else if (num.length <= 9 && num.length > 4) {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  } else {
+    return num;
+  }
+}
+
+export function removeNonIntChars(value: string): string {
+  return value.replace(/[-\.\+e]/g, '').trim();
+}
+
+export function removeLeadingZeroes(value: string): string {
+  while (value.charAt(0) === '0' && value.charAt(1) !== '') {
+    value = value.substring(1);
+  }
+  return value;
+}
+
+export function zeroIfEmpty(value: string): string {
+  return value.trim() === '' ? '0' : value;
 }
