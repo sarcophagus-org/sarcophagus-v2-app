@@ -87,6 +87,7 @@ export function TotalRequiredArchaegologists() {
           >
             <FormLabel color={inputColor}>Total Archaeologists</FormLabel>
             <NumberInput
+              allowMouseWheel
               w="100px"
               color={inputColor}
               value={totalArchaeologists}
@@ -105,6 +106,7 @@ export function TotalRequiredArchaegologists() {
           <Flex direction="column">
             <FormLabel color={inputColor}>Archaeologists required to unwrap</FormLabel>
             <NumberInput
+              allowMouseWheel
               w="100px"
               color={inputColor}
               value={requiredArchaeologists}

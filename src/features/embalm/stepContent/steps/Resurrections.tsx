@@ -38,7 +38,7 @@ export function Resurrections() {
       >
         Resurrection Cadence
       </Heading>
-      <Text mt={4}>When do you want to perform your first rewrap?</Text>
+      <Text mt={4}>What do you want your maximum rewrap interval to be?</Text>
       <VStack
         {...group}
         align="left"
