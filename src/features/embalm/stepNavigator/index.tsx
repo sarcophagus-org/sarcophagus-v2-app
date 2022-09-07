@@ -12,10 +12,8 @@ import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
 import {
   useSetStatuses,
-  validatePublicKey,
   validateRequiredArchaeologists,
   validateTotalArchaeologists,
-  useSetStatuses,
   validateRecipient,
 } from './hooks/useSetStatuses';
 import { useUploadPrice } from './hooks/useUploadPrice';
@@ -37,7 +35,7 @@ export function StepNavigator() {
     name,
     outerPrivateKey,
     outerPublicKey,
-    publicKey,
+    recipient,
     requiredArchaeologists,
     resurrection,
     totalArchaeologists,
@@ -85,7 +83,7 @@ export function StepNavigator() {
         title="Set Recipient"
       >
         <Requirements>
-          <Requirement valid={validatePublicKey(publicKey)}>Recipient Public Key</Requirement>
+          <Requirement valid={validateRecipient(recipient)}>Recipient Public Key</Requirement>
         </Requirements>
       </StepElement>
 

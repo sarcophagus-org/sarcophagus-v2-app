@@ -33,6 +33,7 @@ export function validateRequiredArchaeologists(required: string, total: string):
  */
 export function useSetStatuses() {
   const dispatch = useDispatch();
+
   const {
     diggingFees,
     file,

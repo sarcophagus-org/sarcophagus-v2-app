@@ -22,8 +22,6 @@ const document = async (name: string, recipient: Recipient) => {
       margin: 5,
       padding: 0,
       flexGrow: 1,
-      border: '2px solid black',
-      width: '100px',
     },
     imageView: { height: 120, textAlign: 'center', width: '20%' },
     image: { marginHorizontal: '10%', width: 'auto', height: 'auto' },

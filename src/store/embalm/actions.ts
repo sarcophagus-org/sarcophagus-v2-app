@@ -21,6 +21,18 @@ export enum ActionType {
   SetRecipientSetByOption = 'EMBALM_SET_RECIPIENT_OPTION',
 }
 
+export enum RecipientSetByOption {
+  ADDRESS,
+  PUBLIC_KEY,
+  GENERATE,
+}
+
+export interface Recipient {
+  address: string;
+  publicKey: string;
+  privateKey?: string;
+}
+
 type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
   [ActionType.SetDiggingFees]: { diggingFees: string };
@@ -155,15 +167,6 @@ export function setRequiredArchaeologists(count: string): EmbalmActions {
 }
 
 export function setTotalArchaeologists(count: string): EmbalmActions {
-  return {
-    type: ActionType.SetTotalArchaeologists,
-    payload: {
-      count,
-    },
-  };
-}
-
-export function setUploadPrice(price: string): EmbalmActions {
   return {
     type: ActionType.SetTotalArchaeologists,
     payload: {
