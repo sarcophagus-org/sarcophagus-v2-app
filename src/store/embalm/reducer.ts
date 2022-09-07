@@ -1,7 +1,7 @@
 import { ResurrectionRadioValue } from 'features/embalm/stepContent/steps/Resurrections';
 import { removeFromArray } from 'lib/utils/helpers';
 import { Actions } from '..';
-import { ActionType } from './actions';
+import { ActionType, Recipient, RecipientSetByOption } from './actions';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -13,7 +13,7 @@ export enum Step {
   NameSarcophagus = 0,
   UploadPayload = 1,
   FundBundlr = 2,
-  SetRecipientPublicKey = 3,
+  SetRecipient = 3,
   CreateEncryptionKeypair = 4,
   Resurrections = 5,
   SetDiggingFees = 6,
@@ -28,8 +28,8 @@ export interface EmbalmState {
   name: string;
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
-  publicKey: string;
-  recipientAddress: string;
+  recipient: Recipient;
+  recipientSetByOption: RecipientSetByOption | undefined;
   resurrection: number;
   resurrectionRadioValue: string;
   requiredArchaeologists: string;
@@ -46,8 +46,8 @@ export const embalmInitialState: EmbalmState = {
   name: '',
   outerPrivateKey: null,
   outerPublicKey: null,
-  publicKey: '',
-  recipientAddress: '',
+  recipient: { publicKey: '', address: '' },
+  recipientSetByOption: undefined,
   resurrection: 0,
   resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
   requiredArchaeologists: '0',
@@ -99,8 +99,21 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetName:
       return { ...state, name: action.payload.name };
 
-    case ActionType.SetPublicKey:
-      return { ...state, publicKey: action.payload.publicKey };
+    case ActionType.SetRecipient:
+      return {
+        ...state,
+        recipient: {
+          publicKey: action.payload.publicKey,
+          address: action.payload.address,
+          privateKey: action.payload.privateKey,
+        },
+      };
+
+    case ActionType.SetRecipientSetByOption:
+      return {
+        ...state,
+        recipientSetByOption: action.payload,
+      };
 
     case ActionType.SetFile:
       return { ...state, file: action.payload.file };
@@ -119,9 +132,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetUploadPrice:
       return { ...state, uploadPrice: action.payload.price };
-
-    case ActionType.SetRecipientAddress:
-      return { ...state, recipientAddress: action.payload.address };
 
     default:
       return state;

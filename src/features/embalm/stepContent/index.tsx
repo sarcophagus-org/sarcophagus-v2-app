@@ -18,7 +18,7 @@ export function StepContent() {
     [Step.NameSarcophagus]: <NameSarcophagus />,
     [Step.UploadPayload]: <UploadPayload />,
     [Step.FundBundlr]: <FundBundlr />,
-    [Step.SetRecipientPublicKey]: <SetRecipientPublicKey />,
+    [Step.SetRecipient]: <SetRecipientPublicKey />,
     [Step.CreateEncryptionKeypair]: <CreateEncryptionKeypair />,
     [Step.Resurrections]: <Resurrections />,
     [Step.SetDiggingFees]: <SetDiggingFees />,

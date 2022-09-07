@@ -10,8 +10,6 @@ export enum ActionType {
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
-  SetPublicKey = 'EMBALM_SET_PUBLIC_KEY_ID',
-  SetRecipientAddress = 'EMBLAM_SET_RECIPIENT_ADDRESS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
@@ -19,6 +17,20 @@ export enum ActionType {
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
+  SetRecipient = 'EMBALM_SET_RECIPIENT',
+  SetRecipientSetByOption = 'EMBALM_SET_RECIPIENT_OPTION',
+}
+
+export enum RecipientSetByOption {
+  ADDRESS,
+  PUBLIC_KEY,
+  GENERATE,
+}
+
+export interface Recipient {
+  address: string;
+  publicKey: string;
+  privateKey?: string;
 }
 
 type EmbalmPayload = {
@@ -28,8 +40,8 @@ type EmbalmPayload = {
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
-  [ActionType.SetPublicKey]: { publicKey: string };
-  [ActionType.SetRecipientAddress]: { address: string };
+  [ActionType.SetRecipient]: Recipient;
+  [ActionType.SetRecipientSetByOption]: RecipientSetByOption;
   [ActionType.SetRequiredArchaeologists]: { count: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
@@ -104,12 +116,17 @@ export function setOuterLayerKeys(privateKey: string, publicKey: string): Embalm
   };
 }
 
-export function setPublicKey(publicKey: string): EmbalmActions {
+export function setRecipient(recipient: Recipient): EmbalmActions {
   return {
-    type: ActionType.SetPublicKey,
-    payload: {
-      publicKey,
-    },
+    type: ActionType.SetRecipient,
+    payload: recipient,
+  };
+}
+
+export function setRecipientSetByOption(recipientSetByOption: RecipientSetByOption): EmbalmActions {
+  return {
+    type: ActionType.SetRecipientSetByOption,
+    payload: recipientSetByOption,
   };
 }
 
@@ -163,15 +180,6 @@ export function setUploadPrice(price: string): EmbalmActions {
     type: ActionType.SetUploadPrice,
     payload: {
       price,
-    },
-  };
-}
-
-export function setRecipientAddress(address: string): EmbalmActions {
-  return {
-    type: ActionType.SetRecipientAddress,
-    payload: {
-      address,
     },
   };
 }

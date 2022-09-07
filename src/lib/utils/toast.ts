@@ -215,3 +215,19 @@ export const copiedToClipboard = (): UseToastOptions => ({
   duration,
   position,
 });
+
+export const generateRecipientKeysAndPDF = (): UseToastOptions => ({
+  title: 'Recipient keys generated',
+  description: 'New keys created for recipient and PDF downloaded.',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const generateRecipientPDFFailure = (errorMessage: string): UseToastOptions => ({
+  title: 'Failed to generate keys and create PDF',
+  description: formatToastMessage(errorMessage),
+  status: 'error',
+  duration,
+  position,
+});
