@@ -1,28 +1,33 @@
-import { Heading, Text, VStack, HStack, RadioGroup, Radio, Textarea } from '@chakra-ui/react';
-import { setPublicKey, setRecipientAddress } from 'store/embalm/actions';
+import {
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  RadioGroup,
+  Radio,
+  Textarea,
+  Button,
+} from '@chakra-ui/react';
+import { setRecipient, RecipientSetByOption, setRecipientSetByOption } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useState } from 'react';
 import { RecoverPublicKey } from 'components/recoverPublicKey';
-
-enum SetByRadioValue {
-  ADDRESS,
-  PUBLIC_KEY,
-}
+import { useCreateRecipientPDF } from '../hooks/useCreateRecipientPDF';
 
 export function SetRecipientPublicKey() {
   const dispatch = useDispatch();
-  const { publicKey, recipientAddress } = useSelector(x => x.embalmState);
-  const [value, setValue] = useState<SetByRadioValue | undefined>(() => {
-    if (recipientAddress !== '') return SetByRadioValue.ADDRESS;
-    else if (publicKey !== '') return SetByRadioValue.PUBLIC_KEY;
-    else return undefined;
-  });
+  const { recipient, recipientSetByOption } = useSelector(x => x.embalmState);
 
   function onRadioGroupChange(nextValue: string) {
-    setValue(parseInt(nextValue));
-    dispatch(setPublicKey(''));
-    dispatch(setRecipientAddress(''));
+    dispatch(setRecipientSetByOption(parseInt(nextValue)));
+    dispatch(
+      setRecipient({
+        publicKey: '',
+        address: '',
+        privateKey: undefined,
+      })
+    );
   }
+  const { generateAndDownloadRecipientPDF, isLoading } = useCreateRecipientPDF();
 
   return (
     <VStack
@@ -44,28 +49,50 @@ export function SetRecipientPublicKey() {
         >
           <RadioGroup
             onChange={onRadioGroupChange}
-            value={value}
+            value={recipientSetByOption}
           >
-            <Radio value={SetByRadioValue.ADDRESS}>Address</Radio>
+            <Radio value={RecipientSetByOption.ADDRESS}>Address</Radio>
             <Radio
               ml={8}
-              value={SetByRadioValue.PUBLIC_KEY}
+              value={RecipientSetByOption.PUBLIC_KEY}
             >
               Public Key
             </Radio>
+            <Radio
+              ml={8}
+              value={RecipientSetByOption.GENERATE}
+            >
+              Create New Keys
+            </Radio>
           </RadioGroup>
-          {value === SetByRadioValue.ADDRESS && <RecoverPublicKey />}
-          {value === SetByRadioValue.PUBLIC_KEY && (
+          {recipientSetByOption === RecipientSetByOption.ADDRESS && <RecoverPublicKey />}
+          {recipientSetByOption === RecipientSetByOption.PUBLIC_KEY && (
             <HStack>
               <Textarea
-                onChange={e => dispatch(setPublicKey(e.target.value))}
+                onChange={e => dispatch(setRecipient({ publicKey: e.target.value, address: '' }))}
                 disabled={false}
                 placeholder="public key"
-                value={publicKey || ''}
+                value={recipient.publicKey}
                 height="110px"
                 resize="none"
               />
             </HStack>
+          )}
+          {recipientSetByOption === RecipientSetByOption.GENERATE && (
+            <VStack
+              align="left"
+              spacing={4}
+            >
+              <Text>Generate a new public / private key set. And download to a printable PDF.</Text>
+
+              <Button
+                width="fit-content"
+                onClick={generateAndDownloadRecipientPDF}
+                isLoading={isLoading}
+              >
+                Generate and Download
+              </Button>
+            </VStack>
           )}
         </VStack>
       </VStack>

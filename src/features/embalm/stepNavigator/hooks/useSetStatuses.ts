@@ -1,15 +1,16 @@
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { maxTotalArchaeologists, minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
-import { updateStepStatus } from 'store/embalm/actions';
+import { updateStepStatus, Recipient } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 
-export function validatePublicKey(key: string) {
+export function validateRecipient(recipient: Recipient) {
+  //TODO: do we want to check options for validity? i.e. by address need to have the address set?
   try {
-    ethers.utils.computePublicKey(key);
+    ethers.utils.computePublicKey(recipient.publicKey);
   } catch (error) {
     return false;
   }
@@ -38,7 +39,7 @@ export function useSetStatuses() {
     name,
     outerPrivateKey,
     outerPublicKey,
-    publicKey,
+    recipient,
     requiredArchaeologists,
     resurrection,
     stepStatuses,
@@ -92,11 +93,11 @@ export function useSetStatuses() {
     }
   }
 
-  function setPublicKeyEffect() {
+  function setRecipientEffect() {
     dispatch(
       updateStepStatus(
-        Step.SetRecipientPublicKey,
-        validatePublicKey(publicKey) ? StepStatus.Complete : StepStatus.NotStarted
+        Step.SetRecipient,
+        validateRecipient(recipient) ? StepStatus.Complete : StepStatus.NotStarted
       )
     );
   }
@@ -145,7 +146,7 @@ export function useSetStatuses() {
     uploadPrice,
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
-  useEffect(setPublicKeyEffect, [dispatch, publicKey]);
+  useEffect(setRecipientEffect, [dispatch, recipient]);
   useEffect(resurrectionsEffect, [
     dispatch,
     outerPrivateKey,

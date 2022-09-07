@@ -1,16 +1,16 @@
 import { VStack, Input, Button } from '@chakra-ui/react';
 import { useRecoverPublicKey } from './useRecoverPublicKey';
-import { setRecipientAddress } from 'store/embalm/actions';
+import { setRecipient } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
 export function RecoverPublicKey() {
   const dispatch = useDispatch();
-  const { recipientAddress } = useSelector(x => x.embalmState);
+  const { recipient } = useSelector(x => x.embalmState);
 
   const { recoverPublicKey, isLoading } = useRecoverPublicKey();
 
   async function handleOnClick(): Promise<void> {
-    if (recipientAddress !== '') await recoverPublicKey(recipientAddress);
+    if (recipient.address !== '') await recoverPublicKey(recipient.address);
   }
 
   return (
@@ -20,12 +20,11 @@ export function RecoverPublicKey() {
     >
       <Input
         placeholder="0x0..."
-        onChange={e => dispatch(setRecipientAddress(e.target.value))}
-        value={recipientAddress}
+        onChange={e => dispatch(setRecipient({ address: e.target.value, publicKey: '' }))}
+        value={recipient.address}
         disabled={isLoading}
       />
       <Button
-        background="gray"
         onClick={handleOnClick}
         isLoading={isLoading}
         w="190px"

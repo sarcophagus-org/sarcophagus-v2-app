@@ -15,6 +15,8 @@ import {
   validatePublicKey,
   validateRequiredArchaeologists,
   validateTotalArchaeologists,
+  useSetStatuses,
+  validateRecipient,
 } from './hooks/useSetStatuses';
 import { useUploadPrice } from './hooks/useUploadPrice';
 
@@ -79,8 +81,8 @@ export function StepNavigator() {
       </StepElement>
 
       <StepElement
-        step={Step.SetRecipientPublicKey}
-        title="Set Recipient Public Key"
+        step={Step.SetRecipient}
+        title="Set Recipient"
       >
         <Requirements>
           <Requirement valid={validatePublicKey(publicKey)}>Recipient Public Key</Requirement>

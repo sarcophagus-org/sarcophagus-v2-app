@@ -3,7 +3,7 @@ import { TransactionResponse } from '@ethersproject/providers';
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useProvider } from 'wagmi';
-import { useDispatch, useSelector } from 'store/index';
+import { useDispatch } from 'store/index';
 import { useToast } from '@chakra-ui/react';
 import {
   recoverPublicKeyFailure,
@@ -11,7 +11,7 @@ import {
   recoverPublicKeySuccess,
   recoverPublicKeyNoTransactions,
 } from 'lib/utils/toast';
-import { setPublicKey } from 'store/embalm/actions';
+import { setRecipient } from 'store/embalm/actions';
 
 /**
  * returns a public key from a transaction
@@ -85,7 +85,6 @@ const getParameters =
 export function useRecoverPublicKey() {
   const toast = useToast();
   const dispatch = useDispatch();
-  const publicKey = useSelector(x => x.embalmState.publicKey);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -93,10 +92,9 @@ export function useRecoverPublicKey() {
 
   const recoverPublicKey = useCallback(
     async (address: string) => {
-      dispatch(setPublicKey(''));
       try {
         setIsLoading(true);
-        if (!ethers.utils.isAddress(address)) {
+        if (!ethers.utils.isAddress(address.toLowerCase())) {
           toast(recoverPublicKeyInvalidAddress());
           return;
         }
@@ -119,7 +117,7 @@ export function useRecoverPublicKey() {
             if (
               ethers.utils.computeAddress(recoveredPublicKey).toLowerCase() == address.toLowerCase()
             ) {
-              dispatch(setPublicKey(recoveredPublicKey));
+              dispatch(setRecipient({ publicKey: recoveredPublicKey, address: address }));
 
               //TODO: remove log, this is just for testing
               console.log('recovered public key', recoveredPublicKey);
@@ -140,5 +138,5 @@ export function useRecoverPublicKey() {
     [dispatch, provider, toast]
   );
 
-  return { recoverPublicKey, publicKey, isLoading };
+  return { recoverPublicKey, isLoading };
 }
