@@ -34,8 +34,8 @@ export function SubmitMock() {
 
     let shardI = 0;
     for await (const arch of selectedArchaeologists) {
-      archShards[arch.publicKey] = await arweaveService.encryptShard(shards[shardI], arch.publicKey);
-      unencryptedArchShardHashes[arch.address] = solidityKeccak256(['string'], [shards[shardI]]);
+      archShards[arch.publicKey!] = await arweaveService.encryptShard(shards[shardI], arch.publicKey!);
+      unencryptedArchShardHashes[arch.profile.archAddress] = solidityKeccak256(['string'], [shards[shardI]]);
       shardI++;
     }
 
@@ -49,7 +49,7 @@ export function SubmitMock() {
     selectedArchaeologists.forEach(arch => confirmArweaveTransaction({
       arch,
       arweaveTxId,
-      unencryptedShardHash: unencryptedArchShardHashes[arch.address],
+      unencryptedShardHash: unencryptedArchShardHashes[arch.profile.archAddress],
     }));
 
     const archCount = selectedArchaeologists.length;

@@ -6,22 +6,16 @@ export interface ChildrenOnly {
 }
 
 export interface Archaeologist {
-  publicKey: string;
-  address: string;
-  bounty: BigNumber;
-  diggingFee: BigNumber;
-  isArweaver: boolean;
-  feePerByte: BigNumber;
-  maxResurrectionTime: number;
+  publicKey?: string;
+  profile: ContractArchaeologist;
   connection?: any;
 }
 
 export interface ContractArchaeologist {
   archAddress: string;
-  storageFee: BigNumber;
   diggingFee: BigNumber;
-  bounty: BigNumber;
-  hashedShard: string;
+  maxResurrectionInterval: number;
+  hashedShard?: string;
 }
 
 export interface SignatureWithAccount extends Signature {
