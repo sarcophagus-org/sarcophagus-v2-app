@@ -1,28 +1,28 @@
-import { useContractRead } from 'wagmi';
 import { readContract } from 'wagmi/actions';
 import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
 import { useNetworkConfig } from 'lib/config';
 import { ArchaeologistProfile } from 'types';
 import { useAsyncEffect } from 'hooks/useAsyncEffect';
-import { useDispatch } from '../../store';
+import { useDispatch, useSelector } from '../../store';
 import { storeArchaeologists } from 'store/archaeologist/actions';
 
 export function useGetArchaeologistProfiles() {
   const networkConfig = useNetworkConfig();
   const dispatch = useDispatch();
+  const storedArchaeologists = useSelector(s => s.archaeologistState.archaeologists);
 
-  // dispatch(startLoad());
-  const { data: addresses, isLoading: loadingAddresses } = useContractRead({
-    addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet.abi,
-    functionName: 'getArchaeologistProfileAddresses',
-  });
-
-  // const config: ReadContractsConfig = { contracts: [] };
-  let profiles: ArchaeologistProfile[] = [];
+  let profiles: Record<string, ArchaeologistProfile> = {};
 
   useAsyncEffect(async () => {
-    if (!loadingAddresses && addresses) {
+    if (storedArchaeologists.length > 0) return;
+
+    const addresses = await readContract({
+      addressOrName: networkConfig.diamondDeployAddress,
+      contractInterface: ViewStateFacet.abi,
+      functionName: 'getArchaeologistProfileAddresses',
+    });
+
+    if (addresses) {
       // TODO: Having to do single use `readContract`s in a loop because `useContractReads` does not work in hardhat
       for await (const addr of addresses) {
         const profile = await readContract({
@@ -33,37 +33,18 @@ export function useGetArchaeologistProfiles() {
         });
 
         if (profile) {
-          profiles.push({
+          profiles[addr] = {
             archAddress: addr,
             exists: profile.exists,
             minimumDiggingFee: profile.minimumDiggingFee,
             maximumRewrapInterval: profile.maximumRewrapInterval,
             peerId: profile.peerId,
-          });
+          };
         }
-
-        // config.contracts.push({
-        //   addressOrName: networkConfig.diamondDeployAddress,
-        //   contractInterface: ViewStateFacet.abi,
-        //   functionName: 'getArchaeologistProfile',
-        //   args: [addr],
-        // });
       }
 
-      const archaeologists = profiles.map(profile => ({ profile, isOnline: false }));
-
+      const archaeologists = Object.values(profiles).map(p => ({ profile: p, isOnline: false }));
       dispatch(storeArchaeologists(archaeologists));
-      // dispatch(stopLoad());
     }
-
-  }, [loadingAddresses, addresses]);
-
-  // const { data, isLoading: loadingProfiles } = useContractReads(config);
-  // profiles = data?.map((d, i) => ({
-  //   archAddress: addresses![i],
-  //   exists: d.exists,
-  //   minimumDiggingFee: d.minimumDiggingFee,
-  //   maximumRewrapInterval: d.maximumRewrapInterval,
-  //   peerId: d.peerId,
-  // })) ?? [];
+  }, []);
 }
