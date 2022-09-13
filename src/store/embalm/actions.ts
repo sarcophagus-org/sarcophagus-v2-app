@@ -1,24 +1,29 @@
+import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
+  DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   GoToStep = 'EMBALM_GO_TO_STEP',
+  SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
+  SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
+  SetRecipient = 'EMBALM_SET_RECIPIENT',
+  SetRecipientSetByOption = 'EMBALM_SET_RECIPIENT_OPTION',
+  SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
-  SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
+  SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
   SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  SetRecipient = 'EMBALM_SET_RECIPIENT',
-  SetRecipientSetByOption = 'EMBALM_SET_RECIPIENT_OPTION',
 }
 
 export enum RecipientSetByOption {
@@ -34,7 +39,10 @@ export interface Recipient {
 }
 
 type EmbalmPayload = {
+  [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.GoToStep]: { step: Step };
+  [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
+  [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
@@ -45,6 +53,7 @@ type EmbalmPayload = {
   [ActionType.SetRequiredArchaeologists]: { count: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
+  [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetTotalArchaeologists]: { count: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
@@ -56,6 +65,15 @@ export function goToStep(step: Step): EmbalmActions {
     type: ActionType.GoToStep,
     payload: {
       step,
+    },
+  };
+}
+
+export function setArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologists,
+    payload: {
+      archaeologists,
     },
   };
 }
@@ -157,6 +175,15 @@ export function setResurrectionRadioValue(value: string): EmbalmActions {
   };
 }
 
+export function setSelectedArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
+  return {
+    type: ActionType.SetSelectedArchaeologists,
+    payload: {
+      archaeologists,
+    },
+  };
+}
+
 export function setRequiredArchaeologists(count: string): EmbalmActions {
   return {
     type: ActionType.SetRequiredArchaeologists,
@@ -180,6 +207,24 @@ export function setUploadPrice(price: string): EmbalmActions {
     type: ActionType.SetUploadPrice,
     payload: {
       price,
+    },
+  };
+}
+
+export function selectArchaeologist(archaeologist: Archaeologist): EmbalmActions {
+  return {
+    type: ActionType.SelectArchaeologist,
+    payload: {
+      archaeologist,
+    },
+  };
+}
+
+export function deselectArchaeologist(address: string): EmbalmActions {
+  return {
+    type: ActionType.DeselectArchaeologist,
+    payload: {
+      address,
     },
   };
 }

@@ -133,6 +133,15 @@ export function StepNavigator() {
           </Requirement>
         </Requirements>
       </StepElement>
+
+      <StepElement
+        step={Step.SelectArchaeologists}
+        title="Select Archaeologists"
+      >
+        <Requirements>
+          <Requirement valid={false}>WIP</Requirement>
+        </Requirements>
+      </StepElement>
     </StepsContainer>
   );
 }

@@ -21,7 +21,7 @@ export interface SelectedContractArchaeologist {
 }
 
 export interface ArchaeologistProfile {
-  archAddress: string,
+  archAddress: string;
   exists: boolean;
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;

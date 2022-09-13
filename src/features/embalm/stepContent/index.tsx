@@ -5,6 +5,7 @@ import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { Resurrections } from './steps/Resurrections';
+import { SelectArchaeologists } from './steps/SelectArchaeologists';
 import { SetDiggingFees } from './steps/SetDiggingFees';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
@@ -23,6 +24,7 @@ export function StepContent() {
     [Step.Resurrections]: <Resurrections />,
     [Step.SetDiggingFees]: <SetDiggingFees />,
     [Step.TotalRequiredArchaeologists]: <TotalRequiredArchaegologists />,
+    [Step.SelectArchaeologists]: <SelectArchaeologists />,
   };
 
   function handleClickPrev() {
@@ -40,6 +42,7 @@ export function StepContent() {
       spacing={4}
       minWidth={500}
       w="100%"
+      mb="200px"
     >
       <Button
         variant="link"
