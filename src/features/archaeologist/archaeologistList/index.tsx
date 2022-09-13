@@ -23,8 +23,8 @@ import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
 import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
 import { SubmitMock } from './SubmitMock';
-import { ethers } from 'ethers';
 import { Archaeologist } from 'types';
+import { ethers } from 'ethers';
 
 export function ArchaeologistList() {
   const dispatch = useDispatch();
@@ -71,14 +71,13 @@ export function ArchaeologistList() {
               <Thead>
                 <Tr>
                   <Th>Archaeologists</Th>
-                  <Th>Arweave</Th>
                   <Th isNumeric>Digging Fees</Th>
-                  <Th isNumeric>Bounty</Th>
+                  <Th isNumeric>Online</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {archaeologists.map(arch => (
-                  <Tr key={arch.address}>
+                  <Tr key={arch.profile.archAddress}>
                     <Td>
                       <Flex>
                         <Checkbox
@@ -87,17 +86,19 @@ export function ArchaeologistList() {
                             handleCheckArchaeologist(arch);
                           }}
                         />
-                        <Text ml={3}>{formatAddress(arch.address)}</Text>
+                        <Text ml={3}>{formatAddress(arch.profile.archAddress)}</Text>
                       </Flex>
                     </Td>
+                    <Td isNumeric >
+                      <Text>{ethers.utils.formatEther(arch.profile.minimumDiggingFee)} SARCO</Text>
+                    </Td>
                     <Td>
-                      <Text>{arch.isArweaver.toString()}</Text>
-                    </Td>
-                    <Td isNumeric>
-                      <Text>{ethers.utils.formatEther(arch.diggingFee)} SARCO</Text>
-                    </Td>
-                    <Td isNumeric>
-                      <Text>{ethers.utils.formatEther(arch.bounty)} SARCO</Text>
+                      <Flex>
+                        <Checkbox
+                          isChecked={arch.isOnline}
+                          isReadOnly
+                        />
+                      </Flex>
                     </Td>
                   </Tr>
                 ))}

@@ -1,7 +1,6 @@
 import { Libp2p } from 'libp2p';
 import { Archaeologist } from 'types';
 import { pipe } from 'it-pipe';
-import { ethers } from 'ethers';
 
 if (!process.env.REACT_APP_BOOTSTRAP_NODE_LIST) {
   throw Error('REACT_APP_BOOTSTRAP_NODE_LIST not set in .env');
@@ -15,7 +14,14 @@ const discoveredPeers: Record<string, boolean> = {};
 const discoveredArchs: Record<string, Archaeologist> = {}; // maps arch addresses to Archaeologist objects
 const nodeConnections: Record<string, any> = {}; // maps peer ids to connections to them
 
-export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (archs: Archaeologist[]) => void) {
+export async function initialisePeerDiscovery(
+  browserNode: Libp2p,
+  storedArchaeologists: Archaeologist[],
+  callbacks: {
+    setArchs: (archs: Archaeologist[]) => void,
+    onArchConnected: (arch: Archaeologist) => void,
+  }
+) {
   if (browserNode.isStarted()) return;
 
   const idTruncateLimit = 5;
@@ -33,6 +39,13 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
       discoveredPeers[peerId] = true;
       console.log(`${nodeId.slice(nodeId.length - idTruncateLimit)} discovered: ${peerId.slice(peerId.length - idTruncateLimit)}`);
 
+      const i = storedArchaeologists.findIndex(a => a.profile.peerId === peerId);
+
+      if (i !== -1) {
+        storedArchaeologists[i].isOnline = true;
+        callbacks.setArchs(storedArchaeologists);
+      }
+
       // TODO: Update to dial a node only during arweave validation.
       await browserNode.dialProtocol(evt.detail.id, '/message');
     }
@@ -48,7 +61,15 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 
   browserNode.connectionManager.addEventListener('peer:disconnect', async (evt) => {
     const peerId = evt.detail.remotePeer.toString();
+    discoveredPeers[peerId] = false;
     console.log(`disconnected from: ${peerId.slice(peerId.length - idTruncateLimit)}`);
+
+    const i = storedArchaeologists.findIndex(a => a.profile.peerId === peerId);
+
+    if (i !== -1) {
+      storedArchaeologists[i].isOnline = false;
+      callbacks.setArchs(storedArchaeologists);
+    }
   });
 
   const msgProtocol = '/env-config';
@@ -63,19 +84,14 @@ export async function initialisePeerDiscovery(browserNode: Libp2p, setArchs: (ar
 
           const archConfigJson: Record<string, any> = JSON.parse(decoded);
 
-          const newArch = {
-            publicKey: archConfigJson.encryptionPublicKey,
-            connection: nodeConnections[archConfigJson.peerId],
-            profile: {
-              archAddress: archConfigJson.address,
-              diggingFee: ethers.utils.parseEther('10'),
-              maxResurrectionInterval: 30000,
-            }
-          };
+          // TODO: decode arch address from archConfigJson.signature instead. archConfigJson will only have signature and encryptionPublicKey fields
+          const archAddress = archConfigJson.address;
 
-          discoveredArchs[archConfigJson.address] = newArch;
+          const i = storedArchaeologists.findIndex(a => a.profile.archAddress === archAddress);
+          const arch = storedArchaeologists[i];
+          arch.publicKey = archConfigJson.encryptionPublicKey;
 
-          setArchs(Object.values(discoveredArchs));
+          callbacks.onArchConnected(arch);
         }
       }
     ).finally(() => {

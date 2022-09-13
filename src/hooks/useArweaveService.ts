@@ -76,6 +76,7 @@ const useArweaveService = () => {
       dq: 'wOg4z_7ndHXhl0D2-TS5UE1Ygw5oowj3aWIvFlt9Fgsj4lSP6fhzU46_zjIA-Z3ccnIuka9J3tZLbaoIKDME92nV7GNna_h_-cdGegSLeqrE4t2Lz4xUSxFYiMuWdlVkpqjZysakl9qjDTpzR2q4005UrymTYsljV0tjbHH_1A1enB3MuXEvs37r7R_Hl0B9YG8lIl2ZZ7MAjuQGe4RczOqr9Cn5aUX1M5gIyikEdKX7IaLF2Nndyb6GQTPDhOXM0uLCprQ0uv6vKJOSEbMe4L5jF_PTUIGu-z6RbsXEE_ovISuJH4XshDxqX2gP-4IlfqAZ2FDxEXMC7DrXHg3KoQ',
       qi: 'kS2AXYKfVKOdtNGiksIgs2YT4Pz-62rCeynyFlnUDc6E3eylzctLHhuWMRqWqnPwVPwnw2Fd6eUTOYZe82kVf9d0-XbeDtOOP6fS7HU30ICIvFrLTiaVEsLekUdQwoyC7s0xH99FZpdGJHzC7iNdlChybmrh4Ci5OyOLn_o8goNQBYWEXOgr6JgJLTh9BXvDEbNLLJ0JTZFQeLVqQeimPDSoAwBFCLBBwOd6CFOr5wTc9Pkt8cDrpcf9usU-61uu3Lr4-3PG4yUUQyphnDy84DgpUyuF5JNy0KgtuZaMMuAZJTb_gKN3IdLUHV9phqwrSKylLn-enGJ0f4FTpfcDEQ',
     };
+    // address: Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4
 
     const tx = await arweave.createTransaction({ data: file }, key);
     tx.addTag('Content-Type', 'plain/text');

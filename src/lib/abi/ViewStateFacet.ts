@@ -80,6 +80,11 @@ export const ViewStateFacet = {
               name: 'rewards',
               type: 'uint256',
             },
+            {
+              internalType: 'string',
+              name: 'peerId',
+              type: 'string',
+            },
           ],
           internalType: 'struct LibTypes.ArchaeologistProfile',
           name: '',

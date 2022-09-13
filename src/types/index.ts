@@ -7,15 +7,24 @@ export interface ChildrenOnly {
 
 export interface Archaeologist {
   publicKey?: string;
-  profile: ContractArchaeologist;
+  profile: ArchaeologistProfile;
   connection?: any;
+  isOnline: boolean;
 }
 
-export interface ContractArchaeologist {
+export interface SelectedContractArchaeologist {
   archAddress: string;
   diggingFee: BigNumber;
-  maxResurrectionInterval: number;
+  storageFee: BigNumber;
   hashedShard?: string;
+}
+
+export interface ArchaeologistProfile {
+  archAddress: string,
+  exists: boolean;
+  minimumDiggingFee: BigNumber;
+  maximumRewrapInterval: number;
+  peerId: string;
 }
 
 export interface SignatureWithAccount extends Signature {

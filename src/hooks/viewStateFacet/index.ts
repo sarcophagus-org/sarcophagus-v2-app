@@ -11,3 +11,4 @@ export { useGetRecipientSarcophagi } from './useGetRecipientSarcophagi';
 export { useGetSarcophagus } from './useGetSarcophagus';
 export { useGetSarcophagusArchaeologist } from './useGetSarcophagusArchaeologist';
 export { useGetTotalProtocolFees } from './useGetTotalProtocolFees';
+export { useGetArchaeologistProfiles } from './useGetArchaeologistProfiles';

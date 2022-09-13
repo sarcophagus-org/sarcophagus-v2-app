@@ -433,6 +433,11 @@ export const ArchaeologistFacet = {
           name: 'freeBond',
           type: 'uint256',
         },
+        {
+          internalType: 'string',
+          name: 'peerId',
+          type: 'string',
+        },
       ],
       name: 'registerArchaeologist',
       outputs: [],
