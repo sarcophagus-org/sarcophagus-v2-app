@@ -18,11 +18,15 @@ import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { SubmitMock } from './SubmitMock';
 import { Archaeologist } from 'types';
 import { ethers } from 'ethers';
+<<<<<<< HEAD
 import {
   deselectArchaeologist,
   selectArchaeologist,
   setSelectedArchaeologists,
 } from 'store/embalm/actions';
+=======
+import { selectArchaeologist, setSelectedArchaeologists } from 'store/embalm/actions';
+>>>>>>> Add post selection calculations
 
 export function ArchaeologistList() {
   const dispatch = useDispatch();
@@ -34,7 +38,11 @@ export function ArchaeologistList() {
 
   function handleCheckArchaeologist(arch: Archaeologist) {
     if (selectedArchaeologists.includes(arch)) {
+<<<<<<< HEAD
       dispatch(deselectArchaeologist(arch.profile.archAddress));
+=======
+      dispatch(selectArchaeologist(arch));
+>>>>>>> Add post selection calculations
     } else {
       dispatch(selectArchaeologist(arch));
     }
