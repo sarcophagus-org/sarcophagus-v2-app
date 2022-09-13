@@ -72,7 +72,7 @@ export function ArchaeologistList() {
                 <Tr>
                   <Th>Archaeologists</Th>
                   <Th isNumeric>Digging Fees</Th>
-                  <Th isNumeric>Online</Th>
+                  <Th isNumeric>Status</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -92,13 +92,8 @@ export function ArchaeologistList() {
                     <Td isNumeric >
                       <Text>{ethers.utils.formatEther(arch.profile.minimumDiggingFee)} SARCO</Text>
                     </Td>
-                    <Td>
-                      <Flex>
-                        <Checkbox
-                          isChecked={arch.isOnline}
-                          isReadOnly
-                        />
-                      </Flex>
+                    <Td isNumeric>
+                      <Text>{arch.isOnline ? 'ONLINE' : 'OFFLINE'}</Text>
                     </Td>
                   </Tr>
                 ))}

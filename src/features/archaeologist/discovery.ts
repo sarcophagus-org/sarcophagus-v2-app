@@ -88,10 +88,13 @@ export async function initialisePeerDiscovery(
           const archAddress = archConfigJson.address;
 
           const i = storedArchaeologists.findIndex(a => a.profile.archAddress === archAddress);
-          const arch = storedArchaeologists[i];
-          arch.publicKey = archConfigJson.encryptionPublicKey;
 
-          callbacks.onArchConnected(arch);
+          if (i !== -1) {
+            const arch = storedArchaeologists[i];
+            arch.publicKey = archConfigJson.encryptionPublicKey;
+
+            callbacks.onArchConnected(arch);
+          }
         }
       }
     ).finally(() => {
