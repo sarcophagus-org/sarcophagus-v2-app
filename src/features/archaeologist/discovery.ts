@@ -34,16 +34,18 @@ export async function initialisePeerDiscovery(
 
   // Listen for new peers
   browserNode.addEventListener('peer:discovery', async (evt) => {
-    const peerId = evt.detail.id.toString();
+    const peerId = evt.detail.id;
+    const peerIdStr = peerId.toString();
 
-    if (!discoveredPeers[peerId]) {
-      discoveredPeers[peerId] = true;
-      console.log(`${nodeId.slice(nodeId.length - idTruncateLimit)} discovered: ${peerId.slice(peerId.length - idTruncateLimit)}`);
+    if (!discoveredPeers[peerIdStr]) {
+      discoveredPeers[peerIdStr] = true;
+      console.log(`${nodeId.slice(nodeId.length - idTruncateLimit)} discovered: ${peerIdStr.slice(peerIdStr.length - idTruncateLimit)}`);
 
-      const i = storedArchaeologists.findIndex(a => a.profile.peerId === peerId);
+      const i = storedArchaeologists.findIndex(a => a.profile.peerId.toString() === peerIdStr);
 
       if (i !== -1) {
         storedArchaeologists[i].isOnline = true;
+        storedArchaeologists[i].profile.peerId = peerId;
         callbacks.setArchs(storedArchaeologists);
       }
 
@@ -61,11 +63,13 @@ export async function initialisePeerDiscovery(
   });
 
   browserNode.connectionManager.addEventListener('peer:disconnect', async (evt) => {
-    const peerId = evt.detail.remotePeer.toString();
-    discoveredPeers[peerId] = false;
-    console.log(`disconnected from: ${peerId.slice(peerId.length - idTruncateLimit)}`);
+    const peerId = evt.detail.remotePeer;
+    const peerIdStr = peerId.toString();
 
-    const i = storedArchaeologists.findIndex(a => a.profile.peerId === peerId);
+    discoveredPeers[peerIdStr] = false;
+    console.log(`disconnected from: ${peerIdStr.slice(peerIdStr.length - idTruncateLimit)}`);
+
+    const i = storedArchaeologists.findIndex(a => a.profile.peerId.toString() === peerIdStr);
 
     if (i !== -1) {
       storedArchaeologists[i].isOnline = false;
