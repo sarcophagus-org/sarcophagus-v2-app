@@ -1,6 +1,7 @@
 import { Libp2p } from 'libp2p';
 import { Archaeologist } from 'types';
 import { pipe } from 'it-pipe';
+import { ethers } from 'ethers';
 
 if (!process.env.REACT_APP_BOOTSTRAP_NODE_LIST) {
   throw Error('REACT_APP_BOOTSTRAP_NODE_LIST not set in .env');
@@ -84,15 +85,25 @@ export async function initialisePeerDiscovery(
 
           const archConfigJson: Record<string, any> = JSON.parse(decoded);
 
-          // TODO: decode arch address from archConfigJson.signature instead. archConfigJson will only have signature and encryptionPublicKey fields
-          const archAddress = archConfigJson.address;
+          const signerAddress = ethers.utils.verifyMessage(JSON.stringify({
+            encryptionPublicKey: archConfigJson.encryptionPublicKey,
+            peerId: archConfigJson.peerId,
+          }),
+            archConfigJson.signature,
+          );
 
-          const i = storedArchaeologists.findIndex(a => a.profile.archAddress === archAddress);
+          const i = storedArchaeologists.findIndex(a => a.profile.archAddress === signerAddress);
 
           if (i !== -1) {
             const arch = storedArchaeologists[i];
-            arch.publicKey = archConfigJson.encryptionPublicKey;
+            if (arch.profile.peerId !== archConfigJson.peerId) {
+              // This is POSSIBLE, but in practice shouldn't ever happen.
+              // But that's how you know it'll DEFINITELY happen eh? Sigh.
+              console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
+              return;
+            }
 
+            arch.publicKey = archConfigJson.encryptionPublicKey;
             callbacks.onArchConnected(arch);
           }
         }
