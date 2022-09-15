@@ -77,8 +77,8 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (fileBuffer: Buffer) => {
-      if (!bundlr) return;
+    async (fileBuffer: Buffer | null) => {
+      if (!bundlr || !fileBuffer) return;
 
       setIsUploading(true);
       toast(uploadStart());

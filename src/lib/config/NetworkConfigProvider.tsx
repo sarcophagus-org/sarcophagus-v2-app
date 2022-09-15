@@ -8,11 +8,17 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const networkConfig = !!chain
     ? AllNetworkConfigs[chain.id]
     : {
-        chainId: '',
+        chainId: 0,
         networkName: '',
         networkShortName: '',
         sarcoTokenAddress: '',
         diamondDeployAddress: '',
+        bundlr: {
+          currencyName: '',
+          nodeUrl: '',
+          providerUrl: '',
+          currencyContractAddress: '',
+        },
       };
 
   return (

@@ -1,16 +1,29 @@
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import { VStack, Button } from '@chakra-ui/react';
+import { useSelector } from 'store/index';
+import { UploadPayload } from '../../embalm/stepContent/steps/UploadPayload';
+import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 
-/**
- * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
- */
 export function UploadFile() {
+  const { txId } = useSelector(x => x.bundlrState);
+  const file = useSelector(x => x.embalmState.file);
+  const { uploadFile } = useBundlr();
+
+  async function handleUploadClick() {
+    if (file === null || file === undefined) {
+      console.log('file empty');
+      return;
+    } else {
+      const b = Buffer.from(await file.arrayBuffer());
+      uploadFile(b);
+    }
+  }
+
   return (
-    <Flex
-      mt={6}
-      direction="column"
+    <VStack
+      align="left"
+      spacing={10}
     >
-      <Heading size="md">Upload Payload</Heading>
-      <Text>Not working, will be removed soon</Text>
-    </Flex>
+      <UploadPayload />; <Button onClick={handleUploadClick}>Upload</Button>
+    </VStack>
   );
 }

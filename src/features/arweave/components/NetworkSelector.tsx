@@ -1,8 +1,9 @@
-import { Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { Button, VStack, HStack, Heading, Text } from '@chakra-ui/react';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
-import { mainnetNetworkConfig } from '../../../lib/config/mainnet';
-import { maticNetworkConfig } from '../../../lib/config/matic';
+import { mainnetNetworkConfig } from 'lib/config/mainnet';
+import { maticNetworkConfig } from 'lib/config/matic';
+import { goerliNetworkConfig } from 'lib/config/goerli';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
@@ -12,48 +13,38 @@ export function NetworkSelector() {
   const { switchNetwork, isLoading, pendingChainId } = useSwitchNetwork();
   const { disconnectFromBundlr } = useBundlrSession();
   const { chain } = useNetwork();
-  const ethChainId = Number(mainnetNetworkConfig.chainId);
-  const maticChainId = Number(maticNetworkConfig.chainId);
+  const ethChainId = mainnetNetworkConfig.chainId;
+  const maticChainId = maticNetworkConfig.chainId;
+  const goerliChainId = goerliNetworkConfig.chainId;
 
   function handleClickEthereum() {
     switchNetwork?.(ethChainId);
-
-    // Need to disconnect so the balance will update
     disconnectFromBundlr();
   }
 
   function handleClickMatic() {
     switchNetwork?.(maticChainId);
+    disconnectFromBundlr();
+  }
 
-    // Need to disconnect so the balance will update
+  function handleClickGoerli() {
+    switchNetwork?.(goerliChainId);
     disconnectFromBundlr();
   }
 
   return (
-    <Flex
-      direction="column"
-      mt={6}
+    <VStack
+      spacing={3}
+      align="left"
     >
       <Heading size="md">Select Network</Heading>
-      <Text
-        color="#999"
-        mt={6}
-      >
+      <Text mt={6}>
         Connected to <b>{chain?.name}</b>
       </Text>
-      <Flex mt={3}>
-        <Flex
-          direction="column"
-          align="center"
-        >
-          <Text
-            color="#999"
-            fontSize="sm"
-          >
-            Expensive
-          </Text>
+      <HStack spacing={10}>
+        <VStack>
+          <Text fontSize="sm">Expensive</Text>
           <Button
-            mt={1}
             width={100}
             disabled={chain?.id === ethChainId}
             isLoading={isLoading && pendingChainId === ethChainId}
@@ -61,20 +52,10 @@ export function NetworkSelector() {
           >
             Ethereum
           </Button>
-        </Flex>
-        <Flex
-          ml={6}
-          direction="column"
-          align="center"
-        >
-          <Text
-            color="#999"
-            fontSize="sm"
-          >
-            Cheaper (use for development)
-          </Text>
+        </VStack>
+        <VStack>
+          <Text fontSize="sm">Cheaper (use for development)</Text>
           <Button
-            mt={1}
             width={100}
             disabled={chain?.id === maticChainId}
             isLoading={isLoading && pendingChainId === maticChainId}
@@ -82,8 +63,19 @@ export function NetworkSelector() {
           >
             Matic
           </Button>
-        </Flex>
-      </Flex>
-    </Flex>
+        </VStack>
+        <VStack>
+          <Text fontSize="sm">Testnet</Text>
+          <Button
+            width={100}
+            disabled={chain?.id === goerliChainId}
+            isLoading={isLoading && pendingChainId === goerliChainId}
+            onClick={handleClickGoerli}
+          >
+            Goerli
+          </Button>
+        </VStack>
+      </HStack>
+    </VStack>
   );
 }
