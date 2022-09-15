@@ -4,7 +4,6 @@ import { UploadPayload } from '../../embalm/stepContent/steps/UploadPayload';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 
 export function UploadFile() {
-  const { txId } = useSelector(x => x.bundlrState);
   const file = useSelector(x => x.embalmState.file);
   const { uploadFile } = useBundlr();
 
