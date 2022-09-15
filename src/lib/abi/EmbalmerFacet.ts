@@ -479,18 +479,13 @@ export const EmbalmerFacet = {
               type: 'uint256',
             },
             {
-              internalType: 'uint256',
-              name: 'bounty',
-              type: 'uint256',
-            },
-            {
               internalType: 'bytes32',
               name: 'hashedShard',
               type: 'bytes32',
             },
           ],
-          internalType: 'struct LibTypes.ArchaeologistMemory[]',
-          name: 'archaeologists',
+          internalType: 'struct LibTypes.SelectedArchaeologistMemory[]',
+          name: 'selectedArchaeologists',
           type: 'tuple[]',
         },
         {

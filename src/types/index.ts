@@ -1,27 +1,31 @@
 import { BigNumber, Signature } from 'ethers';
 import { ReactNode } from 'react';
+import { PeerId } from '@libp2p/interfaces/peer-id';
 
 export interface ChildrenOnly {
   children: ReactNode;
 }
 
 export interface Archaeologist {
-  publicKey: string;
-  address: string;
-  bounty: BigNumber;
-  diggingFee: BigNumber;
-  isArweaver: boolean;
-  feePerByte: BigNumber;
-  maxResurrectionTime: number;
+  publicKey?: string;
+  profile: ArchaeologistProfile;
   connection?: any;
+  isOnline: boolean;
 }
 
-export interface ContractArchaeologist {
+export interface SelectedContractArchaeologist {
   archAddress: string;
-  storageFee: BigNumber;
   diggingFee: BigNumber;
-  bounty: BigNumber;
-  hashedShard: string;
+  storageFee: BigNumber;
+  hashedShard?: string;
+}
+
+export interface ArchaeologistProfile {
+  archAddress: string,
+  exists: boolean;
+  minimumDiggingFee: BigNumber;
+  maximumRewrapInterval: number;
+  peerId: PeerId | string;
 }
 
 export interface SignatureWithAccount extends Signature {

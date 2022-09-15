@@ -1,6 +1,5 @@
 import { Noise } from '@chainsafe/libp2p-noise';
 import { Mplex } from '@libp2p/mplex';
-import { Bootstrap } from '@libp2p/bootstrap';
 import { KadDHT } from '@libp2p/kad-dht';
 import { WebRTCStar } from '@libp2p/webrtc-star';
 
@@ -33,13 +32,10 @@ export const nodeConfig = {
   ],
   peerDiscovery: [
     webRtcStar.discovery,
-    new Bootstrap({
-      list: process.env.REACT_APP_BOOTSTRAP_NODE_LIST!.split(',').map((s: string) => s.trim())
-    }),
   ],
   dht,
   connectionManager: {
-    autoDial: true
+    autoDial: false
   },
   pubsub: new FloodSub({
     enabled: true,

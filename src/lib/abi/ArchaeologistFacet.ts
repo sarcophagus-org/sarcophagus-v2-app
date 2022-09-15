@@ -25,6 +25,22 @@ export const ArchaeologistFacet = {
     {
       inputs: [
         {
+          internalType: 'bool',
+          name: 'exists',
+          type: 'bool',
+        },
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+      ],
+      name: 'ArchaeologistProfileExistsShouldBe',
+      type: 'error',
+    },
+    {
+      inputs: [
+        {
           internalType: 'uint256',
           name: 'cursedBond',
           type: 'uint256',
@@ -233,6 +249,37 @@ export const ArchaeologistFacet = {
       inputs: [
         {
           indexed: true,
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'minimumDiggingFee',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'maximumRewrapInterval',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'freeBond',
+          type: 'uint256',
+        },
+      ],
+      name: 'RegisterArchaeologist',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
           internalType: 'bytes32',
           name: 'sarcoId',
           type: 'bytes32',
@@ -245,6 +292,37 @@ export const ArchaeologistFacet = {
         },
       ],
       name: 'UnwrapSarcophagus',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'minimumDiggingFee',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'maximumRewrapInterval',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'freeBond',
+          type: 'uint256',
+        },
+      ],
+      name: 'UpdateArchaeologist',
       type: 'event',
     },
     {
@@ -341,6 +419,34 @@ export const ArchaeologistFacet = {
     {
       inputs: [
         {
+          internalType: 'uint256',
+          name: 'minimumDiggingFee',
+          type: 'uint256',
+        },
+        {
+          internalType: 'uint256',
+          name: 'maximumRewrapInterval',
+          type: 'uint256',
+        },
+        {
+          internalType: 'uint256',
+          name: 'freeBond',
+          type: 'uint256',
+        },
+        {
+          internalType: 'string',
+          name: 'peerId',
+          type: 'string',
+        },
+      ],
+      name: 'registerArchaeologist',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
           internalType: 'bytes32',
           name: 'sarcoId',
           type: 'bytes32',
@@ -352,6 +458,29 @@ export const ArchaeologistFacet = {
         },
       ],
       name: 'unwrapSarcophagus',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: 'minimumDiggingFee',
+          type: 'uint256',
+        },
+        {
+          internalType: 'uint256',
+          name: 'maximumRewrapInterval',
+          type: 'uint256',
+        },
+        {
+          internalType: 'uint256',
+          name: 'freeBond',
+          type: 'uint256',
+        },
+      ],
+      name: 'updateArchaeologist',
       outputs: [],
       stateMutability: 'nonpayable',
       type: 'function',

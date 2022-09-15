@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
-import { ContractArchaeologist } from 'types';
+import { SelectedContractArchaeologist } from 'types';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 
 interface InitializeSarcophagusArgs {
@@ -10,8 +10,8 @@ interface InitializeSarcophagusArgs {
   resurrectionTime: number;
   canBeTransferred: boolean;
   minShards: number;
-  archaeologists: ContractArchaeologist[];
-  arweaveArchaeologist: ContractArchaeologist;
+  archaeologists: SelectedContractArchaeologist[];
+  arweaveArchaeologist: SelectedContractArchaeologist;
 }
 
 export function useInitializeSarcophagus({
