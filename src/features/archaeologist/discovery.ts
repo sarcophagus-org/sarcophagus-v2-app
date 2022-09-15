@@ -33,7 +33,7 @@ export async function initialisePeerDiscovery(
 
 
   // Listen for new peers
-  browserNode.addEventListener('peer:discovery', async (evt) => {
+  browserNode.addEventListener('peer:discovery', (evt) => {
     const peerId = evt.detail.id;
     const peerIdStr = peerId.toString();
 
@@ -48,9 +48,6 @@ export async function initialisePeerDiscovery(
         storedArchaeologists[i].profile.peerId = peerId;
         callbacks.setArchs(storedArchaeologists);
       }
-
-      // TODO: Update to dial a node only during arweave validation.
-      await browserNode.dialProtocol(evt.detail.id, '/message');
     }
   });
 
@@ -100,12 +97,15 @@ export async function initialisePeerDiscovery(
 
           if (i !== -1) {
             const arch = storedArchaeologists[i];
-            if (arch.profile.peerId !== archConfigJson.peerId) {
+            // TODO: Determine if there's a better way to be certain of origin's peerId
+            if (arch.profile.peerId.toString() !== archConfigJson.peerId) {
               // This is POSSIBLE, but in practice shouldn't ever happen.
               // But that's how you know it'll DEFINITELY happen eh? Sigh.
               console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
               return;
             }
+
+            console.log('got public key of', arch.profile.peerId);
 
             arch.publicKey = archConfigJson.encryptionPublicKey;
             callbacks.onArchConnected(arch);

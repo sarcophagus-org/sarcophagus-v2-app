@@ -14,19 +14,19 @@ export function useLoadArchaeologists() {
 
   const storedArchaeologists = useSelector(s => s.archaeologistState.archaeologists);
 
-  const browserNode = useContext(LibP2pContext);
+  const browserNodePromise = useContext(LibP2pContext);
   useAsyncEffect(async () => {
     try {
       console.log('storedArchaeologists', storedArchaeologists);
 
-      if (browserNode === undefined) {
+      if (browserNodePromise === undefined) {
         console.error('browser node is undefined');
         return;
       }
 
       if (storedArchaeologists.length > 0) {
         await initialisePeerDiscovery(
-          await browserNode,
+          await browserNodePromise,
           storedArchaeologists, {
           setArchs: (discoveredArchs: Archaeologist[]) => dispatch(storeArchaeologists(discoveredArchs)),
           onArchConnected: (connectedArc: Archaeologist) => dispatch(selectArchaeologist(connectedArc)),
