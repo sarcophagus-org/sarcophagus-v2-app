@@ -12,10 +12,15 @@ export function generateMockArchaeoloigsts() {
   let mockArchaeologists: Archaeologist[] = [];
   for (let i = 0; i < count; i++) {
     mockArchaeologists.push({
-      publicKey: '0x0',
-      address: generateFakeAddress(),
-      diggingFee: BigNumber.from(randomIntFromInterval(minDiggingFee, maxDiggingFee)),
-      connection: null,
+      profile: {
+        archAddress: generateFakeAddress(),
+        exists: true,
+        minimumDiggingFee: BigNumber.from(randomIntFromInterval(minDiggingFee, maxDiggingFee)),
+        // random number between 1 week and 1 month
+        maximumRewrapInterval: randomIntFromInterval(604800000, 2628000000),
+        peerId: '',
+      },
+      isOnline: true,
     });
   }
   return mockArchaeologists;

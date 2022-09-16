@@ -8,7 +8,7 @@ export function SelectArchaeologists() {
 
   const selectionsLeft = parseInt(totalArchaeologists) - selectedArchaeologists.length;
   const totalDiggingFees = selectedArchaeologists.reduce(
-    (acc, curr) => acc.add(curr.diggingFee),
+    (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
     BigNumber.from('0')
   );
 

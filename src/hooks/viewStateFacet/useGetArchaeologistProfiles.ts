@@ -4,12 +4,12 @@ import { useNetworkConfig } from 'lib/config';
 import { ArchaeologistProfile } from 'types';
 import { useAsyncEffect } from 'hooks/useAsyncEffect';
 import { useDispatch, useSelector } from '../../store';
-import { storeArchaeologists } from 'store/archaeologist/actions';
+import { setArchaeologists } from 'store/embalm/actions';
 
 export function useGetArchaeologistProfiles() {
   const networkConfig = useNetworkConfig();
   const dispatch = useDispatch();
-  const storedArchaeologists = useSelector(s => s.archaeologistState.archaeologists);
+  const storedArchaeologists = useSelector(s => s.embalmState.archaeologists);
 
   let profiles: Record<string, ArchaeologistProfile> = {};
 
@@ -44,7 +44,7 @@ export function useGetArchaeologistProfiles() {
       }
 
       const archaeologists = Object.values(profiles).map(p => ({ profile: p, isOnline: false }));
-      dispatch(storeArchaeologists(archaeologists));
+      dispatch(setArchaeologists(archaeologists));
     }
   }, []);
 }

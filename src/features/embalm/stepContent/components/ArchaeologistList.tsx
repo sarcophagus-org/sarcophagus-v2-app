@@ -25,7 +25,7 @@ export function ArchaeologistList() {
 
   function handleCheckArchaeologist(archaeologist: Archaeologist) {
     if (selectedArchaeologists.includes(archaeologist)) {
-      dispatch(deselectArchaeologist(archaeologist.address));
+      dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
     } else {
       dispatch(selectArchaeologist(archaeologist));
     }
@@ -83,7 +83,7 @@ export function ArchaeologistList() {
               <Tbody>
                 {archaeologists.map(arch => (
                   <Tr
-                    key={arch.address}
+                    key={arch.profile.archAddress}
                     background={selectedArchaeologists.includes(arch) ? 'brand.700' : ''}
                     onClick={() => handleCheckArchaeologist(arch)}
                     cursor="pointer"
@@ -93,7 +93,7 @@ export function ArchaeologistList() {
                         color={selectedArchaeologists.includes(arch) ? 'brand.0' : ''}
                         ml={3}
                       >
-                        {formatAddress(arch.address)}
+                        {formatAddress(arch.profile.archAddress)}
                       </Text>
                     </Td>
                     <Td isNumeric>
@@ -107,7 +107,7 @@ export function ArchaeologistList() {
                           ml={3}
                           color={selectedArchaeologists.includes(arch) ? 'brand.0' : ''}
                         >
-                          {arch.diggingFee.toString()}
+                          {arch.profile.minimumDiggingFee.toString()}
                         </Text>
                       </Flex>
                     </Td>

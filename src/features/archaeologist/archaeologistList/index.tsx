@@ -13,30 +13,28 @@ import {
 } from '@chakra-ui/react';
 import { Loading } from '../../../components/Loading';
 import { useDispatch, useSelector } from '../../../store';
+import { formatAddress } from 'lib/utils/helpers';
+import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
+import { SubmitMock } from './SubmitMock';
+import { Archaeologist } from 'types';
+import { ethers } from 'ethers';
 import {
   deselectArchaeologist,
   selectArchaeologist,
   setSelectedArchaeologists,
-} from '../../../store/archaeologist/actions';
-import { formatAddress } from 'lib/utils/helpers';
-import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
-import { ArchaeologistsWarnings } from './ArchaeologistsWarnings';
-import { RequiredArchaeologistsPicker } from './RequiredArchaeologistsPicker';
-import { SubmitMock } from './SubmitMock';
-import { Archaeologist } from 'types';
-import { ethers } from 'ethers';
+} from 'store/embalm/actions';
 
 export function ArchaeologistList() {
   const dispatch = useDispatch();
 
   useLoadArchaeologists();
 
-  const archaeologists = useSelector(s => s.archaeologistState.archaeologists);
-  const selectedArchaeologists = useSelector(s => s.archaeologistState.selectedArchaeologists);
+  const archaeologists = useSelector(s => s.embalmState.archaeologists);
+  const selectedArchaeologists = useSelector(s => s.embalmState.selectedArchaeologists);
 
   function handleCheckArchaeologist(arch: Archaeologist) {
     if (selectedArchaeologists.includes(arch)) {
-      dispatch(deselectArchaeologist(arch));
+      dispatch(deselectArchaeologist(arch.profile.archAddress));
     } else {
       dispatch(selectArchaeologist(arch));
     }
@@ -51,8 +49,6 @@ export function ArchaeologistList() {
       direction="column"
       height="100%"
     >
-      <RequiredArchaeologistsPicker />
-      <ArchaeologistsWarnings />
       <Button
         width={20}
         size="sm"
@@ -89,7 +85,7 @@ export function ArchaeologistList() {
                         <Text ml={3}>{formatAddress(arch.profile.archAddress)}</Text>
                       </Flex>
                     </Td>
-                    <Td isNumeric >
+                    <Td isNumeric>
                       <Text>{ethers.utils.formatEther(arch.profile.minimumDiggingFee)} SARCO</Text>
                     </Td>
                     <Td isNumeric>

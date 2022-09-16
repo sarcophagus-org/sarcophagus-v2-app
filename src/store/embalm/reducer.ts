@@ -152,7 +152,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return {
         ...state,
         selectedArchaeologists: state.selectedArchaeologists.filter(
-          a => a.address !== action.payload.address
+          a => a.profile.archAddress !== action.payload.address
         ),
       };
 

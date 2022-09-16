@@ -1,9 +1,9 @@
-import { useGetArchaeologistProfiles } from 'hooks/viewStateFacet';
+import { useGetArchaeologistProfiles } from 'hooks/viewStateFacet/useGetArchaeologistProfiles';
 import { LibP2pContext } from 'lib/network/P2PNodeProvider';
 import { useContext } from 'react';
+import { selectArchaeologist, setArchaeologists } from 'store/embalm/actions';
 import { useAsyncEffect } from '../../../hooks/useAsyncEffect';
 import { useDispatch, useSelector } from '../../../store';
-import { storeArchaeologists, selectArchaeologist } from '../../../store/archaeologist/actions';
 import { Archaeologist } from '../../../types';
 import { initialisePeerDiscovery } from '../discovery';
 
@@ -12,7 +12,7 @@ export function useLoadArchaeologists() {
 
   useGetArchaeologistProfiles();
 
-  const storedArchaeologists = useSelector(s => s.archaeologistState.archaeologists);
+  const storedArchaeologists = useSelector(s => s.embalmState.archaeologists);
 
   const browserNodePromise = useContext(LibP2pContext);
   useAsyncEffect(async () => {
@@ -25,11 +25,11 @@ export function useLoadArchaeologists() {
       }
 
       if (storedArchaeologists.length > 0) {
-        await initialisePeerDiscovery(
-          await browserNodePromise,
-          storedArchaeologists, {
-          setArchs: (discoveredArchs: Archaeologist[]) => dispatch(storeArchaeologists(discoveredArchs)),
-          onArchConnected: (connectedArc: Archaeologist) => dispatch(selectArchaeologist(connectedArc)),
+        await initialisePeerDiscovery(await browserNodePromise, storedArchaeologists, {
+          setArchs: (discoveredArchs: Archaeologist[]) =>
+            dispatch(setArchaeologists(discoveredArchs)),
+          onArchConnected: (connectedArc: Archaeologist) =>
+            dispatch(selectArchaeologist(connectedArc)),
         });
       }
     } catch (error) {
