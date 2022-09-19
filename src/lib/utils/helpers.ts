@@ -103,3 +103,17 @@ export function removeLeadingZeroes(value: string): string {
 export function zeroIfEmpty(value: string): string {
   return value.trim() === '' ? '0' : value;
 }
+
+/**
+ * Generates a fake eth address. This address will be invalid, it's just for the mock archaeologist.
+ */
+export function generateFakeAddress(): string {
+  return '0x' + [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+}
+
+/**
+ * Generates a random number between min and max.
+ */
+export function randomIntFromInterval(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}

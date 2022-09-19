@@ -1,5 +1,6 @@
 import { ResurrectionRadioValue } from 'features/embalm/stepContent/steps/Resurrections';
 import { removeFromArray } from 'lib/utils/helpers';
+import { Archaeologist } from 'types/index';
 import { Actions } from '..';
 import { ActionType, Recipient, RecipientSetByOption } from './actions';
 
@@ -18,9 +19,11 @@ export enum Step {
   Resurrections = 5,
   SetDiggingFees = 6,
   TotalRequiredArchaeologists = 7,
+  SelectArchaeologists = 8,
 }
 
 export interface EmbalmState {
+  archaeologists: Archaeologist[];
   currentStep: Step;
   diggingFees: string;
   expandedStepIndices: number[];
@@ -30,15 +33,17 @@ export interface EmbalmState {
   outerPublicKey: string | null;
   recipient: Recipient;
   recipientSetByOption: RecipientSetByOption | undefined;
+  requiredArchaeologists: string;
   resurrection: number;
   resurrectionRadioValue: string;
-  requiredArchaeologists: string;
+  selectedArchaeologists: Archaeologist[];
   stepStatuses: { [key: number]: StepStatus };
   totalArchaeologists: string;
   uploadPrice: string;
 }
 
 export const embalmInitialState: EmbalmState = {
+  archaeologists: [],
   currentStep: Step.NameSarcophagus,
   diggingFees: '0',
   expandedStepIndices: [Step.NameSarcophagus],
@@ -48,9 +53,10 @@ export const embalmInitialState: EmbalmState = {
   outerPublicKey: null,
   recipient: { publicKey: '', address: '' },
   recipientSetByOption: undefined,
+  requiredArchaeologists: '0',
   resurrection: 0,
   resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
-  requiredArchaeologists: '0',
+  selectedArchaeologists: [],
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
@@ -132,6 +138,26 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetUploadPrice:
       return { ...state, uploadPrice: action.payload.price };
+
+    case ActionType.SetArchaeologists:
+      return { ...state, archaeologists: action.payload.archaeologists };
+
+    case ActionType.SelectArchaeologist:
+      return {
+        ...state,
+        selectedArchaeologists: [...state.selectedArchaeologists, action.payload.archaeologist],
+      };
+
+    case ActionType.DeselectArchaeologist:
+      return {
+        ...state,
+        selectedArchaeologists: state.selectedArchaeologists.filter(
+          a => a.profile.archAddress !== action.payload.address
+        ),
+      };
+
+    case ActionType.SetSelectedArchaeologists:
+      return { ...state, selectedArchaeologists: action.payload.archaeologists };
 
     default:
       return state;
