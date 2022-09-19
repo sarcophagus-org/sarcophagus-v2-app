@@ -2,7 +2,6 @@ import { WebBundlr } from '@bundlr-network/client';
 import { useToast } from '@chakra-ui/react';
 import { InjectedEthereumSigner } from 'arbundles/src/signing';
 import { ethers } from 'ethers';
-import { AllNetworkConfigs } from 'lib/config/networkConfig';
 import {
   connectFailure,
   connectStart,
@@ -12,34 +11,31 @@ import {
 import { useCallback, useEffect, useMemo } from 'react';
 import { connect, disconnect as disconnectBundlr, setBundlr } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
+import { useNetworkConfig } from 'lib/config';
 
 export function useBundlrSession() {
-  const nodeUrl = process.env.REACT_APP_BUNDLR_NODE || 'https://node1.bundlr.network';
-
   const dispatch = useDispatch();
   const { isConnected } = useSelector(x => x.bundlrState);
   const { address } = useAccount();
-  const { chain } = useNetwork();
   const toast = useToast();
+  const networkConfig = useNetworkConfig();
 
   // TODO: Find a way to use the provider from wagmi
   const connector: any = window.ethereum;
   const provider = useMemo(() => new ethers.providers.Web3Provider(connector), [connector]);
 
-  // Get the name of the currency that bundlr will understand
-  const currency = useMemo(
-    () => AllNetworkConfigs[chain?.id || 1].bundlrCurrencyName || 'ethereum',
-    [chain]
-  );
-
-  /**
-   * Connects to the arweave bundlr node.
-   * This will prompt the user to sign a message.
-   * Defaults to https://node1.bundlr.network.
-   */
   const connectToBundlr = useCallback(async (): Promise<void> => {
-    let newBundlr = new WebBundlr(nodeUrl, currency, provider);
+    let newBundlr = new WebBundlr(
+      networkConfig.bundlr.nodeUrl,
+      networkConfig.bundlr.currencyName,
+      provider,
+      {
+        timeout: 100000,
+        providerUrl: networkConfig.bundlr.providerUrl,
+        contractAddress: networkConfig.bundlr.currencyContractAddress,
+      }
+    );
 
     toast(connectStart());
     try {
@@ -58,7 +54,7 @@ export function useBundlrSession() {
       const error = _error as Error;
       toast(connectFailure(error.message));
     }
-  }, [currency, dispatch, nodeUrl, provider, toast]);
+  }, [dispatch, networkConfig, provider, toast]);
 
   /**
    * Disconnects from the arweave bundlr node
@@ -88,7 +84,17 @@ export function useBundlrSession() {
 
       // Cast as `any` because typescript doesn't recognize that the bundlr has some of
       // these properties
-      let newBundlr: any = new WebBundlr(nodeUrl, currency, provider);
+      let newBundlr: any = new WebBundlr(
+        networkConfig.bundlr.nodeUrl,
+        networkConfig.bundlr.currencyName,
+        provider,
+        {
+          timeout: 100000,
+          providerUrl: networkConfig.bundlr.providerUrl,
+          contractAddress: networkConfig.bundlr.currencyContractAddress,
+        }
+      );
+
       newBundlr.address = address?.toLowerCase();
       newBundlr.currencyConfig._address = address?.toLowerCase();
       newBundlr.currencyConfig.signer = injectedSigner;
@@ -97,7 +103,7 @@ export function useBundlrSession() {
 
       return newBundlr;
     },
-    [address, currency, nodeUrl, provider]
+    [address, networkConfig, provider]
   );
 
   // Uses the connect wallet button to detect chain change.
