@@ -26,7 +26,6 @@ export function useBundlrSession() {
   const provider = useMemo(() => new ethers.providers.Web3Provider(connector), [connector]);
 
   const connectToBundlr = useCallback(async (): Promise<void> => {
-    console.log(networkConfig.bundlr.nodeUrl, networkConfig.bundlr.currencyName, provider);
     let newBundlr = new WebBundlr(
       networkConfig.bundlr.nodeUrl,
       networkConfig.bundlr.currencyName,
