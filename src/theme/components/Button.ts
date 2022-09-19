@@ -15,6 +15,10 @@ export const Button = {
         bg: 'brand.700',
       },
     },
+    ghost: {
+      fontWeight: 400,
+      fontSize: 14,
+    },
   },
   baseStyle: {
     border: 'none',

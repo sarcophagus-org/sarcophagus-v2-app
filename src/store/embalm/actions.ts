@@ -24,6 +24,9 @@ export enum ActionType {
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
+  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
+  SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
+  SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
 }
 
 export enum RecipientSetByOption {
@@ -32,6 +35,11 @@ export enum RecipientSetByOption {
   GENERATE,
 }
 
+export enum SortDirection {
+  DESC = 'desc',
+  ASC = 'asc',
+  NONE = 'none',
+}
 export interface Recipient {
   address: string;
   publicKey: string;
@@ -58,6 +66,9 @@ type EmbalmPayload = {
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
+  [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
+  [ActionType.SetDiggingFeesFilter]: { filter: string };
+  [ActionType.SetArchAddressSearch]: { search: string };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -225,6 +236,33 @@ export function deselectArchaeologist(address: string): EmbalmActions {
     type: ActionType.DeselectArchaeologist,
     payload: {
       address,
+    },
+  };
+}
+
+export function setDiggingFeesSortDirection(direction: SortDirection): EmbalmActions {
+  return {
+    type: ActionType.SetDiggingFeesSortDirection,
+    payload: {
+      direction,
+    },
+  };
+}
+
+export function setDiggingFeesFilter(filter: string): EmbalmActions {
+  return {
+    type: ActionType.SetDiggingFeesFilter,
+    payload: {
+      filter,
+    },
+  };
+}
+
+export function setArchAddressSearch(search: string): EmbalmActions {
+  return {
+    type: ActionType.SetArchAddressSearch,
+    payload: {
+      search,
     },
   };
 }
