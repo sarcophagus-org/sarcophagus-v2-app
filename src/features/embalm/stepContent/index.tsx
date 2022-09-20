@@ -2,6 +2,7 @@ import { Button, Flex, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
+import { CreateSarcophagus } from './steps/CreateSarcohpagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { Resurrections } from './steps/Resurrections';
@@ -25,6 +26,7 @@ export function StepContent() {
     [Step.SetDiggingFees]: <SetDiggingFees />,
     [Step.TotalRequiredArchaeologists]: <TotalRequiredArchaegologists />,
     [Step.SelectArchaeologists]: <SelectArchaeologists />,
+    [Step.CreateSarcophagus]: <CreateSarcophagus />,
   };
 
   function handleClickPrev() {

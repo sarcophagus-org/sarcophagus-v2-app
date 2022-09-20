@@ -3,8 +3,14 @@
 
 import { BigNumber } from 'ethers';
 import { Archaeologist } from 'types';
-import { generateFakeAddress, randomIntFromInterval } from './utils/helpers';
+import { generateFakeAddress, randomIntFromInterval } from '../utils/helpers';
 
+/**
+ * Temporary function.
+ * Generates mock archaeologists for the archaeologist list.
+ * This does not use the mock private keys to create wallets, it just generates stuff to show on the
+ * table
+ */
 export function generateMockArchaeoloigsts() {
   const count = 10;
   const minDiggingFee = 10;

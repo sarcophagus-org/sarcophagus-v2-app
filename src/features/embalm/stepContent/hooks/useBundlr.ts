@@ -77,15 +77,17 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (fileBuffer: Buffer | null) => {
-      if (!bundlr || !fileBuffer) return;
+    async (fileBuffer: Buffer): Promise<string> => {
+      if (!bundlr) {
+        throw new Error('Bundlr not connected');
+      }
 
       setIsUploading(true);
       toast(uploadStart());
       try {
         const res = await bundlr?.uploader.upload(fileBuffer);
-        dispatch(setTxId(res.data.id));
         toast(uploadSuccess());
+        return res.data.id;
       } catch (_error) {
         const error = _error as Error;
         console.error(error);
@@ -93,8 +95,9 @@ export function useBundlr() {
       } finally {
         setIsUploading(false);
       }
+      return '';
     },
-    [bundlr, dispatch, toast]
+    [bundlr, toast]
   );
 
   return {

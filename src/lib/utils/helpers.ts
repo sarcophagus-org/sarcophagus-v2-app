@@ -1,4 +1,6 @@
 import moment from 'moment';
+import { encrypt as eciesEncrypt } from 'ecies-geth';
+import { ethers } from 'ethers';
 
 /**
  * Formats an address into a more readable format
@@ -116,4 +118,14 @@ export function generateFakeAddress(): string {
  */
 export function randomIntFromInterval(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+/**
+ * Encrypts a payload given a public key
+ * @param publicKey The public key to encrypt the payload with
+ * @param payload The payload to encrypt
+ * @returns The encrypted payload
+ */
+export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffer> {
+  return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(payload));
 }
