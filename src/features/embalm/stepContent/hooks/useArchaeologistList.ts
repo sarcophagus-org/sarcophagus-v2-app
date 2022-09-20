@@ -4,14 +4,12 @@ import {
   selectArchaeologist,
   SortDirection,
   setDiggingFeesSortDirection,
-  setDiggingFeesFilter,
   setArchAddressSearch,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { orderBy } from 'lodash';
-import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
@@ -71,18 +69,6 @@ export function useArchaeologistList() {
       arch.profile.minimumDiggingFee.lte(diggingFeesFilter || 100000000)
   );
 
-  function handleChangeDiggingFeesFilter(valueAsString: string, valueAsNumber: number) {
-    valueAsString = removeNonIntChars(valueAsString);
-    valueAsString = removeLeadingZeroes(valueAsString);
-
-    if (valueAsNumber < 0) {
-      valueAsString = '0';
-      valueAsNumber = 0;
-    }
-
-    dispatch(setDiggingFeesFilter(valueAsString));
-  }
-
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     dispatch(setArchAddressSearch(value));
@@ -96,7 +82,6 @@ export function useArchaeologistList() {
     onClickSortDiggingFees,
     diggingFeesSortDirection,
     sortedFilteredArchaeoligist,
-    handleChangeDiggingFeesFilter,
     handleChangeAddressSearch,
     diggingFeesFilter,
     archAddressSearch,

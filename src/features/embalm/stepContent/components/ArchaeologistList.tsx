@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Flex,
   Image,
@@ -12,11 +11,7 @@ import {
   Tr,
   Button,
   Icon,
-  NumberInput,
-  NumberInputField,
   VStack,
-  InputLeftElement,
-  InputGroup,
   Input,
 } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
@@ -24,7 +19,9 @@ import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { TablePageNavigator } from './TablePageNavigator';
-import { SortDirection } from 'store/embalm/actions';
+import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
+import { useDispatch } from 'store/index';
+import { DiggingFeesInput } from '../components/DiggingFeesInput';
 
 export function ArchaeologistList() {
   const {
@@ -35,17 +32,21 @@ export function ArchaeologistList() {
     sortedFilteredArchaeoligist,
     onClickSortDiggingFees,
     diggingFeesSortDirection,
-    handleChangeDiggingFeesFilter,
     handleChangeAddressSearch,
     diggingFeesFilter,
     archAddressSearch,
   } = useArchaeologistList();
+  const dispatch = useDispatch();
 
   const sortIconMap: { [key: string]: JSX.Element } = {
     [SortDirection.NONE]: <Icon> </Icon>, //Blank icon
     [SortDirection.ASC]: <ArrowUpIcon />,
     [SortDirection.DESC]: <ArrowDownIcon />,
   };
+
+  function setDiggingFees(diggingFees: string) {
+    return dispatch(setDiggingFeesFilter(diggingFees));
+  }
 
   return (
     <Flex
@@ -96,24 +97,10 @@ export function ArchaeologistList() {
                       >
                         Digging Fee
                       </Button>
-                      <Flex align="center">
-                        <InputGroup>
-                          <NumberInput
-                            w="150px"
-                            onChange={handleChangeDiggingFeesFilter}
-                            value={diggingFeesFilter}
-                          >
-                            <NumberInputField
-                              pl={12}
-                              pr={1}
-                              placeholder="Max"
-                            />
-                            <InputLeftElement>
-                              <Image src="sarco-token-icon.png" />
-                            </InputLeftElement>
-                          </NumberInput>
-                        </InputGroup>
-                      </Flex>
+                      <DiggingFeesInput
+                        setDiggingFees={setDiggingFees}
+                        value={diggingFeesFilter}
+                      />
                     </VStack>
                   </Th>
                 </Tr>
