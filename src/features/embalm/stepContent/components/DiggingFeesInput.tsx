@@ -11,9 +11,14 @@ import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 
 interface DiggingFeesInputProps extends UseNumberInputProps {
   setDiggingFees: (value: string) => void;
+  placeholder?: string;
 }
 
-export function DiggingFeesInput({ setDiggingFees, ...rest }: DiggingFeesInputProps) {
+export function DiggingFeesInput({
+  setDiggingFees,
+  placeholder = '',
+  ...rest
+}: DiggingFeesInputProps) {
   function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
     valueAsString = removeNonIntChars(valueAsString);
     valueAsString = removeLeadingZeroes(valueAsString);
@@ -39,7 +44,8 @@ export function DiggingFeesInput({ setDiggingFees, ...rest }: DiggingFeesInputPr
           <NumberInputField
             pl={12}
             pr={1}
-            placeholder="Max"
+            placeholder={placeholder}
+            borderColor="violet.700"
           />
           <InputLeftElement>
             <Image src="sarco-token-icon.png" />

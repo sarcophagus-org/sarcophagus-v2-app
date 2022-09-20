@@ -69,20 +69,21 @@ export function ArchaeologistList() {
               <Thead>
                 <Tr>
                   <Th>
-                    <VStack>
+                    <VStack align="left">
                       <Text
                         variant="secondary"
                         textTransform="capitalize"
-                        p="3"
+                        py={3}
                       >
                         Archaeologists ({sortedFilteredArchaeoligist.length})
                       </Text>
                       <Flex align="center">
                         <Input
-                          w="150px"
+                          w="200px"
                           onChange={handleChangeAddressSearch}
                           value={archAddressSearch}
                           placeholder="Search"
+                          borderColor="violet.700"
                         />
                       </Flex>
                     </VStack>
@@ -100,6 +101,7 @@ export function ArchaeologistList() {
                       <DiggingFeesInput
                         setDiggingFees={setDiggingFees}
                         value={diggingFeesFilter}
+                        placeholder="Max"
                       />
                     </VStack>
                   </Th>
