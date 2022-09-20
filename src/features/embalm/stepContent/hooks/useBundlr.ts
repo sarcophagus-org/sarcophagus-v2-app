@@ -12,7 +12,7 @@ import {
   withdrawSuccess,
 } from 'lib/utils/toast';
 import { useCallback, useState } from 'react';
-import { setIsFunding, setTxId } from 'store/bundlr/actions';
+import { setIsFunding } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 
 export function useBundlr() {
