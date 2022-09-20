@@ -77,15 +77,14 @@ export function ArchaeologistList() {
                       >
                         Archaeologists ({sortedFilteredArchaeoligist.length})
                       </Text>
-                      <Flex align="center">
-                        <Input
-                          w="200px"
-                          onChange={handleChangeAddressSearch}
-                          value={archAddressSearch}
-                          placeholder="Search"
-                          borderColor="violet.700"
-                        />
-                      </Flex>
+                      <Input
+                        w="200px"
+                        onChange={handleChangeAddressSearch}
+                        value={archAddressSearch}
+                        placeholder="Search"
+                        borderColor="violet.700"
+                        color="brand.950"
+                      />
                     </VStack>
                   </Th>
                   <Th isNumeric>
@@ -102,6 +101,7 @@ export function ArchaeologistList() {
                         setDiggingFees={setDiggingFees}
                         value={diggingFeesFilter}
                         placeholder="Max"
+                        color="brand.950"
                       />
                     </VStack>
                   </Th>

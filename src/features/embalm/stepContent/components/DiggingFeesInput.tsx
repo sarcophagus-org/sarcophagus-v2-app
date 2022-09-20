@@ -5,11 +5,11 @@ import {
   NumberInputField,
   InputLeftElement,
   InputGroup,
-  UseNumberInputProps,
+  NumberInputProps,
 } from '@chakra-ui/react';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 
-interface DiggingFeesInputProps extends UseNumberInputProps {
+interface DiggingFeesInputProps extends NumberInputProps {
   setDiggingFees: (value: string) => void;
   placeholder?: string;
 }
