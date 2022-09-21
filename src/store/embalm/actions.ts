@@ -36,9 +36,9 @@ export enum RecipientSetByOption {
 }
 
 export enum SortDirection {
-  DESC = 'desc',
-  ASC = 'asc',
-  NONE = 'none',
+  ASC,
+  DESC,
+  NONE,
 }
 export interface Recipient {
   address: string;

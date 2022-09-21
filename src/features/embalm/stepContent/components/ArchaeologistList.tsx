@@ -14,7 +14,7 @@ import {
   VStack,
   Input,
 } from '@chakra-ui/react';
-import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
@@ -38,8 +38,8 @@ export function ArchaeologistList() {
   } = useArchaeologistList();
   const dispatch = useDispatch();
 
-  const sortIconMap: { [key: string]: JSX.Element } = {
-    [SortDirection.NONE]: <Icon> </Icon>, //Blank icon
+  const sortIconsMap: { [key: number]: JSX.Element } = {
+    [SortDirection.NONE]: <ArrowUpDownIcon> </ArrowUpDownIcon>,
     [SortDirection.ASC]: <ArrowUpIcon />,
     [SortDirection.DESC]: <ArrowDownIcon />,
   };
@@ -92,7 +92,7 @@ export function ArchaeologistList() {
                       <Button
                         variant="ghost"
                         textTransform="capitalize"
-                        rightIcon={sortIconMap[diggingFeesSortDirection]}
+                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
                         onClick={onClickSortDiggingFees}
                       >
                         Digging Fee

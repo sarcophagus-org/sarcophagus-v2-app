@@ -9,11 +9,13 @@ import {
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
-import { orderBy } from 'lodash';
+import { orderBy, keys } from 'lodash';
+import { constants } from 'ethers';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
   const dispatch = useDispatch();
+
   const {
     archaeologists,
     selectedArchaeologists,
@@ -21,6 +23,12 @@ export function useArchaeologistList() {
     diggingFeesFilter,
     archAddressSearch,
   } = useSelector(s => s.embalmState);
+
+  const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
+    [SortDirection.NONE]: undefined,
+    [SortDirection.ASC]: 'asc',
+    [SortDirection.DESC]: 'desc',
+  };
 
   // TODO: It doesn't make sense to implement pagination any further until we are loading real archaeologists
   const onClickNextPage = useCallback(() => {
@@ -45,28 +53,23 @@ export function useArchaeologistList() {
   );
 
   function onClickSortDiggingFees() {
-    dispatch(
-      setDiggingFeesSortDirection(
-        diggingFeesSortDirection === SortDirection.NONE
-          ? SortDirection.ASC
-          : diggingFeesSortDirection === SortDirection.ASC
-          ? SortDirection.DESC
-          : diggingFeesSortDirection === SortDirection.DESC
-          ? SortDirection.NONE
-          : SortDirection.NONE
-      )
-    );
+    const length = keys(SortDirection).length / 2;
+    dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
   }
 
   const sortedArchaeoligist =
     diggingFeesSortDirection === SortDirection.NONE
       ? archaeologists
-      : orderBy(archaeologists, 'profile.minimumDiggingFee', diggingFeesSortDirection);
+      : orderBy(
+          archaeologists,
+          'profile.minimumDiggingFee',
+          sortOrderByMap[diggingFeesSortDirection]
+        );
 
   const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
     arch =>
       arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-      arch.profile.minimumDiggingFee.lte(diggingFeesFilter || 100000000)
+      arch.profile.minimumDiggingFee.lte(diggingFeesFilter || constants.MaxInt256)
   );
 
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
