@@ -2,7 +2,7 @@ import { ResurrectionRadioValue } from 'features/embalm/stepContent/steps/Resurr
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist } from 'types/index';
 import { Actions } from '..';
-import { ActionType, Recipient, RecipientSetByOption } from './actions';
+import { ActionType, Recipient, RecipientSetByOption, SortDirection } from './actions';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -43,6 +43,9 @@ export interface EmbalmState {
   stepStatuses: { [key: number]: StepStatus };
   totalArchaeologists: string;
   uploadPrice: string;
+  diggingFeesSortDirection: SortDirection;
+  diggingFeesFilter: string;
+  archAddressSearch: string;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -68,6 +71,9 @@ export const embalmInitialState: EmbalmState = {
   ),
   totalArchaeologists: '0',
   uploadPrice: '',
+  diggingFeesSortDirection: SortDirection.NONE,
+  diggingFeesFilter: '',
+  archAddressSearch: '',
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -163,6 +169,16 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetSelectedArchaeologists:
       return { ...state, selectedArchaeologists: action.payload.archaeologists };
+
+
+    case ActionType.SetDiggingFeesSortDirection:
+      return { ...state, diggingFeesSortDirection: action.payload.direction };
+
+    case ActionType.SetDiggingFeesFilter:
+      return { ...state, diggingFeesFilter: action.payload.filter };
+
+    case ActionType.SetArchAddressSearch:
+      return { ...state, archAddressSearch: action.payload.search };
 
     case ActionType.SetPayloadTxId:
       return { ...state, payloadTxId: action.payload.txId };

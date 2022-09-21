@@ -9,37 +9,42 @@ import {
   Th,
   Thead,
   Tr,
+  Button,
+  VStack,
+  Input,
 } from '@chakra-ui/react';
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
-import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
-import { useDispatch } from 'store/index';
-import { Archaeologist } from 'types/index';
-import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
+import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { TablePageNavigator } from './TablePageNavigator';
+import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
+import { useDispatch } from 'store/index';
+import { DiggingFeesInput } from '../components/DiggingFeesInput';
 
 export function ArchaeologistList() {
+  const {
+    onClickNextPage,
+    onClickPrevPage,
+    handleCheckArchaeologist,
+    selectedArchaeologists,
+    sortedFilteredArchaeoligist,
+    onClickSortDiggingFees,
+    diggingFeesSortDirection,
+    handleChangeAddressSearch,
+    diggingFeesFilter,
+    archAddressSearch,
+  } = useArchaeologistList();
   const dispatch = useDispatch();
 
-  const { archaeologists, selectedArchaeologists } = useLoadArchaeologists();
+  const sortIconsMap: { [key: number]: JSX.Element } = {
+    [SortDirection.NONE]: <ArrowUpDownIcon> </ArrowUpDownIcon>,
+    [SortDirection.ASC]: <ArrowUpIcon />,
+    [SortDirection.DESC]: <ArrowDownIcon />,
+  };
 
-  function handleCheckArchaeologist(archaeologist: Archaeologist) {
-    if (selectedArchaeologists.includes(archaeologist)) {
-      dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
-    } else {
-      dispatch(selectArchaeologist(archaeologist));
-    }
-  }
-
-  // TODO: It doesn't make sense to implement pagination any further until we are loading real archaeologists
-  function onClickNextPage() {
-    // Temporary console log
-    console.log('Will implement pagination when we are loading real archaeologists');
-  }
-
-  function onClickPrevPage() {
-    // Temporary console log
-    console.log('Will implement pagination when we are loading real archaeologists');
+  function setDiggingFees(diggingFees: string) {
+    return dispatch(setDiggingFeesFilter(diggingFees));
   }
 
   return (
@@ -57,31 +62,52 @@ export function ArchaeologistList() {
           <TableContainer
             width="100%"
             overflowY="auto"
-            maxHeight="600px"
+            maxHeight="650px"
           >
             <Table variant="simple">
               <Thead>
                 <Tr>
                   <Th>
-                    <Text
-                      variant="secondary"
-                      textTransform="capitalize"
-                    >
-                      Archaeologists ({archaeologists.length})
-                    </Text>
+                    <VStack align="left">
+                      <Text
+                        variant="secondary"
+                        textTransform="capitalize"
+                        py={3}
+                      >
+                        Archaeologists ({sortedFilteredArchaeoligist.length})
+                      </Text>
+                      <Input
+                        w="200px"
+                        onChange={handleChangeAddressSearch}
+                        value={archAddressSearch}
+                        placeholder="Search"
+                        borderColor="violet.700"
+                        color="brand.950"
+                      />
+                    </VStack>
                   </Th>
                   <Th isNumeric>
-                    <Text
-                      variant="secondary"
-                      textTransform="capitalize"
-                    >
-                      Digging Fee
-                    </Text>
+                    <VStack>
+                      <Button
+                        variant="ghost"
+                        textTransform="capitalize"
+                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                        onClick={onClickSortDiggingFees}
+                      >
+                        Digging Fee
+                      </Button>
+                      <DiggingFeesInput
+                        setDiggingFees={setDiggingFees}
+                        value={diggingFeesFilter}
+                        placeholder="Max"
+                        color="brand.950"
+                      />
+                    </VStack>
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {archaeologists.map(arch => (
+                {sortedFilteredArchaeoligist.map(arch => (
                   <Tr
                     key={arch.profile.archAddress}
                     background={selectedArchaeologists.includes(arch) ? 'brand.700' : ''}

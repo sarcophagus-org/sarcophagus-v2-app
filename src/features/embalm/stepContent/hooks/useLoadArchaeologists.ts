@@ -4,12 +4,11 @@ import { LibP2pContext } from 'lib/network/P2PNodeProvider';
 import { useContext, useEffect } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setSelectedArchaeologists } from 'store/embalm/actions';
-import { useDispatch, useSelector } from 'store/index';
+import { useDispatch } from 'store/index';
 import { Archaeologist } from 'types/index';
 
 export function useLoadArchaeologists() {
   const dispatch = useDispatch();
-  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const browserNode = useContext(LibP2pContext);
 
@@ -46,6 +45,4 @@ export function useLoadArchaeologists() {
   }, [browserNode, dispatch]);
 
   useAsyncEffect(async () => {}, []);
-
-  return { archaeologists, selectedArchaeologists };
 }

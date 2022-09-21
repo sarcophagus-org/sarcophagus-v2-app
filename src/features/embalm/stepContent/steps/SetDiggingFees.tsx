@@ -1,38 +1,15 @@
-import {
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Image,
-  NumberInput,
-  NumberInputField,
-  Text,
-} from '@chakra-ui/react';
-import {
-  formatLargeNumber,
-  humanizeDuration,
-  removeLeadingZeroes,
-  removeNonIntChars,
-} from 'lib/utils/helpers';
+import { Flex, FormControl, FormLabel, Heading, Image, Text } from '@chakra-ui/react';
+import { formatLargeNumber, humanizeDuration } from 'lib/utils/helpers';
 import { setDiggingFees } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
+import { DiggingFeesInput } from '../components/DiggingFeesInput';
 
 export function SetDiggingFees() {
   const dispatch = useDispatch();
   const { diggingFees, resurrection } = useSelector(x => x.embalmState);
 
-  function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
-    valueAsString = removeNonIntChars(valueAsString);
-    valueAsString = removeLeadingZeroes(valueAsString);
-
-    if (valueAsNumber < 0) {
-      valueAsString = '0';
-      valueAsNumber = 0;
-    }
-
-    if (valueAsString.length > 18) return;
-
-    dispatch(setDiggingFees(valueAsString));
+  function setFees(diggingFees1: string) {
+    return dispatch(setDiggingFees(diggingFees1));
   }
 
   return (
@@ -46,25 +23,11 @@ export function SetDiggingFees() {
       </Heading>
       <FormControl mt={9}>
         <FormLabel color="brand.500">Rewrap digging fees *</FormLabel>
-        <Flex align="center">
-          <NumberInput
-            w="150px"
-            onChange={handleChangeDiggingFees}
-            value={diggingFees}
-          >
-            <NumberInputField
-              pl={12}
-              pr={1}
-              borderColor="violet.700"
-            />
-          </NumberInput>
-          <Image
-            src="sarco-token-icon.png"
-            position="absolute"
-            top="39px"
-            left="16px"
-          />
-        </Flex>
+
+        <DiggingFeesInput
+          setDiggingFees={setFees}
+          value={diggingFees}
+        />
       </FormControl>
       <Flex
         mt={3}
