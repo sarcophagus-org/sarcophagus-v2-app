@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useState } from 'react';
+import { useNetwork } from 'wagmi';
+import { goerliNetworkConfig } from 'lib/config/goerli';
 
 /**
  * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
@@ -18,6 +20,7 @@ export function FundBundlr() {
   const defaultAmount = '0.1';
   const { bundlr, fund, isFunding } = useBundlr();
   const [amount, setAmount] = useState(defaultAmount);
+  const { chain } = useNetwork();
 
   function handleChangeAmount(valueAsString: string) {
     setAmount(valueAsString);
@@ -42,12 +45,14 @@ export function FundBundlr() {
         direction="column"
         maxWidth={800}
       >
-        <Alert status="warning">
-          <AlertIcon color="warning" />
-          <Text color="warning">
-            This does not use testnet. You will be funding the bundlr node with real currency.
-          </Text>
-        </Alert>
+        {chain?.id !== goerliNetworkConfig.chainId && (
+          <Alert status="warning">
+            <AlertIcon color="warning" />
+            <Text color="warning">
+              This does not use testnet. You will be funding the bundlr node with real currency.
+            </Text>
+          </Alert>
+        )}
       </Flex>
       <Flex
         mt={3}

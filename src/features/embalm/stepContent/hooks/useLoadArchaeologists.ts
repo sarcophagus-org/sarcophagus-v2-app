@@ -1,5 +1,5 @@
 import { useAsyncEffect } from 'hooks/useAsyncEffect';
-import { generateMockArchaeoloigsts } from 'lib/mockArchaeologists';
+import { generateMockArchaeoloigsts } from 'lib/mocks/mockArchaeologists';
 import { LibP2pContext } from 'lib/network/P2PNodeProvider';
 import { useContext, useEffect } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';

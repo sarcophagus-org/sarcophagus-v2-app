@@ -20,6 +20,7 @@ export enum Step {
   SetDiggingFees = 6,
   TotalRequiredArchaeologists = 7,
   SelectArchaeologists = 8,
+  CreateSarcophagus = 9,
 }
 
 export interface EmbalmState {
@@ -31,12 +32,14 @@ export interface EmbalmState {
   name: string;
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
+  payloadTxId: string;
   recipient: Recipient;
   recipientSetByOption: RecipientSetByOption | undefined;
   requiredArchaeologists: string;
   resurrection: number;
   resurrectionRadioValue: string;
   selectedArchaeologists: Archaeologist[];
+  shardsTxId: string;
   stepStatuses: { [key: number]: StepStatus };
   totalArchaeologists: string;
   uploadPrice: string;
@@ -54,12 +57,14 @@ export const embalmInitialState: EmbalmState = {
   name: '',
   outerPrivateKey: null,
   outerPublicKey: null,
+  payloadTxId: '',
   recipient: { publicKey: '', address: '' },
   recipientSetByOption: undefined,
   requiredArchaeologists: '0',
   resurrection: 0,
   resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
   selectedArchaeologists: [],
+  shardsTxId: '',
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
@@ -165,6 +170,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetSelectedArchaeologists:
       return { ...state, selectedArchaeologists: action.payload.archaeologists };
 
+
     case ActionType.SetDiggingFeesSortDirection:
       return { ...state, diggingFeesSortDirection: action.payload.direction };
 
@@ -173,6 +179,12 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetArchAddressSearch:
       return { ...state, archAddressSearch: action.payload.search };
+
+    case ActionType.SetPayloadTxId:
+      return { ...state, payloadTxId: action.payload.txId };
+
+    case ActionType.SetShardsTxId:
+      return { ...state, shardsTxId: action.payload.txId };
 
     default:
       return state;
