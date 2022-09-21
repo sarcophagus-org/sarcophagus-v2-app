@@ -3,18 +3,20 @@ import { Actions } from '..';
 import { ActionType } from './actions';
 
 export interface BundlrState {
-  isConnected: boolean;
-  bundlr: WebBundlr | null;
   balance: string;
+  bundlr: WebBundlr | null;
+  isConnected: boolean;
   isFunding: boolean;
+  isUploading: boolean;
   txId: string | null;
 }
 
 export const bundlrInitialState: BundlrState = {
-  isConnected: false,
-  bundlr: null,
   balance: '',
+  bundlr: null,
+  isConnected: false,
   isFunding: false,
+  isUploading: false,
   txId: null,
 };
 
@@ -39,6 +41,9 @@ export function bundlrReducer(state: BundlrState, action: Actions): BundlrState 
     case ActionType.SetTxId:
       const txId = action.payload.txId;
       return { ...state, txId };
+
+    case ActionType.SetIsUploading:
+      return { ...state, isUploading: action.payload.isUploading };
 
     default:
       return state;

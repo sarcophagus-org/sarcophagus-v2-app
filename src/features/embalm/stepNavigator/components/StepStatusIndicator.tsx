@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Text, Flex } from '@chakra-ui/react';
 import { StepStatus } from 'store/embalm/reducer';
 
 interface StepStatusIndicatorProps {
@@ -18,9 +18,13 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         borderRadius={100}
         align="center"
         justifyContent="center"
-        color="brand.0"
       >
-        {index + 1}
+        <Text
+          color="brand.0"
+          fontSize="xs"
+        >
+          {index + 1}
+        </Text>
       </Flex>
     ),
     [StepStatus.Started]: (
@@ -33,7 +37,7 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         align="center"
         justifyContent="center"
       >
-        {index + 1}
+        <Text fontSize="xs">{index + 1}</Text>
       </Flex>
     ),
     [StepStatus.NotStarted]: (
@@ -46,7 +50,7 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         align="center"
         justifyContent="center"
       >
-        {index + 1}
+        <Text fontSize="xs">{index + 1}</Text>
       </Flex>
     ),
   };

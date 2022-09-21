@@ -142,6 +142,15 @@ export function StepNavigator() {
           <Requirement valid={false}>WIP</Requirement>
         </Requirements>
       </StepElement>
+
+      <StepElement
+        step={Step.CreateSarcophagus}
+        title="CreateSarcophagus"
+      >
+        <Requirements>
+          <Requirement valid={false}>WIP</Requirement>
+        </Requirements>
+      </StepElement>
     </StepsContainer>
   );
 }

@@ -2,10 +2,16 @@ import { Alert as AlertChakra, AlertIcon, Text, AlertProps } from '@chakra-ui/re
 
 export function Alert(props: AlertProps) {
   const { status, children } = props;
+
+  let textColor = status?.toString();
+  if (status === 'info' || status === 'success') {
+    textColor = 'brand.950';
+  }
+
   return (
     <AlertChakra {...props}>
       <AlertIcon color={status} />
-      <Text color={status}>{children}</Text>
+      <Text color={textColor}>{children}</Text>
     </AlertChakra>
   );
 }

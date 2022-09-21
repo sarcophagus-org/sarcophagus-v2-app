@@ -19,6 +19,9 @@ Sentry.init({
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
+  // Note that strict mode causes components to render twice in development but only one time in
+  // production
+  // https://stackoverflow.com/questions/61254372/my-react-component-is-rendering-twice-because-of-strict-mode
   <React.StrictMode>
     <App />
   </React.StrictMode>

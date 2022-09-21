@@ -14,12 +14,14 @@ export enum ActionType {
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
+  SetPayloadTxId = 'EMBALM_SET_PAYLOAD_TX_ID',
   SetRecipient = 'EMBALM_SET_RECIPIENT',
   SetRecipientSetByOption = 'EMBALM_SET_RECIPIENT_OPTION',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
+  SetShardsTxId = 'EMBALM_SET_SHARDS_TX_ID',
   SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
@@ -48,12 +50,14 @@ type EmbalmPayload = {
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
+  [ActionType.SetPayloadTxId]: { txId: string };
   [ActionType.SetRecipient]: Recipient;
   [ActionType.SetRecipientSetByOption]: RecipientSetByOption;
   [ActionType.SetRequiredArchaeologists]: { count: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
+  [ActionType.SetShardsTxId]: { txId: string };
   [ActionType.SetTotalArchaeologists]: { count: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
@@ -225,6 +229,24 @@ export function deselectArchaeologist(address: string): EmbalmActions {
     type: ActionType.DeselectArchaeologist,
     payload: {
       address,
+    },
+  };
+}
+
+export function setPayloadTxId(txId: string): EmbalmActions {
+  return {
+    type: ActionType.SetPayloadTxId,
+    payload: {
+      txId,
+    },
+  };
+}
+
+export function setShardsTxId(txId: string): EmbalmActions {
+  return {
+    type: ActionType.SetShardsTxId,
+    payload: {
+      txId,
     },
   };
 }
