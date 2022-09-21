@@ -10,7 +10,6 @@ import {
   Thead,
   Tr,
   Button,
-  Icon,
   VStack,
   Input,
 } from '@chakra-ui/react';

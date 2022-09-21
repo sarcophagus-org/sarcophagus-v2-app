@@ -244,12 +244,14 @@ export function deselectArchaeologist(address: string): EmbalmActions {
   };
 }
 
-
 export function setDiggingFeesSortDirection(direction: SortDirection): EmbalmActions {
   return {
     type: ActionType.SetDiggingFeesSortDirection,
     payload: {
       direction,
+    },
+  };
+}
 
 export function setPayloadTxId(txId: string): EmbalmActions {
   return {
@@ -259,7 +261,6 @@ export function setPayloadTxId(txId: string): EmbalmActions {
     },
   };
 }
-
 
 export function setDiggingFeesFilter(filter: string): EmbalmActions {
   return {
@@ -275,6 +276,9 @@ export function setArchAddressSearch(search: string): EmbalmActions {
     type: ActionType.SetArchAddressSearch,
     payload: {
       search,
+    },
+  };
+}
 
 export function setShardsTxId(txId: string): EmbalmActions {
   return {
