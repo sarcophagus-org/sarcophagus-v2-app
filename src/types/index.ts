@@ -16,8 +16,10 @@ export interface Archaeologist {
 export interface SelectedContractArchaeologist {
   archAddress: string;
   diggingFee: BigNumber;
-  storageFee: BigNumber;
-  hashedShard?: string;
+  unencryptedShardDoubleHash: string;
+  v: number;
+  r: string;
+  s: string;
 }
 
 export interface ArchaeologistProfile {

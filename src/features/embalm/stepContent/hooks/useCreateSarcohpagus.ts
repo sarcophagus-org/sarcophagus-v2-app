@@ -8,6 +8,7 @@ import { setPayloadTxId, setSelectedArchaeologists, setShardsTxId } from 'store/
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useBundlr } from './useBundlr';
+import { useCreateSarcophagus as useEmbalmerFacetCreateSarcophagus } from 'hooks/embalmerFacet';
 
 async function encryptShards(publicKeys: string[], payload: Uint8Array[]): Promise<Buffer[]> {
   return Promise.all(publicKeys.map(async (key, i) => encrypt(key, Buffer.from(payload[i]))));
@@ -26,6 +27,7 @@ export function useCreateSarcophagus() {
   } = useSelector(x => x.embalmState);
   const { isUploading } = useSelector(x => x.bundlrState);
   const { uploadFile } = useBundlr();
+  const { submit } = useEmbalmerFacetCreateSarcophagus();
 
   // TODO: Move this into its own hook and check all fields
   const canCreateSarcophagus = recipient.publicKey !== '' && !!outerPublicKey && !!file;
@@ -70,7 +72,7 @@ export function useCreateSarcophagus() {
       dispatch(setShardsTxId(newShardsTxId));
 
       // Step 7: Create the sarcophagus
-      // TODO: Make a transaction to create the sarcophagus
+      useEmbalmerFacetCreateSarcophagus();
     } catch (error) {
       console.error(error);
     } finally {
