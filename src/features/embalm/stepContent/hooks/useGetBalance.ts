@@ -15,7 +15,9 @@ export function useGetBalance() {
   const formattedBalance = useMemo(
     () =>
       isConnected
-        ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${chain?.nativeCurrency?.name}`
+        ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${
+            chain?.nativeCurrency?.name || 'ETH'
+          }`
         : '',
     [balance, chain, isConnected]
   );

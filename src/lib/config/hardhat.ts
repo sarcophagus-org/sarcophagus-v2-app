@@ -7,9 +7,9 @@ export const hardhatNetworkConfig: NetworkConfig = {
   sarcoTokenAddress: process.env.REACT_APP_SARCO_TOKEN_ADDRESS || '0x0',
   diamondDeployAddress: process.env.REACT_APP_LOCAL_CONTRACT_ADDRESS || '0x0',
   bundlr: {
-    currencyName: '',
-    nodeUrl: '',
-    providerUrl: '',
-    currencyContractAddress: '',
+    currencyName: 'ethereum',
+    nodeUrl: 'https://devnet.bundlr.network',
+    providerUrl: 'https://rpc.ankr.com/eth_goerli',
+    currencyContractAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   },
 };
