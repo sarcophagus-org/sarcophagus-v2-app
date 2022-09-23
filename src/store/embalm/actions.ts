@@ -1,6 +1,7 @@
 import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
+import { PeerId } from '@libp2p/interfaces/peer-id';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -8,6 +9,8 @@ export enum ActionType {
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
+  SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
+  SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
@@ -52,6 +55,8 @@ type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
+  [ActionType.SetArchaeologistConnection]: { peerId: PeerId | string; connection: any };
+  [ActionType.SetArchaeologistOnlineStatus]: { peerId: PeerId | string; isOnline: boolean };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
@@ -285,6 +290,32 @@ export function setShardsTxId(txId: string): EmbalmActions {
     type: ActionType.SetShardsTxId,
     payload: {
       txId,
+    },
+  };
+}
+
+export function setArchaeologistOnlineStatus(
+  peerId: PeerId | string,
+  isOnline: boolean
+): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistOnlineStatus,
+    payload: {
+      peerId,
+      isOnline,
+    },
+  };
+}
+
+export function setArchaeologistConnection(
+  peerId: PeerId | string,
+  connection: any
+): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistConnection,
+    payload: {
+      peerId,
+      connection,
     },
   };
 }

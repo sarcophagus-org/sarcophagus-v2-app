@@ -56,6 +56,11 @@ export const ViewStateFacet = {
               type: 'bool',
             },
             {
+              internalType: 'string',
+              name: 'peerId',
+              type: 'string',
+            },
+            {
               internalType: 'uint256',
               name: 'minimumDiggingFee',
               type: 'uint256',
@@ -79,11 +84,6 @@ export const ViewStateFacet = {
               internalType: 'uint256',
               name: 'rewards',
               type: 'uint256',
-            },
-            {
-              internalType: 'string',
-              name: 'peerId',
-              type: 'string',
             },
           ],
           internalType: 'struct LibTypes.ArchaeologistProfile',
@@ -325,11 +325,6 @@ export const ViewStateFacet = {
               type: 'string[]',
             },
             {
-              internalType: 'uint256',
-              name: 'storageFee',
-              type: 'uint256',
-            },
-            {
               internalType: 'address',
               name: 'embalmer',
               type: 'address',
@@ -337,11 +332,6 @@ export const ViewStateFacet = {
             {
               internalType: 'address',
               name: 'recipientAddress',
-              type: 'address',
-            },
-            {
-              internalType: 'address',
-              name: 'arweaveArchaeologist',
               type: 'address',
             },
             {
@@ -387,7 +377,7 @@ export const ViewStateFacet = {
             },
             {
               internalType: 'bytes32',
-              name: 'doubleHashedShard',
+              name: 'unencryptedShardDoubleHash',
               type: 'bytes32',
             },
             {

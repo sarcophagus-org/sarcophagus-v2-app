@@ -4,8 +4,8 @@ export const goerliNetworkConfig: NetworkConfig = {
   chainId: 5,
   networkName: 'Goerli Testnet',
   networkShortName: 'Goerli',
-  sarcoTokenAddress: '0x0',
-  diamondDeployAddress: '0x0',
+  sarcoTokenAddress: '',
+  diamondDeployAddress: '',
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://devnet.bundlr.network',

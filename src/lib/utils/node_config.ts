@@ -7,39 +7,34 @@ import { FloodSub } from '@libp2p/floodsub';
 
 const dht = new KadDHT({
   protocolPrefix: '/archaeologist-service',
-  clientMode: false
+  clientMode: false,
 });
 
 const webRtcStar = new WebRTCStar();
 
-export const nodeConfig = {
+export const nodeConfig: any = {
   addresses: {
     // Add the signaling server address, along with our PeerId to our multiaddrs list
     // libp2p will automatically attempt to dial to the signaling server so that it can
     // receive inbound connections from other peers
-    listen: process.env.REACT_APP_SIGNAL_SERVER_LIST!.split(',').map((s: string) => s.trim()).map((server: any) => {
-      return `/dns4/${server}/tcp/443/wss/p2p-webrtc-star`;
-    })
+    listen: process.env
+      .REACT_APP_SIGNAL_SERVER_LIST!.split(',')
+      .map((s: string) => s.trim())
+      .map((server: any) => {
+        return `/dns4/${server}/tcp/443/wss/p2p-webrtc-star`;
+      }),
   },
-  transports: [
-    webRtcStar
-  ],
-  connectionEncryption: [
-    new Noise()
-  ],
-  streamMuxers: [
-    new Mplex()
-  ],
-  peerDiscovery: [
-    webRtcStar.discovery,
-  ],
+  transports: [webRtcStar],
+  connectionEncryption: [new Noise()],
+  streamMuxers: [new Mplex()],
+  peerDiscovery: [webRtcStar.discovery],
   dht,
   connectionManager: {
-    autoDial: false
+    autoDial: false,
   },
   pubsub: new FloodSub({
     enabled: true,
     canRelayMessage: true,
-    emitSelf: false
+    emitSelf: false,
   }),
 };
