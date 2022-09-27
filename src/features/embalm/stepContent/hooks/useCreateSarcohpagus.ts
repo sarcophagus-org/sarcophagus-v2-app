@@ -47,7 +47,6 @@ export function useCreateSarcophagus() {
 
       // Step 2: Encrypt the outer layer
       const encryptedOuterLayer = await encrypt(outerPublicKey, encryptedInnerLayer);
-      if (!encryptedOuterLayer) return;
 
       // Step 3: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
@@ -61,6 +60,12 @@ export function useCreateSarcophagus() {
       // key
       const archPublicKeys = selectedArchaeologists.map(x => x.publicKey || '');
       const encryptedShards = await encryptShards(archPublicKeys, shards);
+
+      // This may need to be updated to return a mapping of archaeologist public keys to
+      // encrypted shards hexes, to allow archs to know which shard is theirs. Otherwise they would
+      // manually attempt to decrypt each shard to know which is theirs.
+      // https://github.com/sarcophagus-org/sarcophagus-v2-app/pull/68/files/f8d49a136b5322ac2eb81bf4e7fe552c91d9ac7e#r976854151
+      // TODO: Change this to mapping of arch public keys to encrypted shards
       const encryptedShardsHex = encryptedShards.map(x => ethers.utils.hexlify(x));
 
       // Step 5: Upload the double encrypted payload to the arweave bundlr

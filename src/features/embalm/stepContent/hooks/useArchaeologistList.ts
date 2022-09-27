@@ -23,6 +23,7 @@ export function useArchaeologistList() {
     diggingFeesFilter,
     archAddressSearch,
   } = useSelector(s => s.embalmState);
+  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
@@ -59,9 +60,9 @@ export function useArchaeologistList() {
 
   const sortedArchaeoligist =
     diggingFeesSortDirection === SortDirection.NONE
-      ? archaeologists
+      ? onlineArchaeologists
       : orderBy(
-          archaeologists,
+          onlineArchaeologists,
           'profile.minimumDiggingFee',
           sortOrderByMap[diggingFeesSortDirection]
         );

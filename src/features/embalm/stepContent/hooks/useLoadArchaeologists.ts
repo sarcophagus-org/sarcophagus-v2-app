@@ -1,48 +1,69 @@
-import { useAsyncEffect } from 'hooks/useAsyncEffect';
-import { generateMockArchaeoloigsts } from 'lib/mocks/mockArchaeologists';
-import { LibP2pContext } from 'lib/network/P2PNodeProvider';
-import { useContext, useEffect } from 'react';
+import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
+import { useNetworkConfig } from 'lib/config';
+import { useEffect } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
-import { setArchaeologists, setSelectedArchaeologists } from 'store/embalm/actions';
-import { useDispatch } from 'store/index';
-import { Archaeologist } from 'types/index';
+import { setArchaeologists } from 'store/embalm/actions';
+import { useDispatch, useSelector } from 'store/index';
+import { ArchaeologistProfile } from 'types';
+import { readContract } from 'wagmi/actions';
 
+/**
+ * Loads archaeologist profiles from the sarcophagus contract
+ */
 export function useLoadArchaeologists() {
   const dispatch = useDispatch();
-
-  const browserNode = useContext(LibP2pContext);
+  const networkConfig = useNetworkConfig();
+  const { archaeologists } = useSelector(s => s.embalmState);
 
   useEffect(() => {
     (async () => {
       try {
+        // Only load the archaeologists once when the component mounts. The only reason the
+        // archaeologists would need to be loaded from the contract again is when a new
+        // archaeologist registers.
+        if (archaeologists.length > 0) return;
         dispatch(startLoad());
-        const loadedArchaeologists: Archaeologist[] = generateMockArchaeoloigsts();
 
-        // TODO: Temporarily remove this and load mock archaeologists
-        // if (browserNode === undefined) {
-        //   console.error('browser node is undefined');
-        //   return;
-        // }
+        let profiles: Record<string, ArchaeologistProfile> = {};
 
-        // await initialisePeerDiscovery(await browserNode, (discoveredArchs: Archaeologist[]) =>
-        //   dispatch(setArchaeologists(discoveredArchs))
-        // );
+        const addresses: string[] = await readContract({
+          addressOrName: networkConfig.diamondDeployAddress,
+          contractInterface: ViewStateFacet.abi,
+          functionName: 'getArchaeologistProfileAddresses',
+        });
 
-        dispatch(setArchaeologists(loadedArchaeologists));
+        if (addresses) {
+          // TODO: Having to do single use `readContract`s in a loop because `useContractReads` does not work in hardhat
+          for await (const addr of addresses) {
+            const profile: ArchaeologistProfile = await readContract({
+              addressOrName: networkConfig.diamondDeployAddress,
+              contractInterface: ViewStateFacet.abi,
+              functionName: 'getArchaeologistProfile',
+              args: [addr],
+            });
 
-        // TODO: Remove this when we load real archaeologiss
-        // Resets selected archaeologists.
-        // This only exists because new mock archaeoloigsts are being generated ealier in this
-        // useEffect.
-        dispatch(setSelectedArchaeologists([]));
+            if (profile) {
+              profiles[addr] = {
+                archAddress: addr,
+                exists: profile.exists,
+                minimumDiggingFee: profile.minimumDiggingFee,
+                maximumRewrapInterval: profile.maximumRewrapInterval,
+                peerId: profile.peerId,
+              };
+            }
+          }
+
+          const newArchaeologists = Object.values(profiles).map(p => ({
+            profile: p,
+            isOnline: false,
+          }));
+          dispatch(setArchaeologists(newArchaeologists));
+        }
       } catch (error) {
-        // TODO: Implement better error handling
         console.error(error);
       } finally {
         dispatch(stopLoad());
       }
     })();
-  }, [browserNode, dispatch]);
-
-  useAsyncEffect(async () => {}, []);
+  }, [archaeologists, dispatch, networkConfig.diamondDeployAddress]);
 }

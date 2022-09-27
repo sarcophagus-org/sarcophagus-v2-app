@@ -87,6 +87,22 @@ function toggleStep(state: EmbalmState, step: Step): EmbalmState {
   return { ...state, expandedStepIndices: expandedStepIndicesCopy };
 }
 
+function updateArchProperty(
+  state: EmbalmState,
+  peerId: string,
+  key: keyof Archaeologist,
+  value: any
+): EmbalmState {
+  const archaeologistIndex = state.archaeologists.findIndex(a => a.profile.peerId === peerId);
+  if (archaeologistIndex === -1) return state;
+  const archaeologistsCopy = state.archaeologists.slice();
+  archaeologistsCopy[archaeologistIndex] = {
+    ...archaeologistsCopy[archaeologistIndex],
+    [key]: value,
+  };
+  return { ...state, archaeologists: archaeologistsCopy };
+}
+
 export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState {
   switch (action.type) {
     case ActionType.GoToStep:
@@ -185,6 +201,22 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetShardsTxId:
       return { ...state, shardsTxId: action.payload.txId };
+
+    case ActionType.SetArchaeologistOnlineStatus:
+      return updateArchProperty(
+        state,
+        action.payload.peerId.toString(),
+        'isOnline',
+        action.payload.isOnline
+      );
+
+    case ActionType.SetArchaeologistConnection:
+      return updateArchProperty(
+        state,
+        action.payload.peerId.toString(),
+        'connection',
+        action.payload.connection
+      );
 
     default:
       return state;

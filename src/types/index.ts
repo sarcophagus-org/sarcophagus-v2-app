@@ -1,6 +1,6 @@
 import { BigNumber, Signature } from 'ethers';
 import { ReactNode } from 'react';
-import { PeerId } from '@libp2p/interfaces/peer-id';
+import { PeerId } from '@libp2p/interface-peer-id';
 
 export interface ChildrenOnly {
   children: ReactNode;
