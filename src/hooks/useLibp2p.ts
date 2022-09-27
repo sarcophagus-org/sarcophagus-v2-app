@@ -1,6 +1,6 @@
-import { Connection } from '@libp2p/interfaces/connection';
-import { PeerInfo } from '@libp2p/interfaces/peer-info';
-import { StreamHandler } from '@libp2p/interfaces/registrar';
+import { Connection } from '@libp2p/interface-connection';
+import { PeerInfo } from '@libp2p/interface-peer-info';
+import { StreamHandler } from '@libp2p/interface-registrar';
 import { ethers } from 'ethers';
 import { pipe } from 'it-pipe';
 import { nodeConfig } from 'lib/utils/node_config';

@@ -3,8 +3,6 @@ import { Mplex } from '@libp2p/mplex';
 import { KadDHT } from '@libp2p/kad-dht';
 import { WebRTCStar } from '@libp2p/webrtc-star';
 
-import { FloodSub } from '@libp2p/floodsub';
-
 const dht = new KadDHT({
   protocolPrefix: '/archaeologist-service',
   clientMode: false,
@@ -32,9 +30,4 @@ export const nodeConfig: any = {
   connectionManager: {
     autoDial: false,
   },
-  pubsub: new FloodSub({
-    enabled: true,
-    canRelayMessage: true,
-    emitSelf: false,
-  }),
 };
