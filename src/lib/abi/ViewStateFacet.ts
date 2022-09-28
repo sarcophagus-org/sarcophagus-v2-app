@@ -218,6 +218,42 @@ export const ViewStateFacet = {
     {
       inputs: [
         {
+          internalType: 'address[]',
+          name: 'addresses',
+          type: 'address[]',
+        },
+      ],
+      name: 'getArchaeologistsStatistics',
+      outputs: [
+        {
+          components: [
+            {
+              internalType: 'bytes32[]',
+              name: 'successes',
+              type: 'bytes32[]',
+            },
+            {
+              internalType: 'bytes32[]',
+              name: 'cancels',
+              type: 'bytes32[]',
+            },
+            {
+              internalType: 'bytes32[]',
+              name: 'accusals',
+              type: 'bytes32[]',
+            },
+          ],
+          internalType: 'struct LibTypes.ArchaeologistStatistics[]',
+          name: '',
+          type: 'tuple[]',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
           internalType: 'address',
           name: 'archaeologist',
           type: 'address',
@@ -262,6 +298,19 @@ export const ViewStateFacet = {
         },
       ],
       name: 'getFreeBond',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'getGracePeriod',
       outputs: [
         {
           internalType: 'uint256',
@@ -362,7 +411,7 @@ export const ViewStateFacet = {
             },
             {
               internalType: 'uint256',
-              name: 'resurrectionWindow',
+              name: 'gracePeriod',
               type: 'uint256',
             },
             {

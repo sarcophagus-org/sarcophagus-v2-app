@@ -105,6 +105,9 @@ export function useCreateSarcophagus() {
         minimumDiggingFee: BigNumber.from('0'),
         maximumRewrapInterval: 0,
         peerId: '',
+        successes: [],
+        cancels: [],
+        accusals: [],
       },
       isOnline: true,
     }));

@@ -26,6 +26,9 @@ export interface ArchaeologistProfile {
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;
   peerId: PeerId | string;
+  successes: string[];
+  cancels: string[];
+  accusals: string[];
 }
 
 export interface SignatureWithAccount extends Signature {

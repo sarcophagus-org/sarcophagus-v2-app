@@ -25,6 +25,9 @@ export function generateMockArchaeoloigsts() {
         // random number between 1 week and 1 month
         maximumRewrapInterval: randomIntFromInterval(604800000, 2628000000),
         peerId: '',
+        successes: [],
+        cancels: [],
+        accusals: [],
       },
       isOnline: true,
     });
