@@ -1,5 +1,6 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
+import { ethers } from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
 import { useSelector } from 'store/index';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 
@@ -8,8 +9,8 @@ export function SelectArchaeologists() {
 
   const selectionsLeft = parseInt(totalArchaeologists) - selectedArchaeologists.length;
   const totalDiggingFees = selectedArchaeologists.reduce(
-    (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
-    BigNumber.from('0')
+    (acc, curr) => acc.add(parseInt(formatEther(curr.profile.minimumDiggingFee))),
+    ethers.constants.Zero
   );
 
   return (

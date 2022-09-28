@@ -21,6 +21,7 @@ import { TablePageNavigator } from './TablePageNavigator';
 import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from '../components/DiggingFeesInput';
+import { ethers } from 'ethers';
 
 export function ArchaeologistList() {
   const {
@@ -113,6 +114,13 @@ export function ArchaeologistList() {
                     background={selectedArchaeologists.includes(arch) ? 'brand.700' : ''}
                     onClick={() => handleCheckArchaeologist(arch)}
                     cursor="pointer"
+                    _hover={
+                      selectedArchaeologists.includes(arch)
+                        ? {}
+                        : {
+                            background: 'brand.100',
+                          }
+                    }
                   >
                     <Td>
                       <Text
@@ -133,7 +141,7 @@ export function ArchaeologistList() {
                           ml={3}
                           color={selectedArchaeologists.includes(arch) ? 'brand.0' : ''}
                         >
-                          {arch.profile.minimumDiggingFee.toString()}
+                          {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
                         </Text>
                       </Flex>
                     </Td>
