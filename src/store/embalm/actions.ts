@@ -1,7 +1,7 @@
 import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
-import { PeerId } from '@libp2p/interfaces/peer-id';
+import { PeerId } from '@libp2p/interface-peer-id';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
