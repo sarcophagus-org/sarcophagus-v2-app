@@ -28,6 +28,12 @@ export interface ArchaeologistProfile {
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;
   peerId: PeerId | string;
+  shard?: Uint8Array;
+  signature: {
+    v: number;
+    r: string;
+    s: string;
+  };
 }
 
 export interface SignatureWithAccount extends Signature {

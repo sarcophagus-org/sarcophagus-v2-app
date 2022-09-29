@@ -32,7 +32,7 @@ export function useLoadArchaeologists() {
           functionName: 'getArchaeologistProfileAddresses',
         });
 
-        if (addresses) {
+        if (addresses?.length !== 0) {
           // TODO: Having to do single use `readContract`s in a loop because `useContractReads` does not work in hardhat
           for await (const addr of addresses) {
             const profile: ArchaeologistProfile = await readContract({
@@ -49,6 +49,7 @@ export function useLoadArchaeologists() {
                 minimumDiggingFee: profile.minimumDiggingFee,
                 maximumRewrapInterval: profile.maximumRewrapInterval,
                 peerId: profile.peerId,
+                signature: { v: 0, r: '', s: '' }, // TODO Update with signature from profile
               };
             }
           }
