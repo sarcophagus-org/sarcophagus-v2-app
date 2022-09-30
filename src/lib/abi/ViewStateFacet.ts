@@ -80,11 +80,6 @@ export const ViewStateFacet = {
               name: 'cursedBond',
               type: 'uint256',
             },
-            {
-              internalType: 'uint256',
-              name: 'rewards',
-              type: 'uint256',
-            },
           ],
           internalType: 'struct LibTypes.ArchaeologistProfile',
           name: '',
@@ -129,6 +124,57 @@ export const ViewStateFacet = {
     {
       inputs: [
         {
+          internalType: 'address[]',
+          name: 'addresses',
+          type: 'address[]',
+        },
+      ],
+      name: 'getArchaeologistProfiles',
+      outputs: [
+        {
+          components: [
+            {
+              internalType: 'bool',
+              name: 'exists',
+              type: 'bool',
+            },
+            {
+              internalType: 'string',
+              name: 'peerId',
+              type: 'string',
+            },
+            {
+              internalType: 'uint256',
+              name: 'minimumDiggingFee',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'maximumRewrapInterval',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'freeBond',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'cursedBond',
+              type: 'uint256',
+            },
+          ],
+          internalType: 'struct LibTypes.ArchaeologistProfile[]',
+          name: '',
+          type: 'tuple[]',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
           internalType: 'address',
           name: 'archaeologist',
           type: 'address',
@@ -164,25 +210,6 @@ export const ViewStateFacet = {
           internalType: 'bool',
           name: '',
           type: 'bool',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'archaeologist',
-          type: 'address',
-        },
-      ],
-      name: 'getAvailableRewards',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
         },
       ],
       stateMutability: 'view',
@@ -247,7 +274,7 @@ export const ViewStateFacet = {
     },
     {
       inputs: [],
-      name: 'getProtocolFeeAmount',
+      name: 'getProtocolFeeBasePercentage',
       outputs: [
         {
           internalType: 'uint256',
@@ -272,6 +299,25 @@ export const ViewStateFacet = {
           internalType: 'bytes32[]',
           name: '',
           type: 'bytes32[]',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+      ],
+      name: 'getRewards',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
         },
       ],
       stateMutability: 'view',

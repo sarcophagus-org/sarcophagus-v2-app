@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { ArchaeologistProfile } from 'types';
 import { readContract } from 'wagmi/actions';
 
 /**
