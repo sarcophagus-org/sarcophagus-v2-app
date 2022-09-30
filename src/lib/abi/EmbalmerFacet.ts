@@ -14,33 +14,38 @@ export const EmbalmerFacet = {
     {
       inputs: [
         {
+          internalType: 'bool',
+          name: 'exists',
+          type: 'bool',
+        },
+        {
           internalType: 'address',
           name: 'archaeologist',
           type: 'address',
         },
       ],
-      name: 'ArchaeologistNotOnSarcophagus',
+      name: 'ArchaeologistProfileExistsShouldBe',
       type: 'error',
     },
     {
       inputs: [],
-      name: 'ArweaveArchaeologistNotInList',
-      type: 'error',
-    },
-    {
-      inputs: [],
-      name: 'ArweaveTxIdEmpty',
+      name: 'ArweaveTxIdsInvalid',
       type: 'error',
     },
     {
       inputs: [
         {
           internalType: 'uint256',
-          name: 'signaturesLength',
+          name: 'diggingFee',
           type: 'uint256',
         },
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
       ],
-      name: 'IncorrectNumberOfArchaeologistSignatures',
+      name: 'DiggingFeeTooLow',
       type: 'error',
     },
     {
@@ -121,6 +126,22 @@ export const EmbalmerFacet = {
     {
       inputs: [
         {
+          internalType: 'uint256',
+          name: 'resurrectionTime',
+          type: 'uint256',
+        },
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+      ],
+      name: 'ResurrectionTimeTooFarInFuture',
+      type: 'error',
+    },
+    {
+      inputs: [
+        {
           internalType: 'bytes32',
           name: 'sarcoId',
           type: 'bytes32',
@@ -137,34 +158,12 @@ export const EmbalmerFacet = {
           type: 'bytes32',
         },
       ],
-      name: 'SarcophagusAlreadyFinalized',
-      type: 'error',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-      ],
       name: 'SarcophagusDoesNotExist',
       type: 'error',
     },
     {
       inputs: [],
       name: 'SarcophagusIsUnwrappable',
-      type: 'error',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-      ],
-      name: 'SarcophagusNotFinalized',
       type: 'error',
     },
     {
@@ -200,11 +199,6 @@ export const EmbalmerFacet = {
       type: 'error',
     },
     {
-      inputs: [],
-      name: 'SignatureListNotUnique',
-      type: 'error',
-    },
-    {
       anonymous: false,
       inputs: [
         {
@@ -215,38 +209,6 @@ export const EmbalmerFacet = {
         },
       ],
       name: 'BurySarcophagus',
-      type: 'event',
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-      ],
-      name: 'CancelSarcophagus',
-      type: 'event',
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-        {
-          indexed: false,
-          internalType: 'string',
-          name: 'arweaveTxId',
-          type: 'string',
-        },
-      ],
-      name: 'FinalizeSarcophagus',
       type: 'event',
     },
     {
@@ -290,12 +252,6 @@ export const EmbalmerFacet = {
         },
         {
           indexed: false,
-          internalType: 'address',
-          name: 'arweaveArchaeologist',
-          type: 'address',
-        },
-        {
-          indexed: false,
           internalType: 'address[]',
           name: 'cursedArchaeologists',
           type: 'address[]',
@@ -306,8 +262,14 @@ export const EmbalmerFacet = {
           name: 'totalFees',
           type: 'uint256',
         },
+        {
+          indexed: false,
+          internalType: 'string[]',
+          name: 'arweaveTxIds',
+          type: 'string[]',
+        },
       ],
-      name: 'InitializeSarcophagus',
+      name: 'CreateSarcophagus',
       type: 'event',
     },
     {
@@ -338,86 +300,6 @@ export const EmbalmerFacet = {
         },
       ],
       name: 'burySarcophagus',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-      ],
-      name: 'cancelSarcophagus',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-        {
-          components: [
-            {
-              internalType: 'address',
-              name: 'account',
-              type: 'address',
-            },
-            {
-              internalType: 'uint8',
-              name: 'v',
-              type: 'uint8',
-            },
-            {
-              internalType: 'bytes32',
-              name: 'r',
-              type: 'bytes32',
-            },
-            {
-              internalType: 'bytes32',
-              name: 's',
-              type: 'bytes32',
-            },
-          ],
-          internalType: 'struct LibTypes.SignatureWithAccount[]',
-          name: 'archaeologistSignatures',
-          type: 'tuple[]',
-        },
-        {
-          components: [
-            {
-              internalType: 'uint8',
-              name: 'v',
-              type: 'uint8',
-            },
-            {
-              internalType: 'bytes32',
-              name: 'r',
-              type: 'bytes32',
-            },
-            {
-              internalType: 'bytes32',
-              name: 's',
-              type: 'bytes32',
-            },
-          ],
-          internalType: 'struct LibTypes.Signature',
-          name: 'arweaveArchaeologistSignature',
-          type: 'tuple',
-        },
-        {
-          internalType: 'string',
-          name: 'arweaveTxId',
-          type: 'string',
-        },
-      ],
-      name: 'finalizeSarcophagus',
       outputs: [],
       stateMutability: 'nonpayable',
       type: 'function',
@@ -470,31 +352,41 @@ export const EmbalmerFacet = {
             },
             {
               internalType: 'uint256',
-              name: 'storageFee',
-              type: 'uint256',
-            },
-            {
-              internalType: 'uint256',
               name: 'diggingFee',
               type: 'uint256',
             },
             {
               internalType: 'bytes32',
-              name: 'hashedShard',
+              name: 'unencryptedShardDoubleHash',
+              type: 'bytes32',
+            },
+            {
+              internalType: 'uint8',
+              name: 'v',
+              type: 'uint8',
+            },
+            {
+              internalType: 'bytes32',
+              name: 'r',
+              type: 'bytes32',
+            },
+            {
+              internalType: 'bytes32',
+              name: 's',
               type: 'bytes32',
             },
           ],
-          internalType: 'struct LibTypes.SelectedArchaeologistMemory[]',
+          internalType: 'struct LibTypes.SelectedArchaeologistData[]',
           name: 'selectedArchaeologists',
           type: 'tuple[]',
         },
         {
-          internalType: 'address',
-          name: 'arweaveArchaeologist',
-          type: 'address',
+          internalType: 'string[]',
+          name: 'arweaveTxIds',
+          type: 'string[]',
         },
       ],
-      name: 'initializeSarcophagus',
+      name: 'createSarcophagus',
       outputs: [
         {
           internalType: 'uint256',

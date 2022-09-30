@@ -28,7 +28,8 @@ export function useLoadArchaeologists() {
           contractInterface: ViewStateFacet.abi,
           functionName: 'getArchaeologistProfileAddresses',
         });
-        if (!addresses) return;
+
+        if (!addresses || addresses.length === 0) return;
 
         const profiles = await readContract({
           addressOrName: networkConfig.diamondDeployAddress,
