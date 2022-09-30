@@ -4,11 +4,16 @@ import { encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { setIsUploading } from 'store/bundlr/actions';
-import { setPayloadTxId, setSelectedArchaeologists, setShardsTxId } from 'store/embalm/actions';
+import {
+  setPayloadTxId,
+  setSelectedArchaeologists,
+  setShardsTxId,
+  setShards,
+} from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useBundlr } from './useBundlr';
-import { useCreateSarcophagus as useEmbalmerFacetCreateSarcophagus } from 'hooks/embalmerFacet';
+import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 
 async function encryptShards(publicKeys: string[], payload: Uint8Array[]): Promise<Buffer[]> {
   return Promise.all(publicKeys.map(async (key, i) => encrypt(key, Buffer.from(payload[i]))));
@@ -27,7 +32,7 @@ export function useCreateSarcophagus() {
   } = useSelector(x => x.embalmState);
   const { isUploading } = useSelector(x => x.bundlrState);
   const { uploadFile } = useBundlr();
-  const { createSarcophagus } = useEmbalmerFacetCreateSarcophagus();
+  const { createSarcophagus } = useSubmitSarcophagus();
 
   // TODO: Move this into its own hook and check all fields
   const canCreateSarcophagus = recipient.publicKey !== '' && !!outerPublicKey && !!file;
@@ -51,8 +56,8 @@ export function useCreateSarcophagus() {
         // TODO: Use requiredArchaeologists value
         threshold: 3,
       });
-      //save shards to arch profiles
-      selectedArchaeologists.forEach((arch, index) => (arch.profile.shard = shards[index]));
+      //save shards
+      dispatch(setShards(shards));
 
       // Step 4: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key

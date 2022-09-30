@@ -1,4 +1,4 @@
 export { useBurySarcophagus } from './useBurySarcophagus';
 export { useCancelSarcophagus } from './useCancelSarcophagus';
-export { useCreateSarcophagus } from './useCreateSarcophagus';
+export { useSubmitSarcophagus } from './useSubmitSarcophagus';
 export { useRewrapSarcophagus } from './useRewrapSarcophagus';
