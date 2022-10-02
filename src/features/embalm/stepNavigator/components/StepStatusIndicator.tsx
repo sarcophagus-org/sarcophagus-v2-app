@@ -7,11 +7,13 @@ interface StepStatusIndicatorProps {
 }
 
 export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps) {
+  const statusSize = '25px';
+
   const stepStatusMap = {
     [StepStatus.Complete]: (
       <Flex
-        h="20px"
-        w="20px"
+        h={statusSize}
+        w={statusSize}
         border="1px solid"
         borderColor="brand.950"
         backgroundColor="brand.950"
@@ -29,8 +31,8 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
     ),
     [StepStatus.Started]: (
       <Flex
-        h="20px"
-        w="20px"
+        h={statusSize}
+        w={statusSize}
         border="1px solid"
         borderColor="brand.950"
         borderRadius={100}
@@ -42,8 +44,8 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
     ),
     [StepStatus.NotStarted]: (
       <Flex
-        h="20px"
-        w="20px"
+        h={statusSize}
+        w={statusSize}
         border="1px solid"
         borderColor="brand.950"
         borderRadius={100}
