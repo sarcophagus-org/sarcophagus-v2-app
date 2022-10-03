@@ -29,11 +29,6 @@ Also Windows users will need to add .npmrc file with the contents script-shell=p
 
 Finally, copy `.env.example` into `.env` in root directory and update your environment variables.
 
-To use local version of Arweave:
-
-clone https://github.com/textury/arlocal
-run npx arlocal
-
 ## Community
 
 [![Discord](https://img.shields.io/discord/753398645507883099?color=768AD4&label=discord)](https://discord.com/channels/753398645507883099/)

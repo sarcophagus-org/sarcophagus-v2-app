@@ -46,6 +46,7 @@ export interface EmbalmState {
   diggingFeesSortDirection: SortDirection;
   diggingFeesFilter: string;
   archAddressSearch: string;
+  shards: Uint8Array[];
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -74,6 +75,7 @@ export const embalmInitialState: EmbalmState = {
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
   archAddressSearch: '',
+  shards: [],
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -186,7 +188,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetSelectedArchaeologists:
       return { ...state, selectedArchaeologists: action.payload.archaeologists };
 
-
     case ActionType.SetDiggingFeesSortDirection:
       return { ...state, diggingFeesSortDirection: action.payload.direction };
 
@@ -217,6 +218,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         'connection',
         action.payload.connection
       );
+
+    case ActionType.SetShards:
+      return { ...state, shards: action.payload.shards };
 
     default:
       return state;

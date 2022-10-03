@@ -1,7 +1,7 @@
 import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
-import { PeerId } from '@libp2p/interfaces/peer-id';
+import { PeerId } from '@libp2p/interface-peer-id';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -32,6 +32,7 @@ export enum ActionType {
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
+  SetShards = 'EMBALM_SET_SHARDS',
 }
 
 export enum RecipientSetByOption {
@@ -78,6 +79,7 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
+  [ActionType.SetShards]: { shards: Uint8Array[] };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -316,6 +318,15 @@ export function setArchaeologistConnection(
     payload: {
       peerId,
       connection,
+    },
+  };
+}
+
+export function setShards(shards: Uint8Array[]): EmbalmActions {
+  return {
+    type: ActionType.SetShards,
+    payload: {
+      shards,
     },
   };
 }

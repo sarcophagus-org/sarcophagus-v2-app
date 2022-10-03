@@ -1,10 +1,15 @@
 import { Text, Button, Flex, Heading } from '@chakra-ui/react';
 import { Alert } from 'components/Alert';
 import { useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
+import { useApprove } from 'hooks/sarcoToken/useApprove';
+import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 
 export function CreateSarcophagus() {
-  const { handleSubmit, isUploading, canCreateSarcophagus, payloadTxId, shardsTxId } =
+  const { handleSubmit, handleCreate, isUploading, canCreateSarcophagus, payloadTxId, shardsTxId } =
     useCreateSarcophagus();
+
+  const { approve } = useApprove();
+  const { allowance } = useAllowance();
 
   return (
     <Flex
@@ -35,12 +40,26 @@ export function CreateSarcophagus() {
       <Text mt={3}>Payload txId: {payloadTxId} </Text>
       <Text>Shards txId: {shardsTxId} </Text>
       <Button
+        disabled={allowance?.gt(0)}
+        onClick={() => approve()}
+      >
+        Approve Sarco Token
+      </Button>
+      <Button
         mt={6}
         onClick={handleSubmit}
         isLoading={isUploading}
         disabled={isUploading || !canCreateSarcophagus}
       >
         Upload Payload
+      </Button>
+      <Button
+        mt={6}
+        onClick={handleCreate}
+        isLoading={isUploading}
+        disabled={isUploading || !canCreateSarcophagus}
+      >
+        Create Sarco
       </Button>
     </Flex>
   );

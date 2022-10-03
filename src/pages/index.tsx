@@ -2,7 +2,6 @@ import { Flex, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
-import Home from '../pages/Home';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { ArweaveTestPage } from './ArweaveTestPage';
 import { EmbalmPage } from './EmbalmPage';
@@ -16,11 +15,6 @@ export function Pages() {
       path: '/embalm',
       element: <EmbalmPage />,
       label: 'Embalm',
-    },
-    {
-      path: '/',
-      element: <Home />,
-      label: 'Home',
     },
     {
       path: '/archaeologists',
