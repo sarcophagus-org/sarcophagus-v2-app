@@ -28,6 +28,11 @@ export function generateMockArchaeoloigsts() {
         successes: [],
         cancels: [],
         accusals: [],
+        signature: {
+          v: 0,
+          r: '',
+          s: '',
+        },
       },
       isOnline: true,
     });
