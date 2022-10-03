@@ -40,7 +40,7 @@ export function useLibp2p() {
     [dispatch]
   );
 
-  const handleStream: StreamHandler = useCallback(
+  const handlePublicKeyMsgStream: StreamHandler = useCallback(
     ({ stream }) => {
       pipe(stream, async function (source) {
         for await (const msg of source) {
@@ -104,13 +104,14 @@ export function useLibp2p() {
         if (!libp2pNode) return;
         if (libp2pNode.isStarted()) return;
         const msgProtocol = '/env-config';
+        // const msgProtocol = '/public-key'; // TODO: uncomment to replace above when service PR #27 is merged
 
         await libp2pNode.start();
 
         libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
         libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
         libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-        libp2pNode.handle([msgProtocol], handleStream);
+        libp2pNode.handle([msgProtocol], handlePublicKeyMsgStream);
       } catch (error) {
         console.error(error);
       }
@@ -123,7 +124,7 @@ export function useLibp2p() {
       libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
       libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
     };
-  }, [handleStream, libp2pNode, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
+  }, [handlePublicKeyMsgStream, libp2pNode, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
 
   const confirmArweaveTransaction = useCallback(
     async (peerId: string, arweaveTxId: string, unencryptedShardHash: string) => {
@@ -139,6 +140,7 @@ export function useLibp2p() {
         });
 
         const { stream } = await connection.newStream('/validate-arweave');
+        // const { stream } = await connection.newStream('/arweave-signoff'); // TODO: uncomment to replace above when service #27 PR is merged
 
         pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
           for await (const data of source) {
