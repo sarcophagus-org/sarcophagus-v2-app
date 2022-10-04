@@ -3,6 +3,7 @@ import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist } from 'types/index';
 import { Actions } from '..';
 import { ActionType, Recipient, RecipientSetByOption, SortDirection } from './actions';
+import { PeerId } from '@libp2p/interface-peer-id';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -202,6 +203,14 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetShardsTxId:
       return { ...state, shardsTxId: action.payload.txId };
+
+    case ActionType.SetArchaeologistFullPeerId:
+      return updateArchProperty(
+        state,
+        action.payload.peerId.toString(),
+        'fullPeerId',
+        action.payload.peerId
+      );
 
     case ActionType.SetArchaeologistOnlineStatus:
       return updateArchProperty(

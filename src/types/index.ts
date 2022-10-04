@@ -11,6 +11,8 @@ export interface Archaeologist {
   profile: ArchaeologistProfile;
   connection?: any;
   isOnline: boolean;
+  fullPeerId?: PeerId;
+  lastPinged?: Date;
 }
 
 export interface SelectedContractArchaeologist {
@@ -27,7 +29,7 @@ export interface ArchaeologistProfile {
   exists: boolean;
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;
-  peerId: PeerId | string;
+  peerId: string;
 
   signature: {
     v: number;

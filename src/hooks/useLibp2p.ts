@@ -7,7 +7,7 @@ import { nodeConfig } from 'lib/config/node_config';
 import { createLibp2p } from 'libp2p';
 import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
-import { setArchaeologistConnection, setArchaeologistOnlineStatus } from 'store/embalm/actions';
+import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
 export function useLibp2p() {
@@ -17,8 +17,9 @@ export function useLibp2p() {
 
   const onPeerDiscovery = useCallback(
     (evt: CustomEvent<PeerInfo>) => {
-      const peerId = evt.detail.id.toString();
-      dispatch(setArchaeologistOnlineStatus(peerId, true));
+      const peerId = evt.detail.id;
+      dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
+      dispatch(setArchaeologistFullPeerId(peerId));
     },
     [dispatch]
   );
@@ -62,7 +63,7 @@ export function useLibp2p() {
           if (i !== -1) {
             const arch = archaeologists[i];
             // TODO: Determine if there's a better way to be certain of origin's peerId
-            if (arch.profile.peerId.toString() !== archConfigJson.peerId) {
+            if (arch.profile.peerId !== archConfigJson.peerId) {
               // This is POSSIBLE, but in practice shouldn't ever happen.
               // But that's how you know it'll DEFINITELY happen eh? Sigh.
               console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
@@ -103,8 +104,7 @@ export function useLibp2p() {
       try {
         if (!libp2pNode) return;
         if (libp2pNode.isStarted()) return;
-        const msgProtocol = '/env-config';
-        // const msgProtocol = '/public-key'; // TODO: uncomment to replace above when service PR #27 is merged
+        const msgProtocol = '/public-key';
 
         await libp2pNode.start();
 
@@ -139,8 +139,7 @@ export function useLibp2p() {
           unencryptedShardHash,
         });
 
-        const { stream } = await connection.newStream('/validate-arweave');
-        // const { stream } = await connection.newStream('/arweave-signoff'); // TODO: uncomment to replace above when service #27 PR is merged
+        const { stream } = await connection.newStream('/arweave-signoff');
 
         pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
           for await (const data of source) {
