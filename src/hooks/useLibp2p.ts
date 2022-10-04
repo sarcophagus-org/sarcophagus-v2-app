@@ -3,7 +3,7 @@ import { PeerInfo } from '@libp2p/interface-peer-info';
 import { StreamHandler } from '@libp2p/interface-registrar';
 import { ethers } from 'ethers';
 import { pipe } from 'it-pipe';
-import { nodeConfig } from 'lib/utils/node_config';
+import { nodeConfig } from 'lib/config/node_config';
 import { createLibp2p } from 'libp2p';
 import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
