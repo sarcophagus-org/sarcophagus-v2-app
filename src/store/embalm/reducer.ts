@@ -3,7 +3,6 @@ import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist } from 'types/index';
 import { Actions } from '..';
 import { ActionType, Recipient, RecipientSetByOption, SortDirection } from './actions';
-import { PeerId } from '@libp2p/interface-peer-id';
 
 export enum StepStatus {
   Complete = 'complete',

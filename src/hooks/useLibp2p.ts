@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'store/index';
 export function useLibp2p() {
   const dispatch = useDispatch();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
-  const archaeologists = useSelector(s => s.embalmState.archaeologists);
+  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const onPeerDiscovery = useCallback(
     (evt: CustomEvent<PeerInfo>) => {
@@ -45,35 +45,37 @@ export function useLibp2p() {
     ({ stream }) => {
       pipe(stream, async function (source) {
         for await (const msg of source) {
-          const decoded = new TextDecoder().decode(msg);
-          console.info(`received message ${decoded}`);
+          try {
+            const decoded = new TextDecoder().decode(msg);
+            console.info(`received public key ${decoded}`);
 
-          const archConfigJson: Record<string, any> = JSON.parse(decoded);
+            const archConfigJson: Record<string, any> = JSON.parse(decoded);
 
-          const signerAddress = ethers.utils.verifyMessage(
-            JSON.stringify({
-              encryptionPublicKey: archConfigJson.encryptionPublicKey,
-              peerId: archConfigJson.peerId,
-            }),
-            archConfigJson.signature
-          );
+            const signerAddress = ethers.utils.verifyMessage(
+              JSON.stringify({
+                encryptionPublicKey: archConfigJson.encryptionPublicKey,
+                peerId: archConfigJson.peerId,
+              }),
+              archConfigJson.signature
+            );
 
-          const i = archaeologists.findIndex(a => a.profile.archAddress === signerAddress);
+            const i = archaeologists.findIndex(a => a.profile.archAddress === signerAddress);
 
-          if (i !== -1) {
-            const arch = archaeologists[i];
-            // TODO: Determine if there's a better way to be certain of origin's peerId
-            if (arch.profile.peerId !== archConfigJson.peerId) {
-              // This is POSSIBLE, but in practice shouldn't ever happen.
-              // But that's how you know it'll DEFINITELY happen eh? Sigh.
-              console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
-              return;
+            if (i !== -1) {
+              const arch = archaeologists[i];
+              // TODO: Determine if there's a better way to be certain of origin's peerId
+              if (arch.profile.peerId !== archConfigJson.peerId) {
+                // This is POSSIBLE, but in practice shouldn't ever happen.
+                // But that's how you know it'll DEFINITELY happen eh? Sigh.
+                console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
+                return;
+              }
+
+              console.log('got public key of', arch.profile.peerId);
+              arch.publicKey = archConfigJson.encryptionPublicKey;
             }
-
-            console.log('got public key of', arch.profile.peerId);
-
-            arch.publicKey = archConfigJson.encryptionPublicKey;
-            // callbacks.onArchConnected(arch);
+          } catch (e) {
+            console.error(e);
           }
         }
       }).finally(() => {
@@ -104,14 +106,13 @@ export function useLibp2p() {
       try {
         if (!libp2pNode) return;
         if (libp2pNode.isStarted()) return;
-        const msgProtocol = '/public-key';
 
         await libp2pNode.start();
 
         libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
         libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
         libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-        libp2pNode.handle([msgProtocol], handlePublicKeyMsgStream);
+        libp2pNode.handle(['/public-key'], handlePublicKeyMsgStream);
       } catch (error) {
         console.error(error);
       }
@@ -154,5 +155,15 @@ export function useLibp2p() {
     [archaeologists]
   );
 
-  return { confirmArweaveTransaction };
+  const dialSelectedArchaeologists = useCallback(() => {
+    selectedArchaeologists.map(async arch => {
+      try {
+        await libp2pNode?.dialProtocol(arch.fullPeerId!, '/initConnection');
+      } catch (e) {
+        console.log(`error connecting to ${arch.profile.peerId}`, e);
+      }
+    });
+  }, [selectedArchaeologists, libp2pNode]);
+
+  return { confirmArweaveTransaction, dialSelectedArchaeologists };
 }

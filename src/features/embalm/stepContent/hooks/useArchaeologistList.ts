@@ -11,9 +11,12 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
+import { useLibp2p } from 'hooks/useLibp2p';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
+  const { dialSelectedArchaeologists } = useLibp2p();
+
   const dispatch = useDispatch();
 
   const {
@@ -23,6 +26,7 @@ export function useArchaeologistList() {
     diggingFeesFilter,
     archAddressSearch,
   } = useSelector(s => s.embalmState);
+
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
@@ -35,7 +39,10 @@ export function useArchaeologistList() {
   const onClickNextPage = useCallback(() => {
     // Temporary console log
     console.log('Will implement pagination when we are loading real archaeologists');
-  }, []);
+
+    // TODO: temporary home for "event" that will fire up arch connection attempts. Move as appropriate.
+    dialSelectedArchaeologists();
+  }, [dialSelectedArchaeologists]);
 
   const onClickPrevPage = useCallback(() => {
     // Temporary console log
