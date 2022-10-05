@@ -138,6 +138,7 @@ export function useLibp2p() {
       }
     })();
 
+    // TODO: Pending decision on what to do with this. Remove? Move this hook higher up DOM? Sth else?
     // Remove the event listeners on unmount
     // return () => {
     //   console.log('clean up listeners');
