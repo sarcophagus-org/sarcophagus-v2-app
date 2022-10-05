@@ -1,6 +1,6 @@
 import { Flex, Heading } from '@chakra-ui/react';
 import { StepContent } from 'features/embalm/stepContent';
-import { useLibp2p } from 'hooks/useLibp2p';
+import { useLibp2p } from 'hooks/libp2p/useLibp2p';
 import { useLoadArchaeologists } from './stepContent/hooks/useLoadArchaeologists';
 import { StepNavigator } from './stepNavigator';
 

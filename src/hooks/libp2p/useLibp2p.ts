@@ -9,7 +9,7 @@ import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
 import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { log } from '../lib/utils/logger';
+import { log } from '../../lib/utils/logger';
 
 const pingThreshold = 60000;
 

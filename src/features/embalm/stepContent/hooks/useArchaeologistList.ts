@@ -11,7 +11,7 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
-import { useLibp2p } from 'hooks/useLibp2p';
+import { useLibp2p } from 'hooks/libp2p/useLibp2p';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
