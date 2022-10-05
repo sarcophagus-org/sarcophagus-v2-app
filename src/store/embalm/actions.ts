@@ -2,6 +2,7 @@ import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
+import { Connection } from '@libp2p/interface-connection';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -57,7 +58,7 @@ type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchaeologistConnection]: { peerId: PeerId | string; connection: any };
+  [ActionType.SetArchaeologistConnection]: { peerId: PeerId | string; connection: Connection | undefined };
   [ActionType.SetArchaeologistOnlineStatus]: { peerId: string; isOnline: boolean, lastPinged?: Date };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId; };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
@@ -320,7 +321,7 @@ export function setArchaeologistOnlineStatus(
 
 export function setArchaeologistConnection(
   peerId: PeerId | string,
-  connection: any
+  connection: Connection | undefined
 ): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistConnection,
