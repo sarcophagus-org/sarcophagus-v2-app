@@ -51,7 +51,7 @@ export function useArchaeologistList() {
 
   const handleCheckArchaeologist = useCallback(
     (archaeologist: Archaeologist) => {
-      if (selectedArchaeologists.includes(archaeologist)) {
+      if (selectedArchaeologists.findIndex(arch => arch.profile.peerId === archaeologist.profile.peerId) !== -1) {
         dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
       } else {
         dispatch(selectArchaeologist(archaeologist));
