@@ -1,12 +1,12 @@
 import { Flex, Heading } from '@chakra-ui/react';
 import { StepContent } from 'features/embalm/stepContent';
-import { useLibp2p } from 'hooks/libp2p/useLibp2p';
 import { useLoadArchaeologists } from './stepContent/hooks/useLoadArchaeologists';
 import { StepNavigator } from './stepNavigator';
+import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 
 export function Embalm() {
   useLoadArchaeologists();
-  useLibp2p();
+  useBootLibp2pNode();
 
   return (
     <Flex

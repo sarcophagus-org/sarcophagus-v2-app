@@ -3,10 +3,7 @@ import { PeerInfo } from '@libp2p/interface-peer-info';
 import { StreamHandler } from '@libp2p/interface-registrar';
 import { ethers } from 'ethers';
 import { pipe } from 'it-pipe';
-import { nodeConfig } from 'lib/config/node_config';
-import { createLibp2p } from 'libp2p';
-import { useCallback, useEffect } from 'react';
-import { setLibp2p } from 'store/app/actions';
+import { useCallback } from 'react';
 import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
@@ -107,51 +104,6 @@ export function useLibp2p() {
     [archaeologists]
   );
 
-  // Sets a new libp2p node instance
-  useEffect(() => {
-    (async () => {
-      try {
-        if (!libp2pNode) {
-          const newLibp2pNode = await createLibp2p(nodeConfig);
-          dispatch(setLibp2p(newLibp2pNode));
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, [dispatch, libp2pNode]);
-
-  // Sets up the libp2p listeners
-  useEffect(() => {
-    (async () => {
-      try {
-        if (!libp2pNode) return;
-        if (libp2pNode.isStarted()) return;
-
-        await libp2pNode.start();
-        log(`Browser node started with peerID: ${libp2pNode.peerId.toString()}`);
-
-        libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
-        libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
-        libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-        libp2pNode.handle(['/public-key'], handlePublicKeyMsgStream);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    // TODO: Pending decision on what to do with this. Remove? Move this hook higher up DOM? Sth else?
-    // Remove the event listeners on unmount
-    // return () => {
-    //   console.log('clean up listeners');
-
-    //   if (!libp2pNode) return;
-    //   libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
-    //   libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
-    //   libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
-    // };
-  }, [handlePublicKeyMsgStream, libp2pNode, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
-
   const confirmArweaveTransaction = useCallback(
     async (peerId: string, arweaveTxId: string, unencryptedShardHash: string) => {
       try {
@@ -182,16 +134,22 @@ export function useLibp2p() {
 
   const dialSelectedArchaeologists = useCallback(() => {
     selectedArchaeologists.map(async arch => {
-      log('dialing!');
       try {
         const connection = await libp2pNode?.dial(arch.fullPeerId!);
         if (!connection) throw Error('No connection obtained from dial');
         dispatch(setArchaeologistConnection(arch.profile.peerId, connection!));
       } catch (e) {
-        console.log(`error connecting to ${arch.profile.peerId}`, e);
+        console.error(`error connecting to ${arch.profile.peerId}`, e);
       }
     });
   }, [selectedArchaeologists, libp2pNode, dispatch]);
 
-  return { confirmArweaveTransaction, dialSelectedArchaeologists };
+  return {
+    onPeerDiscovery,
+    onPeerConnect,
+    onPeerDisconnect,
+    handlePublicKeyStream: handlePublicKeyMsgStream,
+    confirmArweaveTransaction,
+    dialSelectedArchaeologists
+  };
 }
