@@ -10,6 +10,10 @@ import { setLibp2p } from 'store/app/actions';
 import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
+const pingThreshold = 60000;
+
+const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
+
 export function useLibp2p() {
   const dispatch = useDispatch();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
@@ -20,6 +24,22 @@ export function useLibp2p() {
       const peerId = evt.detail.id;
       dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
       dispatch(setArchaeologistFullPeerId(peerId));
+
+      if (heartbeatTimeouts[peerId.toString()]) {
+        clearTimeout(heartbeatTimeouts[peerId.toString()]);
+        heartbeatTimeouts[peerId.toString()] = undefined;
+      }
+
+      const timeout = setTimeout(() => {
+        console.log(`No longer online: ${peerId.toString()}`);
+        dispatch(setArchaeologistOnlineStatus(
+          peerId.toString(),
+          false,
+        ));
+      }, pingThreshold);
+
+      heartbeatTimeouts[peerId.toString()] = timeout;
+
     },
     [dispatch]
   );
@@ -119,12 +139,14 @@ export function useLibp2p() {
     })();
 
     // Remove the event listeners on unmount
-    return () => {
-      if (!libp2pNode) return;
-      libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
-      libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
-      libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
-    };
+    // return () => {
+    //   console.log('clean up listeners');
+
+    //   if (!libp2pNode) return;
+    //   libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
+    //   libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
+    //   libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
+    // };
   }, [handlePublicKeyMsgStream, libp2pNode, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
 
   const confirmArweaveTransaction = useCallback(
