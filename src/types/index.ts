@@ -1,6 +1,7 @@
 import { BigNumber, Signature } from 'ethers';
 import { ReactNode } from 'react';
 import { PeerId } from '@libp2p/interface-peer-id';
+import { Connection } from '@libp2p/interface-connection';
 
 export interface ChildrenOnly {
   children: ReactNode;
@@ -9,8 +10,10 @@ export interface ChildrenOnly {
 export interface Archaeologist {
   publicKey?: string;
   profile: ArchaeologistProfile;
-  connection?: any;
+  connection?: Connection;
   isOnline: boolean;
+  fullPeerId?: PeerId;
+  lastPinged?: Date;
 }
 
 export interface SelectedContractArchaeologist {
@@ -27,7 +30,7 @@ export interface ArchaeologistProfile {
   exists: boolean;
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;
-  peerId: PeerId | string;
+  peerId: string;
 
   signature: {
     v: number;

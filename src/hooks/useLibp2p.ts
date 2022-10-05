@@ -3,22 +3,43 @@ import { PeerInfo } from '@libp2p/interface-peer-info';
 import { StreamHandler } from '@libp2p/interface-registrar';
 import { ethers } from 'ethers';
 import { pipe } from 'it-pipe';
-import { nodeConfig } from 'lib/utils/node_config';
+import { nodeConfig } from 'lib/config/node_config';
 import { createLibp2p } from 'libp2p';
 import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
-import { setArchaeologistConnection, setArchaeologistOnlineStatus } from 'store/embalm/actions';
+import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
+
+const pingThreshold = 60000;
+
+const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
 
 export function useLibp2p() {
   const dispatch = useDispatch();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
-  const archaeologists = useSelector(s => s.embalmState.archaeologists);
+  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const onPeerDiscovery = useCallback(
     (evt: CustomEvent<PeerInfo>) => {
-      const peerId = evt.detail.id.toString();
-      dispatch(setArchaeologistOnlineStatus(peerId, true));
+      const peerId = evt.detail.id;
+      dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
+      dispatch(setArchaeologistFullPeerId(peerId));
+
+      if (heartbeatTimeouts[peerId.toString()]) {
+        clearTimeout(heartbeatTimeouts[peerId.toString()]);
+        heartbeatTimeouts[peerId.toString()] = undefined;
+      }
+
+      const timeout = setTimeout(() => {
+        console.log(`No longer online: ${peerId.toString()}`);
+        dispatch(setArchaeologistOnlineStatus(
+          peerId.toString(),
+          false,
+        ));
+      }, pingThreshold);
+
+      heartbeatTimeouts[peerId.toString()] = timeout;
+
     },
     [dispatch]
   );
@@ -35,44 +56,46 @@ export function useLibp2p() {
     (evt: CustomEvent<Connection>) => {
       const peerId = evt.detail.remotePeer.toString();
       dispatch(setArchaeologistOnlineStatus(peerId, false));
-      dispatch(setArchaeologistConnection(peerId, null));
+      dispatch(setArchaeologistConnection(peerId, undefined));
     },
     [dispatch]
   );
 
-  const handleStream: StreamHandler = useCallback(
+  const handlePublicKeyMsgStream: StreamHandler = useCallback(
     ({ stream }) => {
       pipe(stream, async function (source) {
         for await (const msg of source) {
-          const decoded = new TextDecoder().decode(msg);
-          console.info(`received message ${decoded}`);
+          try {
+            const decoded = new TextDecoder().decode(msg);
+            console.info(`received public key ${decoded}`);
 
-          const archConfigJson: Record<string, any> = JSON.parse(decoded);
+            const archConfigJson: Record<string, any> = JSON.parse(decoded);
 
-          const signerAddress = ethers.utils.verifyMessage(
-            JSON.stringify({
-              encryptionPublicKey: archConfigJson.encryptionPublicKey,
-              peerId: archConfigJson.peerId,
-            }),
-            archConfigJson.signature
-          );
+            const signerAddress = ethers.utils.verifyMessage(
+              JSON.stringify({
+                encryptionPublicKey: archConfigJson.encryptionPublicKey,
+                peerId: archConfigJson.peerId,
+              }),
+              archConfigJson.signature
+            );
 
-          const i = archaeologists.findIndex(a => a.profile.archAddress === signerAddress);
+            const i = archaeologists.findIndex(a => a.profile.archAddress === signerAddress);
 
-          if (i !== -1) {
-            const arch = archaeologists[i];
-            // TODO: Determine if there's a better way to be certain of origin's peerId
-            if (arch.profile.peerId.toString() !== archConfigJson.peerId) {
-              // This is POSSIBLE, but in practice shouldn't ever happen.
-              // But that's how you know it'll DEFINITELY happen eh? Sigh.
-              console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
-              return;
+            if (i !== -1) {
+              const arch = archaeologists[i];
+              // TODO: Determine if there's a better way to be certain of origin's peerId
+              if (arch.profile.peerId !== archConfigJson.peerId) {
+                // This is POSSIBLE, but in practice shouldn't ever happen.
+                // But that's how you know it'll DEFINITELY happen eh? Sigh.
+                console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
+                return;
+              }
+
+              console.log('got public key of', arch.profile.peerId);
+              arch.publicKey = archConfigJson.encryptionPublicKey;
             }
-
-            console.log('got public key of', arch.profile.peerId);
-
-            arch.publicKey = archConfigJson.encryptionPublicKey;
-            // callbacks.onArchConnected(arch);
+          } catch (e) {
+            console.error(e);
           }
         }
       }).finally(() => {
@@ -103,27 +126,29 @@ export function useLibp2p() {
       try {
         if (!libp2pNode) return;
         if (libp2pNode.isStarted()) return;
-        const msgProtocol = '/env-config';
 
         await libp2pNode.start();
 
         libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
         libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
         libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-        libp2pNode.handle([msgProtocol], handleStream);
+        libp2pNode.handle(['/public-key'], handlePublicKeyMsgStream);
       } catch (error) {
         console.error(error);
       }
     })();
 
+    // TODO: Pending decision on what to do with this. Remove? Move this hook higher up DOM? Sth else?
     // Remove the event listeners on unmount
-    return () => {
-      if (!libp2pNode) return;
-      libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
-      libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
-      libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
-    };
-  }, [handleStream, libp2pNode, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
+    // return () => {
+    //   console.log('clean up listeners');
+
+    //   if (!libp2pNode) return;
+    //   libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
+    //   libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
+    //   libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
+    // };
+  }, [handlePublicKeyMsgStream, libp2pNode, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
 
   const confirmArweaveTransaction = useCallback(
     async (peerId: string, arweaveTxId: string, unencryptedShardHash: string) => {
@@ -138,7 +163,7 @@ export function useLibp2p() {
           unencryptedShardHash,
         });
 
-        const { stream } = await connection.newStream('/validate-arweave');
+        const { stream } = await connection.newStream('/arweave-signoff');
 
         pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
           for await (const data of source) {
@@ -153,5 +178,17 @@ export function useLibp2p() {
     [archaeologists]
   );
 
-  return { confirmArweaveTransaction };
+  const dialSelectedArchaeologists = useCallback(() => {
+    selectedArchaeologists.map(async arch => {
+      try {
+        const connection = await libp2pNode?.dial(arch.fullPeerId!);
+        if (!connection) throw Error('No connection obtained from dial');
+        dispatch(setArchaeologistConnection(arch.profile.peerId, connection!));
+      } catch (e) {
+        console.log(`error connecting to ${arch.profile.peerId}`, e);
+      }
+    });
+  }, [selectedArchaeologists, libp2pNode, dispatch]);
+
+  return { confirmArweaveTransaction, dialSelectedArchaeologists };
 }

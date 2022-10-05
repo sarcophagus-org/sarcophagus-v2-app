@@ -2,6 +2,7 @@ import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
+import { Connection } from '@libp2p/interface-connection';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -11,6 +12,7 @@ export enum ActionType {
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
+  SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
@@ -56,8 +58,9 @@ type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchaeologistConnection]: { peerId: PeerId | string; connection: any };
-  [ActionType.SetArchaeologistOnlineStatus]: { peerId: PeerId | string; isOnline: boolean };
+  [ActionType.SetArchaeologistConnection]: { peerId: PeerId | string; connection: Connection | undefined };
+  [ActionType.SetArchaeologistOnlineStatus]: { peerId: string; isOnline: boolean, lastPinged?: Date };
+  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId; };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
@@ -296,8 +299,15 @@ export function setShardsTxId(txId: string): EmbalmActions {
   };
 }
 
+export function setArchaeologistFullPeerId(peerId: PeerId): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistFullPeerId,
+    payload: { peerId },
+  };
+}
+
 export function setArchaeologistOnlineStatus(
-  peerId: PeerId | string,
+  peerId: string,
   isOnline: boolean
 ): EmbalmActions {
   return {
@@ -311,7 +321,7 @@ export function setArchaeologistOnlineStatus(
 
 export function setArchaeologistConnection(
   peerId: PeerId | string,
-  connection: any
+  connection: Connection | undefined
 ): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistConnection,
