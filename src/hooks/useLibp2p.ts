@@ -9,6 +9,7 @@ import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
 import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
+import { log } from '../lib/utils/logger';
 
 const pingThreshold = 60000;
 
@@ -128,6 +129,7 @@ export function useLibp2p() {
         if (libp2pNode.isStarted()) return;
 
         await libp2pNode.start();
+        log(`Browser node started with peerID: ${libp2pNode.peerId.toString()}`);
 
         libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
         libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
@@ -180,6 +182,7 @@ export function useLibp2p() {
 
   const dialSelectedArchaeologists = useCallback(() => {
     selectedArchaeologists.map(async arch => {
+      log('dialing!');
       try {
         const connection = await libp2pNode?.dial(arch.fullPeerId!);
         if (!connection) throw Error('No connection obtained from dial');
