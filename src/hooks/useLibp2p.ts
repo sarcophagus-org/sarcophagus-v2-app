@@ -158,12 +158,14 @@ export function useLibp2p() {
   const dialSelectedArchaeologists = useCallback(() => {
     selectedArchaeologists.map(async arch => {
       try {
-        await libp2pNode?.dialProtocol(arch.fullPeerId!, '/initConnection');
+        const connection = await libp2pNode?.dial(arch.fullPeerId!);
+        if (!connection) throw Error('No connection obtained from dial');
+        dispatch(setArchaeologistConnection(arch.profile.peerId, connection!));
       } catch (e) {
         console.log(`error connecting to ${arch.profile.peerId}`, e);
       }
     });
-  }, [selectedArchaeologists, libp2pNode]);
+  }, [selectedArchaeologists, libp2pNode, dispatch]);
 
   return { confirmArweaveTransaction, dialSelectedArchaeologists };
 }
