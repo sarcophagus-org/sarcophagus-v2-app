@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'store/index';
 /**
  * Hook for managing resurrection selection
  */
-export function useResurrections() {
+export function useResurrection() {
   const dispatch = useDispatch();
   const {
     resurrection,
@@ -46,9 +46,9 @@ export function useResurrections() {
     if (radioValue !== 'Other') {
       setCustomResurrectionDate(null);
 
-      const [number] = radioValue.split(' ');
+      const [months] = radioValue === '' ? '0' : radioValue.split(' ');
       const newResurrection = new Date();
-      newResurrection.setMonth(newResurrection.getMonth() + parseInt(number));
+      newResurrection.setMonth(newResurrection.getMonth() + parseInt(months));
       dispatch(setResurrection(newResurrection.getTime()));
     } else {
       if (customResurrectionDate) {
