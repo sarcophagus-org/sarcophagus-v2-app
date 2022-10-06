@@ -8,7 +8,7 @@ import {
   setArchaeologistConnection,
   setArchaeologistFullPeerId,
   setArchaeologistOnlineStatus,
-  setArchaeologistPublicKey
+  setArchaeologistPublicKey,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
@@ -46,12 +46,8 @@ export function useLibp2p() {
 
       heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
         console.log(`No longer online: ${peerId.toString()}`);
-        dispatch(setArchaeologistOnlineStatus(
-          peerId.toString(),
-          false,
-        ));
+        dispatch(setArchaeologistOnlineStatus(peerId.toString(), false));
       }, pingThreshold);
-
     },
     [dispatch]
   );
@@ -73,7 +69,7 @@ export function useLibp2p() {
     [dispatch]
   );
 
-  const handlePublicKeyStream: StreamHandler =
+  const handlePublicKeyStream: StreamHandler = useCallback(
     ({ stream }) => {
       pipe(stream, async function (source) {
         for await (const msg of source) {
@@ -85,7 +81,7 @@ export function useLibp2p() {
 
             const signerAddress = ethers.utils.verifyMessage(
               JSON.stringify({
-                encryptionPublicKey: publicKeyResponse.encryptionPublicKey
+                encryptionPublicKey: publicKeyResponse.encryptionPublicKey,
               }),
               publicKeyResponse.signature
             );
@@ -96,7 +92,12 @@ export function useLibp2p() {
                 // TODO -- handle error state here, will need to communicate to user
                 console.error('arch peer ID does not match profile:', signerAddress);
               }
-              dispatch(setArchaeologistPublicKey(arch.fullPeerId!.toString(), publicKeyResponse.encryptionPublicKey));
+              dispatch(
+                setArchaeologistPublicKey(
+                  arch.fullPeerId!.toString(),
+                  publicKeyResponse.encryptionPublicKey
+                )
+              );
               setTimeout(() => {
                 console.log('new arch', JSON.stringify(arch));
               }, 4000);
@@ -112,7 +113,9 @@ export function useLibp2p() {
         // clean up resources
         stream.close();
       });
-    };
+    },
+    [selectedArchaeologists, dispatch]
+  );
 
   const confirmArweaveTransaction = useCallback(
     async (peerId: string, arweaveTxId: string, unencryptedShardHash: string) => {
@@ -142,14 +145,11 @@ export function useLibp2p() {
     [archaeologists]
   );
 
-  const resetPublicKeyStream = async () => {
+  const resetPublicKeyStream = useCallback(async () => {
     await libp2pNode!.unhandle(PUBLIC_KEY_STREAM);
 
-    await libp2pNode!.handle(
-      [PUBLIC_KEY_STREAM],
-      handlePublicKeyStream
-    );
-  };
+    await libp2pNode!.handle([PUBLIC_KEY_STREAM], handlePublicKeyStream);
+  }, [handlePublicKeyStream, libp2pNode]);
 
   const dialSelectedArchaeologists = useCallback(async () => {
     await resetPublicKeyStream();
@@ -163,7 +163,7 @@ export function useLibp2p() {
         console.error(`error connecting to ${arch.profile.peerId}`, e);
       }
     });
-  }, [selectedArchaeologists, libp2pNode, dispatch]);
+  }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
   return {
     onPeerDiscovery,
@@ -171,6 +171,6 @@ export function useLibp2p() {
     onPeerDisconnect,
     handlePublicKeyStream,
     confirmArweaveTransaction,
-    dialSelectedArchaeologists
+    dialSelectedArchaeologists,
   };
 }

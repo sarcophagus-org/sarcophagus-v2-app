@@ -51,7 +51,11 @@ export function useArchaeologistList() {
 
   const handleCheckArchaeologist = useCallback(
     (archaeologist: Archaeologist) => {
-      if (selectedArchaeologists.findIndex(arch => arch.profile.peerId === archaeologist.profile.peerId) !== -1) {
+      if (
+        selectedArchaeologists.findIndex(
+          arch => arch.profile.peerId === archaeologist.profile.peerId
+        ) !== -1
+      ) {
         dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
       } else {
         dispatch(selectArchaeologist(archaeologist));
@@ -69,10 +73,10 @@ export function useArchaeologistList() {
     diggingFeesSortDirection === SortDirection.NONE
       ? onlineArchaeologists
       : orderBy(
-        onlineArchaeologists,
-        'profile.minimumDiggingFee',
-        sortOrderByMap[diggingFeesSortDirection]
-      );
+          onlineArchaeologists,
+          'profile.minimumDiggingFee',
+          sortOrderByMap[diggingFeesSortDirection]
+        );
 
   const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
     arch =>

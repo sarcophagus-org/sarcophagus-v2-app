@@ -1,6 +1,6 @@
 import { nodeConfig } from 'lib/config/node_config';
 import { createLibp2p, Libp2p } from 'libp2p';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
@@ -22,24 +22,23 @@ export function useBootLibp2pNode() {
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { handlePublicKeyStream, onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
 
-  const createAndSetNode = async (): Promise<Libp2p> => {
+  const createAndSetNode = useCallback(async (): Promise<Libp2p> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
 
     // set global libp2p node for later use
-    dispatch(
-      setLibp2p(
-        newLibp2pNode
-      )
-    );
+    dispatch(setLibp2p(newLibp2pNode));
 
     return newLibp2pNode;
-  };
+  }, [dispatch]);
 
-  const addNodeEventListeners = (libp2pNode: Libp2p): void => {
-    libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
-    libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
-    libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-  };
+  const addNodeEventListeners = useCallback(
+    (libp2pNode: Libp2p): void => {
+      libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
+      libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
+      libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
+    },
+    [onPeerDiscovery, onPeerConnect, onPeerDisconnect]
+  );
 
   useEffect(() => {
     (async () => {
@@ -51,20 +50,13 @@ export function useBootLibp2pNode() {
           log(`Browser node starting with peerID: ${newLibp2pNode.peerId.toString()}`);
 
           addNodeEventListeners(newLibp2pNode);
+          // TODO: remove event listeners
+          // Need to find correct place to call this without disrupting the event listeners
+          // Was previously removing on unmount of the useLibp2p hook, but that was not working
         }
       } catch (error) {
         console.error(error);
       }
     })();
-  }, [dispatch, globalLibp2pNode, handlePublicKeyStream, onPeerConnect, onPeerDisconnect, onPeerDiscovery]);
-
-
-  // TODO: This method is not called.
-  // Need to find correct place to call this without disrupting the event listeners
-  // Was previously removing on unmount of the useLibp2p hook, but that was not working
-  const removeNodeEventListeners = (libp2pNode: Libp2p): void => {
-    libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
-    libp2pNode.connectionManager.removeEventListener('peer:connect', onPeerConnect);
-    libp2pNode.connectionManager.removeEventListener('peer:disconnect', onPeerDisconnect);
-  };
+  }, [globalLibp2pNode, handlePublicKeyStream, createAndSetNode, addNodeEventListeners]);
 }
