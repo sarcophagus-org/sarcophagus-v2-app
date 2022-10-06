@@ -45,11 +45,14 @@ export function useResurrection() {
   useEffect(() => {
     if (radioValue !== 'Other') {
       setCustomResurrectionDate(null);
-
-      const [months] = radioValue === '' ? '0' : radioValue.split(' ');
-      const newResurrection = new Date();
-      newResurrection.setMonth(newResurrection.getMonth() + parseInt(months));
-      dispatch(setResurrection(newResurrection.getTime()));
+      if (radioValue === '') {
+        dispatch(setResurrection(0));
+      } else {
+        const [months] = radioValue === '' ? '0' : radioValue.split(' ');
+        const newResurrection = new Date();
+        newResurrection.setMonth(newResurrection.getMonth() + parseInt(months));
+        dispatch(setResurrection(newResurrection.getTime()));
+      }
     } else {
       if (customResurrectionDate) {
         dispatch(setResurrection(customResurrectionDate.getTime()));
@@ -59,7 +62,7 @@ export function useResurrection() {
 
   // Updates the error if the resurrection time is invalid
   useEffect(() => {
-    if (resurrection - minimumResurrection < Date.now()) {
+    if (resurrection - minimumResurrection < Date.now() && resurrection !== 0) {
       setError(
         `Resurrection must be ${moment
           .duration(minimumResurrection)

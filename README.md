@@ -20,7 +20,8 @@ git clone ...
 then, install the necessary dependencies:
 
 ```
-yarn
+npm install
+npm run start
 ```
 
 At the time of this writing, the project currently uses Node v17.4.0. It is recommended to use `nvm use` in root directory to switch to the correct version of Node.
