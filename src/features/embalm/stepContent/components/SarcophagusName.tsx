@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Input, Text, VStack } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, VStack } from '@chakra-ui/react';
 import { useSarcophgusName } from '../hooks/useSarcophagusName';
 import { maxSarcophagusNameLength } from 'lib/constants';
 
