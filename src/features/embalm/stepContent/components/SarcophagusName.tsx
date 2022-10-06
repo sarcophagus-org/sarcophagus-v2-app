@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Input, Text, VStack } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, VStack } from '@chakra-ui/react';
 import { useSarcophgusName } from '../hooks/useSarcophagusName';
 import { maxSarcophagusNameLength } from 'lib/constants';
 
@@ -17,12 +17,6 @@ export function SarcophagusName() {
           value={name}
           maxLength={maxSarcophagusNameLength}
         />
-        <Text
-          mt={3}
-          textAlign="left"
-        >
-          Your Sarcophagus will be public on the blockchain.
-        </Text>
       </FormControl>
     </VStack>
   );
