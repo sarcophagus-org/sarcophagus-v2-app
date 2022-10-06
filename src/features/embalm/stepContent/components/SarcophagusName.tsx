@@ -17,12 +17,6 @@ export function SarcophagusName() {
           value={name}
           maxLength={maxSarcophagusNameLength}
         />
-        <Text
-          mt={3}
-          textAlign="left"
-        >
-          Your Sarcophagus will be public on the blockchain.
-        </Text>
       </FormControl>
     </VStack>
   );
