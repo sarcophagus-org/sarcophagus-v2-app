@@ -17,7 +17,7 @@ interface StepContentMap {
 }
 
 export function StepContent() {
-  const { currentStep, stepCount, goToPrev, goToNext } = useStepContent();
+  const { currentStep, goToPrev, goToNext } = useStepContent();
 
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {

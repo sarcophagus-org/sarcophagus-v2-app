@@ -1,4 +1,3 @@
-import { ResurrectionRadioValue } from 'features/embalm/stepContent/components/Resurrections';
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist } from 'types/index';
 import { Actions } from '..';

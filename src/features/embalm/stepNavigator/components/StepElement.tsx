@@ -1,6 +1,5 @@
-import { VStack, Center, Flex, Spinner, Text, HStack, background } from '@chakra-ui/react';
-import React, { ReactNode } from 'react';
-import { Step, StepStatus } from 'store/embalm/reducer';
+import { Center, Flex, Spinner, Text, HStack } from '@chakra-ui/react';
+import { Step } from 'store/embalm/reducer';
 import { useStepNavigator } from '../hooks/useStepNavigator';
 import { StepStatusIndicator } from './StepStatusIndicator';
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
@@ -12,7 +11,7 @@ interface StepProps {
 }
 
 export function StepElement({ title, step, isLoading }: StepProps) {
-  const { getStatus, selectStep, toggleStep } = useStepNavigator();
+  const { getStatus, selectStep } = useStepNavigator();
   const status = getStatus(step);
   const { currentStep } = useSelector(x => x.embalmState);
 

@@ -1,10 +1,8 @@
 import { Step } from 'store/embalm/reducer';
 import { useSelector } from 'store/index';
-import { useGetBalance } from '../stepContent/hooks/useGetBalance';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
 import { useSetStatuses } from './hooks/useSetStatuses';
-import { useUploadPrice } from './hooks/useUploadPrice';
 
 export enum StepId {
   NameSarcophagus,

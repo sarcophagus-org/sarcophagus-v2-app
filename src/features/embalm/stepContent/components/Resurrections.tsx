@@ -21,14 +21,8 @@ export enum ResurrectionRadioValue {
 export function Resurrections({ ...rest }: FlexProps) {
   const options = Object.values(ResurrectionRadioValue);
 
-  const {
-    error,
-    getRadioProps,
-    radioValue,
-    customResurrectionDate,
-    handleCustomDateChange,
-    resurrection,
-  } = useResurrections();
+  const { error, getRadioProps, radioValue, customResurrectionDate, handleCustomDateChange } =
+    useResurrections();
 
   const CustomResurrectionButton = forwardRef(({ value, onClick, disabled }, ref) => (
     <Button
