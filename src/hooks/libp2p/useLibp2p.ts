@@ -7,7 +7,8 @@ import { useCallback } from 'react';
 import {
   setArchaeologistConnection,
   setArchaeologistFullPeerId,
-  setArchaeologistOnlineStatus
+  setArchaeologistOnlineStatus,
+  setArchaeologistPublicKey
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
@@ -95,7 +96,10 @@ export function useLibp2p() {
                 // TODO -- handle error state here, will need to communicate to user
                 console.error('arch peer ID does not match profile:', signerAddress);
               }
-              arch.publicKey = publicKeyResponse.encryptionPublicKey;
+              dispatch(setArchaeologistPublicKey(arch.fullPeerId!.toString(), publicKeyResponse.encryptionPublicKey));
+              setTimeout(() => {
+                console.log('new arch', JSON.stringify(arch));
+              }, 4000);
             } else {
               // TODO -- handle error state here, will need to communicate to user
               console.error('signature does not map to a selected archaeologist:', signerAddress);
