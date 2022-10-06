@@ -30,8 +30,8 @@ export function Embalm() {
       >
         {/* Left side container */}
         <Flex
-          minWidth={375}
-          maxWidth={375}
+          minWidth={300}
+          maxWidth={300}
         >
           <StepNavigator />
         </Flex>

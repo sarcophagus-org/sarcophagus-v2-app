@@ -25,6 +25,7 @@ export enum ActionType {
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
+  SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
   SetShardsTxId = 'EMBALM_SET_SHARDS_TX_ID',
   SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
@@ -73,6 +74,7 @@ type EmbalmPayload = {
   [ActionType.SetRequiredArchaeologists]: { count: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
+  [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetShardsTxId]: { txId: string };
   [ActionType.SetTotalArchaeologists]: { count: string };
@@ -196,6 +198,15 @@ export function setResurrectionRadioValue(value: string): EmbalmActions {
     type: ActionType.SetResurrectionRadioValue,
     payload: {
       value,
+    },
+  };
+}
+
+export function setCustomResurrectionDate(date: Date | null): EmbalmActions {
+  return {
+    type: ActionType.SetCustomResurrectionDate,
+    payload: {
+      date,
     },
   };
 }

@@ -78,7 +78,7 @@ export function convertMinutesToMs(num: number) {
 
 export function humanizeDuration(duration: number) {
   if (duration === 0) return '0 seconds';
-  return moment.duration(duration).humanize({ d: 7, w: 4 });
+  return moment.duration(duration / 1000).humanize({ d: 7, w: 4 });
 }
 
 export function formatLargeNumber(num: string): string {
