@@ -24,8 +24,12 @@ export function Resurrections({ ...rest }: FlexProps) {
   const { error, getRadioProps, radioValue, customResurrectionDate, handleCustomDateChange } =
     useResurrections();
 
+  function handleonSelet() {
+    console.log('select0');
+  }
   const CustomResurrectionButton = forwardRef(({ value, onClick, disabled }, ref) => (
     <Button
+      onSelect={handleonSelet}
       onClick={onClick}
       ref={ref}
       disabled={disabled}
@@ -33,6 +37,10 @@ export function Resurrections({ ...rest }: FlexProps) {
       {value ? value : 'Custom Date'}
     </Button>
   ));
+
+  function handleCustomInput() {
+    console.log('click here');
+  }
 
   return (
     <Flex
@@ -44,7 +52,7 @@ export function Resurrections({ ...rest }: FlexProps) {
         variant="secondary"
         mt={4}
       >
-        When do you want Sarcophagus resurrected? You can change this later.
+        When do you want your Sarcophagus resurrected? You can change this later.
       </Text>
       <VStack
         align="left"
@@ -75,6 +83,7 @@ export function Resurrections({ ...rest }: FlexProps) {
               fixedHeight
               disabled={radioValue !== 'Other'}
               customInput={<CustomResurrectionButton />}
+              onInputClick={handleCustomInput}
             />
           </Radio>
         </HStack>

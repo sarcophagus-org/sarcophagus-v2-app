@@ -99,16 +99,6 @@ export function useSetStatuses() {
     );
   }
 
-  // function resurrectionsEffect() {
-  //   if (resurrection >= minimumResurrection) {
-  //     dispatch(updateStepStatus(Step.Resurrections, StepStatus.Complete));
-  //   } else {
-  //     if (resurrectionsStatus !== StepStatus.NotStarted) {
-  //       dispatch(updateStepStatus(Step.Resurrections, StepStatus.Started));
-  //     }
-  //   }
-  // }
-
   function diggingFeesEffect() {
     if (parseInt(diggingFees) > 0) {
       dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Complete));
@@ -144,13 +134,6 @@ export function useSetStatuses() {
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setRecipientEffect, [dispatch, recipient]);
-  // useEffect(resurrectionsEffect, [
-  //   dispatch,
-  //   outerPrivateKey,
-  //   outerPublicKey,
-  //   resurrection,
-  //   resurrectionsStatus,
-  // ]);
   useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
   useEffect(totalRequiredArchaeologistsEffect, [
     dispatch,
