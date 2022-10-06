@@ -4,13 +4,26 @@ import { StreamHandler } from '@libp2p/interface-registrar';
 import { ethers } from 'ethers';
 import { pipe } from 'it-pipe';
 import { useCallback } from 'react';
-import { setArchaeologistConnection, setArchaeologistFullPeerId, setArchaeologistOnlineStatus } from 'store/embalm/actions';
+import {
+  setArchaeologistConnection,
+  setArchaeologistFullPeerId,
+  setArchaeologistOnlineStatus
+} from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 
+// values used to determine if an archaeologist is online
 const pingThreshold = 60000;
-
 const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
+
+// stream protocol name used to receive archaeologist's public key
+const PUBLIC_KEY_STREAM = '/public-key';
+
+interface PublicKeyResponseFromArchaeologist {
+  signature: string;
+  encryptionPublicKey: string;
+  peerId: string;
+}
 
 export function useLibp2p() {
   const dispatch = useDispatch();
@@ -20,6 +33,7 @@ export function useLibp2p() {
   const onPeerDiscovery = useCallback(
     (evt: CustomEvent<PeerInfo>) => {
       const peerId = evt.detail.id;
+
       dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
       dispatch(setArchaeologistFullPeerId(peerId));
 
@@ -28,15 +42,13 @@ export function useLibp2p() {
         heartbeatTimeouts[peerId.toString()] = undefined;
       }
 
-      const timeout = setTimeout(() => {
+      heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
         console.log(`No longer online: ${peerId.toString()}`);
         dispatch(setArchaeologistOnlineStatus(
           peerId.toString(),
           false,
         ));
       }, pingThreshold);
-
-      heartbeatTimeouts[peerId.toString()] = timeout;
 
     },
     [dispatch]
@@ -59,38 +71,34 @@ export function useLibp2p() {
     [dispatch]
   );
 
-  const handlePublicKeyMsgStream: StreamHandler = useCallback(
+  const handlePublicKeyStream: StreamHandler =
     ({ stream }) => {
       pipe(stream, async function (source) {
         for await (const msg of source) {
           try {
             const decoded = new TextDecoder().decode(msg);
-            console.info(`received public key ${decoded}`);
+            log(`received public key ${decoded}`);
 
-            const archConfigJson: Record<string, any> = JSON.parse(decoded);
+            const publicKeyResponse: PublicKeyResponseFromArchaeologist = JSON.parse(decoded);
 
             const signerAddress = ethers.utils.verifyMessage(
               JSON.stringify({
-                encryptionPublicKey: archConfigJson.encryptionPublicKey,
-                peerId: archConfigJson.peerId,
+                encryptionPublicKey: publicKeyResponse.encryptionPublicKey,
+                peerId: publicKeyResponse.peerId,
               }),
-              archConfigJson.signature
+              publicKeyResponse.signature
             );
 
-            const i = archaeologists.findIndex(a => a.profile.archAddress === signerAddress);
-
-            if (i !== -1) {
-              const arch = archaeologists[i];
-              // TODO: Determine if there's a better way to be certain of origin's peerId
-              if (arch.profile.peerId !== archConfigJson.peerId) {
-                // This is POSSIBLE, but in practice shouldn't ever happen.
-                // But that's how you know it'll DEFINITELY happen eh? Sigh.
-                console.error('Peer ID mismatch'); // TODO: Handle this problem better. Relay feedback to user.
-                return;
+            const arch = selectedArchaeologists.find(a => a.profile.archAddress === signerAddress);
+            if (arch) {
+              if (arch.profile.peerId !== arch.fullPeerId!.toString()) {
+                // TODO -- handle error state here, will need to communicate to user
+                console.error('arch peer ID does not match profile:', signerAddress);
               }
-
-              console.log('got public key of', arch.profile.peerId);
-              arch.publicKey = archConfigJson.encryptionPublicKey;
+              arch.publicKey = publicKeyResponse.encryptionPublicKey;
+            } else {
+              // TODO -- handle error state here, will need to communicate to user
+              console.error('signature does not map to a selected archaeologist:', signerAddress);
             }
           } catch (e) {
             console.error(e);
@@ -100,9 +108,7 @@ export function useLibp2p() {
         // clean up resources
         stream.close();
       });
-    },
-    [archaeologists]
-  );
+    };
 
   const confirmArweaveTransaction = useCallback(
     async (peerId: string, arweaveTxId: string, unencryptedShardHash: string) => {
@@ -132,7 +138,18 @@ export function useLibp2p() {
     [archaeologists]
   );
 
-  const dialSelectedArchaeologists = useCallback(() => {
+  const resetPublicKeyStream = async () => {
+    await libp2pNode!.unhandle(PUBLIC_KEY_STREAM);
+
+    await libp2pNode!.handle(
+      [PUBLIC_KEY_STREAM],
+      handlePublicKeyStream
+    );
+  };
+
+  const dialSelectedArchaeologists = useCallback(async () => {
+    await resetPublicKeyStream();
+
     selectedArchaeologists.map(async arch => {
       try {
         const connection = await libp2pNode?.dial(arch.fullPeerId!);
@@ -148,7 +165,7 @@ export function useLibp2p() {
     onPeerDiscovery,
     onPeerConnect,
     onPeerDisconnect,
-    handlePublicKeyStream: handlePublicKeyMsgStream,
+    handlePublicKeyStream,
     confirmArweaveTransaction,
     dialSelectedArchaeologists
   };

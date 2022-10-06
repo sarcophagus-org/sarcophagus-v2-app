@@ -15,10 +15,7 @@ import { useLibp2p } from './useLibp2p';
  * 1. Initialize node with a pre-defined config
  * 2. Start the node
  * 3. Add event listeners to the node for peer discovery and connection
- * 4. Add stream handler for relevant streams
  */
-
-const PUBLIC_KEY_STREAM = '/public-key';
 
 export function useBootLibp2pNode() {
   const dispatch = useDispatch();
@@ -54,7 +51,6 @@ export function useBootLibp2pNode() {
           log(`Browser node starting with peerID: ${newLibp2pNode.peerId.toString()}`);
 
           addNodeEventListeners(newLibp2pNode);
-          await newLibp2pNode.handle([PUBLIC_KEY_STREAM], handlePublicKeyStream);
         }
       } catch (error) {
         console.error(error);
