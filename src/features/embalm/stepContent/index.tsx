@@ -49,12 +49,9 @@ export function StepContent() {
       w="100%"
       mb="200px"
     >
-      <Text fontSize="lg">
-        Step {currentStep.valueOf() + 1}/{stepCount}
-      </Text>
       {/* Form Content */}
       <Heading pb={5}>{contentMap[currentStep].title}</Heading>
-      <Flex py={1}>{contentMap[currentStep].component}</Flex>
+      <Flex pb={5}>{contentMap[currentStep].component}</Flex>
       <Flex justify="space-between">
         <Button
           variant="link"

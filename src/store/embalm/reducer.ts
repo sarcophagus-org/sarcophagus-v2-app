@@ -16,11 +16,10 @@ export enum Step {
   FundBundlr = 2,
   SetRecipient = 3,
   CreateEncryptionKeypair = 4,
-  Resurrections = 5,
-  SetDiggingFees = 6,
-  TotalRequiredArchaeologists = 7,
-  SelectArchaeologists = 8,
-  CreateSarcophagus = 9,
+  SetDiggingFees = 5,
+  TotalRequiredArchaeologists = 6,
+  SelectArchaeologists = 7,
+  CreateSarcophagus = 8,
 }
 
 export interface EmbalmState {
@@ -38,6 +37,7 @@ export interface EmbalmState {
   requiredArchaeologists: string;
   resurrection: number;
   resurrectionRadioValue: string;
+  customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
   shardsTxId: string;
   stepStatuses: { [key: number]: StepStatus };
@@ -63,7 +63,8 @@ export const embalmInitialState: EmbalmState = {
   recipientSetByOption: undefined,
   requiredArchaeologists: '0',
   resurrection: 0,
-  resurrectionRadioValue: ResurrectionRadioValue.OneWeek,
+  resurrectionRadioValue: '',
+  customResurrectionDate: null,
   selectedArchaeologists: [],
   shardsTxId: '',
   stepStatuses: Object.keys(Step).reduce(
@@ -164,6 +165,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetResurrectionRadioValue:
       return { ...state, resurrectionRadioValue: action.payload.value };
+
+    case ActionType.SetCustomResurrectionDate:
+      return { ...state, customResurrectionDate: action.payload.date };
 
     case ActionType.SetUploadPrice:
       return { ...state, uploadPrice: action.payload.price };

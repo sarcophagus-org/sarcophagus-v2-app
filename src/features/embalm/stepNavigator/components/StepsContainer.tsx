@@ -11,7 +11,7 @@ export function StepsContainer({ children }: { children: React.ReactNode }) {
       allowMultiple
       index={expandedIndices}
     >
-      {children}
+      {children} xxx
     </Accordion>
   );
 }

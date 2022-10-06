@@ -1,10 +1,20 @@
-import { Divider, Flex, Heading, Text, VStack, HStack, Button, FlexProps } from '@chakra-ui/react';
+import {
+  Flex,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Button,
+  FlexProps,
+  forwardRef,
+} from '@chakra-ui/react';
 import { Radio } from 'components/Radio';
 import { useResurrections } from '../hooks/useResurrections';
+import { DatePicker } from 'components/DatePicker';
 
 export enum ResurrectionRadioValue {
-  OneWeek = '1 month',
-  OneMonth = '2 months',
+  OneMonth = '1 month',
+  TwoMonth = '2 months',
   ThreeMonths = '3 months',
 }
 
@@ -14,15 +24,21 @@ export function Resurrections({ ...rest }: FlexProps) {
   const {
     error,
     getRadioProps,
-    getRootProps,
-    // handleBlurDate,
-    // handleFocusDate,
-    // handleOtherDateChange,
-    // otherValue,
     radioValue,
+    customResurrectionDate,
+    handleCustomDateChange,
+    resurrection,
   } = useResurrections();
 
-  const group = getRootProps();
+  const CustomResurrectionButton = forwardRef(({ value, onClick, disabled }, ref) => (
+    <Button
+      onClick={onClick}
+      ref={ref}
+      disabled={disabled}
+    >
+      {value ? value : 'Custom Date'}
+    </Button>
+  ));
 
   return (
     <Flex
@@ -50,9 +66,24 @@ export function Resurrections({ ...rest }: FlexProps) {
           <Radio {...getRadioProps({ value: options[1] })}>{options[1]}</Radio>
           <Radio {...getRadioProps({ value: options[2] })}>{options[2]}</Radio>
         </HStack>
-        <Radio {...getRadioProps({ value: 'Other' })}>
-          <Button>Custom Date</Button>
-        </Radio>
+        <HStack spacing={6}>
+          <Radio {...getRadioProps({ value: 'Other' })}>
+            <DatePicker
+              selected={customResurrectionDate}
+              onChange={handleCustomDateChange}
+              showTimeSelect
+              minDate={new Date()}
+              showPopperArrow={false}
+              timeFormat="HH:mm"
+              timeIntervals={30}
+              timeCaption="Time"
+              dateFormat="MM/dd/yyyy HH:mm"
+              fixedHeight
+              disabled={radioValue !== 'Other'}
+              customInput={<CustomResurrectionButton />}
+            />
+          </Radio>
+        </HStack>
       </VStack>
       {error && (
         <Text

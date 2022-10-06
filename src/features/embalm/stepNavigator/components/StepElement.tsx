@@ -1,4 +1,4 @@
-import { VStack, Center, Flex, Spinner, Text, HStack } from '@chakra-ui/react';
+import { VStack, Center, Flex, Spinner, Text, HStack, background } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useStepNavigator } from '../hooks/useStepNavigator';
@@ -20,12 +20,6 @@ export function StepElement({ title, step, isLoading }: StepProps) {
     selectStep(step);
   }
 
-  // function handleClickExpand(e: React.MouseEvent<HTMLDivElement>) {
-  //   // Prevent the selection of the step
-  //   e.stopPropagation();
-  //   toggleStep(step);
-  // }
-
   return (
     <HStack
       mb={6}
@@ -44,6 +38,7 @@ export function StepElement({ title, step, isLoading }: StepProps) {
           index={step}
         />
         <Text
+          color={currentStep === step ? 'brand.950' : 'brand.400'}
           align="left"
           ml={3}
         >

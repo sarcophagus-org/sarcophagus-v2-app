@@ -22,7 +22,6 @@
     "@react-pdf/renderer": "^3.0.0",
     "@sentry/react": "^7.8.1",
     "@sentry/tracing": "^7.8.1",
-    "@types/qrcode": "^1.5.0",
     "arbundles": "^0.6.21",
     "arweave": "^1.11.4",
     "arweave-js": "^1.0.0",
@@ -88,10 +87,12 @@
     "node": "17.4.0"
   },
   "devDependencies": {
-    "@types/moment": "^2.13.0",
     "@types/file-saver": "^2.0.5",
+    "@types/moment": "^2.13.0",
     "@types/node": "^16.11.39",
+    "@types/qrcode": "^1.5.0",
     "@types/react": "^18.0.15",
+    "@types/react-datepicker": "^4.4.2",
     "@types/react-dom": "^18.0.5",
     "@types/react-router-dom": "^5.3.3",
     "cross-env": "^7.0.3",

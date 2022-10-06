@@ -53,21 +53,17 @@ export function useSetStatuses() {
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
-  const resurrectionsStatus = stepStatuses[Step.Resurrections];
   const diggingFeesStatus = stepStatuses[Step.SetDiggingFees];
   const totalRequiredArchaeologistsStatus = stepStatuses[Step.TotalRequiredArchaeologists];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
-    const nameLength = name.trim().length;
+    const validName = name.trim().length > 0;
+    const validResurrection = resurrection - minimumResurrection > Date.now();
 
-    if (nameLength > 0) {
+    if (validName && validResurrection) {
       dispatch(updateStepStatus(Step.NameSarcophagus, StepStatus.Complete));
-    }
-
-    // If the user has interacted with this step and deletes the name, the step will be set to
-    // Started status
-    if (nameSarcophagusStatus !== StepStatus.NotStarted && nameLength === 0) {
+    } else {
       dispatch(updateStepStatus(Step.NameSarcophagus, StepStatus.Started));
     }
   }
@@ -103,15 +99,15 @@ export function useSetStatuses() {
     );
   }
 
-  function resurrectionsEffect() {
-    if (resurrection >= minimumResurrection) {
-      dispatch(updateStepStatus(Step.Resurrections, StepStatus.Complete));
-    } else {
-      if (resurrectionsStatus !== StepStatus.NotStarted) {
-        dispatch(updateStepStatus(Step.Resurrections, StepStatus.Started));
-      }
-    }
-  }
+  // function resurrectionsEffect() {
+  //   if (resurrection >= minimumResurrection) {
+  //     dispatch(updateStepStatus(Step.Resurrections, StepStatus.Complete));
+  //   } else {
+  //     if (resurrectionsStatus !== StepStatus.NotStarted) {
+  //       dispatch(updateStepStatus(Step.Resurrections, StepStatus.Started));
+  //     }
+  //   }
+  // }
 
   function diggingFeesEffect() {
     if (parseInt(diggingFees) > 0) {
@@ -136,7 +132,7 @@ export function useSetStatuses() {
     }
   }
 
-  useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus]);
+  useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus, resurrection]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
   useEffect(fundBundlrEffect, [
     balance,
@@ -148,13 +144,13 @@ export function useSetStatuses() {
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setRecipientEffect, [dispatch, recipient]);
-  useEffect(resurrectionsEffect, [
-    dispatch,
-    outerPrivateKey,
-    outerPublicKey,
-    resurrection,
-    resurrectionsStatus,
-  ]);
+  // useEffect(resurrectionsEffect, [
+  //   dispatch,
+  //   outerPrivateKey,
+  //   outerPublicKey,
+  //   resurrection,
+  //   resurrectionsStatus,
+  // ]);
   useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
   useEffect(totalRequiredArchaeologistsEffect, [
     dispatch,

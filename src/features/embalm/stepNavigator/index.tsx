@@ -48,14 +48,12 @@ export function StepNavigator() {
         step={Step.CreateEncryptionKeypair}
         title="Create Encryption Keypair"
       ></StepElement>
-      <StepElement
-        step={Step.Resurrections}
-        title="Resurrections"
-      ></StepElement>
+
       <StepElement
         step={Step.SetDiggingFees}
         title="Set Digging Fees"
       ></StepElement>
+
       <StepElement
         step={Step.TotalRequiredArchaeologists}
         title="Total/Required Archaeologists"
