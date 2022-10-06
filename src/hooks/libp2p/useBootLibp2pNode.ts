@@ -22,14 +22,12 @@ export function useBootLibp2pNode() {
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { handlePublicKeyStream, onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
 
-  const createAndSetNode = useCallback(async (): Promise<Libp2p> => {
+  const createAndStartNode = useCallback(async (): Promise<Libp2p> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
-
-    // set global libp2p node for later use
-    dispatch(setLibp2p(newLibp2pNode));
+    await newLibp2pNode.start();
 
     return newLibp2pNode;
-  }, [dispatch]);
+  }, []);
 
   const addNodeEventListeners = useCallback(
     (libp2pNode: Libp2p): void => {
@@ -44,12 +42,14 @@ export function useBootLibp2pNode() {
     (async () => {
       try {
         if (!globalLibp2pNode) {
-          const newLibp2pNode = await createAndSetNode();
-          await newLibp2pNode.start();
+          const newLibp2pNode = await createAndStartNode();
 
           log(`Browser node starting with peerID: ${newLibp2pNode.peerId.toString()}`);
 
           addNodeEventListeners(newLibp2pNode);
+          // set global libp2p node for later use
+          dispatch(setLibp2p(newLibp2pNode));
+
           // TODO: remove event listeners
           // Need to find correct place to call this without disrupting the event listeners
           // Was previously removing on unmount of the useLibp2p hook, but that was not working
@@ -58,5 +58,11 @@ export function useBootLibp2pNode() {
         console.error(error);
       }
     })();
-  }, [globalLibp2pNode, handlePublicKeyStream, createAndSetNode, addNodeEventListeners]);
+  }, [
+    globalLibp2pNode,
+    handlePublicKeyStream,
+    createAndStartNode,
+    dispatch,
+    addNodeEventListeners,
+  ]);
 }

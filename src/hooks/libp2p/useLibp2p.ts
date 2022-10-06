@@ -12,10 +12,7 @@ import {
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
-
-// protocol names used to set up streams for communication with archaeologist nodes
-const PUBLIC_KEY_STREAM = '/archaeologist-public-key';
-const NEGOTIATION_SIGNATURE_STREAM = '/archaeologist-negotiation-signature';
+import { PUBLIC_KEY_STREAM, NEGOTIATION_SIGNATURE_STREAM } from '../../lib/config/node_config';
 
 // values used to determine if an archaeologist is online
 const pingThreshold = 60000;
@@ -24,7 +21,6 @@ const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
 interface PublicKeyResponseFromArchaeologist {
   signature: string;
   encryptionPublicKey: string;
-  peerId: string;
 }
 
 export function useLibp2p() {
@@ -98,9 +94,6 @@ export function useLibp2p() {
                   publicKeyResponse.encryptionPublicKey
                 )
               );
-              setTimeout(() => {
-                console.log('new arch', JSON.stringify(arch));
-              }, 4000);
             } else {
               // TODO -- handle error state here, will need to communicate to user
               console.error('signature does not map to a selected archaeologist:', signerAddress);
