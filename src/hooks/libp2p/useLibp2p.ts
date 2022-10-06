@@ -13,12 +13,13 @@ import {
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 
+// protocol names used to set up streams for communication with archaeologists
+const PUBLIC_KEY_STREAM = '/public-key';
+const NEGOTIATION_SIGNATURE_STREAM = '/negotiation-signature'
+
 // values used to determine if an archaeologist is online
 const pingThreshold = 60000;
 const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
-
-// stream protocol name used to receive archaeologist's public key
-const PUBLIC_KEY_STREAM = '/public-key';
 
 interface PublicKeyResponseFromArchaeologist {
   signature: string;
@@ -127,7 +128,7 @@ export function useLibp2p() {
           unencryptedShardHash,
         });
 
-        const { stream } = await connection.newStream('/arweave-signoff');
+        const { stream } = await connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
         pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
           for await (const data of source) {
