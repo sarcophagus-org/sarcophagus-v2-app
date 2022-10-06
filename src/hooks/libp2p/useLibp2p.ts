@@ -13,7 +13,7 @@ import {
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 
-// protocol names used to set up streams for communication with archaeologists
+// protocol names used to set up streams for communication with archaeologist nodes
 const PUBLIC_KEY_STREAM = '/archaeologist-public-key';
 const NEGOTIATION_SIGNATURE_STREAM = '/archaeologist-negotiation-signature';
 
