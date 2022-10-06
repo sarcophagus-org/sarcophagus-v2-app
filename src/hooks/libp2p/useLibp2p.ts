@@ -14,8 +14,8 @@ import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 
 // protocol names used to set up streams for communication with archaeologists
-const PUBLIC_KEY_STREAM = '/public-key';
-const NEGOTIATION_SIGNATURE_STREAM = '/negotiation-signature'
+const PUBLIC_KEY_STREAM = '/archaeologist-public-key';
+const NEGOTIATION_SIGNATURE_STREAM = '/archaeologist-negotiation-signature'
 
 // values used to determine if an archaeologist is online
 const pingThreshold = 60000;
