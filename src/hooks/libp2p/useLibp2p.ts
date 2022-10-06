@@ -85,8 +85,7 @@ export function useLibp2p() {
 
             const signerAddress = ethers.utils.verifyMessage(
               JSON.stringify({
-                encryptionPublicKey: publicKeyResponse.encryptionPublicKey,
-                peerId: publicKeyResponse.peerId,
+                encryptionPublicKey: publicKeyResponse.encryptionPublicKey
               }),
               publicKeyResponse.signature
             );
