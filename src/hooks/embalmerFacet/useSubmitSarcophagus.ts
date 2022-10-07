@@ -48,7 +48,7 @@ export function useSubmitSarcophagus() {
       {
         name: name,
         recipient: recipient.address,
-        resurrectionTime: resurrection + Date.now(),
+        resurrectionTime: resurrection / 1000,
         canBeTransferred: true, //TODO: canBeTransferred
         minShards: requiredArchaeologists,
       },
