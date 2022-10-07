@@ -1,4 +1,4 @@
-import { Flex, Input, Link, Text, VStack } from '@chakra-ui/react';
+import { Input, Link, Text, VStack } from '@chakra-ui/react';
 import { Alert } from 'components/Alert';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import prettyBytes from 'pretty-bytes';
