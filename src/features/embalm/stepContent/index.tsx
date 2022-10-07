@@ -1,5 +1,4 @@
 import { Button, Flex, Heading, Text, HStack, VStack } from '@chakra-ui/react';
-import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
