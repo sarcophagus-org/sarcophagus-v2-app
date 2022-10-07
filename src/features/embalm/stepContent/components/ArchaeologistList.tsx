@@ -109,7 +109,10 @@ export function ArchaeologistList() {
               </Thead>
               <Tbody>
                 {sortedFilteredArchaeoligist.map(arch => {
-                  const isSelected = selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1;
+                  const isSelected =
+                    selectedArchaeologists.findIndex(
+                      a => a.profile.peerId === arch.profile.peerId
+                    ) !== -1;
 
                   return (
                     <Tr
@@ -121,8 +124,8 @@ export function ArchaeologistList() {
                         isSelected
                           ? {}
                           : {
-                            background: 'brand.100',
-                          }
+                              background: 'brand.100',
+                            }
                       }
                     >
                       <Td>

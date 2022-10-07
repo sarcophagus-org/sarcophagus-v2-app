@@ -3,8 +3,14 @@ import { Mplex } from '@libp2p/mplex';
 import { KadDHT } from '@libp2p/kad-dht';
 import { WebRTCStar } from '@libp2p/webrtc-star';
 
+// protocol names used to set up communication with archaeologist nodes
+// these values must be the same for webapp's and archaeologist's node config
+export const PUBLIC_KEY_STREAM = '/archaeologist-public-key';
+export const NEGOTIATION_SIGNATURE_STREAM = '/archaeologist-negotiation-signature';
+const DHT_PROTOCOL_PREFIX = '/archaeologist-service';
+
 const dht = new KadDHT({
-  protocolPrefix: '/archaeologist-service',
+  protocolPrefix: DHT_PROTOCOL_PREFIX,
   clientMode: false,
 });
 

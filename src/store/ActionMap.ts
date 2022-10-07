@@ -6,5 +6,5 @@ export type ActionMap<M extends { [index: string]: any }> = {
     : {
         type: Key;
         payload: M[Key];
-      }
+      };
 };
