@@ -2,11 +2,9 @@ import { Flex, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
-import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { ArweaveTestPage } from './ArweaveTestPage';
 import { EmbalmPage } from './EmbalmPage';
-import { FreeBondTestPage } from './FreeBondTestPage';
-import { RecoverPublicKeyTestPage } from './RecoverPublicKeyTestPage';
+
 import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
