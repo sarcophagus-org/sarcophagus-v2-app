@@ -17,24 +17,9 @@ export function Pages() {
       label: 'Embalm',
     },
     {
-      path: '/archaeologists',
-      element: <ArchaeologistsPage />,
-      label: 'Archaeologists',
-    },
-    {
-      path: '/free-bond-test',
-      element: <FreeBondTestPage />,
-      label: 'Free Bond Test',
-    },
-    {
       path: '/arweave',
       element: <ArweaveTestPage />,
       label: 'Arweave Test',
-    },
-    {
-      path: '/recover-public-key-test',
-      element: <RecoverPublicKeyTestPage />,
-      label: 'Recover Public Key Test',
     },
     {
       path: '/theme-test',

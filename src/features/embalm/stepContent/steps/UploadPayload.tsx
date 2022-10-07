@@ -1,4 +1,4 @@
-import { Flex, Heading, Input, Link, Text, VStack } from '@chakra-ui/react';
+import { Flex, Input, Link, Text, VStack } from '@chakra-ui/react';
 import { Alert } from 'components/Alert';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import prettyBytes from 'pretty-bytes';
@@ -31,13 +31,11 @@ export function UploadPayload() {
   }
 
   return (
-    <Flex
+    <VStack
       w="100%"
-      direction="column"
+      align="left"
     >
-      <Heading>Upload your payload</Heading>
-      <Text mt={4}>Your payload (corpse) will be wrapped in a later step.</Text>
-      <Flex h={12} />
+      <Text mb={6}>Your payload (corpse) will be wrapped in a later step.</Text>
       {error && (
         <Alert
           mb={3}
@@ -49,7 +47,12 @@ export function UploadPayload() {
       <FileDragAndDrop handleFileDrop={handleFileDrop}>
         {file ? (
           <VStack spacing={3}>
-            <Text>{file.name}</Text>
+            <Text
+              px={2}
+              align="center"
+            >
+              {file.name}
+            </Text>
             <Text>Size: {prettyBytes(file.size)}</Text>
             <Text>
               {"Bundlr's upload price: "}
@@ -80,6 +83,6 @@ export function UploadPayload() {
         ref={fileInputRef}
         type="file"
       />
-    </Flex>
+    </VStack>
   );
 }

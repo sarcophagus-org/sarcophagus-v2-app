@@ -14,7 +14,9 @@ export function useUploadPrice() {
   const formattedUploadPrice = useMemo(
     () =>
       isConnected
-        ? `${parseFloat(uploadPrice).toFixed(uploadPriceDecimals)} ${chain?.nativeCurrency?.name}`
+        ? `${parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals)} ${
+            chain?.nativeCurrency?.name
+          }`
         : '',
     [chain, isConnected, uploadPrice]
   );
