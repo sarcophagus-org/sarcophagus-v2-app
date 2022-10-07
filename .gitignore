@@ -150,4 +150,7 @@ dist
 #intelliJ
 .idea/
 
+#husky
+.husky/
+
 # End of https://www.toptal.com/developers/gitignore/api/node

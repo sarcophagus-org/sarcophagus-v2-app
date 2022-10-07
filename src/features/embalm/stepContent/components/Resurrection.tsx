@@ -30,6 +30,7 @@ export function Resurrection({ ...rest }: FlexProps) {
       ref={ref}
       disabled={disabled}
     >
+      {/* this value is an empty string, so this logic evalutate true on null | undefinded | '' */}
       {value ? value : 'Custom Date'}
     </Button>
   ));

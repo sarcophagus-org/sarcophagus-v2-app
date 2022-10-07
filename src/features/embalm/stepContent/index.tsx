@@ -1,4 +1,5 @@
 import { Button, Flex, Heading, Text, HStack, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
@@ -43,6 +44,7 @@ export function StepContent() {
   return (
     <VStack
       align="left"
+      spacing={4}
       minWidth={600}
       w="100%"
       mb="200px"

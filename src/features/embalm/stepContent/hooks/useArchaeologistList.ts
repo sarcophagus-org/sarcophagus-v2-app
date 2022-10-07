@@ -11,7 +11,7 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
-import { useLibp2p } from 'hooks/useLibp2p';
+import { useLibp2p } from 'hooks/libp2p/useLibp2p';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
@@ -51,7 +51,11 @@ export function useArchaeologistList() {
 
   const handleCheckArchaeologist = useCallback(
     (archaeologist: Archaeologist) => {
-      if (selectedArchaeologists.findIndex(arch => arch.profile.peerId === archaeologist.profile.peerId) !== -1) {
+      if (
+        selectedArchaeologists.findIndex(
+          arch => arch.profile.peerId === archaeologist.profile.peerId
+        ) !== -1
+      ) {
         dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
       } else {
         dispatch(selectArchaeologist(archaeologist));
@@ -69,10 +73,10 @@ export function useArchaeologistList() {
     diggingFeesSortDirection === SortDirection.NONE
       ? onlineArchaeologists
       : orderBy(
-        onlineArchaeologists,
-        'profile.minimumDiggingFee',
-        sortOrderByMap[diggingFeesSortDirection]
-      );
+          onlineArchaeologists,
+          'profile.minimumDiggingFee',
+          sortOrderByMap[diggingFeesSortDirection]
+        );
 
   const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
     arch =>

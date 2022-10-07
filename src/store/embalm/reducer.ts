@@ -96,12 +96,14 @@ function updateArchProperty(
   value: any
 ): EmbalmState {
   const archaeologistIndex = state.archaeologists.findIndex(a => a.profile.peerId === peerId);
+
   if (archaeologistIndex === -1) return state;
   const archaeologistsCopy = state.archaeologists.slice();
   archaeologistsCopy[archaeologistIndex] = {
     ...archaeologistsCopy[archaeologistIndex],
     [key]: value,
   };
+
   return { ...state, archaeologists: archaeologistsCopy };
 }
 
@@ -228,6 +230,14 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         action.payload.peerId.toString(),
         'connection',
         action.payload.connection
+      );
+
+    case ActionType.SetArchaeologistPublicKey:
+      return updateArchProperty(
+        state,
+        action.payload.peerId.toString(),
+        'publicKey',
+        action.payload.publicKey
       );
 
     case ActionType.SetShards:

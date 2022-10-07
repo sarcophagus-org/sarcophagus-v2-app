@@ -13,6 +13,7 @@ export enum ActionType {
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
+  SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
@@ -59,9 +60,17 @@ type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchaeologistConnection]: { peerId: PeerId | string; connection: Connection | undefined };
-  [ActionType.SetArchaeologistOnlineStatus]: { peerId: string; isOnline: boolean, lastPinged?: Date };
-  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId; };
+  [ActionType.SetArchaeologistConnection]: {
+    peerId: PeerId | string;
+    connection: Connection | undefined;
+  };
+  [ActionType.SetArchaeologistOnlineStatus]: {
+    peerId: string;
+    isOnline: boolean;
+    lastPinged?: Date;
+  };
+  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
+  [ActionType.SetArchaeologistPublicKey]: { peerId: PeerId | string; publicKey: string };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
@@ -317,10 +326,20 @@ export function setArchaeologistFullPeerId(peerId: PeerId): EmbalmActions {
   };
 }
 
-export function setArchaeologistOnlineStatus(
+export function setArchaeologistConnection(
   peerId: string,
-  isOnline: boolean
+  connection: Connection | undefined
 ): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistConnection,
+    payload: {
+      peerId,
+      connection,
+    },
+  };
+}
+
+export function setArchaeologistOnlineStatus(peerId: string, isOnline: boolean): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistOnlineStatus,
     payload: {
@@ -330,15 +349,12 @@ export function setArchaeologistOnlineStatus(
   };
 }
 
-export function setArchaeologistConnection(
-  peerId: PeerId | string,
-  connection: Connection | undefined
-): EmbalmActions {
+export function setArchaeologistPublicKey(peerId: string, publicKey: string): EmbalmActions {
   return {
-    type: ActionType.SetArchaeologistConnection,
+    type: ActionType.SetArchaeologistPublicKey,
     payload: {
       peerId,
-      connection,
+      publicKey,
     },
   };
 }
