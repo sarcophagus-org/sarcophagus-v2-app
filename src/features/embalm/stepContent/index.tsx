@@ -43,7 +43,6 @@ export function StepContent() {
   return (
     <VStack
       align="left"
-      spacing={4}
       minWidth={600}
       w="100%"
       mb="200px"

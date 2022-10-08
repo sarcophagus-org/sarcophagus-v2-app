@@ -35,7 +35,12 @@ export function UploadPayload() {
       w="100%"
       align="left"
     >
-      <Text mb={6}>Your payload (corpse) will be wrapped in a later step.</Text>
+      <Text
+        mb={6}
+        variant="secondary"
+      >
+        Your payload (corpse) will be wrapped in a later step.
+      </Text>
       {error && (
         <Alert
           mb={3}

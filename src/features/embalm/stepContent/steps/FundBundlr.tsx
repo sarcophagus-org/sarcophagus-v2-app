@@ -69,7 +69,12 @@ export function FundBundlr() {
       align="left"
       w="100%"
     >
-      <Text mb={6}>Bundlr will package your payload and send to Arweave using Ethereum.</Text>
+      <Text
+        mb={6}
+        variant="secondary"
+      >
+        Bundlr will package your payload and send to Arweave using Ethereum.
+      </Text>
       {!isConnected ? (
         <VStack
           py={8}
