@@ -1,4 +1,4 @@
-import { Text, VStack, Textarea, Box, Select as ChakraSelect } from '@chakra-ui/react';
+import { Text, VStack, Textarea, Box } from '@chakra-ui/react';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { RecoverPublicKey } from '../components/RecoverPublicKey';
@@ -7,7 +7,6 @@ import { GenerateRecipientPDF } from '../components/GenerateRecipientPDF';
 import { Select, OptionBase, GroupBase } from 'chakra-react-select';
 import { validateRecipient } from 'features/embalm/stepNavigator/hooks/useSetStatuses';
 import { Alert } from 'components/Alert';
-import { useState } from 'react';
 interface IRecipientSetByOption extends OptionBase {
   label: string;
   value: RecipientSetByOption;
@@ -16,7 +15,6 @@ interface IRecipientSetByOption extends OptionBase {
 export function SetRecipientPublicKey() {
   const dispatch = useDispatch();
   const { recipientState } = useSelector(x => x.embalmState);
-  const [value1, setValue1] = useState<string>('');
 
   function handleOnChange(newValue: IRecipientSetByOption | null) {
     dispatch(
