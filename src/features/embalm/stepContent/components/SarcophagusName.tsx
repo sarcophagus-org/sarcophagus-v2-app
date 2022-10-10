@@ -9,6 +9,7 @@ export function SarcophagusName() {
     <VStack
       align="left"
       spacing={8}
+      mt={6}
     >
       <FormControl>
         <FormLabel>Name</FormLabel>

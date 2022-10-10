@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, Text, HStack, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
@@ -22,8 +22,8 @@ export function StepContent() {
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {
     [Step.NameSarcophagus]: { component: <NameSarcophagus />, title: 'Name your sarcophagus' },
-    [Step.UploadPayload]: { component: <UploadPayload />, title: '' },
-    [Step.FundBundlr]: { component: <FundBundlr />, title: '' },
+    [Step.UploadPayload]: { component: <UploadPayload />, title: 'Upload your payload' },
+    [Step.FundBundlr]: { component: <FundBundlr />, title: 'Fund Arweave Bundlr' },
     [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: '' },
     [Step.CreateEncryptionKeypair]: { component: <CreateEncryptionKeypair />, title: '' },
     [Step.SetDiggingFees]: { component: <SetDiggingFees />, title: '' },
@@ -42,17 +42,18 @@ export function StepContent() {
 
   return (
     <VStack
-      direction="column"
       align="left"
-      spacing={4}
       minWidth={600}
       w="100%"
       mb="200px"
     >
       {/* Form Content */}
-      <Heading pb={5}>{contentMap[currentStep].title}</Heading>
+      <Heading>{contentMap[currentStep].title}</Heading>
       <Flex pb={5}>{contentMap[currentStep].component}</Flex>
-      <Flex justify="space-between">
+      <HStack
+        justify="space-between"
+        spacing={0}
+      >
         <Button
           variant="link"
           width="fit-content"
@@ -69,7 +70,7 @@ export function StepContent() {
         >
           <Text fontSize="lg">{'Next >'}</Text>
         </Button>
-      </Flex>
+      </HStack>
     </VStack>
   );
 }

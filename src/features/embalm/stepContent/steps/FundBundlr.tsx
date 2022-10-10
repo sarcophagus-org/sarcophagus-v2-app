@@ -1,9 +1,7 @@
 import {
   Button,
-  Flex,
   FormControl,
   FormLabel,
-  Heading,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -11,6 +9,8 @@ import {
   NumberInputStepper,
   Text,
   VStack,
+  HStack,
+  Box,
 } from '@chakra-ui/react';
 import { Alert } from 'components/Alert';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
@@ -18,14 +18,12 @@ import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPri
 import { useCallback, useState } from 'react';
 import { setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useNetwork } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 
 export function FundBundlr() {
   const dispatch = useDispatch();
   const { fund, isFunding } = useBundlr();
-  const { chain } = useNetwork();
   const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
   const { balance, getBalance, formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
@@ -50,64 +48,55 @@ export function FundBundlr() {
     dispatch(setBalance(newBalance));
   }, [amount, dispatch, fund, getBalance, isAmountValid]);
 
+  function AlertMessage() {
+    if (!file) {
+      return <Alert status="warning">Upload a payload to get the upload price.</Alert>;
+    }
+
+    if (parseFloat(balance) < parseFloat(uploadPrice)) {
+      return <Alert status="warning">You need to add funds to Bundlr.</Alert>;
+    }
+
+    return (
+      <Alert status="success">
+        You have enough funds in Bundlr. You can top up your balance or continue to the next step.
+      </Alert>
+    );
+  }
+
   return (
     <VStack
-      spacing={9}
       align="left"
       w="100%"
     >
-      <Heading>Fund Arweave Bundlr</Heading>
+      <Text
+        mb={6}
+        variant="secondary"
+      >
+        Bundlr will package your payload and send to Arweave using Ethereum.
+      </Text>
       {!isConnected ? (
         <VStack
-          pt={12}
-          pb={12}
-          spacing={9}
+          py={8}
+          spacing={6}
         >
-          <Text>Your are not connected to the Arweave Bundlr</Text>
-          <Button onClick={connectToBundlr}>Connect to Arweave Bundlr</Button>
+          <Text>Click to connect to Arweave Bundlr</Text>
+          <Button onClick={connectToBundlr}>Connect to Bundlr</Button>
         </VStack>
       ) : (
-        <>
-          <VStack align="left">
-            <Flex>
-              <Text variant="secondary">You are connected to the Arweave Bundlr.</Text>
-              <Button
-                ml={6}
-                variant="link"
-                onClick={handleDisconnect}
-              >
-                Disconnect
-              </Button>
-            </Flex>
-            <Text variant="secondary">Your Bundlr balance is {formattedBalance}.</Text>
-            {file ? (
-              <Text variant="secondary">
-                {"The Bundlr's upload price is"} {formattedUploadPrice}.
-              </Text>
-            ) : (
-              <Text variant="secondary">Upload a payload to get the upload price.</Text>
-            )}
-            {parseFloat(balance) < parseFloat(uploadPrice) && (
-              <Text variant="secondary">You need to fund the Bundlr to continue.</Text>
-            )}
-          </VStack>
+        <VStack
+          align="left"
+          pt={2}
+        >
           <FormControl>
-            {/* TODO: Remove this alert for production */}
-            {chain?.id === 1 && (
-              <Alert
-                mb={6}
-                status="warning"
-              >
-                {'Funding the Bundlr uses real currency! Devs should use MATIC.'}
-              </Alert>
-            )}
             <FormLabel>Amount</FormLabel>
-            <Flex>
+            <HStack>
               <NumberInput
                 flex={1}
                 onChange={handleAmountChange}
                 value={amount}
                 isDisabled={isFunding}
+                mr={3}
               >
                 <NumberInputField />
                 <NumberInputStepper>
@@ -116,18 +105,43 @@ export function FundBundlr() {
                 </NumberInputStepper>
               </NumberInput>
               <Button
-                ml={6}
                 float="right"
                 w="150px"
                 disabled={!isAmountValid || isFunding}
                 isLoading={isFunding}
                 onClick={handleFund}
               >
-                Fund
+                Add Funds
               </Button>
-            </Flex>
+            </HStack>
           </FormControl>
-        </>
+          <Box py={3}>
+            <AlertMessage />
+          </Box>
+          <VStack
+            border="1px solid "
+            borderColor="violet.700"
+            spacing={0}
+            align="left"
+            p={3}
+          >
+            <HStack
+              spacing={0}
+              justify="space-between"
+              align="flex-start"
+            >
+              <Text>Connected to Bundlr service.</Text>
+              <Button
+                ml={6}
+                onClick={handleDisconnect}
+              >
+                Disconnect
+              </Button>
+            </HStack>
+            <Text variant="secondary">Bundlr balance: {formattedBalance}.</Text>
+            <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
+          </VStack>
+        </VStack>
       )}
     </VStack>
   );

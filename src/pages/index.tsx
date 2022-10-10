@@ -2,11 +2,9 @@ import { Flex, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
-import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { ArweaveTestPage } from './ArweaveTestPage';
 import { EmbalmPage } from './EmbalmPage';
-import { FreeBondTestPage } from './FreeBondTestPage';
-import { RecoverPublicKeyTestPage } from './RecoverPublicKeyTestPage';
+
 import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
@@ -17,24 +15,9 @@ export function Pages() {
       label: 'Embalm',
     },
     {
-      path: '/archaeologists',
-      element: <ArchaeologistsPage />,
-      label: 'Archaeologists',
-    },
-    {
-      path: '/free-bond-test',
-      element: <FreeBondTestPage />,
-      label: 'Free Bond Test',
-    },
-    {
       path: '/arweave',
       element: <ArweaveTestPage />,
       label: 'Arweave Test',
-    },
-    {
-      path: '/recover-public-key-test',
-      element: <RecoverPublicKeyTestPage />,
-      label: 'Recover Public Key Test',
     },
     {
       path: '/theme-test',
