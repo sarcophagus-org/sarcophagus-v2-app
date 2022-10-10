@@ -14,6 +14,7 @@ export interface Archaeologist {
   isOnline: boolean;
   fullPeerId?: PeerId;
   lastPinged?: Date;
+  signature?: string
 }
 
 export interface SelectedContractArchaeologist {

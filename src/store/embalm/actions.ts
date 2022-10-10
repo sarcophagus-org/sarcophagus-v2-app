@@ -11,6 +11,7 @@ export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
+  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
@@ -61,8 +62,12 @@ type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
   [ActionType.SetArchaeologistConnection]: {
-    peerId: PeerId | string;
+    peerId: string;
     connection: Connection | undefined;
+  };
+  [ActionType.SetArchaeologistSignature]: {
+    peerId: string;
+    signature: string;
   };
   [ActionType.SetArchaeologistOnlineStatus]: {
     peerId: string;
@@ -70,7 +75,7 @@ type EmbalmPayload = {
     lastPinged?: Date;
   };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
-  [ActionType.SetArchaeologistPublicKey]: { peerId: PeerId | string; publicKey: string };
+  [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
@@ -335,6 +340,19 @@ export function setArchaeologistConnection(
     payload: {
       peerId,
       connection,
+    },
+  };
+}
+
+export function setArchaeologistSignature(
+  peerId: string,
+  signature: string
+): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistSignature,
+    payload: {
+      peerId,
+      signature,
     },
   };
 }

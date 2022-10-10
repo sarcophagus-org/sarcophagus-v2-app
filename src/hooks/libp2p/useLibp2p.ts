@@ -9,6 +9,7 @@ import {
   setArchaeologistFullPeerId,
   setArchaeologistOnlineStatus,
   setArchaeologistPublicKey,
+  setArchaeologistSignature,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
@@ -142,17 +143,20 @@ export function useLibp2p() {
 
           pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
             for await (const data of source) {
-              const dataStr = new TextDecoder().decode(data as BufferSource | undefined);
+              const dataStr = new TextDecoder().decode(data);
               console.log('dataStr', dataStr);
+
+              const { signature }: { signature: string } = JSON.parse(dataStr);
+              dispatch(setArchaeologistSignature(arch.profile.peerId, signature!));
             }
-          });
+          }).finally(() => stream.close());
         });
       } catch (err) {
         //TODO figure out what to do at this point
         console.error(`Error in peer connection listener: ${err}`);
       }
     },
-    [selectedArchaeologists]
+    [selectedArchaeologists, dispatch]
   );
 
   const resetPublicKeyStream = useCallback(async () => {
