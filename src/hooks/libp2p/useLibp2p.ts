@@ -1,7 +1,7 @@
 import { Connection } from '@libp2p/interface-connection';
 import { PeerInfo } from '@libp2p/interface-peer-info';
 import { StreamHandler } from '@libp2p/interface-registrar';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { pipe } from 'it-pipe';
 import { useCallback } from 'react';
 import {
@@ -23,10 +23,18 @@ interface PublicKeyResponseFromArchaeologist {
   encryptionPublicKey: string;
 }
 
+interface SarcophagusNegotiationParams {
+  arweaveTxId: string;
+  unencryptedShardDoubleHash: string;
+  maxRewrapInterval: number;
+  diggingFee: string;
+  timestamp: number;
+}
+
 export function useLibp2p() {
   const dispatch = useDispatch();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
+  const { selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const onPeerDiscovery = useCallback(
     (evt: CustomEvent<PeerInfo>) => {
@@ -111,31 +119,42 @@ export function useLibp2p() {
   );
 
   const confirmArweaveTransaction = useCallback(
-    async (peerId: string, arweaveTxId: string, unencryptedShardHash: string) => {
+    async (
+      arweaveTxId: string,
+      unencryptedShardDoubleHash: string,
+      diggingFee: BigNumber,
+      maxRewrapInterval: number,
+      timestamp: number
+    ) => {
       try {
-        // Get the connection of the archaeologist using the peerId
-        const connection = archaeologists.find(arch => arch.profile.peerId === peerId)?.connection;
+        selectedArchaeologists.map(async arch => {
+          if (!arch.connection) throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
-        if (!connection) throw new Error('No connection to archaeologist');
+          const negotiationParams: SarcophagusNegotiationParams = {
+            arweaveTxId,
+            unencryptedShardDoubleHash,
+            diggingFee: diggingFee.toString(),
+            maxRewrapInterval,
+            timestamp,
+          };
 
-        const outboundMsg = JSON.stringify({
-          arweaveTxId,
-          unencryptedShardHash,
-        });
+          const outboundMsg = JSON.stringify(negotiationParams);
 
-        const { stream } = await connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
+          const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
-        pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
-          for await (const data of source) {
-            const dataStr = new TextDecoder().decode(data as BufferSource | undefined);
-            console.log('dataStr', dataStr);
-          }
+          pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
+            for await (const data of source) {
+              const dataStr = new TextDecoder().decode(data as BufferSource | undefined);
+              console.log('dataStr', dataStr);
+            }
+          });
         });
       } catch (err) {
-        console.error(`Error in peer conn listener: ${err}`);
+        //TODO figure out what to do at this point
+        console.error(`Error in peer connection listener: ${err}`);
       }
     },
-    [archaeologists]
+    [selectedArchaeologists]
   );
 
   const resetPublicKeyStream = useCallback(async () => {
