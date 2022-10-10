@@ -84,9 +84,7 @@ export function useLibp2p() {
             const publicKeyResponse: PublicKeyResponseFromArchaeologist = JSON.parse(decoded);
 
             const signerAddress = ethers.utils.verifyMessage(
-              JSON.stringify({
-                encryptionPublicKey: publicKeyResponse.encryptionPublicKey,
-              }),
+              publicKeyResponse.encryptionPublicKey,
               publicKeyResponse.signature
             );
 
