@@ -17,27 +17,12 @@ export interface Archaeologist {
   signature?: string
 }
 
-export interface SelectedContractArchaeologist {
-  archAddress: string;
-  diggingFee: BigNumber;
-  unencryptedShardDoubleHash: string;
-  v: number;
-  r: string;
-  s: string;
-}
-
 export interface ArchaeologistProfile {
   archAddress: string;
   exists: boolean;
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;
   peerId: string;
-
-  signature: {
-    v: number;
-    r: string;
-    s: string;
-  };
 }
 
 export interface SignatureWithAccount extends Signature {
