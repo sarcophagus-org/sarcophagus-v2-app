@@ -9,7 +9,10 @@ export function Alert(props: AlertProps) {
   }
 
   return (
-    <AlertChakra {...props}>
+    <AlertChakra
+      alignItems="flex-start"
+      {...props}
+    >
       <AlertIcon color={status} />
       <Text color={textColor}>{children}</Text>
     </AlertChakra>

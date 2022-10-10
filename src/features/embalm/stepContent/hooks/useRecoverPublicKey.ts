@@ -4,14 +4,7 @@ import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useProvider } from 'wagmi';
 import { useDispatch } from 'store/index';
-import { useToast } from '@chakra-ui/react';
-import {
-  recoverPublicKeyFailure,
-  recoverPublicKeyInvalidAddress,
-  recoverPublicKeySuccess,
-  recoverPublicKeyNoTransactions,
-} from 'lib/utils/toast';
-import { setRecipient } from 'store/embalm/actions';
+import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 
 /**
  * returns a public key from a transaction
@@ -76,6 +69,13 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
   return ethers.utils.recoverPublicKey(msgHash, signature);
 }
 
+export enum ErrorStatus {
+  SUCCESS = 1,
+  INVALID_ADDRESS,
+  CANNOT_RECOVER,
+  ERROR,
+}
+
 //TODO: these three consts need to be moved to network config eventually, and then do a supported network check
 const etherscanEndpoint = 'https://api.etherscan.io/api';
 const etherscanApikey = process.env.REACT_APP_ETHERSCAN_APIKEY;
@@ -83,10 +83,10 @@ const getParameters =
   'module=account&action=txlist&startblock=0&endblock=99999999&page=1&offset=1000&sort=asc';
 
 export function useRecoverPublicKey() {
-  const toast = useToast();
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [errorStatus, setErrorStatus] = useState<ErrorStatus | null>(null);
 
   const provider = useProvider();
 
@@ -95,7 +95,8 @@ export function useRecoverPublicKey() {
       try {
         setIsLoading(true);
         if (!ethers.utils.isAddress(address.toLowerCase())) {
-          toast(recoverPublicKeyInvalidAddress());
+          setErrorStatus(ErrorStatus.INVALID_ADDRESS);
+
           return;
         }
 
@@ -104,7 +105,8 @@ export function useRecoverPublicKey() {
         );
 
         if (response.status !== 200) {
-          toast(recoverPublicKeyFailure(response.data.message));
+          setErrorStatus(ErrorStatus.ERROR);
+          console.log('useReoveryPublicKey 200', response.data.message);
           return;
         }
 
@@ -117,26 +119,33 @@ export function useRecoverPublicKey() {
             if (
               ethers.utils.computeAddress(recoveredPublicKey).toLowerCase() == address.toLowerCase()
             ) {
-              dispatch(setRecipient({ publicKey: recoveredPublicKey, address: address }));
+              dispatch(
+                setRecipientState({
+                  publicKey: recoveredPublicKey,
+                  address: address,
+                  setByOption: RecipientSetByOption.ADDRESS,
+                })
+              );
 
               //TODO: remove log, this is just for testing
               console.log('recovered public key', recoveredPublicKey);
+              setErrorStatus(ErrorStatus.SUCCESS);
 
-              toast(recoverPublicKeySuccess());
               return;
             }
           }
         }
-        toast(recoverPublicKeyNoTransactions());
+        setErrorStatus(ErrorStatus.CANNOT_RECOVER);
       } catch (_error) {
         const error = _error as Error;
-        toast(recoverPublicKeyFailure(error.message));
+        console.log('useReoveryPublicKey error', error);
+        setErrorStatus(ErrorStatus.ERROR);
       } finally {
         setIsLoading(false);
       }
     },
-    [dispatch, provider, toast]
+    [dispatch, provider]
   );
 
-  return { recoverPublicKey, isLoading };
+  return { recoverPublicKey, isLoading, errorStatus };
 }
