@@ -108,22 +108,17 @@ export function useCreateSarcophagus() {
       const wallets = archPrivateKeys.map(pk => new ethers.Wallet(pk));
       const archaeologists: Archaeologist[] = await Promise.all(
         wallets.map(async w => {
-          const signedMessage = await w.signMessage('test message');
-          const signature = ethers.utils.splitSignature(signedMessage);
+          const signature = await w.signMessage('test message');
 
           return {
             publicKey: w.publicKey,
+            signature,
             profile: {
               archAddress: w.address,
               exists: true,
               minimumDiggingFee: BigNumber.from('10'),
               maximumRewrapInterval: 0,
               peerId: '',
-              signature: {
-                v: signature.v,
-                r: signature.r,
-                s: signature.s,
-              },
             },
             isOnline: true,
           };

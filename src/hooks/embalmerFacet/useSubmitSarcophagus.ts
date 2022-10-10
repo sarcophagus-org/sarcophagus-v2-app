@@ -30,13 +30,13 @@ export function useSubmitSarcophagus() {
   const sarcoId = utils.id(name + Date.now().toString()); //TODO: verify this is correct way to generate
 
   const contractArchs = selectedArchaeologists.map((arch, index) => {
+    const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
+
     return {
       archAddress: arch.profile.archAddress,
       diggingFee: arch.profile.minimumDiggingFee.toString(),
       unencryptedShardDoubleHash: doubleHashShard(shards[index]),
-      v: arch.profile.signature?.v,
-      r: arch.profile.signature?.r,
-      s: arch.profile.signature?.s,
+      v, r, s,
     };
   });
 
