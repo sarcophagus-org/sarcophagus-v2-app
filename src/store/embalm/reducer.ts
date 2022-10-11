@@ -46,6 +46,7 @@ export interface EmbalmState {
   diggingFeesFilter: string;
   archAddressSearch: string;
   archaeologistEncryptedShards: ArcheaologistEncryptedShard[];
+  publicKeysReady: boolean;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -76,6 +77,7 @@ export const embalmInitialState: EmbalmState = {
   diggingFeesFilter: '',
   archAddressSearch: '',
   archaeologistEncryptedShards: [],
+  publicKeysReady: false,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -157,6 +159,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetName:
       return { ...state, name: action.payload.name };
+
+    case ActionType.SetPublicKeysReady:
+      return { ...state, publicKeysReady: action.payload.publicKeysReady };
 
     case ActionType.SetRecipient:
       return {
@@ -265,13 +270,17 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       });
 
     case ActionType.SetArchaeologistPublicKey:
-      return updateArchProperty(
+      const updatedState = updateArchProperty(
         state,
         action.payload.peerId.toString(), {
         key: 'publicKey',
         value: action.payload.publicKey,
         updateSelected: true,
       });
+
+      updatedState.publicKeysReady = updatedState.selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0;
+
+      return updatedState;
 
     case ActionType.SetShards:
       return { ...state, archaeologistEncryptedShards: action.payload.shards };

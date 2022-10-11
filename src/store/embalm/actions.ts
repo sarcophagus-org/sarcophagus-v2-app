@@ -38,6 +38,7 @@ export enum ActionType {
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetShards = 'EMBALM_SET_SHARDS',
+  SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
 }
 
 export enum RecipientSetByOption {
@@ -99,6 +100,7 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetShards]: { shards: ArcheaologistEncryptedShard[] };
+  [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -161,6 +163,15 @@ export function setName(name: string): EmbalmActions {
     type: ActionType.SetName,
     payload: {
       name,
+    },
+  };
+}
+
+export function setPublicKeysReady(publicKeysReady: boolean): EmbalmActions {
+  return {
+    type: ActionType.SetPublicKeysReady,
+    payload: {
+      publicKeysReady,
     },
   };
 }
