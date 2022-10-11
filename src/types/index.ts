@@ -29,7 +29,7 @@ export interface ArchaeologistProfile {
   maximumRewrapInterval: number;
   peerId: PeerId | string;
   successes: string[];
-  cancels: string[];
+  cleanups: string[];
   accusals: string[];
   signature: {
     v: number;

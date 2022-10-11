@@ -26,7 +26,7 @@ export function generateMockArchaeoloigsts() {
         maximumRewrapInterval: randomIntFromInterval(604800000, 2628000000),
         peerId: '',
         successes: [],
-        cancels: [],
+        cleanups: [],
         accusals: [],
         signature: {
           v: 0,

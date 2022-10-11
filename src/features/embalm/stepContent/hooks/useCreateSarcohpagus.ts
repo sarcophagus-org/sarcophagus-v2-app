@@ -120,7 +120,7 @@ export function useCreateSarcophagus() {
               maximumRewrapInterval: 0,
               peerId: '',
               successes: [],
-              cancels: [],
+              cleanups: [],
               accusals: [],
               signature: {
                 v: signature.v,

@@ -50,7 +50,7 @@ export function useLoadArchaeologists() {
             ...p,
             archAddress: addresses[i],
             successes: stats[i].successes,
-            cancels: stats[i].cancels,
+            cleanups: stats[i].cleanups,
             accusals: stats[i].accusals,
           },
           isOnline: false,
