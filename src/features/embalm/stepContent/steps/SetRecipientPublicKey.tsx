@@ -70,6 +70,7 @@ export function SetRecipientPublicKey() {
                 ...provided,
                 bg: 'brand.0',
                 fontSize: 'sm',
+                borderColor: 'violet.700',
               }),
 
               option: (provided, state) => ({
