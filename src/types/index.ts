@@ -30,6 +30,9 @@ export interface ArchaeologistProfile {
   exists: boolean;
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: number;
+  successes: string[];
+  cleanups: string[];
+  accusals: string[];
   peerId: string;
 
   signature: {

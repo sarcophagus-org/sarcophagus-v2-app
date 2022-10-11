@@ -119,6 +119,9 @@ export function useCreateSarcophagus() {
               minimumDiggingFee: BigNumber.from('10'),
               maximumRewrapInterval: 0,
               peerId: '',
+              successes: [],
+              cleanups: [],
+              accusals: [],
               signature: {
                 v: signature.v,
                 r: signature.r,

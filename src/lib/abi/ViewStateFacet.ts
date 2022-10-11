@@ -7,13 +7,66 @@ export const ViewStateFacet = {
           name: 'archaeologist',
           type: 'address',
         },
+        {
+          internalType: 'uint256',
+          name: 'index',
+          type: 'uint256',
+        },
       ],
-      name: 'getArchaeologistAccusals',
+      name: 'archaeologistAccusalsIdentifier',
       outputs: [
         {
-          internalType: 'bytes32[]',
+          internalType: 'bytes32',
           name: '',
-          type: 'bytes32[]',
+          type: 'bytes32',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'index',
+          type: 'uint256',
+        },
+      ],
+      name: 'archaeologistCleanupsIdentifier',
+      outputs: [
+        {
+          internalType: 'bytes32',
+          name: '',
+          type: 'bytes32',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'index',
+          type: 'uint256',
+        },
+      ],
+      name: 'archaeologistSuccessesIdentifier',
+      outputs: [
+        {
+          internalType: 'bytes32',
+          name: '',
+          type: 'bytes32',
         },
       ],
       stateMutability: 'view',
@@ -27,12 +80,31 @@ export const ViewStateFacet = {
           type: 'address',
         },
       ],
-      name: 'getArchaeologistCleanups',
+      name: 'getArchaeologistAccusalsCount',
       outputs: [
         {
-          internalType: 'bytes32[]',
+          internalType: 'uint256',
           name: '',
-          type: 'bytes32[]',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+      ],
+      name: 'getArchaeologistCleanupsCount',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
         },
       ],
       stateMutability: 'view',
@@ -223,6 +295,61 @@ export const ViewStateFacet = {
           type: 'address',
         },
       ],
+      name: 'getArchaeologistSuccessesCount',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address[]',
+          name: 'addresses',
+          type: 'address[]',
+        },
+      ],
+      name: 'getArchaeologistsStatistics',
+      outputs: [
+        {
+          components: [
+            {
+              internalType: 'uint256',
+              name: 'successes',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'accusals',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'cleanups',
+              type: 'uint256',
+            },
+          ],
+          internalType: 'struct LibTypes.ArchaeologistStatistics[]',
+          name: '',
+          type: 'tuple[]',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'archaeologist',
+          type: 'address',
+        },
+      ],
       name: 'getCursedBond',
       outputs: [
         {
@@ -254,6 +381,19 @@ export const ViewStateFacet = {
       type: 'function',
     },
     {
+      inputs: [],
+      name: 'getExpirationThreshold',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
       inputs: [
         {
           internalType: 'address',
@@ -262,6 +402,19 @@ export const ViewStateFacet = {
         },
       ],
       name: 'getFreeBond',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'getGracePeriod',
       outputs: [
         {
           internalType: 'uint256',
@@ -362,7 +515,7 @@ export const ViewStateFacet = {
             },
             {
               internalType: 'uint256',
-              name: 'resurrectionWindow',
+              name: 'maximumRewrapInterval',
               type: 'uint256',
             },
             {
