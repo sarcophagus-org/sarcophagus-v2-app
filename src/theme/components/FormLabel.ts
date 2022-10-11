@@ -2,6 +2,6 @@ import { ComponentStyleConfig } from '@chakra-ui/react';
 
 export const FormLabel: ComponentStyleConfig = {
   baseStyle: {
-    fontSize: 12,
+    fontSize: '1em',
   },
 };

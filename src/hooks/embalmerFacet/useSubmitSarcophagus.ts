@@ -48,7 +48,7 @@ export function useSubmitSarcophagus() {
       {
         name: name,
         recipient: recipient.address,
-        resurrectionTime: resurrection + Date.now(),
+        resurrectionTime: resurrection / 1000, // resurrection is in milliseconds, but saved in seconds on the contract
         canBeTransferred: true, //TODO: canBeTransferred
         minShards: requiredArchaeologists,
       },

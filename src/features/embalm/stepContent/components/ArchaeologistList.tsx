@@ -108,45 +108,52 @@ export function ArchaeologistList() {
                 </Tr>
               </Thead>
               <Tbody>
-                {sortedFilteredArchaeoligist.map(arch => (
-                  <Tr
-                    key={arch.profile.archAddress}
-                    background={selectedArchaeologists.includes(arch) ? 'brand.700' : ''}
-                    onClick={() => handleCheckArchaeologist(arch)}
-                    cursor="pointer"
-                    _hover={
-                      selectedArchaeologists.includes(arch)
-                        ? {}
-                        : {
-                            background: 'brand.100',
-                          }
-                    }
-                  >
-                    <Td>
-                      <Text
-                        color={selectedArchaeologists.includes(arch) ? 'brand.0' : ''}
-                        ml={3}
-                      >
-                        {formatAddress(arch.profile.archAddress)}
-                      </Text>
-                    </Td>
-                    <Td isNumeric>
-                      <Flex justify="center">
-                        <Image
-                          src="sarco-token-icon.png"
-                          w="18px"
-                          h="18px"
-                        />
+                {sortedFilteredArchaeoligist.map(arch => {
+                  const isSelected =
+                    selectedArchaeologists.findIndex(
+                      a => a.profile.peerId === arch.profile.peerId
+                    ) !== -1;
+
+                  return (
+                    <Tr
+                      key={arch.profile.archAddress}
+                      background={isSelected ? 'brand.700' : ''}
+                      onClick={() => handleCheckArchaeologist(arch)}
+                      cursor="pointer"
+                      _hover={
+                        isSelected
+                          ? {}
+                          : {
+                              background: 'brand.100',
+                            }
+                      }
+                    >
+                      <Td>
                         <Text
+                          color={isSelected ? 'brand.0' : ''}
                           ml={3}
-                          color={selectedArchaeologists.includes(arch) ? 'brand.0' : ''}
                         >
-                          {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
+                          {formatAddress(arch.profile.archAddress)}
                         </Text>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                ))}
+                      </Td>
+                      <Td isNumeric>
+                        <Flex justify="center">
+                          <Image
+                            src="sarco-token-icon.png"
+                            w="18px"
+                            h="18px"
+                          />
+                          <Text
+                            ml={3}
+                            color={isSelected ? 'brand.0' : ''}
+                          >
+                            {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
+                          </Text>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </TableContainer>

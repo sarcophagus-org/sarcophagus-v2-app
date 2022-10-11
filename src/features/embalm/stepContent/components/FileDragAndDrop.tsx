@@ -71,7 +71,7 @@ export function FileDragAndDrop(props: FileUploaderProps) {
       border="1px dashed"
       borderColor="brand.500"
       bg={isHovering ? 'brand.100' : 'none'}
-      h={175}
+      h={200}
       ref={dropAreaRef}
     >
       {children}
