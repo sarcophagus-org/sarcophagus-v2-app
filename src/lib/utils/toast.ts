@@ -161,38 +161,6 @@ export const payloadSaveSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const recoverPublicKeyFailure = (errorMessage: string): UseToastOptions => ({
-  title: 'Public Key Failed',
-  description: formatToastMessage(errorMessage),
-  status: 'error',
-  duration,
-  position,
-});
-
-export const recoverPublicKeyInvalidAddress = (): UseToastOptions => ({
-  title: 'Invalid Address',
-  description: 'Given input in not a valid etherum address',
-  status: 'warning',
-  duration,
-  position,
-});
-
-export const recoverPublicKeySuccess = (): UseToastOptions => ({
-  title: 'Recover Public Key Successful!',
-  description: 'Successfully recovered public key from address',
-  status: 'success',
-  duration,
-  position,
-});
-
-export const recoverPublicKeyNoTransactions = (): UseToastOptions => ({
-  title: 'No Transactions',
-  description: 'This address has no transaction in which to recover the pubilc key',
-  status: 'warning',
-  duration,
-  position,
-});
-
 export const generateOuterKeys = (): UseToastOptions => ({
   title: 'Keys generated',
   description: 'A new pair of encryption keys have been generated.',
@@ -212,22 +180,6 @@ export const generateOuterKeysFailure = (errorMessage: string): UseToastOptions 
 export const copiedToClipboard = (): UseToastOptions => ({
   title: 'Text copied to clipboard',
   status: 'info',
-  duration,
-  position,
-});
-
-export const generateRecipientKeysAndPDF = (): UseToastOptions => ({
-  title: 'Recipient keys generated',
-  description: 'New keys created for recipient and PDF downloaded.',
-  status: 'success',
-  duration,
-  position,
-});
-
-export const generateRecipientPDFFailure = (errorMessage: string): UseToastOptions => ({
-  title: 'Failed to generate keys and create PDF',
-  description: formatToastMessage(errorMessage),
-  status: 'error',
   duration,
   position,
 });

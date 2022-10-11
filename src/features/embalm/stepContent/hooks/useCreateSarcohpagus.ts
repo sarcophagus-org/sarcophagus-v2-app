@@ -22,7 +22,7 @@ async function encryptShards(publicKeys: string[], payload: Uint8Array[]): Promi
 export function useCreateSarcophagus() {
   const dispatch = useDispatch();
   const {
-    recipient,
+    recipientState,
     file,
     outerPublicKey,
     outerPrivateKey,
@@ -35,16 +35,16 @@ export function useCreateSarcophagus() {
   const { createSarcophagus } = useSubmitSarcophagus();
 
   // TODO: Move this into its own hook and check all fields
-  const canCreateSarcophagus = recipient.publicKey !== '' && !!outerPublicKey && !!file;
+  const canCreateSarcophagus = recipientState.publicKey !== '' && !!outerPublicKey && !!file;
 
   const handleSubmit = useCallback(async () => {
     try {
       // Prepare the payload
-      if (recipient.publicKey === '' || !file || !outerPublicKey) return;
+      if (recipientState.publicKey === '' || !file || !outerPublicKey) return;
       const payload = await readFileDataAsBase64(file);
 
       // Step 1: Encrypt the inner layer
-      const encryptedInnerLayer = await encrypt(recipient.publicKey, payload);
+      const encryptedInnerLayer = await encrypt(recipientState.publicKey, payload);
 
       // Step 2: Encrypt the outer layer
       const encryptedOuterLayer = await encrypt(outerPublicKey, encryptedInnerLayer);
@@ -88,7 +88,7 @@ export function useCreateSarcophagus() {
     file,
     outerPrivateKey,
     outerPublicKey,
-    recipient.publicKey,
+    recipientState.publicKey,
     selectedArchaeologists,
     uploadFile,
   ]);

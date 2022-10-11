@@ -24,7 +24,7 @@ export function StepContent() {
     [Step.NameSarcophagus]: { component: <NameSarcophagus />, title: 'Name your sarcophagus' },
     [Step.UploadPayload]: { component: <UploadPayload />, title: 'Upload your payload' },
     [Step.FundBundlr]: { component: <FundBundlr />, title: 'Fund Arweave Bundlr' },
-    [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: '' },
+    [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: 'Set Recipient' },
     [Step.CreateEncryptionKeypair]: { component: <CreateEncryptionKeypair />, title: '' },
     [Step.SetDiggingFees]: { component: <SetDiggingFees />, title: '' },
     [Step.TotalRequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },

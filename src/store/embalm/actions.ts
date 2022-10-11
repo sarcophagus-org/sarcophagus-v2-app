@@ -21,8 +21,7 @@ export enum ActionType {
   SetName = 'EMBALM_SET_NAME',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetPayloadTxId = 'EMBALM_SET_PAYLOAD_TX_ID',
-  SetRecipient = 'EMBALM_SET_RECIPIENT',
-  SetRecipientSetByOption = 'EMBALM_SET_RECIPIENT_OPTION',
+  SetRecipientState = 'EMBALM_SET_RECIPIENT_STATE',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
@@ -40,9 +39,15 @@ export enum ActionType {
 }
 
 export enum RecipientSetByOption {
-  ADDRESS,
+  ADDRESS = 1,
   PUBLIC_KEY,
   GENERATE,
+}
+
+export enum GeneratePDFState {
+  UNSET,
+  GENERATED,
+  DOWNLOADED,
 }
 
 export enum SortDirection {
@@ -50,10 +55,12 @@ export enum SortDirection {
   DESC,
   NONE,
 }
-export interface Recipient {
+export interface RecipientState {
   address: string;
   publicKey: string;
   privateKey?: string;
+  setByOption: RecipientSetByOption | null;
+  generatePDFState?: GeneratePDFState;
 }
 
 type EmbalmPayload = {
@@ -78,8 +85,7 @@ type EmbalmPayload = {
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetPayloadTxId]: { txId: string };
-  [ActionType.SetRecipient]: Recipient;
-  [ActionType.SetRecipientSetByOption]: RecipientSetByOption;
+  [ActionType.SetRecipientState]: RecipientState;
   [ActionType.SetRequiredArchaeologists]: { count: string };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
@@ -170,17 +176,10 @@ export function setOuterLayerKeys(privateKey: string, publicKey: string): Embalm
   };
 }
 
-export function setRecipient(recipient: Recipient): EmbalmActions {
+export function setRecipientState(recipientState: RecipientState): EmbalmActions {
   return {
-    type: ActionType.SetRecipient,
-    payload: recipient,
-  };
-}
-
-export function setRecipientSetByOption(recipientSetByOption: RecipientSetByOption): EmbalmActions {
-  return {
-    type: ActionType.SetRecipientSetByOption,
-    payload: recipientSetByOption,
+    type: ActionType.SetRecipientState,
+    payload: recipientState,
   };
 }
 
