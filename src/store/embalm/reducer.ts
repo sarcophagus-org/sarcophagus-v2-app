@@ -1,5 +1,5 @@
 import { removeFromArray } from 'lib/utils/helpers';
-import { Archaeologist } from 'types/index';
+import { Archaeologist, ArcheaologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
 import { ActionType, Recipient, RecipientSetByOption, SortDirection } from './actions';
 
@@ -45,7 +45,7 @@ export interface EmbalmState {
   diggingFeesSortDirection: SortDirection;
   diggingFeesFilter: string;
   archAddressSearch: string;
-  shards: Uint8Array[];
+  archaeologistEncryptedShards: ArcheaologistEncryptedShard[];
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -75,7 +75,7 @@ export const embalmInitialState: EmbalmState = {
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
   archAddressSearch: '',
-  shards: [],
+  archaeologistEncryptedShards: [],
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -274,7 +274,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       });
 
     case ActionType.SetShards:
-      return { ...state, shards: action.payload.shards };
+      return { ...state, archaeologistEncryptedShards: action.payload.shards };
 
     default:
       return state;

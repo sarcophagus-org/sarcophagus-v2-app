@@ -14,7 +14,7 @@ export interface Archaeologist {
   isOnline: boolean;
   fullPeerId?: PeerId;
   lastPinged?: Date;
-  signature?: string
+  signature?: string;
 }
 
 export interface ArchaeologistProfile {
@@ -27,6 +27,12 @@ export interface ArchaeologistProfile {
 
 export interface SignatureWithAccount extends Signature {
   account: string;
+}
+
+export interface ArcheaologistEncryptedShard {
+  publicKey: string,
+  encryptedShard: string,
+  unencryptedShardDoubleHash: string,
 }
 
 // Temporary

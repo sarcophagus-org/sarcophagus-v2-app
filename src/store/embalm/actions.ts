@@ -1,4 +1,4 @@
-import { Archaeologist } from 'types/index';
+import { Archaeologist, ArcheaologistEncryptedShard } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
@@ -98,7 +98,7 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
-  [ActionType.SetShards]: { shards: Uint8Array[] };
+  [ActionType.SetShards]: { shards: ArcheaologistEncryptedShard[] };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -377,7 +377,7 @@ export function setArchaeologistPublicKey(peerId: string, publicKey: string): Em
   };
 }
 
-export function setShards(shards: Uint8Array[]): EmbalmActions {
+export function setShards(shards: ArcheaologistEncryptedShard[]): EmbalmActions {
   return {
     type: ActionType.SetShards,
     payload: {

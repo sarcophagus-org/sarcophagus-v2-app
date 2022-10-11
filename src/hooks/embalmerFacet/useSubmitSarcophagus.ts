@@ -2,15 +2,7 @@ import { ethers, utils } from 'ethers';
 import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 import { useSelector } from 'store/index';
-
-function doubleHashShard(shard: Uint8Array): string {
-  console.log('shard', shard);
-  if (shard) {
-    return ethers.utils.keccak256(ethers.utils.keccak256(shard));
-  } else {
-    return '';
-  }
-}
+import { useMemo } from 'react';
 
 export function useSubmitSarcophagus() {
   const toastDescription = 'Sarcophagus created';
@@ -24,21 +16,24 @@ export function useSubmitSarcophagus() {
     requiredArchaeologists,
     payloadTxId,
     shardsTxId,
-    shards,
+    diggingFees,
+    archaeologistEncryptedShards,
   } = useSelector(x => x.embalmState);
 
   const sarcoId = utils.id(name + Date.now().toString()); //TODO: verify this is correct way to generate
 
-  const contractArchs = selectedArchaeologists.map((arch, index) => {
-    const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
+  const contractArchs = useMemo(() => {
+    return selectedArchaeologists.filter(arch => arch.signature !== undefined).map((arch) => {
+      const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
+      return {
+        archAddress: arch.profile.archAddress,
+        diggingFee: diggingFees,
+        unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(shard => shard.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
+        v, r, s,
+      };
+    });
+  }, [selectedArchaeologists, archaeologistEncryptedShards, diggingFees]);
 
-    return {
-      archAddress: arch.profile.archAddress,
-      diggingFee: arch.profile.minimumDiggingFee.toString(),
-      unencryptedShardDoubleHash: doubleHashShard(shards[index]),
-      v, r, s,
-    };
-  });
 
   const { submit } = useSubmitTransaction({
     contractInterface: EmbalmerFacet.abi,
@@ -49,7 +44,7 @@ export function useSubmitSarcophagus() {
         name: name,
         recipient: recipient.address,
         resurrectionTime: resurrection / 1000,
-        canBeTransferred: true, //TODO: canBeTransferred
+        canBeTransferred: false, //TODO: default to false until transfer logic figured out
         minShards: requiredArchaeologists,
       },
       contractArchs,
@@ -59,5 +54,5 @@ export function useSubmitSarcophagus() {
     transactionDescription,
   });
 
-  return { createSarcophagus: submit };
+  return { submitSarcophagus: submit };
 }

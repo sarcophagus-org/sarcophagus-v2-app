@@ -129,3 +129,11 @@ export function randomIntFromInterval(min: number, max: number): number {
 export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffer> {
   return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(payload));
 }
+
+export function doubleHashShard(shard: Uint8Array): string {
+  if (shard) {
+    return ethers.utils.keccak256(ethers.utils.keccak256(shard));
+  } else {
+    return '';
+  }
+}
