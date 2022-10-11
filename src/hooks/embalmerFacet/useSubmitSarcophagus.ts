@@ -4,7 +4,6 @@ import { useSubmitTransaction } from '../useSubmitTransactions';
 import { useSelector } from 'store/index';
 
 function doubleHashShard(shard: Uint8Array): string {
-  console.log('shard', shard);
   if (shard) {
     return ethers.utils.keccak256(ethers.utils.keccak256(shard));
   } else {
