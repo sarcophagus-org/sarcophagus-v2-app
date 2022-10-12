@@ -74,22 +74,6 @@ export const ArchaeologistFacet = {
       inputs: [
         {
           internalType: 'uint256',
-          name: 'reward',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'amount',
-          type: 'uint256',
-        },
-      ],
-      name: 'NotEnoughReward',
-      type: 'error',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
           name: 'resurrectionTime',
           type: 'uint256',
         },
@@ -106,17 +90,6 @@ export const ArchaeologistFacet = {
         },
       ],
       name: 'SarcophagusDoesNotExist',
-      type: 'error',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'sarcoId',
-          type: 'bytes32',
-        },
-      ],
-      name: 'SarcophagusNotFinalized',
       type: 'error',
     },
     {
@@ -160,7 +133,7 @@ export const ArchaeologistFacet = {
         },
         {
           internalType: 'uint256',
-          name: 'resurrectionWindow',
+          name: 'gracePeriod',
           type: 'uint256',
         },
         {
@@ -255,6 +228,12 @@ export const ArchaeologistFacet = {
         },
         {
           indexed: false,
+          internalType: 'string',
+          name: 'peerId',
+          type: 'string',
+        },
+        {
+          indexed: false,
           internalType: 'uint256',
           name: 'minimumDiggingFee',
           type: 'uint256',
@@ -302,6 +281,12 @@ export const ArchaeologistFacet = {
           internalType: 'address',
           name: 'archaeologist',
           type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'string',
+          name: 'peerId',
+          type: 'string',
         },
         {
           indexed: false,
@@ -419,6 +404,11 @@ export const ArchaeologistFacet = {
     {
       inputs: [
         {
+          internalType: 'string',
+          name: 'peerId',
+          type: 'string',
+        },
+        {
           internalType: 'uint256',
           name: 'minimumDiggingFee',
           type: 'uint256',
@@ -432,11 +422,6 @@ export const ArchaeologistFacet = {
           internalType: 'uint256',
           name: 'freeBond',
           type: 'uint256',
-        },
-        {
-          internalType: 'string',
-          name: 'peerId',
-          type: 'string',
         },
       ],
       name: 'registerArchaeologist',
@@ -464,6 +449,11 @@ export const ArchaeologistFacet = {
     },
     {
       inputs: [
+        {
+          internalType: 'string',
+          name: 'peerId',
+          type: 'string',
+        },
         {
           internalType: 'uint256',
           name: 'minimumDiggingFee',
@@ -499,13 +489,7 @@ export const ArchaeologistFacet = {
       type: 'function',
     },
     {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'amount',
-          type: 'uint256',
-        },
-      ],
+      inputs: [],
       name: 'withdrawReward',
       outputs: [],
       stateMutability: 'nonpayable',

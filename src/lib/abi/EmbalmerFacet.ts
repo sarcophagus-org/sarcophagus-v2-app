@@ -35,17 +35,17 @@ export const EmbalmerFacet = {
     {
       inputs: [
         {
-          internalType: 'uint256',
-          name: 'diggingFee',
-          type: 'uint256',
+          internalType: 'address',
+          name: 'recoveredAddress',
+          type: 'address',
         },
         {
           internalType: 'address',
-          name: 'archaeologist',
+          name: 'expectedAddress',
           type: 'address',
         },
       ],
-      name: 'DiggingFeeTooLow',
+      name: 'InvalidSignature',
       type: 'error',
     },
     {
@@ -73,6 +73,17 @@ export const EmbalmerFacet = {
         },
       ],
       name: 'NewResurrectionTimeInPast',
+      type: 'error',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: 'newResurrectionTime',
+          type: 'uint256',
+        },
+      ],
+      name: 'NewResurrectionTimeTooLarge',
       type: 'error',
     },
     {
@@ -131,9 +142,9 @@ export const EmbalmerFacet = {
           type: 'uint256',
         },
         {
-          internalType: 'address',
-          name: 'archaeologist',
-          type: 'address',
+          internalType: 'uint256',
+          name: 'sarcophagusMaximumRewrapInterval',
+          type: 'uint256',
         },
       ],
       name: 'ResurrectionTimeTooFarInFuture',
@@ -169,6 +180,17 @@ export const EmbalmerFacet = {
     {
       inputs: [
         {
+          internalType: 'uint256',
+          name: 'timestamp',
+          type: 'uint256',
+        },
+      ],
+      name: 'SarcophagusParametersExpired',
+      type: 'error',
+    },
+    {
+      inputs: [
+        {
           internalType: 'address',
           name: 'sender',
           type: 'address',
@@ -180,22 +202,6 @@ export const EmbalmerFacet = {
         },
       ],
       name: 'SenderNotEmbalmer',
-      type: 'error',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'hopefulAddress',
-          type: 'address',
-        },
-        {
-          internalType: 'address',
-          name: 'actualAddress',
-          type: 'address',
-        },
-      ],
-      name: 'SignatureFromWrongAccount',
       type: 'error',
     },
     {
@@ -259,7 +265,13 @@ export const EmbalmerFacet = {
         {
           indexed: false,
           internalType: 'uint256',
-          name: 'totalFees',
+          name: 'totalDiggingFees',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'createSarcophagusProtocolFees',
           type: 'uint256',
         },
         {
@@ -285,6 +297,18 @@ export const EmbalmerFacet = {
           indexed: false,
           internalType: 'uint256',
           name: 'resurrectionTime',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'totalDiggingFees',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'rewrapSarcophagusProtocolFees',
           type: 'uint256',
         },
       ],
@@ -329,6 +353,11 @@ export const EmbalmerFacet = {
               type: 'uint256',
             },
             {
+              internalType: 'uint256',
+              name: 'maximumRewrapInterval',
+              type: 'uint256',
+            },
+            {
               internalType: 'bool',
               name: 'canBeTransferred',
               type: 'bool',
@@ -337,6 +366,11 @@ export const EmbalmerFacet = {
               internalType: 'uint8',
               name: 'minShards',
               type: 'uint8',
+            },
+            {
+              internalType: 'uint256',
+              name: 'timestamp',
+              type: 'uint256',
             },
           ],
           internalType: 'struct LibTypes.SarcophagusMemory',
