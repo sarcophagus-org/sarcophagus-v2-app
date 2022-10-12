@@ -1,19 +1,23 @@
 import { Connection } from '@libp2p/interface-connection';
 import { PeerInfo } from '@libp2p/interface-peer-info';
 import { StreamHandler } from '@libp2p/interface-registrar';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { pipe } from 'it-pipe';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   setArchaeologistConnection,
   setArchaeologistFullPeerId,
   setArchaeologistOnlineStatus,
   setArchaeologistPublicKey,
   setArchaeologistSignature,
+  setPublicKeysReady,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 import { PUBLIC_KEY_STREAM, NEGOTIATION_SIGNATURE_STREAM } from '../../lib/config/node_config';
+import { useCreateSarcophagus } from 'features/embalm/stepContent/hooks/useCreateSarcohpagus';
+import { useCreateEncryptionKeypair } from 'features/embalm/stepContent/hooks/useCreateEncryptionKeypair';
+import { ArchaeologistEncryptedShard } from 'types';
 
 // values used to determine if an archaeologist is online
 const pingThreshold = 60000;
@@ -35,7 +39,11 @@ interface SarcophagusNegotiationParams {
 export function useLibp2p() {
   const dispatch = useDispatch();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { selectedArchaeologists } = useSelector(s => s.embalmState);
+  const {
+    selectedArchaeologists,
+    diggingFees,
+    publicKeysReady,
+  } = useSelector(s => s.embalmState);
 
   const onPeerDiscovery = useCallback(
     (evt: CustomEvent<PeerInfo>) => {
@@ -117,25 +125,32 @@ export function useLibp2p() {
     [selectedArchaeologists, dispatch]
   );
 
-  const confirmArweaveTransaction = useCallback(
-    async (
-      arweaveTxId: string,
-      unencryptedShardDoubleHash: string,
-      diggingFee: BigNumber,
-      maxRewrapInterval: number,
-      timestamp: number
-    ) => {
+
+
+  // TODO: Remove shard setup simulation code below when properly wired up
+  const { uploadToArweave, isUploading } = useCreateSarcophagus();
+  const { createEncryptionKeypair } = useCreateEncryptionKeypair();
+
+  const initiateSarcophagusNegotiation = useCallback(
+    async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string) => {
       try {
+        let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
+        selectedArchaeologists.forEach(arch => maxRewrapInterval = arch.profile.maximumRewrapInterval < maxRewrapInterval ? arch.profile.maximumRewrapInterval : maxRewrapInterval);
+
+        if (archaeologistShards.length === 0) return;
+
         selectedArchaeologists.map(async arch => {
           if (!arch.connection) throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
           const negotiationParams: SarcophagusNegotiationParams = {
-            arweaveTxId,
-            unencryptedShardDoubleHash,
-            diggingFee: diggingFee.toString(),
+            arweaveTxId: encryptedShardsTxId,
+            diggingFee: diggingFees,
             maxRewrapInterval,
-            timestamp,
+            timestamp: Date.now(),
+            unencryptedShardDoubleHash: archaeologistShards.filter(s => s.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
           };
+
+          console.log('negotiationParams', negotiationParams);
 
           const outboundMsg = JSON.stringify(negotiationParams);
 
@@ -144,9 +159,11 @@ export function useLibp2p() {
           pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
             for await (const data of source) {
               const dataStr = new TextDecoder().decode(data);
-              console.log('dataStr', dataStr);
+              console.log('got', dataStr);
 
               const { signature }: { signature: string } = JSON.parse(dataStr);
+              console.log('set signature');
+              console.log(signature);
               dispatch(setArchaeologistSignature(arch.profile.peerId, signature!));
             }
           }).finally(() => stream.close());
@@ -156,8 +173,22 @@ export function useLibp2p() {
         console.error(`Error in peer connection listener: ${err}`);
       }
     },
-    [selectedArchaeologists, dispatch]
+    [selectedArchaeologists, dispatch, diggingFees]
   );
+
+  // Simulate private key sharding and upload to arweave
+  useEffect(() => {
+    (async () => {
+      if (publicKeysReady) {
+        await createEncryptionKeypair();
+        const { encryptedShards, encryptedShardsTxId } = await uploadToArweave();
+
+        console.log('initiating sarco negotiation');
+        await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
+        dispatch(setPublicKeysReady(false));
+      }
+    })();
+  }, [publicKeysReady]);
 
   const resetPublicKeyStream = useCallback(async () => {
     await libp2pNode!.unhandle(PUBLIC_KEY_STREAM);
@@ -184,7 +215,7 @@ export function useLibp2p() {
     onPeerConnect,
     onPeerDisconnect,
     handlePublicKeyStream,
-    confirmArweaveTransaction,
+    initiateSarcophagusNegotiation,
     dialSelectedArchaeologists,
   };
 }

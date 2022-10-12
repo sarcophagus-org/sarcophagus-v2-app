@@ -18,12 +18,15 @@ export function useSubmitSarcophagus() {
     shardsTxId,
     diggingFees,
     archaeologistEncryptedShards,
+    signaturesReady,
   } = useSelector(x => x.embalmState);
 
   const sarcoId = utils.id(name + Date.now().toString()); //TODO: verify this is correct way to generate
 
   const contractArchs = useMemo(() => {
-    return selectedArchaeologists.filter(arch => arch.signature !== undefined).map((arch) => {
+    if (!signaturesReady) return [];
+
+    return selectedArchaeologists.map(arch => {
       const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
       return {
         archAddress: arch.profile.archAddress,
@@ -32,7 +35,7 @@ export function useSubmitSarcophagus() {
         v, r, s,
       };
     });
-  }, [selectedArchaeologists, archaeologistEncryptedShards, diggingFees]);
+  }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards, diggingFees]);
 
 
   const { submit } = useSubmitTransaction({
@@ -41,7 +44,7 @@ export function useSubmitSarcophagus() {
     args: [
       sarcoId,
       {
-        name: name,
+        name,
         recipient: recipient.address,
         resurrectionTime: resurrection / 1000,
         canBeTransferred: false, //TODO: default to false until transfer logic figured out

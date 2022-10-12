@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { encrypt as eciesEncrypt } from 'ecies-geth';
 import { ethers } from 'ethers';
+import { hexlify, solidityKeccak256 } from 'ethers/lib/utils';
 
 /**
  * Formats an address into a more readable format
@@ -132,7 +133,11 @@ export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffe
 
 export function doubleHashShard(shard: Uint8Array): string {
   if (shard) {
-    return ethers.utils.keccak256(ethers.utils.keccak256(shard));
+    const unencryptedHash = solidityKeccak256(['string'], [hexlify(shard)]);
+    console.log('unencryptedHash', unencryptedHash);
+    const unencryptedDoubleHash = solidityKeccak256(['string'], [unencryptedHash]);
+    console.log('unencryptedDoubleHash', unencryptedDoubleHash);
+    return unencryptedDoubleHash;
   } else {
     return '';
   }

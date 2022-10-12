@@ -29,7 +29,7 @@ export interface SignatureWithAccount extends Signature {
   account: string;
 }
 
-export interface ArcheaologistEncryptedShard {
+export interface ArchaeologistEncryptedShard {
   publicKey: string,
   encryptedShard: string,
   unencryptedShardDoubleHash: string,
