@@ -1,4 +1,4 @@
-import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
+import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
 import { useEffect } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -25,7 +25,7 @@ export function useLoadArchaeologists() {
 
         const addresses: string[] = await readContract({
           addressOrName: networkConfig.diamondDeployAddress,
-          contractInterface: ViewStateFacet.abi,
+          contractInterface: ViewStateFacet__factory.abi,
           functionName: 'getArchaeologistProfileAddresses',
         });
 
@@ -33,14 +33,14 @@ export function useLoadArchaeologists() {
 
         const profiles = await readContract({
           addressOrName: networkConfig.diamondDeployAddress,
-          contractInterface: ViewStateFacet.abi,
+          contractInterface: ViewStateFacet__factory.abi,
           functionName: 'getArchaeologistProfiles',
           args: [addresses],
         });
 
         const stats = await readContract({
           addressOrName: networkConfig.diamondDeployAddress,
-          contractInterface: ViewStateFacet.abi,
+          contractInterface: ViewStateFacet__factory.abi,
           functionName: 'getArchaeologistsStatistics',
           args: [addresses],
         });

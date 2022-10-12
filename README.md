@@ -30,6 +30,7 @@ Also Windows users will need to add .npmrc file with the contents script-shell=p
 
 Finally, copy `.env.example` into `.env` in root directory and update your environment variables.
 
+Note that for local development with metamask against the archaeologist service and a hardhat node, you'll need to set the chain id to 31337 in custom network settings. Metamask's default is 1337.
 ## Community
 
 [![Discord](https://img.shields.io/discord/753398645507883099?color=768AD4&label=discord)](https://discord.com/channels/753398645507883099/)

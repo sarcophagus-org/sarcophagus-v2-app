@@ -1,5 +1,5 @@
 import { ethers, utils } from 'ethers';
-import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
+import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useSubmitTransaction } from '../useSubmitTransactions';
 import { useSelector } from 'store/index';
 
@@ -40,7 +40,7 @@ export function useSubmitSarcophagus() {
   });
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacet.abi,
+    contractInterface: EmbalmerFacet__factory.abi,
     functionName: 'createSarcophagus',
     args: [
       sarcoId,
