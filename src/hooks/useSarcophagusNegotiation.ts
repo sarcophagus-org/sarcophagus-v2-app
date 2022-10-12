@@ -111,6 +111,7 @@ export function useSarcophagusNegotiation() {
 
   // Simulate private key sharding and upload to arweave when public keys ready
   let runSimulation = useRef(true);
+  let runCreateSimulation = useRef(true);
   useEffect(() => {
     (async () => {
       if (publicKeysReady && runSimulation.current) {
@@ -129,12 +130,10 @@ export function useSarcophagusNegotiation() {
   // Likely scenario is to use signaturesReady to visually prompt user to
   // click that final submit button to make the contract call.
   useEffect(() => {
-    if (signaturesReady) {
+    if (signaturesReady && runCreateSimulation.current) {
+      runCreateSimulation.current = false;
       console.log('signatures ready');
       submitSarcophagus();
-
-      // TODO: Figure out another way to prevent infinite calls to this effect
-      dispatch(setSelectedArchaeologists([]));
     }
   }, [signaturesReady, dispatch, submitSarcophagus]);
 
