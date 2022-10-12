@@ -1,6 +1,6 @@
 import { ethers, utils } from 'ethers';
 import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
-import { useSubmitTransaction } from '../useSubmitTransactions';
+import { useSubmitTransaction } from '../useSubmitTransaction';
 import { useSelector } from 'store/index';
 import { useMemo } from 'react';
 

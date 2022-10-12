@@ -1,5 +1,5 @@
 import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
-import { useSubmitTransaction } from '../useSubmitTransactions';
+import { useSubmitTransaction } from '../useSubmitTransaction';
 
 interface RewrapSarcophagusArgs {
   sarcoId: string;
