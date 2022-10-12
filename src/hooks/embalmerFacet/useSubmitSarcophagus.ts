@@ -37,7 +37,7 @@ export function useSubmitSarcophagus() {
     });
   }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards, diggingFees]);
 
-
+  // TODO: validate store-sourced args before making this call
   const { submit } = useSubmitTransaction({
     contractInterface: EmbalmerFacet.abi,
     functionName: 'createSarcophagus',
@@ -45,7 +45,7 @@ export function useSubmitSarcophagus() {
       sarcoId,
       {
         name,
-        recipient: recipientState.address,
+        recipient: recipientState.address || '0xa1B1C565b740134aBBd3a11888F1B28bd2B52e96',
         resurrectionTime: Math.trunc(resurrection / 1000), // resurrection is in milliseconds, but saved in seconds on the contract
         canBeTransferred: false, //TODO: default to false until transfer logic figured out
         minShards: requiredArchaeologists,
