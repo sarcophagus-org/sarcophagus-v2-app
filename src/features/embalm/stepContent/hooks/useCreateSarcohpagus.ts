@@ -30,6 +30,8 @@ export function useCreateSarcophagus() {
     selectedArchaeologists,
     payloadTxId,
     shardsTxId,
+    totalArchaeologists,
+    requiredArchaeologists,
   } = useSelector(x => x.embalmState);
   const { isUploading } = useSelector(x => x.bundlrState);
   const { uploadFile } = useBundlr();
@@ -57,9 +59,8 @@ export function useCreateSarcophagus() {
 
       // Step 3: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
-        // TODO: Use `totalArchaeologists` and `requiredArchaeologists` instead of selectedArchaeologists.length
-        shares: selectedArchaeologists.length,
-        threshold: selectedArchaeologists.length,
+        shares: Number.parseInt(totalArchaeologists),
+        threshold: Number.parseInt(requiredArchaeologists),
       });
 
       // Step 4: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -86,14 +87,15 @@ export function useCreateSarcophagus() {
       dispatch(setIsUploading(false));
     }
   }, [
-    dispatch,
-    file,
-    outerPrivateKey,
-    outerPublicKey,
-    recipientState.publicKey,
-    selectedArchaeologists,
-    uploadFile,
     canCreateSarcophagus,
+    file,
+    outerPublicKey,
+    totalArchaeologists,
+    requiredArchaeologists,
+    outerPrivateKey,
+    selectedArchaeologists,
+    uploadArweaveFile,
+    dispatch
   ]);
 
   const handleCreate = useCallback(async () => {
