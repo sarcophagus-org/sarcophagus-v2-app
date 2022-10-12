@@ -8,12 +8,12 @@ import {
   setSignaturesReady,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { NEGOTIATION_SIGNATURE_STREAM } from '../../lib/config/node_config';
+import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import { useCreateSarcophagus } from 'features/embalm/stepContent/hooks/useCreateSarcohpagus';
 import { useCreateEncryptionKeypair } from 'features/embalm/stepContent/hooks/useCreateEncryptionKeypair';
 import { ArchaeologistEncryptedShard } from 'types';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
-import { useLibp2p } from './useLibp2p';
+import { useLibp2p } from './libp2p/useLibp2p';
 
 interface SarcophagusNegotiationParams {
   arweaveTxId: string;

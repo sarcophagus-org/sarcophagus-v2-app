@@ -11,7 +11,7 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
-import { useSarcophagusNegotiation } from 'hooks/libp2p/useSarcophagusNegotiation';
+import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
