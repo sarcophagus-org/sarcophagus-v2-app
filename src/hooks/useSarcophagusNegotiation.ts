@@ -4,7 +4,6 @@ import {
   setArchaeologistConnection,
   setArchaeologistSignature,
   setPublicKeysReady,
-  setSelectedArchaeologists,
   setSignaturesReady,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -115,13 +114,13 @@ export function useSarcophagusNegotiation() {
   useEffect(() => {
     (async () => {
       if (publicKeysReady && runSimulation.current) {
+        runSimulation.current = false;
+
         await createEncryptionKeypair();
         const { encryptedShards, encryptedShardsTxId } = await uploadToArweave();
 
         console.log('initiating sarco negotiation');
         await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
-
-        runSimulation.current = false;
       }
     })();
   }, [publicKeysReady, dispatch, initiateSarcophagusNegotiation, runSimulation, createEncryptionKeypair, uploadToArweave]);
