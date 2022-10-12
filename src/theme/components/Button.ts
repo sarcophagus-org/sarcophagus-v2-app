@@ -19,6 +19,12 @@ export const Button = {
       fontWeight: 400,
       fontSize: 14,
     },
+    link: {
+      color: 'brand.950',
+      textDecoration: 'underline',
+      fontSize: 'sm',
+      display: 'inline',
+    },
   },
   baseStyle: {
     border: 'none',

@@ -1,15 +1,25 @@
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { maxTotalArchaeologists, minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
-import { updateStepStatus, Recipient } from 'store/embalm/actions';
+import {
+  updateStepStatus,
+  RecipientState,
+  RecipientSetByOption,
+  GeneratePDFState,
+} from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 
-export function validateRecipient(recipient: Recipient) {
-  //TODO: do we want to check options for validity? i.e. by address need to have the address set?
+export function validateRecipient(recipient: RecipientState) {
   try {
+    if (
+      recipient.setByOption === RecipientSetByOption.GENERATE &&
+      recipient.generatePDFState !== GeneratePDFState.DOWNLOADED
+    ) {
+      return false;
+    }
     ethers.utils.computePublicKey(recipient.publicKey);
   } catch (error) {
     return false;
@@ -40,7 +50,7 @@ export function useSetStatuses() {
     name,
     outerPrivateKey,
     outerPublicKey,
-    recipient,
+    recipientState,
     requiredArchaeologists,
     resurrection,
     stepStatuses,
@@ -94,7 +104,7 @@ export function useSetStatuses() {
     dispatch(
       updateStepStatus(
         Step.SetRecipient,
-        validateRecipient(recipient) ? StepStatus.Complete : StepStatus.NotStarted
+        validateRecipient(recipientState) ? StepStatus.Complete : StepStatus.NotStarted
       )
     );
   }
@@ -133,7 +143,7 @@ export function useSetStatuses() {
     uploadPrice,
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
-  useEffect(setRecipientEffect, [dispatch, recipient]);
+  useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
   useEffect(totalRequiredArchaeologistsEffect, [
     dispatch,

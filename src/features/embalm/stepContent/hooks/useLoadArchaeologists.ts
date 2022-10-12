@@ -38,8 +38,21 @@ export function useLoadArchaeologists() {
           args: [addresses],
         });
 
+        const stats = await readContract({
+          addressOrName: networkConfig.diamondDeployAddress,
+          contractInterface: ViewStateFacet.abi,
+          functionName: 'getArchaeologistsStatistics',
+          args: [addresses],
+        });
+
         const newArchaeologists = profiles.map((p, i) => ({
-          profile: { ...p, archAddress: addresses[i] },
+          profile: {
+            ...p,
+            archAddress: addresses[i],
+            successes: stats[i].successes,
+            cleanups: stats[i].cleanups,
+            accusals: stats[i].accusals,
+          },
           isOnline: false,
         }));
         dispatch(setArchaeologists(newArchaeologists));

@@ -1,17 +1,19 @@
-import { useToast } from '@chakra-ui/react';
 import { useState, useCallback } from 'react';
-import { setRecipient, Recipient } from 'store/embalm/actions';
+import {
+  setRecipientState,
+  RecipientState,
+  GeneratePDFState,
+  RecipientSetByOption,
+} from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Page, Text, Image, View, Document, StyleSheet, pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import QRCode from 'qrcode';
-import santiize from 'sanitize-filename';
-import { generateRecipientKeysAndPDF, generateRecipientPDFFailure } from 'lib/utils/toast';
-
+import sanitize from 'sanitize-filename';
 import { createEncryptionKeypairAsync } from '../useCreateEncryptionKeypair';
 import { ethers } from 'ethers';
 
-const document = async (name: string, recipient: Recipient) => {
+const document = async (name: string, recipient: RecipientState) => {
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'column',
@@ -75,43 +77,79 @@ const document = async (name: string, recipient: Recipient) => {
   );
 };
 
-const generatePdfDocument = async (name: string, recipient: Recipient) => {
+const generatePdfDocument = async (name: string, recipient: RecipientState) => {
   return pdf(await document(name, recipient)).toBlob();
 };
 
-export function useCreateRecipientPDF() {
+export function useGenerateRecipientPDF() {
   const dispatch = useDispatch();
-  const toast = useToast();
-  const { name } = useSelector(x => x.embalmState);
+  const { name, recipientState } = useSelector(x => x.embalmState);
   const [isLoading, setIsLoading] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
-  const generateAndDownloadRecipientPDF = useCallback(async () => {
+  const generatePublicKey = useCallback(async () => {
     try {
       setIsLoading(true);
+      setGenerateError(null);
 
       const { privateKey, publicKey } = await createEncryptionKeypairAsync();
 
-      const recipient: Recipient = {
+      const recipient: RecipientState = {
         address: ethers.utils.computeAddress(publicKey),
         publicKey: publicKey,
         privateKey: privateKey,
+        setByOption: RecipientSetByOption.GENERATE,
+        generatePDFState: GeneratePDFState.GENERATED,
       };
-      dispatch(setRecipient(recipient));
-
-      const pdfBlob = await generatePdfDocument(name, recipient);
-      saveAs(pdfBlob, santiize(name + '-' + recipient.address.slice(0, 6) + '.pdf'));
-
-      const id = 'generateRecipientPDF';
-      if (!toast.isActive(id)) {
-        toast({ ...generateRecipientKeysAndPDF(), id });
-      }
+      dispatch(setRecipientState(recipient));
+      setIsLoading(false);
     } catch (_error) {
+      dispatch(
+        setRecipientState({
+          address: '',
+          publicKey: '',
+          setByOption: RecipientSetByOption.GENERATE,
+        })
+      );
       const error = _error as Error;
-      toast(generateRecipientPDFFailure(error.message));
+      setGenerateError(error.message);
     } finally {
       setIsLoading(false);
     }
-  }, [dispatch, name, toast]);
+  }, [dispatch]);
 
-  return { isLoading, generateAndDownloadRecipientPDF };
+  const downloadRecipientPDF = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setGenerateError(null);
+
+      const pdfBlob = await generatePdfDocument(name, recipientState);
+      saveAs(pdfBlob, sanitize(name + '-' + recipientState.address.slice(0, 6) + '.pdf'));
+
+      // TODO: need to refactor RecipientState so that we can just set GenerateState without setting the whole recipient
+      const newRecipientState: RecipientState = {
+        address: recipientState.address,
+        publicKey: recipientState.publicKey,
+        privateKey: recipientState.privateKey,
+        setByOption: recipientState.setByOption,
+        generatePDFState: GeneratePDFState.DOWNLOADED,
+      };
+
+      dispatch(setRecipientState(newRecipientState));
+    } catch (_error) {
+      dispatch(
+        setRecipientState({
+          address: '',
+          publicKey: '',
+          setByOption: RecipientSetByOption.GENERATE,
+        })
+      );
+      const error = _error as Error;
+      setGenerateError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dispatch, name, recipientState]);
+
+  return { isLoading, downloadRecipientPDF, generatePublicKey, generateError };
 }

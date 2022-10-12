@@ -10,7 +10,7 @@ export function useSubmitSarcophagus() {
 
   const {
     name,
-    recipient,
+    recipientState,
     resurrection,
     selectedArchaeologists,
     requiredArchaeologists,
@@ -45,8 +45,8 @@ export function useSubmitSarcophagus() {
       sarcoId,
       {
         name,
-        recipient: recipient.address,
-        resurrectionTime: resurrection / 1000,
+        recipient: recipientState.address,
+        resurrectionTime: resurrection / 1000, // resurrection is in milliseconds, but saved in seconds on the contract
         canBeTransferred: false, //TODO: default to false until transfer logic figured out
         minShards: requiredArchaeologists,
       },

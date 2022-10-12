@@ -1,7 +1,7 @@
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
-import { ActionType, Recipient, RecipientSetByOption, SortDirection } from './actions';
+import { ActionType, RecipientState, SortDirection } from './actions';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -31,8 +31,7 @@ export interface EmbalmState {
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
   payloadTxId: string;
-  recipient: Recipient;
-  recipientSetByOption: RecipientSetByOption | undefined;
+  recipientState: RecipientState;
   requiredArchaeologists: string;
   resurrection: number;
   resurrectionRadioValue: string;
@@ -60,8 +59,7 @@ export const embalmInitialState: EmbalmState = {
   outerPrivateKey: null,
   outerPublicKey: null,
   payloadTxId: '',
-  recipient: { publicKey: '', address: '' },
-  recipientSetByOption: undefined,
+  recipientState: { publicKey: '', address: '', setByOption: null },
   requiredArchaeologists: '0',
   resurrection: 0,
   resurrectionRadioValue: '',
@@ -165,20 +163,16 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetPublicKeysReady:
       return { ...state, publicKeysReady: action.payload.publicKeysReady };
 
-    case ActionType.SetRecipient:
+    case ActionType.SetRecipientState:
       return {
         ...state,
-        recipient: {
+        recipientState: {
           publicKey: action.payload.publicKey,
           address: action.payload.address,
           privateKey: action.payload.privateKey,
+          setByOption: action.payload.setByOption,
+          generatePDFState: action.payload.generatePDFState,
         },
-      };
-
-    case ActionType.SetRecipientSetByOption:
-      return {
-        ...state,
-        recipientSetByOption: action.payload,
       };
 
     case ActionType.SetFile:
