@@ -1,4 +1,4 @@
-import { ethers, utils } from 'ethers';
+import { BigNumber, ethers, utils } from 'ethers';
 import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
 import { useSubmitTransaction } from '../useSubmitTransaction';
 import { useSelector } from 'store/index';
@@ -30,12 +30,22 @@ export function useSubmitSarcophagus() {
       const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
       return {
         archAddress: arch.profile.archAddress,
-        diggingFee: diggingFees,
+        diggingFee: ethers.utils.parseEther(diggingFees),
         unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(shard => shard.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
         v, r, s,
       };
     });
   }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards, diggingFees]);
+
+
+  const maximumRewrapInterval = useMemo(() => {
+    if (!signaturesReady) return ethers.constants.Zero;
+
+    let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
+    selectedArchaeologists.forEach(arch => maxRewrapInterval = arch.profile.maximumRewrapInterval < maxRewrapInterval ? arch.profile.maximumRewrapInterval : maxRewrapInterval);
+    return BigNumber.from(maxRewrapInterval);
+  }, [selectedArchaeologists, signaturesReady]);
+
 
   // TODO: validate store-sourced args before making this call
   const { submit } = useSubmitTransaction({
@@ -46,9 +56,11 @@ export function useSubmitSarcophagus() {
       {
         name,
         recipient: recipientState.address || '0xa1B1C565b740134aBBd3a11888F1B28bd2B52e96',
-        resurrectionTime: Math.trunc(resurrection / 1000), // resurrection is in milliseconds, but saved in seconds on the contract
+        resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()), // resurrection is in milliseconds, but saved in seconds on the contract,
         canBeTransferred: false, //TODO: default to false until transfer logic figured out
-        minShards: requiredArchaeologists,
+        minShards: Number.parseInt(requiredArchaeologists),
+        timestamp: BigNumber.from(Math.trunc(Date.now() / 1000).toString()),
+        maximumRewrapInterval,
       },
       contractArchs,
       [payloadTxId, shardsTxId],
