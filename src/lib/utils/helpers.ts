@@ -134,9 +134,7 @@ export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffe
 export function doubleHashShard(shard: Uint8Array): string {
   if (shard) {
     const unencryptedHash = solidityKeccak256(['string'], [hexlify(shard)]);
-    console.log('unencryptedHash', unencryptedHash);
     const unencryptedDoubleHash = solidityKeccak256(['string'], [unencryptedHash]);
-    console.log('unencryptedDoubleHash', unencryptedDoubleHash);
     return unencryptedDoubleHash;
   } else {
     return '';

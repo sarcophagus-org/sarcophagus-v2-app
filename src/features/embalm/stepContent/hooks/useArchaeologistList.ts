@@ -11,11 +11,11 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
-import { useLibp2p } from 'hooks/libp2p/useLibp2p';
+import { useSarcophagusNegotiation } from 'hooks/libp2p/useSarcophagusNegotiation';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
-  const { dialSelectedArchaeologists } = useLibp2p();
+  const { dialSelectedArchaeologists } = useSarcophagusNegotiation();
 
   const dispatch = useDispatch();
 
@@ -73,10 +73,10 @@ export function useArchaeologistList() {
     diggingFeesSortDirection === SortDirection.NONE
       ? onlineArchaeologists
       : orderBy(
-          onlineArchaeologists,
-          'profile.minimumDiggingFee',
-          sortOrderByMap[diggingFeesSortDirection]
-        );
+        onlineArchaeologists,
+        'profile.minimumDiggingFee',
+        sortOrderByMap[diggingFeesSortDirection]
+      );
 
   const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
     arch =>
