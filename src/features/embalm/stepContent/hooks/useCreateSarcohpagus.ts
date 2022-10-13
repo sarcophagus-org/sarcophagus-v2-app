@@ -65,18 +65,15 @@ export function useCreateSarcophagus() {
 
       // Step 4: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key
-      // dispatch(setShards(encryptedShards));
       const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
       const encryptedShards = await encryptShards(archPublicKeys, shards);
 
       // Step 5: Upload the double encrypted payload to the arweave bundlr
       const sarcophagusPayloadTxId = await uploadArweaveFile(encryptedOuterLayer); // TODO: change to use uploadFile for Bundlr
-      // dispatch(setPayloadTxId(sarcophagusPayloadTxId));
 
       // Step 6: Upload the encrypted shards mapping to the arweave bundlr
       const mapping: Record<string, string> = encryptedShards.reduce((acc, shard) => ({ ...acc, [shard.publicKey]: shard.encryptedShard }), {});
       const encryptedShardsTxId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr
-      // dispatch(setShardsTxId(encryptedShardsTxId));
 
       dispatch(setShardPayloadData(encryptedShards, sarcophagusPayloadTxId, encryptedShardsTxId));
       return { encryptedShards, encryptedShardsTxId };
