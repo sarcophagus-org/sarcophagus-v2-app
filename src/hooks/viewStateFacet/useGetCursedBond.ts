@@ -1,5 +1,5 @@
 import { useContractRead } from 'wagmi';
-import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
+import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
 
 export function useGetCursedBond({ archaeologist }: { archaeologist: string }) {
@@ -7,7 +7,7 @@ export function useGetCursedBond({ archaeologist }: { archaeologist: string }) {
 
   const { data } = useContractRead({
     addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet.abi,
+    contractInterface: ViewStateFacet__factory.abi,
     functionName: 'getCursedBond',
     args: [archaeologist],
   });

@@ -1,7 +1,7 @@
 // import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useAccount, useContract, useContractRead, useProvider } from 'wagmi';
-import { ViewStateFacet } from 'lib/abi/ViewStateFacet';
+import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { ISarcophagus } from 'types/sarcophagi.interfaces';
 import { useNetworkConfig } from 'lib/config';
 
@@ -13,13 +13,13 @@ const useSarcophagi = () => {
 
   const viewStateContract = useContract({
     addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet.abi,
+    contractInterface: ViewStateFacet__factory.abi,
     signerOrProvider: provider,
   });
 
   const getEmbalmersarcophagi = useContractRead({
     addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet.abi,
+    contractInterface: ViewStateFacet__factory.abi,
     functionName: 'getEmbalmersarcophagi',
     args: [embalmerAddress],
   });

@@ -1,4 +1,4 @@
-import { EmbalmerFacet } from 'lib/abi/EmbalmerFacet';
+import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useSubmitTransaction } from '../useSubmitTransaction';
 
 interface BurySarcophagusArgs {
@@ -10,7 +10,7 @@ export function useBurySarcophagus({ sarcoId }: BurySarcophagusArgs) {
   const transactionDescription = 'Bury sarcophagus';
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacet.abi,
+    contractInterface: EmbalmerFacet__factory.abi,
     functionName: 'burySarcophagus',
     args: [sarcoId],
     toastDescription,
