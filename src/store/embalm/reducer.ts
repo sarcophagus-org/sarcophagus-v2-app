@@ -225,12 +225,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetArchAddressSearch:
       return { ...state, archAddressSearch: action.payload.search };
 
-    case ActionType.SetPayloadTxId:
-      return { ...state, payloadTxId: action.payload.txId };
-
-    case ActionType.SetShardsTxId:
-      return { ...state, shardsTxId: action.payload.txId };
-
     case ActionType.SetArchaeologistFullPeerId:
       return updateArchProperty(
         state,
