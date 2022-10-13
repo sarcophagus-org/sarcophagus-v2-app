@@ -33,7 +33,6 @@ export function useBundlrSession() {
       {
         timeout: 100000,
         providerUrl: networkConfig.bundlr.providerUrl,
-        contractAddress: networkConfig.bundlr.currencyContractAddress,
       }
     );
 
@@ -91,7 +90,6 @@ export function useBundlrSession() {
         {
           timeout: 100000,
           providerUrl: networkConfig.bundlr.providerUrl,
-          contractAddress: networkConfig.bundlr.currencyContractAddress,
         }
       );
 

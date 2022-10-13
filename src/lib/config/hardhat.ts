@@ -10,6 +10,5 @@ export const hardhatNetworkConfig: NetworkConfig = {
     currencyName: 'ethereum',
     nodeUrl: 'https://devnet.bundlr.network',
     providerUrl: 'https://rpc.ankr.com/eth_goerli',
-    currencyContractAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   },
 };

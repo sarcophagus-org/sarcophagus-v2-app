@@ -10,6 +10,5 @@ export const mainnetNetworkConfig: NetworkConfig = {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',
     providerUrl: 'https://rpc.ankr.com/eth',
-    currencyContractAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   },
 };
