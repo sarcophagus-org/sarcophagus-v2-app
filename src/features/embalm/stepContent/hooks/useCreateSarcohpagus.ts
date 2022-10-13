@@ -7,7 +7,7 @@ import {
   setShardPayloadData,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useBundlr } from './useBundlr';
+// import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
@@ -23,7 +23,7 @@ async function encryptShards(publicKeys: string[], payload: Uint8Array[]): Promi
 export function useCreateSarcophagus() {
   const dispatch = useDispatch();
   const {
-    recipientState,
+    // recipientState,
     file,
     outerPublicKey,
     outerPrivateKey,
@@ -34,7 +34,7 @@ export function useCreateSarcophagus() {
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
   const { isUploading } = useSelector(x => x.bundlrState);
-  const { uploadFile } = useBundlr();
+  // const { uploadFile } = useBundlr();
   const { uploadArweaveFile } = useArweaveService();
   const { submitSarcophagus } = useSubmitSarcophagus();
 
