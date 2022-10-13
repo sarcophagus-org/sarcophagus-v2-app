@@ -21,7 +21,7 @@ export interface ArchaeologistProfile {
   archAddress: string;
   exists: boolean;
   minimumDiggingFee: BigNumber;
-  maximumRewrapInterval: number;
+  maximumRewrapInterval: BigNumber;
   successes: string[];
   cleanups: string[];
   accusals: string[];

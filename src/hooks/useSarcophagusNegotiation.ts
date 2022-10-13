@@ -13,11 +13,12 @@ import { useCreateEncryptionKeypair } from 'features/embalm/stepContent/hooks/us
 import { ArchaeologistEncryptedShard } from 'types';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { useLibp2p } from './libp2p/useLibp2p';
+import { BigNumber } from 'ethers';
 
 interface SarcophagusNegotiationParams {
   arweaveTxId: string;
   unencryptedShardDoubleHash: string;
-  maxRewrapInterval: number;
+  maxRewrapInterval: BigNumber;
   diggingFee: string;
   timestamp: number;
 }
@@ -50,10 +51,14 @@ export function useSarcophagusNegotiation() {
   const initiateSarcophagusNegotiation = useCallback(
     async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string) => {
       try {
-        let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
-        selectedArchaeologists.forEach(arch => maxRewrapInterval = arch.profile.maximumRewrapInterval < maxRewrapInterval ? arch.profile.maximumRewrapInterval : maxRewrapInterval);
-
         if (archaeologistShards.length === 0) return;
+
+        let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
+        selectedArchaeologists.forEach(arch =>
+          maxRewrapInterval = arch.profile.maximumRewrapInterval.lt(maxRewrapInterval) ?
+            arch.profile.maximumRewrapInterval :
+            maxRewrapInterval
+        );
 
         selectedArchaeologists.map(async arch => {
           if (!arch.connection) throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);

@@ -42,8 +42,13 @@ export function useSubmitSarcophagus() {
     if (!signaturesReady) return ethers.constants.Zero;
 
     let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
-    selectedArchaeologists.forEach(arch => maxRewrapInterval = arch.profile.maximumRewrapInterval < maxRewrapInterval ? arch.profile.maximumRewrapInterval : maxRewrapInterval);
-    return BigNumber.from(maxRewrapInterval);
+    selectedArchaeologists.forEach(arch =>
+      maxRewrapInterval = arch.profile.maximumRewrapInterval.lt(maxRewrapInterval) ?
+        arch.profile.maximumRewrapInterval :
+        maxRewrapInterval
+    );
+
+    return maxRewrapInterval;
   }, [selectedArchaeologists, signaturesReady]);
 
 
