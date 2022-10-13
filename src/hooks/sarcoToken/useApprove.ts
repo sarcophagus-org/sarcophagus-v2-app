@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { useContractWrite } from 'wagmi';
-import { SarcoToken } from 'lib/abi/SarcoToken';
+import { SarcoTokenMock__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
 
 export function useApprove() {
@@ -8,7 +8,7 @@ export function useApprove() {
 
   const { write } = useContractWrite({
     addressOrName: networkConfig.sarcoTokenAddress,
-    contractInterface: SarcoToken.abi,
+    contractInterface: SarcoTokenMock__factory.abi,
     functionName: 'approve',
     args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
   });

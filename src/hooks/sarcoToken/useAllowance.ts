@@ -1,5 +1,5 @@
 import { useAccount, useContractRead } from 'wagmi';
-import { SarcoToken } from 'lib/abi/SarcoToken';
+import { SarcoTokenMock__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
 
 export function useAllowance() {
@@ -8,7 +8,7 @@ export function useAllowance() {
 
   const { data } = useContractRead({
     addressOrName: networkConfig.sarcoTokenAddress,
-    contractInterface: SarcoToken.abi,
+    contractInterface: SarcoTokenMock__factory.abi,
     functionName: 'allowance',
     args: [address, networkConfig.diamondDeployAddress],
   });
