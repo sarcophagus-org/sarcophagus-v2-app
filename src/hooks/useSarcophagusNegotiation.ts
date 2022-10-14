@@ -54,12 +54,10 @@ export function useSarcophagusNegotiation() {
       try {
         if (archaeologistShards.length === 0) return;
 
-        let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
-        selectedArchaeologists.forEach(arch =>
-          maxRewrapInterval = arch.profile.maximumRewrapInterval.lt(maxRewrapInterval) ?
-            arch.profile.maximumRewrapInterval :
-            maxRewrapInterval
-        );
+        const minimumMaxRewrapInterval =
+          Math.min(...selectedArchaeologists.map((arch) => {
+            return Number(arch.profile.maximumRewrapInterval)
+          }));
 
         const negotiationTimestamp = Date.now();
         dispatch(setNegotiationTimestamp(negotiationTimestamp));
@@ -70,7 +68,7 @@ export function useSarcophagusNegotiation() {
           const negotiationParams: SarcophagusNegotiationParams = {
             arweaveTxId: encryptedShardsTxId,
             diggingFee: arch.profile.minimumDiggingFee.toString(),
-            maxRewrapInterval,
+            maxRewrapInterval: BigNumber.from(minimumMaxRewrapInterval),
             timestamp: negotiationTimestamp,
             unencryptedShardDoubleHash: archaeologistShards.filter(s => s.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
           };
