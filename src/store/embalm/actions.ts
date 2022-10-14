@@ -37,6 +37,7 @@ export enum ActionType {
   SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
   SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
+  SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
 }
 
 export enum RecipientSetByOption {
@@ -109,6 +110,7 @@ type EmbalmPayload = {
   };
   [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetSignaturesReady]: { signaturesReady: boolean };
+  [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -366,6 +368,15 @@ export function setArchaeologistOnlineStatus(peerId: string, isOnline: boolean):
     payload: {
       peerId,
       isOnline,
+    },
+  };
+}
+
+export function setNegotiationTimestamp(negotiationTimestamp: number): EmbalmActions {
+  return {
+    type: ActionType.SetNegotiationTimestamp,
+    payload: {
+      negotiationTimestamp,
     },
   };
 }

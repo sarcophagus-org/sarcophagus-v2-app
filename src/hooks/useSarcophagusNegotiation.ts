@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import {
   setArchaeologistConnection,
   setArchaeologistSignature,
+  setNegotiationTimestamp,
   setPublicKeysReady,
   setSignaturesReady,
 } from 'store/embalm/actions';
@@ -27,7 +28,6 @@ export function useSarcophagusNegotiation() {
   const dispatch = useDispatch();
   const {
     selectedArchaeologists,
-    diggingFees,
     publicKeysReady,
     signaturesReady,
   } = useSelector(s => s.embalmState);
@@ -60,14 +60,17 @@ export function useSarcophagusNegotiation() {
             maxRewrapInterval
         );
 
+        const negotiationTimestamp = Date.now();
+        dispatch(setNegotiationTimestamp(negotiationTimestamp));
+
         selectedArchaeologists.map(async arch => {
           if (!arch.connection) throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
           const negotiationParams: SarcophagusNegotiationParams = {
             arweaveTxId: encryptedShardsTxId,
-            diggingFee: diggingFees,
+            diggingFee: arch.profile.minimumDiggingFee.toString(),
             maxRewrapInterval,
-            timestamp: Date.now(),
+            timestamp: negotiationTimestamp,
             unencryptedShardDoubleHash: archaeologistShards.filter(s => s.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
           };
 
@@ -78,6 +81,7 @@ export function useSarcophagusNegotiation() {
           pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
             for await (const data of source) {
               const dataStr = new TextDecoder().decode(data);
+              // TODO: remove these logs after we gain some confidence in this exchange
               console.log('got', dataStr);
 
               const { signature }: { signature: string } = JSON.parse(dataStr);
@@ -92,7 +96,7 @@ export function useSarcophagusNegotiation() {
         console.error(`Error in peer connection listener: ${err}`);
       }
     },
-    [selectedArchaeologists, dispatch, diggingFees]
+    [selectedArchaeologists, dispatch]
   );
 
   // Update publicKeysReady

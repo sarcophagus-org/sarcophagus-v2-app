@@ -47,6 +47,7 @@ export interface EmbalmState {
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   publicKeysReady: boolean;
   signaturesReady: boolean;
+  negotiationTimestamp: number;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -78,6 +79,7 @@ export const embalmInitialState: EmbalmState = {
   archaeologistEncryptedShards: [],
   publicKeysReady: false,
   signaturesReady: false,
+  negotiationTimestamp: 0,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -264,6 +266,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetSignaturesReady:
       return { ...state, signaturesReady: action.payload.signaturesReady };
+
+    case ActionType.SetNegotiationTimestamp:
+      return { ...state, negotiationTimestamp: action.payload.negotiationTimestamp };
 
     case ActionType.SetArchaeologistPublicKey:
       return updateArchProperty(

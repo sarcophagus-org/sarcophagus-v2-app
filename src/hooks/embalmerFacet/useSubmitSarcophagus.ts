@@ -16,9 +16,9 @@ export function useSubmitSarcophagus() {
     requiredArchaeologists,
     payloadTxId,
     shardsTxId,
-    diggingFees,
     archaeologistEncryptedShards,
     signaturesReady,
+    negotiationTimestamp,
   } = useSelector(x => x.embalmState);
 
   const sarcoId = utils.id(name + Date.now().toString()); //TODO: verify this is correct way to generate
@@ -30,12 +30,12 @@ export function useSubmitSarcophagus() {
       const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
       return {
         archAddress: arch.profile.archAddress,
-        diggingFee: ethers.utils.parseEther(diggingFees),
+        diggingFee: arch.profile.minimumDiggingFee,
         unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(shard => shard.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
         v, r, s,
       };
     });
-  }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards, diggingFees]);
+  }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards]);
 
 
   const maximumRewrapInterval = useMemo(() => {
@@ -64,7 +64,7 @@ export function useSubmitSarcophagus() {
         resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()), // resurrection is in milliseconds, but saved in seconds on the contract,
         canBeTransferred: false, //TODO: default to false until transfer logic figured out
         minShards: Number.parseInt(requiredArchaeologists),
-        timestamp: BigNumber.from(Math.trunc(Date.now() / 1000).toString()),
+        timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
         maximumRewrapInterval,
       },
       contractArchs,
