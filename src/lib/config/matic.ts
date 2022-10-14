@@ -10,6 +10,5 @@ export const maticNetworkConfig: NetworkConfig = {
     currencyName: 'matic',
     nodeUrl: 'https://node1.bundlr.network',
     providerUrl: 'https://polygon-rpc.com',
-    currencyContractAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   },
 };

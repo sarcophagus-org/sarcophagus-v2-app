@@ -36,6 +36,7 @@ export function useBundlr() {
       toast(fundStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
+        console.log(parsedAmount);
         await bundlr?.fund(Number(parsedAmount));
 
         toast(fundSuccess());
@@ -85,7 +86,7 @@ export function useBundlr() {
       setIsUploading(true);
       toast(uploadStart());
       try {
-        const res = await bundlr?.uploader.upload(fileBuffer);
+        const res = await bundlr?.upload(fileBuffer);
         toast(uploadSuccess());
         return res.data.id;
       } catch (_error) {
