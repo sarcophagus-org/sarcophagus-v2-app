@@ -1,5 +1,5 @@
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useSubmitTransaction } from '../useSubmitTransactions';
+import { useSubmitTransaction } from '../useSubmitTransaction';
 
 interface CancelSarcophagusArgs {
   sarcoId: string;

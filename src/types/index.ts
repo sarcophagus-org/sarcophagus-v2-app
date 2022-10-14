@@ -14,36 +14,28 @@ export interface Archaeologist {
   isOnline: boolean;
   fullPeerId?: PeerId;
   lastPinged?: Date;
-}
-
-export interface SelectedContractArchaeologist {
-  archAddress: string;
-  diggingFee: BigNumber;
-  unencryptedShardDoubleHash: string;
-  v: number;
-  r: string;
-  s: string;
+  signature?: string;
 }
 
 export interface ArchaeologistProfile {
   archAddress: string;
   exists: boolean;
   minimumDiggingFee: BigNumber;
-  maximumRewrapInterval: number;
+  maximumRewrapInterval: BigNumber;
   successes: string[];
   cleanups: string[];
   accusals: string[];
   peerId: string;
-
-  signature: {
-    v: number;
-    r: string;
-    s: string;
-  };
 }
 
 export interface SignatureWithAccount extends Signature {
   account: string;
+}
+
+export interface ArchaeologistEncryptedShard {
+  publicKey: string,
+  encryptedShard: string,
+  unencryptedShardDoubleHash: string,
 }
 
 // Temporary

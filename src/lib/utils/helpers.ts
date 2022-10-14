@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { encrypt as eciesEncrypt } from 'ecies-geth';
 import { ethers } from 'ethers';
+import { hexlify, solidityKeccak256 } from 'ethers/lib/utils';
 
 /**
  * Formats an address into a more readable format
@@ -128,4 +129,14 @@ export function randomIntFromInterval(min: number, max: number): number {
  */
 export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffer> {
   return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(payload));
+}
+
+export function doubleHashShard(shard: Uint8Array): string {
+  if (shard) {
+    const unencryptedHash = solidityKeccak256(['string'], [hexlify(shard)]);
+    const unencryptedDoubleHash = solidityKeccak256(['string'], [unencryptedHash]);
+    return unencryptedDoubleHash;
+  } else {
+    return '';
+  }
 }

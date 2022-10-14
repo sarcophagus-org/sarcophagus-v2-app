@@ -1,6 +1,5 @@
-import { useAsyncEffect } from 'hooks/useAsyncEffect';
 import { bundlrBalanceDecimals } from 'lib/constants';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
@@ -15,9 +14,7 @@ export function useGetBalance() {
   const formattedBalance = useMemo(
     () =>
       isConnected
-        ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${
-            chain?.nativeCurrency?.name || 'ETH'
-          }`
+        ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${chain?.nativeCurrency?.name || 'ETH'}`
         : '',
     [balance, chain, isConnected]
   );
@@ -25,21 +22,23 @@ export function useGetBalance() {
   /**
    * The hook returns this to manually load the balance after a successful fund
    */
-  async function getBalance(): Promise<string> {
+  const getBalance = useCallback(async () => {
     if (!bundlr) return '0';
     const newBalance = await bundlr.getLoadedBalance();
     const converted = bundlr.utils.unitConverter(newBalance);
     return converted.toString();
-  }
-
-  useAsyncEffect(async () => {
-    if (bundlr) {
-      const newBalance = await getBalance();
-      dispatch(setBalance(newBalance));
-    } else {
-      dispatch(setBalance(''));
-    }
   }, [bundlr]);
+
+  useEffect(() => {
+    (async () => {
+      if (bundlr) {
+        const newBalance = await getBalance();
+        dispatch(setBalance(newBalance));
+      } else {
+        dispatch(setBalance(''));
+      }
+    })();
+  }, [bundlr, dispatch, getBalance]);
 
   return { balance, getBalance, formattedBalance };
 }
