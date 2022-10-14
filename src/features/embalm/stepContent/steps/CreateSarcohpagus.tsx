@@ -5,7 +5,7 @@ import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 
 export function CreateSarcophagus() {
-  const { uploadToArweave, handleCreate, isUploading, canCreateSarcophagus, payloadTxId, shardsTxId } =
+  const { uploadAndSetEncryptedShards, handleCreate, isUploading, canCreateSarcophagus, payloadTxId, shardsTxId } =
     useCreateSarcophagus();
 
   const { approve } = useApprove();
@@ -47,7 +47,7 @@ export function CreateSarcophagus() {
       </Button>
       <Button
         mt={6}
-        onClick={uploadToArweave}
+        onClick={uploadAndSetEncryptedShards}
         isLoading={isUploading}
         disabled={isUploading || !canCreateSarcophagus}
       >

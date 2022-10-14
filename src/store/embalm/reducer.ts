@@ -279,14 +279,21 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         updateSelected: true,
       });
 
+    case ActionType.SetSarcophagusPayloadTxId:
+      const { sarcophagusPayloadTxId } = action.payload;
+
+      return {
+        ...state,
+        payloadTxId: sarcophagusPayloadTxId
+      }
+
     case ActionType.SetShardPayloadData:
-      const { shards, encryptedShardsTxId, sarcophagusPayloadTxId } = action.payload;
+      const { shards, encryptedShardsTxId } = action.payload;
 
       return {
         ...state,
         archaeologistEncryptedShards: shards,
-        shardsTxId: encryptedShardsTxId,
-        payloadTxId: sarcophagusPayloadTxId,
+        shardsTxId: encryptedShardsTxId
       };
 
     default:

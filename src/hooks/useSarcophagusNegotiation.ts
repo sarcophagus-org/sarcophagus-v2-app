@@ -4,8 +4,8 @@ import {
   setArchaeologistConnection,
   setArchaeologistSignature,
   setNegotiationTimestamp,
-  setPublicKeysReady,
-  setSignaturesReady,
+  setPublicKeysReady, setSarcophagusPayloadTxId,
+  setSignaturesReady
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
@@ -30,6 +30,7 @@ export function useSarcophagusNegotiation() {
     selectedArchaeologists,
     publicKeysReady,
     signaturesReady,
+    payloadTxId
   } = useSelector(s => s.embalmState);
   const { resetPublicKeyStream } = useLibp2p();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
@@ -112,7 +113,7 @@ export function useSarcophagusNegotiation() {
 
   // TODO: Remove all shard setup simulation code below once create sarco flow is properly wired up
   // TODO: `initiateSarcophagusNegotiation` and `submitSarcophagus` should be intentionally called in response to UI action
-  const { uploadToArweave } = useCreateSarcophagus();
+  const { uploadAndSetEncryptedShards, uploadAndSetDoubleEncryptedFile } = useCreateSarcophagus();
   const { createEncryptionKeypair } = useCreateEncryptionKeypair();
   const { submitSarcophagus } = useSubmitSarcophagus();
 
@@ -126,24 +127,30 @@ export function useSarcophagusNegotiation() {
         runSimulation.current = false;
 
         await createEncryptionKeypair();
-        const { encryptedShards, encryptedShardsTxId } = await uploadToArweave();
+        const { encryptedShards, encryptedShardsTxId } = await uploadAndSetEncryptedShards();
 
         console.log('initiating sarco negotiation');
         await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
       }
     })();
-  }, [publicKeysReady, dispatch, initiateSarcophagusNegotiation, runSimulation, createEncryptionKeypair, uploadToArweave]);
+  }, [publicKeysReady, dispatch, initiateSarcophagusNegotiation, runSimulation, createEncryptionKeypair, uploadAndSetEncryptedShards]);
 
+  // TODO: move this to its own hook / file when create sarcophagus flow is finalized
   // Simulate call to create sarco when signatures ready
   // Likely scenario is to use signaturesReady to visually prompt user to
   // click that final submit button to make the contract call.
-  useEffect(() => {
+  useEffect( () => {
     if (signaturesReady && runCreateSimulation.current) {
       runCreateSimulation.current = false;
       console.log('signatures ready');
+      uploadAndSetDoubleEncryptedFile();
+    }
+
+    if (!!payloadTxId) {
+      console.log('file upload to arweave complete, submitting create sarcophagus');
       submitSarcophagus();
     }
-  }, [signaturesReady, dispatch, submitSarcophagus]);
+  }, [signaturesReady, dispatch, uploadAndSetDoubleEncryptedFile, submitSarcophagus]);
 
   return {
     dialSelectedArchaeologists,

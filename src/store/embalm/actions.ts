@@ -35,6 +35,7 @@ export enum ActionType {
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
+  SetSarcophagusPayloadTxId = 'EMBALM_SET_SARCOPHAGUS_PAYLOAD_TX_ID',
   SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
@@ -103,9 +104,11 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
+  [ActionType.SetSarcophagusPayloadTxId]: {
+    sarcophagusPayloadTxId: string
+  };
   [ActionType.SetShardPayloadData]: {
     shards: ArchaeologistEncryptedShard[],
-    sarcophagusPayloadTxId: string,
     encryptedShardsTxId: string
   };
   [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
@@ -391,12 +394,20 @@ export function setArchaeologistPublicKey(peerId: string, publicKey: string): Em
   };
 }
 
-export function setShardPayloadData(shards: ArchaeologistEncryptedShard[], sarcophagusPayloadTxId: string, encryptedShardsTxId: string): EmbalmActions {
+export function setSarcophagusPayloadTxId(sarcophagusPayloadTxId: string): EmbalmActions {
+  return {
+    type: ActionType.SetSarcophagusPayloadTxId,
+    payload: {
+      sarcophagusPayloadTxId
+    },
+  };
+}
+
+export function setShardPayloadData(shards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string): EmbalmActions {
   return {
     type: ActionType.SetShardPayloadData,
     payload: {
       shards,
-      sarcophagusPayloadTxId,
       encryptedShardsTxId
     },
   };
