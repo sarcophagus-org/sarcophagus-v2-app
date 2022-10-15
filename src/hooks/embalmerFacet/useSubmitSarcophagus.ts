@@ -59,7 +59,7 @@ export function useSubmitSarcophagus() {
         recipient: recipientState.address || '0xa1B1C565b740134aBBd3a11888F1B28bd2B52e96',
         resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()), // resurrection is in milliseconds, but saved in seconds on the contract,
         canBeTransferred: false, //TODO: default to false until transfer logic figured out
-        minShards: Number.parseInt(requiredArchaeologists),
+        minShards: requiredArchaeologists,
         timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
         maximumRewrapInterval,
       },

@@ -31,7 +31,7 @@ export interface EmbalmState {
   outerPublicKey: string | null;
   payloadTxId: string;
   recipientState: RecipientState;
-  requiredArchaeologists: string;
+  requiredArchaeologists: number;
   resurrection: number;
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
@@ -59,7 +59,7 @@ export const embalmInitialState: EmbalmState = {
   outerPublicKey: null,
   payloadTxId: '',
   recipientState: { publicKey: '', address: '', setByOption: null },
-  requiredArchaeologists: '0',
+  requiredArchaeologists: 1,
   resurrection: 0,
   resurrectionRadioValue: '',
   customResurrectionDate: null,

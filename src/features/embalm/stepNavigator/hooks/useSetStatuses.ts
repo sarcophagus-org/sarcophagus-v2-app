@@ -32,10 +32,8 @@ export function validateTotalArchaeologists(total: number): boolean {
   return totalAsNumber <= maxTotalArchaeologists && totalAsNumber > 0 && !isNaN(totalAsNumber);
 }
 
-export function validateRequiredArchaeologists(required: string, total: number): boolean {
-  const totalAsNumber = total;
-  const requiredAsNumber = parseInt(required);
-  return requiredAsNumber <= totalAsNumber && requiredAsNumber > 0 && !isNaN(requiredAsNumber);
+export function validateRequiredArchaeologists(required: number, total: number): boolean {
+  return required <= total && required > 0 && !isNaN(required);
 }
 
 /**

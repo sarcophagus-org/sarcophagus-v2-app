@@ -2,7 +2,6 @@ import {
   Divider,
   Flex,
   FormControl,
-  FormLabel,
   Heading,
   NumberDecrementStepper,
   NumberIncrementStepper,
@@ -25,21 +24,11 @@ export function TotalRequiredArchaegologists() {
   const totalArchaeologists = selectedArchaeologists.length;
 
   function handleRequiredArchaeologistsChange(valueAsString: string, valueAsNumber: number) {
-    valueAsString = removeNonIntChars(valueAsString);
-    valueAsString = removeLeadingZeroes(valueAsString);
-
-    if (valueAsNumber < 0) {
-      valueAsString = '0';
-      valueAsNumber = 0;
-    }
-
-    if (valueAsString.length > 3) return;
-
-    dispatch(setRequiredArchaeologists(valueAsString));
+    dispatch(setRequiredArchaeologists(valueAsNumber));
   }
 
   useEffect(() => {
-    if (parseInt(requiredArchaeologists) > totalArchaeologists) {
+    if (requiredArchaeologists > totalArchaeologists) {
       setError('You cannot have more required archaeologist than total archaeologists');
     } else {
       setError(null);
@@ -66,7 +55,7 @@ export function TotalRequiredArchaegologists() {
       <FormControl>
         <Flex mt={6}>
           <Flex direction="column">
-            <NumberInput
+            <NumberInput defaultValue={1} min={1} max={totalArchaeologists || 1}
               allowMouseWheel
               w="100px"
               color={inputColor}

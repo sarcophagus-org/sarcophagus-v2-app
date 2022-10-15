@@ -91,7 +91,7 @@ type EmbalmPayload = {
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetRecipientState]: RecipientState;
-  [ActionType.SetRequiredArchaeologists]: { count: string };
+  [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
@@ -258,7 +258,7 @@ export function setSelectedArchaeologists(archaeologists: Archaeologist[]): Emba
   };
 }
 
-export function setRequiredArchaeologists(count: string): EmbalmActions {
+export function setRequiredArchaeologists(count: number): EmbalmActions {
   return {
     type: ActionType.SetRequiredArchaeologists,
     payload: {

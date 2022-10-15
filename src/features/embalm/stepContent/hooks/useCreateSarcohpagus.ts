@@ -79,7 +79,7 @@ export function useCreateSarcophagus() {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: Number.parseInt(requiredArchaeologists),
+        threshold: requiredArchaeologists,
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
