@@ -17,6 +17,7 @@ import { useLibp2p } from './libp2p/useLibp2p';
 import { BigNumber } from 'ethers';
 import { useApprove } from './sarcoToken/useApprove';
 import { useAllowance } from './sarcoToken/useAllowance';
+import { getLowestRewrapInterval } from '../lib/utils/helpers';
 
 interface SarcophagusNegotiationParams {
   arweaveTxId: string;
@@ -52,11 +53,7 @@ export function useSarcophagusNegotiation() {
   const initiateSarcophagusNegotiation = useCallback(
     async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string) => {
       try {
-        const minimumMaxRewrapInterval = Math.min(
-          ...selectedArchaeologists.map(arch => {
-            return Number(arch.profile.maximumRewrapInterval);
-          })
-        );
+        const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
 
         const negotiationTimestamp = Date.now();
         dispatch(setNegotiationTimestamp(negotiationTimestamp));
@@ -67,7 +64,7 @@ export function useSarcophagusNegotiation() {
           const negotiationParams: SarcophagusNegotiationParams = {
             arweaveTxId: encryptedShardsTxId,
             diggingFee: arch.profile.minimumDiggingFee.toString(),
-            maxRewrapInterval: BigNumber.from(minimumMaxRewrapInterval),
+            maxRewrapInterval: BigNumber.from(lowestRewrapInterval),
             timestamp: negotiationTimestamp,
             unencryptedShardDoubleHash: archaeologistShards.find(
               s => s.publicKey === arch.publicKey
