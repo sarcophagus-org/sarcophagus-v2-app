@@ -4,8 +4,8 @@ import {
   setArchaeologistConnection,
   setArchaeologistSignature,
   setNegotiationTimestamp,
-  setPublicKeysReady, setSarcophagusPayloadTxId,
-  setSignaturesReady
+  setPublicKeysReady,
+  setSignaturesReady,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
@@ -28,12 +28,9 @@ interface SarcophagusNegotiationParams {
 
 export function useSarcophagusNegotiation() {
   const dispatch = useDispatch();
-  const {
-    selectedArchaeologists,
-    publicKeysReady,
-    signaturesReady,
-    payloadTxId
-  } = useSelector(s => s.embalmState);
+  const { selectedArchaeologists, publicKeysReady, signaturesReady, payloadTxId } = useSelector(
+    s => s.embalmState
+  );
 
   const { resetPublicKeyStream } = useLibp2p();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
@@ -55,22 +52,26 @@ export function useSarcophagusNegotiation() {
   const initiateSarcophagusNegotiation = useCallback(
     async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string) => {
       try {
-        const minimumMaxRewrapInterval =
-          Math.min(...selectedArchaeologists.map((arch) => {
+        const minimumMaxRewrapInterval = Math.min(
+          ...selectedArchaeologists.map(arch => {
             return Number(arch.profile.maximumRewrapInterval);
-          }));
+          })
+        );
 
         const negotiationTimestamp = Date.now();
         dispatch(setNegotiationTimestamp(negotiationTimestamp));
         selectedArchaeologists.map(async arch => {
-          if (!arch.connection) throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
+          if (!arch.connection)
+            throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
           const negotiationParams: SarcophagusNegotiationParams = {
             arweaveTxId: encryptedShardsTxId,
             diggingFee: arch.profile.minimumDiggingFee.toString(),
             maxRewrapInterval: BigNumber.from(minimumMaxRewrapInterval),
             timestamp: negotiationTimestamp,
-            unencryptedShardDoubleHash: archaeologistShards.find(s => s.publicKey === arch.publicKey)!.unencryptedShardDoubleHash
+            unencryptedShardDoubleHash: archaeologistShards.find(
+              s => s.publicKey === arch.publicKey
+            )!.unencryptedShardDoubleHash,
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
@@ -100,22 +101,34 @@ export function useSarcophagusNegotiation() {
   );
 
   // Update publicKeysReady
-  useEffect(() => dispatch(
-    setPublicKeysReady(selectedArchaeologists.length > 0 && selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0)
-  ), [selectedArchaeologists, dispatch]);
+  useEffect(
+    () =>
+      dispatch(
+        setPublicKeysReady(
+          selectedArchaeologists.length > 0 &&
+            selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
+        )
+      ),
+    [selectedArchaeologists, dispatch]
+  );
 
   // Update signaturesReady
-  useEffect(() => dispatch(
-    setSignaturesReady(selectedArchaeologists.length > 0 && selectedArchaeologists.filter(arch => arch.signature === undefined).length === 0)
-  ), [selectedArchaeologists, dispatch]);
-
+  useEffect(
+    () =>
+      dispatch(
+        setSignaturesReady(
+          selectedArchaeologists.length > 0 &&
+            selectedArchaeologists.filter(arch => arch.signature === undefined).length === 0
+        )
+      ),
+    [selectedArchaeologists, dispatch]
+  );
 
   // TODO: Remove all shard setup simulation code below once create sarco flow is properly wired up
   // TODO: `initiateSarcophagusNegotiation` and `submitSarcophagus` should be intentionally called in response to UI action
   const { uploadAndSetEncryptedShards, uploadAndSetDoubleEncryptedFile } = useCreateSarcophagus();
   const { createEncryptionKeypair } = useCreateEncryptionKeypair();
   const { submitSarcophagus } = useSubmitSarcophagus();
-
 
   // Simulate private key sharding and upload to arweave when public keys ready
   let runSimulation = useRef(true);
@@ -131,7 +144,14 @@ export function useSarcophagusNegotiation() {
         await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
       }
     })();
-  }, [publicKeysReady, dispatch, initiateSarcophagusNegotiation, runSimulation, createEncryptionKeypair, uploadAndSetEncryptedShards]);
+  }, [
+    publicKeysReady,
+    dispatch,
+    initiateSarcophagusNegotiation,
+    runSimulation,
+    createEncryptionKeypair,
+    uploadAndSetEncryptedShards,
+  ]);
 
   // TODO: move this to its own hook and refactor when create sarcophagus flow is finalized
   // Simulate call to create sarco when signatures ready
@@ -159,10 +179,20 @@ export function useSarcophagusNegotiation() {
       console.log('file upload to arweave complete, submitting create sarcophagus');
       submitSarcophagus();
     }
-  }, [signaturesReady, dispatch, payloadTxId, uploadAndSetDoubleEncryptedFile, submitSarcophagus, isApproving]);
+  }, [
+    signaturesReady,
+    dispatch,
+    payloadTxId,
+    uploadAndSetDoubleEncryptedFile,
+    submitSarcophagus,
+    isApproving,
+    allowance,
+    approve,
+    isSubmitting,
+  ]);
 
   return {
     dialSelectedArchaeologists,
-    initiateSarcophagusNegotiation
+    initiateSarcophagusNegotiation,
   };
 }

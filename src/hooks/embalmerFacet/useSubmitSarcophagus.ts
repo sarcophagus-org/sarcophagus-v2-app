@@ -31,26 +31,29 @@ export function useSubmitSarcophagus() {
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(shard => shard.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
-        v, r, s,
+        unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(
+          shard => shard.publicKey === arch.publicKey
+        )[0].unencryptedShardDoubleHash,
+        v,
+        r,
+        s,
       };
     });
   }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards]);
-
 
   const maximumRewrapInterval = useMemo(() => {
     if (!signaturesReady) return ethers.constants.Zero;
 
     let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
-    selectedArchaeologists.forEach(arch =>
-      maxRewrapInterval = arch.profile.maximumRewrapInterval.lt(maxRewrapInterval) ?
-        arch.profile.maximumRewrapInterval :
-        maxRewrapInterval
+    selectedArchaeologists.forEach(
+      arch =>
+        (maxRewrapInterval = arch.profile.maximumRewrapInterval.lt(maxRewrapInterval)
+          ? arch.profile.maximumRewrapInterval
+          : maxRewrapInterval)
     );
 
     return maxRewrapInterval;
   }, [selectedArchaeologists, signaturesReady]);
-
 
   // TODO: validate store-sourced args before making this call
   const { submit } = useSubmitTransaction({

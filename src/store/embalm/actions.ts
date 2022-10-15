@@ -105,11 +105,11 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetSarcophagusPayloadTxId]: {
-    sarcophagusPayloadTxId: string
+    sarcophagusPayloadTxId: string;
   };
   [ActionType.SetShardPayloadData]: {
-    shards: ArchaeologistEncryptedShard[],
-    encryptedShardsTxId: string
+    shards: ArchaeologistEncryptedShard[];
+    encryptedShardsTxId: string;
   };
   [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetSignaturesReady]: { signaturesReady: boolean };
@@ -352,10 +352,7 @@ export function setArchaeologistConnection(
   };
 }
 
-export function setArchaeologistSignature(
-  peerId: string,
-  signature: string
-): EmbalmActions {
+export function setArchaeologistSignature(peerId: string, signature: string): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistSignature,
     payload: {
@@ -398,17 +395,20 @@ export function setSarcophagusPayloadTxId(sarcophagusPayloadTxId: string): Embal
   return {
     type: ActionType.SetSarcophagusPayloadTxId,
     payload: {
-      sarcophagusPayloadTxId
+      sarcophagusPayloadTxId,
     },
   };
 }
 
-export function setShardPayloadData(shards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string): EmbalmActions {
+export function setShardPayloadData(
+  shards: ArchaeologistEncryptedShard[],
+  encryptedShardsTxId: string
+): EmbalmActions {
   return {
     type: ActionType.SetShardPayloadData,
     payload: {
       shards,
-      encryptedShardsTxId
+      encryptedShardsTxId,
     },
   };
 }

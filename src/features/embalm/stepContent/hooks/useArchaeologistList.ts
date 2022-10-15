@@ -73,10 +73,10 @@ export function useArchaeologistList() {
     diggingFeesSortDirection === SortDirection.NONE
       ? onlineArchaeologists
       : orderBy(
-        onlineArchaeologists,
-        'profile.minimumDiggingFee',
-        sortOrderByMap[diggingFeesSortDirection]
-      );
+          onlineArchaeologists,
+          'profile.minimumDiggingFee',
+          sortOrderByMap[diggingFeesSortDirection]
+        );
 
   const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
     arch =>

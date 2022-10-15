@@ -5,8 +5,14 @@ import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 
 export function CreateSarcophagus() {
-  const { uploadAndSetEncryptedShards, handleCreate, isUploading, canCreateSarcophagus, payloadTxId, shardsTxId } =
-    useCreateSarcophagus();
+  const {
+    uploadAndSetEncryptedShards,
+    handleCreate,
+    isUploading,
+    canCreateSarcophagus,
+    payloadTxId,
+    shardsTxId,
+  } = useCreateSarcophagus();
 
   const { approve } = useApprove();
   const { allowance } = useAllowance();
