@@ -67,7 +67,7 @@ const useArweaveService = () => {
     return decryptedFile.toString() === fileBytes.toString();
   };
 
-  //TODO: remove when archologist do the upload.
+  //TODO: remove when Bundlr is implemented or make this a dev-env only operation
   const uploadArweaveFile = async (file: string | Buffer): Promise<string> => {
     const arweave = initArweave();
 

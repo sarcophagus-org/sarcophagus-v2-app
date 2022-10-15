@@ -85,7 +85,6 @@ export function useCreateSarcophagus() {
         [shard.publicKey]: shard.encryptedShard
       }), {});
 
-      console.log('uploading encrypted shards to arweave');
       const encryptedShardsTxId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr, once local testing figured out
 
       dispatch(setShardPayloadData(encryptedShards, encryptedShardsTxId));
