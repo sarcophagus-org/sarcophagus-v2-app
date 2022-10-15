@@ -23,7 +23,7 @@ export function TotalRequiredArchaegologists() {
   const [error, setError] = useState<string | null>(null);
   const totalArchaeologists = selectedArchaeologists.length;
 
-  function handleRequiredArchaeologistsChange(valueAsString: string, valueAsNumber: number) {
+  function handleRequiredArchaeologistsChange(_: string, valueAsNumber: number) {
     dispatch(setRequiredArchaeologists(valueAsNumber));
   }
 
