@@ -10,7 +10,6 @@ import {
   NumberInputStepper,
   Text,
 } from '@chakra-ui/react';
-import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 import { useEffect, useState } from 'react';
 import { setRequiredArchaeologists } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
