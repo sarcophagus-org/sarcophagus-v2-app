@@ -51,13 +51,16 @@ export function useSarcophagusNegotiation() {
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
   const initiateSarcophagusNegotiation = useCallback(
-    async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string) => {
+    async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string): Promise<string[] | undefined> => {
       try {
         const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
 
         const negotiationTimestamp = Date.now();
         dispatch(setNegotiationTimestamp(negotiationTimestamp));
-        selectedArchaeologists.map(async arch => {
+
+        const archaeologistSignatures: string[] = [];
+
+        await Promise.all(selectedArchaeologists.map(async arch => {
           if (!arch.connection)
             throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
@@ -76,7 +79,7 @@ export function useSarcophagusNegotiation() {
           const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
           console.log('sending negotiation params to archaeologist:', arch.profile.peerId);
-          pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
+          await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
             for await (const data of source) {
               const dataStr = new TextDecoder().decode(data);
               // TODO: remove these logs after we gain some confidence in this exchange
@@ -85,10 +88,16 @@ export function useSarcophagusNegotiation() {
               const { signature }: { signature: string } = JSON.parse(dataStr);
               console.log('setting arch signature');
               console.log(signature);
+              archaeologistSignatures.push(signature);
               dispatch(setArchaeologistSignature(arch.profile.peerId, signature!));
             }
-          }).finally(() => stream.close());
-        });
+          }).finally(() => {
+              stream.close();
+            }
+          );
+        }));
+
+        return archaeologistSignatures;
       } catch (err) {
         //TODO figure out what to do at this point
         console.error(`Error in peer connection listener: ${err}`);
@@ -138,7 +147,12 @@ export function useSarcophagusNegotiation() {
         await createEncryptionKeypair();
         const { encryptedShards, encryptedShardsTxId } = await uploadAndSetEncryptedShards();
         console.log('initiating sarco negotiation');
-        await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
+        const archaeologistSignatures = await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
+        console.log(
+          'arch sigs:',
+          archaeologistSignatures
+        );
+        await uploadAndSetDoubleEncryptedFile();
       }
     })();
   }, [
@@ -159,34 +173,34 @@ export function useSarcophagusNegotiation() {
   const { approve } = useApprove();
   const { allowance } = useAllowance();
 
-  useEffect(() => {
-    if (signaturesReady && runCreateSimulation.current) {
-      runCreateSimulation.current = false;
-      console.log('signatures ready');
-      uploadAndSetDoubleEncryptedFile();
-    }
-
-    if (!!payloadTxId && !allowance?.gt(0) && !isApproving) {
-      setIsApproving(true);
-      approve();
-    }
-
-    if (!!payloadTxId && !isSubmitting && allowance?.gt(0)) {
-      setIsSubmitting(true);
-      console.log('file upload to arweave complete, submitting create sarcophagus');
-      submitSarcophagus();
-    }
-  }, [
-    signaturesReady,
-    dispatch,
-    payloadTxId,
-    uploadAndSetDoubleEncryptedFile,
-    submitSarcophagus,
-    isApproving,
-    allowance,
-    approve,
-    isSubmitting,
-  ]);
+  // useEffect(() => {
+  //   if (signaturesReady && runCreateSimulation.current) {
+  //     runCreateSimulation.current = false;
+  //     console.log('signatures ready');
+  //     uploadAndSetDoubleEncryptedFile();
+  //   }
+  //
+  //   if (!!payloadTxId && !allowance?.gt(0) && !isApproving) {
+  //     setIsApproving(true);
+  //     approve();
+  //   }
+  //
+  //   if (!!payloadTxId && !isSubmitting && allowance?.gt(0)) {
+  //     setIsSubmitting(true);
+  //     console.log('file upload to arweave complete, submitting create sarcophagus');
+  //     submitSarcophagus();
+  //   }
+  // }, [
+  //   signaturesReady,
+  //   dispatch,
+  //   payloadTxId,
+  //   uploadAndSetDoubleEncryptedFile,
+  //   submitSarcophagus,
+  //   isApproving,
+  //   allowance,
+  //   approve,
+  //   isSubmitting,
+  // ]);
 
   return {
     dialSelectedArchaeologists,
