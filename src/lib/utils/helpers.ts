@@ -90,6 +90,10 @@ export function convertMinutesToMs(num: number) {
   return num * 60_000;
 }
 
+export function humanizeUnixTimestamp(unixTimestamp: number): string {
+  return new Date(unixTimestamp).toLocaleDateString('en-US');
+}
+
 export function humanizeDuration(duration: number) {
   if (duration === 0) return '0 seconds';
   return moment.duration(duration / 1000).humanize({ d: 7, w: 4 });

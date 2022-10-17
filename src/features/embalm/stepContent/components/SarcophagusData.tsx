@@ -9,7 +9,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { useSarcophagusData } from '../hooks/useSarcophagusData';
+import { notSet, useSarcophagusData } from '../hooks/useSarcophagusData';
 
 export function SarcophagusData() {
   const { sarcophagusDataMap } = useSarcophagusData();
@@ -66,19 +66,22 @@ export function SarcophagusData() {
           <Tbody>
             {
               Array.from(sarcophagusDataMap).map((mapRow) => {
-                const dataVal = mapRow[0];
-                const dataKey = mapRow[1];
+                const dataKey = mapRow[0];
+                const dataVal = mapRow[1];
+
                 return (
                   <Tr
                     key={dataKey}
                   >
-                    <Td>
-                      {dataVal}
-                    </Td>
-                    <Td>
+                    <Td py={2}>
                       {dataKey}
                     </Td>
-                    <Td>
+                    <Td py={2}>
+                      <Text variant={dataVal === notSet ? 'secondary' : ''}>
+                        {dataVal}
+                      </Text>
+                    </Td>
+                    <Td py={2}>
                       Edit
                     </Td>
                   </Tr>
