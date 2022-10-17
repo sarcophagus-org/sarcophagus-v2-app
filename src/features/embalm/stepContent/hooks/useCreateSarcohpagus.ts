@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { setIsUploading } from 'store/bundlr/actions';
 import { setSarcophagusPayloadTxId, setShardPayloadData } from 'store/embalm/actions';
@@ -9,6 +9,16 @@ import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
+
+export enum CreateSarcophagusStep {
+  NOT_STARTED,
+  DIAL_ARCHAEOLOGISTS,
+  UPLOAD_ENCRYPTED_SHARDS,
+  ARCHAEOLOGIST_NEGOTIATION,
+  UPLOAD_FILE,
+  SUBMIT_SARCHOPHAGUS,
+  COMPLETED
+}
 
 async function encryptShards(
   publicKeys: string[],
@@ -39,6 +49,8 @@ export function useCreateSarcophagus() {
   // const { uploadFile } = useBundlr();
   const { uploadArweaveFile } = useArweaveService();
   const { submitSarcophagus } = useSubmitSarcophagus();
+
+  const [currentStep, setCurrentStep] = useState(CreateSarcophagusStep.NOT_STARTED);
 
   // TODO: Move this into its own hook and check all fields
   // TODO: render a message to the user about what data is missing

@@ -173,34 +173,34 @@ export function useSarcophagusNegotiation() {
   const { approve } = useApprove();
   const { allowance } = useAllowance();
 
-  // useEffect(() => {
-  //   if (signaturesReady && runCreateSimulation.current) {
-  //     runCreateSimulation.current = false;
-  //     console.log('signatures ready');
-  //     uploadAndSetDoubleEncryptedFile();
-  //   }
-  //
-  //   if (!!payloadTxId && !allowance?.gt(0) && !isApproving) {
-  //     setIsApproving(true);
-  //     approve();
-  //   }
-  //
-  //   if (!!payloadTxId && !isSubmitting && allowance?.gt(0)) {
-  //     setIsSubmitting(true);
-  //     console.log('file upload to arweave complete, submitting create sarcophagus');
-  //     submitSarcophagus();
-  //   }
-  // }, [
-  //   signaturesReady,
-  //   dispatch,
-  //   payloadTxId,
-  //   uploadAndSetDoubleEncryptedFile,
-  //   submitSarcophagus,
-  //   isApproving,
-  //   allowance,
-  //   approve,
-  //   isSubmitting,
-  // ]);
+  useEffect(() => {
+    if (signaturesReady && runCreateSimulation.current) {
+      runCreateSimulation.current = false;
+      console.log('signatures ready');
+      uploadAndSetDoubleEncryptedFile();
+    }
+
+    if (!!payloadTxId && !allowance?.gt(0) && !isApproving) {
+      setIsApproving(true);
+      approve();
+    }
+
+    if (!!payloadTxId && !isSubmitting && allowance?.gt(0)) {
+      setIsSubmitting(true);
+      console.log('file upload to arweave complete, submitting create sarcophagus');
+      submitSarcophagus();
+    }
+  }, [
+    signaturesReady,
+    dispatch,
+    payloadTxId,
+    uploadAndSetDoubleEncryptedFile,
+    submitSarcophagus,
+    isApproving,
+    allowance,
+    approve,
+    isSubmitting,
+  ]);
 
   return {
     dialSelectedArchaeologists,
