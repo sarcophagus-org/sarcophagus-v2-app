@@ -16,7 +16,7 @@ export enum CreateSarcophagusStep {
   UPLOAD_ENCRYPTED_SHARDS,
   ARCHAEOLOGIST_NEGOTIATION,
   UPLOAD_FILE,
-  SUBMIT_SARCHOPHAGUS,
+  SUBMIT_SARCOPHAGUS,
   COMPLETED
 }
 
@@ -52,22 +52,14 @@ export function useCreateSarcophagus() {
 
   const [currentStep, setCurrentStep] = useState(CreateSarcophagusStep.NOT_STARTED);
 
-  // TODO: Move this into its own hook and check all fields
-  // TODO: render a message to the user about what data is missing
-  const canCreateSarcophagus = recipientState.publicKey !== '' && !!outerPublicKey && !!file;
-
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
-    const emptyData = { sarcophagusPayloadTxId: '' };
-
-    if (!canCreateSarcophagus) return emptyData;
-
-    const payload = await readFileDataAsBase64(file);
+    const payload = await readFileDataAsBase64(file!);
 
     // Step 1: Encrypt the inner layer
     const encryptedInnerLayer = await encrypt(recipientState.publicKey, payload); // TODO: Restore this line and remove line below when in-app create sarco flow is ready
 
     // Step 2: Encrypt the outer layer
-    const encryptedOuterLayer = await encrypt(outerPublicKey, encryptedInnerLayer);
+    const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
     const sarcophagusPayloadTxId = await uploadArweaveFile(encryptedOuterLayer); // TODO: change to use uploadFile for Bundlr, once local testing figured out
@@ -83,11 +75,7 @@ export function useCreateSarcophagus() {
   ]);
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
-    const emptyData = { encryptedShards: [], encryptedShardsTxId: '' };
-    try {
-      // Prepare the payload
-      if (!canCreateSarcophagus) return emptyData;
-
+      try {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
@@ -114,12 +102,8 @@ export function useCreateSarcophagus() {
       return { encryptedShards, encryptedShardsTxId };
     } catch (error) {
       console.error(error);
-      return emptyData;
-    } finally {
-      dispatch(setIsUploading(false));
     }
   }, [
-    canCreateSarcophagus,
     requiredArchaeologists,
     outerPrivateKey,
     selectedArchaeologists,
@@ -138,7 +122,6 @@ export function useCreateSarcophagus() {
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
     isUploading,
-    canCreateSarcophagus,
     payloadTxId,
     shardsTxId,
   };

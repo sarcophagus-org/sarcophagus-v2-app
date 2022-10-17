@@ -1,17 +1,13 @@
 import {
   Flex,
-  Image,
   Table,
-  TableContainer,
   Tbody,
   Td,
   Text,
   Th,
   Thead,
   Tr,
-  Button,
   VStack,
-  Input
 } from '@chakra-ui/react';
 import { useSarcophagusData } from '../hooks/useSarcophagusData';
 
@@ -21,8 +17,8 @@ export function SarcophagusData() {
   return (
     <VStack
       align='left'
-      spacing={8}
-      mt={6}
+      spacing={6}
+      mt={4}
     >
       <Text>
         Sarcophagus Summary
