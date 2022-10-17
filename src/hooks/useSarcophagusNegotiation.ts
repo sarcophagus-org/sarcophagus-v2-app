@@ -38,7 +38,7 @@ export function useSarcophagusNegotiation() {
 
   const dialSelectedArchaeologists = useCallback(async () => {
     await resetPublicKeyStream();
-    console.log('dialing selected archs');
+
     selectedArchaeologists.map(async arch => {
       try {
         const connection = await libp2pNode?.dial(arch.fullPeerId!);
@@ -53,6 +53,7 @@ export function useSarcophagusNegotiation() {
   const initiateSarcophagusNegotiation = useCallback(
     async (archaeologistShards: ArchaeologistEncryptedShard[], encryptedShardsTxId: string): Promise<string[] | undefined> => {
       try {
+        console.log('arch shards super inside', archaeologistShards.length);
         const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
 
         const negotiationTimestamp = Date.now();
@@ -100,23 +101,23 @@ export function useSarcophagusNegotiation() {
         return archaeologistSignatures;
       } catch (err) {
         //TODO figure out what to do at this point
-        console.error(`Error in peer connection listener: ${err}`);
+        console.error(`Error in initiateSarcophagusNegotiation: ${err}`);
       }
     },
     [selectedArchaeologists, dispatch]
   );
 
   // Update publicKeysReady
-  // useEffect(
-  //   () =>
-  //     dispatch(
-  //       setPublicKeysReady(
-  //         selectedArchaeologists.length > 0 &&
-  //           selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
-  //       )
-  //     ),
-  //   [selectedArchaeologists, dispatch]
-  // );
+  useEffect(
+    () =>
+      dispatch(
+        setPublicKeysReady(
+          selectedArchaeologists.length > 0 &&
+            selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
+        )
+      ),
+    [selectedArchaeologists, dispatch]
+  );
   //
   // // Update signaturesReady
   // useEffect(

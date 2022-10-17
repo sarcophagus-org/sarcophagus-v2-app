@@ -52,6 +52,7 @@ export function useCreateSarcophagus() {
     outerPublicKey,
     outerPrivateKey,
     selectedArchaeologists,
+    publicKeysReady,
     payloadTxId,
     shardsTxId,
     requiredArchaeologists
@@ -60,50 +61,69 @@ export function useCreateSarcophagus() {
   // const { uploadFile } = useBundlr();
   const { uploadArweaveFile } = useArweaveService();
   const { submitSarcophagus } = useSubmitSarcophagus();
-  const { dialSelectedArchaeologists } = useSarcophagusNegotiation();
+  const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } = useSarcophagusNegotiation();
   const [currentStep, setCurrentStep] = useState(CreateSarcophagusStep.NOT_STARTED);
   const [stepExecuting, setStepExecuting] = useState(false);
+  const [archaeologistShards, setArchaeologistShards] = useState([] as ArchaeologistEncryptedShard[]);
+  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState('');
 
   const incrementStep = (): void => {
     const currentIndex = createSarcophagusSteps.indexOf(currentStep);
     setCurrentStep(createSarcophagusSteps[currentIndex + 1]);
   };
 
-  const executeStep = async (stepToExecute: Function, args?: any) => {
-    setStepExecuting(true);
-    await stepToExecute();
+  const executeStep = async (stepToExecute: Function, ...args: any[]): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      setStepExecuting(true);
 
-    // Set current step to next step
-    incrementStep();
-    setStepExecuting(false);
+      stepToExecute(...args).then((result: any) => {
+        setStepExecuting(false);
+
+        // Set current step to next step
+        incrementStep();
+        resolve(result);
+      }).catch((error: any) => {
+        setStepExecuting(false);
+      });
+    });
   };
 
-  useEffect(() => {
-    (async () => {
-      if (!stepExecuting) {
-        switch (currentStep) {
-          case CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS:
-            await executeStep(
-              dialSelectedArchaeologists
-            );
-            break;
-          case CreateSarcophagusStep.UPLOAD_ENCRYPTED_SHARDS:
+  const uploadAndSetEncryptedShards = useCallback(async () => {
+    try {
+      // Step 1: Split the outer layer private key using shamirs secret sharing
+      const shards: Uint8Array[] = split(outerPrivateKey, {
+        shares: selectedArchaeologists.length,
+        threshold: requiredArchaeologists
+      });
 
-            break;
-          case CreateSarcophagusStep.ARCHAEOLOGIST_NEGOTIATION:
+      // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
+      // key
+      const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
+      const encShards = await encryptShards(archPublicKeys, shards);
 
-            break;
-          case CreateSarcophagusStep.UPLOAD_PAYLOAD:
+      // Step 3: Upload the encrypted shards mapping to the arweave bundlr
+      const mapping: Record<string, string> = encShards.reduce(
+        (acc, shard) => ({
+          ...acc,
+          [shard.publicKey]: shard.encryptedShard
+        }),
+        {}
+      );
 
-            break;
-          case CreateSarcophagusStep.SUBMIT_SARCOPHAGUS:
-
-            break;
-        }
-      }
-    })();
-  }, [currentStep, stepExecuting]);
-
+      const txId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr, once local testing figured out
+      console.log('setting shards', encShards);
+      setArchaeologistShards(encShards);
+      setEncryptedShardsTxId(txId);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [
+    requiredArchaeologists,
+    outerPrivateKey,
+    selectedArchaeologists,
+    uploadArweaveFile,
+    dispatch
+  ]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     const payload = await readFileDataAsBase64(file!);
@@ -126,42 +146,40 @@ export function useCreateSarcophagus() {
     uploadArweaveFile
   ]);
 
-  const uploadAndSetEncryptedShards = useCallback(async () => {
-    try {
-      // Step 1: Split the outer layer private key using shamirs secret sharing
-      const shards: Uint8Array[] = split(outerPrivateKey, {
-        shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists
-      });
+  useEffect(() => {
+    (async () => {
+      if (!stepExecuting) {
+        switch (currentStep) {
+          case CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS:
+            await executeStep(
+              dialSelectedArchaeologists
+            );
+            break;
+          case CreateSarcophagusStep.UPLOAD_ENCRYPTED_SHARDS:
+            // TODO -- remove reliance on this global state var
+            if (publicKeysReady) {
+              await executeStep(
+                uploadAndSetEncryptedShards
+              );
+            }
+            break;
+          case CreateSarcophagusStep.ARCHAEOLOGIST_NEGOTIATION:
+            const archaeologistSignatures = await executeStep(
+              initiateSarcophagusNegotiation,
+              archaeologistShards,
+              encryptedShardsTxId
+            );
+            break;
+          case CreateSarcophagusStep.UPLOAD_PAYLOAD:
 
-      // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
-      // key
-      const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
-      const encryptedShards = await encryptShards(archPublicKeys, shards);
+            break;
+          case CreateSarcophagusStep.SUBMIT_SARCOPHAGUS:
 
-      // Step 3: Upload the encrypted shards mapping to the arweave bundlr
-      const mapping: Record<string, string> = encryptedShards.reduce(
-        (acc, shard) => ({
-          ...acc,
-          [shard.publicKey]: shard.encryptedShard
-        }),
-        {}
-      );
-
-      const encryptedShardsTxId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr, once local testing figured out
-
-      dispatch(setShardPayloadData(encryptedShards, encryptedShardsTxId));
-      return { encryptedShards, encryptedShardsTxId };
-    } catch (error) {
-      console.error(error);
-    }
-  }, [
-    requiredArchaeologists,
-    outerPrivateKey,
-    selectedArchaeologists,
-    uploadArweaveFile,
-    dispatch
-  ]);
+            break;
+        }
+      }
+    })();
+  }, [currentStep, stepExecuting, publicKeysReady, archaeologistShards, encryptedShardsTxId]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStep(CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS);
