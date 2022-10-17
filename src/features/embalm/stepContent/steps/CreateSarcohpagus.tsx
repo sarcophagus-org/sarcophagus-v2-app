@@ -1,6 +1,5 @@
-import { Text, Button, Flex, Heading } from '@chakra-ui/react';
-import { Alert } from 'components/Alert';
-import { useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
+import { Button, Flex, Heading } from '@chakra-ui/react';
+import { CreateSarcophagusStep, useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 import { useSarcophagusData } from '../hooks/useSarcophagusData';
@@ -8,11 +7,11 @@ import { SarcophagusData } from '../components/SarcophagusData';
 
 export function CreateSarcophagus() {
   const {
+    currentStep,
     uploadAndSetEncryptedShards,
     handleCreate,
-    isUploading,
     payloadTxId,
-    shardsTxId,
+    shardsTxId
   } = useCreateSarcophagus();
 
   const {
@@ -23,20 +22,36 @@ export function CreateSarcophagus() {
   const { approve } = useApprove();
   const { allowance } = useAllowance();
 
+  const isCreateProcessStarted = (): boolean => {
+    return currentStep !== CreateSarcophagusStep.NOT_STARTED;
+  };
+
   return (
     <Flex
-      direction="column"
-      w="100%"
+      direction='column'
+      w='100%'
     >
       <Heading>Create Sarcophagus</Heading>
-      <SarcophagusData />
-      <Button
-        mt={6}
-        onClick={handleCreate}
-        disabled={!canCreateSarcophagus()}
-      >
-        Create Sarcophagus
-      </Button>
+      {
+        !isCreateProcessStarted() ?
+          (
+            <>
+              <SarcophagusData />
+              <Button
+                mt={6}
+                onClick={handleCreate}
+                disabled={!canCreateSarcophagus()}
+              >
+                Create Sarcophagus
+              </Button>
+            </>
+          ) :
+          (
+            <>
+              WE STARTED
+            </>
+          )
+      }
     </Flex>
   );
 }

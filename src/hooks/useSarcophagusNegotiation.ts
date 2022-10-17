@@ -38,7 +38,7 @@ export function useSarcophagusNegotiation() {
 
   const dialSelectedArchaeologists = useCallback(async () => {
     await resetPublicKeyStream();
-
+    console.log('dialing selected archs');
     selectedArchaeologists.map(async arch => {
       try {
         const connection = await libp2pNode?.dial(arch.fullPeerId!);
@@ -107,100 +107,102 @@ export function useSarcophagusNegotiation() {
   );
 
   // Update publicKeysReady
-  useEffect(
-    () =>
-      dispatch(
-        setPublicKeysReady(
-          selectedArchaeologists.length > 0 &&
-            selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
-        )
-      ),
-    [selectedArchaeologists, dispatch]
-  );
-
-  // Update signaturesReady
-  useEffect(
-    () =>
-      dispatch(
-        setSignaturesReady(
-          selectedArchaeologists.length > 0 &&
-            selectedArchaeologists.filter(arch => arch.signature === undefined).length === 0
-        )
-      ),
-    [selectedArchaeologists, dispatch]
-  );
+  // useEffect(
+  //   () =>
+  //     dispatch(
+  //       setPublicKeysReady(
+  //         selectedArchaeologists.length > 0 &&
+  //           selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
+  //       )
+  //     ),
+  //   [selectedArchaeologists, dispatch]
+  // );
+  //
+  // // Update signaturesReady
+  // useEffect(
+  //   () =>
+  //     dispatch(
+  //       setSignaturesReady(
+  //         selectedArchaeologists.length > 0 &&
+  //           selectedArchaeologists.filter(arch => arch.signature === undefined).length === 0
+  //       )
+  //     ),
+  //   [selectedArchaeologists, dispatch]
+  // );
 
   // TODO: Remove all shard setup simulation code below once create sarco flow is properly wired up
   // TODO: `initiateSarcophagusNegotiation` and `submitSarcophagus` should be intentionally called in response to UI action
-  const { uploadAndSetEncryptedShards, uploadAndSetDoubleEncryptedFile } = useCreateSarcophagus();
-  const { createEncryptionKeypair } = useCreateEncryptionKeypair();
-  const { submitSarcophagus } = useSubmitSarcophagus();
+  // const { uploadAndSetEncryptedShards, uploadAndSetDoubleEncryptedFile } = useCreateSarcophagus();
+  // const { createEncryptionKeypair } = useCreateEncryptionKeypair();
+  // const { submitSarcophagus } = useSubmitSarcophagus();
 
   // Simulate private key sharding and upload to arweave when public keys ready
-  let runSimulation = useRef(true);
-  let runCreateSimulation = useRef(true);
-  useEffect(() => {
-    (async () => {
-      if (publicKeysReady && runSimulation.current) {
-        runSimulation.current = false;
-
-        await createEncryptionKeypair();
-        const { encryptedShards, encryptedShardsTxId } = await uploadAndSetEncryptedShards();
-        console.log('initiating sarco negotiation');
-        const archaeologistSignatures = await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
-        console.log(
-          'arch sigs:',
-          archaeologistSignatures
-        );
-        await uploadAndSetDoubleEncryptedFile();
-      }
-    })();
-  }, [
-    publicKeysReady,
-    dispatch,
-    initiateSarcophagusNegotiation,
-    runSimulation,
-    createEncryptionKeypair,
-    uploadAndSetEncryptedShards,
-  ]);
+  // let runSimulation = useRef(true);
+  // let runCreateSimulation = useRef(true);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (publicKeysReady && runSimulation.current) {
+  //       runSimulation.current = false;
+  //
+  //       await createEncryptionKeypair();
+  //       const { encryptedShards, encryptedShardsTxId } = await uploadAndSetEncryptedShards();
+  //       console.log('initiating sarco negotiation');
+  //       const archaeologistSignatures = await initiateSarcophagusNegotiation(encryptedShards, encryptedShardsTxId);
+  //       console.log(
+  //         'arch sigs:',
+  //         archaeologistSignatures
+  //       );
+  //       await uploadAndSetDoubleEncryptedFile();
+  //     }
+  //   })();
+  // }, [
+  //   publicKeysReady,
+  //   dispatch,
+  //   initiateSarcophagusNegotiation,
+  //   runSimulation,
+  //   createEncryptionKeypair,
+  //   uploadAndSetEncryptedShards,
+  // ]);
 
   // TODO: move this to its own hook and refactor when create sarcophagus flow is finalized
   // Simulate call to create sarco when signatures ready
   // Likely scenario is to use signaturesReady to visually prompt user to
   // click that final submit button to make the contract call.
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
-  const { approve } = useApprove();
-  const { allowance } = useAllowance();
-
-  useEffect(() => {
-    if (signaturesReady && runCreateSimulation.current) {
-      runCreateSimulation.current = false;
-      console.log('signatures ready');
-      uploadAndSetDoubleEncryptedFile();
-    }
-
-    if (!!payloadTxId && !allowance?.gt(0) && !isApproving) {
-      setIsApproving(true);
-      approve();
-    }
-
-    if (!!payloadTxId && !isSubmitting && allowance?.gt(0)) {
-      setIsSubmitting(true);
-      console.log('file upload to arweave complete, submitting create sarcophagus');
-      submitSarcophagus();
-    }
-  }, [
-    signaturesReady,
-    dispatch,
-    payloadTxId,
-    uploadAndSetDoubleEncryptedFile,
-    submitSarcophagus,
-    isApproving,
-    allowance,
-    approve,
-    isSubmitting,
-  ]);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isApproving, setIsApproving] = useState(false);
+  // const { approve } = useApprove();
+  // const { allowance } = useAllowance();
+  //
+  // useEffect(() => {
+  //   if (false) {
+  //     if (signaturesReady && runCreateSimulation.current) {
+  //       runCreateSimulation.current = false;
+  //       console.log('signatures ready');
+  //       uploadAndSetDoubleEncryptedFile();
+  //     }
+  //
+  //     if (!!payloadTxId && !allowance?.gt(0) && !isApproving) {
+  //       setIsApproving(true);
+  //       approve();
+  //     }
+  //
+  //     if (!!payloadTxId && !isSubmitting && allowance?.gt(0)) {
+  //       setIsSubmitting(true);
+  //       console.log('file upload to arweave complete, submitting create sarcophagus');
+  //       submitSarcophagus();
+  //     }
+  //   }
+  // }, [
+  //   signaturesReady,
+  //   dispatch,
+  //   payloadTxId,
+  //   uploadAndSetDoubleEncryptedFile,
+  //   submitSarcophagus,
+  //   isApproving,
+  //   allowance,
+  //   approve,
+  //   isSubmitting,
+  // ]);
 
   return {
     dialSelectedArchaeologists,

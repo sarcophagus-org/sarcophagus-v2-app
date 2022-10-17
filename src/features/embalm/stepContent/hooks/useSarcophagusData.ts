@@ -40,7 +40,7 @@ export const useSarcophagusData = () => {
     ];
 
     return requiredSteps.every(step => {
-      return getStatus(step) !== StepStatus.Complete;
+      return getStatus(step) === StepStatus.Complete;
     });
   };
 
