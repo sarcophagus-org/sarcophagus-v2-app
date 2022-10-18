@@ -34,26 +34,18 @@ export interface SubmitSarcophagusProps {
   currentStage: CreateSarcophagusStage;
 }
 
-export function useSubmitSarcophagus(
-  {
-    negotiationTimestamp,
-    archaeologistSignatures,
-    archaeologistShards,
-    arweaveTxIds,
-    currentStage
-  }: SubmitSarcophagusProps
-) {
-
+export function useSubmitSarcophagus({
+  negotiationTimestamp,
+  archaeologistSignatures,
+  archaeologistShards,
+  arweaveTxIds,
+  currentStage,
+}: SubmitSarcophagusProps) {
   const toastDescription = 'Sarcophagus created';
   const transactionDescription = 'Create sarcophagus';
 
-  const {
-    name,
-    recipientState,
-    resurrection,
-    selectedArchaeologists,
-    requiredArchaeologists
-  } = useSelector(x => x.embalmState);
+  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
+    useSelector(x => x.embalmState);
 
   const isSubmitting = currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS;
 
@@ -63,7 +55,9 @@ export function useSubmitSarcophagus(
     }
 
     return selectedArchaeologists.map(arch => {
-      const { v, r, s } = ethers.utils.splitSignature(archaeologistSignatures.get(arch.profile.archAddress)!);
+      const { v, r, s } = ethers.utils.splitSignature(
+        archaeologistSignatures.get(arch.profile.archAddress)!
+      );
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
@@ -72,7 +66,7 @@ export function useSubmitSarcophagus(
         )[0].unencryptedShardDoubleHash,
         v,
         r,
-        s
+        s,
       };
     });
   }, [selectedArchaeologists, archaeologistShards, archaeologistSignatures, isSubmitting]);
@@ -84,27 +78,27 @@ export function useSubmitSarcophagus(
     resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()),
     minShards: requiredArchaeologists,
     timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
-    maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists)
+    maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
   };
 
   const args =
-    isSubmitting && contractArchaeologists().length ?
-      [
-        sarcoId,
-        {
-          ...settings
-        },
-        contractArchaeologists(),
-        arweaveTxIds
-      ] :
-      [];
+    isSubmitting && contractArchaeologists().length
+      ? [
+          sarcoId,
+          {
+            ...settings,
+          },
+          contractArchaeologists(),
+          arweaveTxIds,
+        ]
+      : [];
 
   const { submit } = useSubmitTransaction({
     contractInterface: EmbalmerFacet__factory.abi,
     functionName: 'createSarcophagus',
     args,
     toastDescription,
-    transactionDescription
+    transactionDescription,
   });
 
   const submitSarcophagus = args.length ? submit : undefined;

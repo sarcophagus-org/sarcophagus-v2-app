@@ -1,14 +1,4 @@
-import {
-  Flex,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  VStack,
-} from '@chakra-ui/react';
+import { Flex, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from '@chakra-ui/react';
 import { notSet, useSarcophagusData } from '../hooks/useSarcophagusData';
 
 export function SarcophagusData() {
@@ -16,25 +6,23 @@ export function SarcophagusData() {
 
   return (
     <VStack
-      align='left'
+      align="left"
       spacing={6}
       mt={4}
     >
-      <Text>
-        Sarcophagus Summary
-      </Text>
+      <Text>Sarcophagus Summary</Text>
       <Flex
         flex={4}
-        height='100%'
-        direction='column'
+        height="100%"
+        direction="column"
       >
-        <Table variant='simple'>
+        <Table variant="simple">
           <Thead>
             <Tr>
               <Th>
-                <VStack align='left'>
+                <VStack align="left">
                   <Text
-                    variant='secondary'
+                    variant="secondary"
                     py={3}
                   >
                     Item
@@ -42,9 +30,9 @@ export function SarcophagusData() {
                 </VStack>
               </Th>
               <Th>
-                <VStack align='left'>
+                <VStack align="left">
                   <Text
-                    variant='secondary'
+                    variant="secondary"
                     py={3}
                   >
                     Details
@@ -52,9 +40,9 @@ export function SarcophagusData() {
                 </VStack>
               </Th>
               <Th>
-                <VStack align='left'>
+                <VStack align="left">
                   <Text
-                    variant='secondary'
+                    variant="secondary"
                     py={3}
                   >
                     Action
@@ -64,30 +52,20 @@ export function SarcophagusData() {
             </Tr>
           </Thead>
           <Tbody>
-            {
-              Array.from(sarcophagusDataMap).map((mapRow) => {
-                const dataKey = mapRow[0];
-                const dataVal = mapRow[1];
+            {Array.from(sarcophagusDataMap).map(mapRow => {
+              const dataKey = mapRow[0];
+              const dataVal = mapRow[1];
 
-                return (
-                  <Tr
-                    key={dataKey}
-                  >
-                    <Td py={2}>
-                      {dataKey}
-                    </Td>
-                    <Td py={2}>
-                      <Text variant={dataVal === notSet ? 'secondary' : ''}>
-                        {dataVal}
-                      </Text>
-                    </Td>
-                    <Td py={2}>
-                      Edit
-                    </Td>
-                  </Tr>
-                );
-              })
-            }
+              return (
+                <Tr key={dataKey}>
+                  <Td py={2}>{dataKey}</Td>
+                  <Td py={2}>
+                    <Text variant={dataVal === notSet ? 'secondary' : ''}>{dataVal}</Text>
+                  </Td>
+                  <Td py={2}>Edit</Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
       </Flex>

@@ -1,9 +1,6 @@
 import { pipe } from 'it-pipe';
 import React, { useCallback, useEffect } from 'react';
-import {
-  setArchaeologistConnection,
-  setPublicKeysReady,
-} from 'store/embalm/actions';
+import { setArchaeologistConnection, setPublicKeysReady } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import { ArchaeologistEncryptedShard } from 'types';
@@ -21,9 +18,7 @@ interface SarcophagusNegotiationParams {
 
 export function useSarcophagusNegotiation() {
   const dispatch = useDispatch();
-  const { selectedArchaeologists } = useSelector(
-    s => s.embalmState
-  );
+  const { selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const { resetPublicKeyStream } = useLibp2p();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
@@ -57,40 +52,41 @@ export function useSarcophagusNegotiation() {
 
         const archaeologistSignatures = new Map<string, string>([]);
 
-        await Promise.all(selectedArchaeologists.map(async arch => {
-          if (!arch.connection)
-            throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
+        await Promise.all(
+          selectedArchaeologists.map(async arch => {
+            if (!arch.connection)
+              throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
-          const negotiationParams: SarcophagusNegotiationParams = {
-            arweaveTxId: encryptedShardsTxId,
-            diggingFee: arch.profile.minimumDiggingFee.toString(),
-            maxRewrapInterval: BigNumber.from(lowestRewrapInterval),
-            timestamp: negotiationTimestamp,
-            unencryptedShardDoubleHash: archaeologistShards.find(
-              s => s.publicKey === arch.publicKey
-            )!.unencryptedShardDoubleHash,
-          };
+            const negotiationParams: SarcophagusNegotiationParams = {
+              arweaveTxId: encryptedShardsTxId,
+              diggingFee: arch.profile.minimumDiggingFee.toString(),
+              maxRewrapInterval: BigNumber.from(lowestRewrapInterval),
+              timestamp: negotiationTimestamp,
+              unencryptedShardDoubleHash: archaeologistShards.find(
+                s => s.publicKey === arch.publicKey
+              )!.unencryptedShardDoubleHash,
+            };
 
-          const outboundMsg = JSON.stringify(negotiationParams);
+            const outboundMsg = JSON.stringify(negotiationParams);
 
-          const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
+            const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
-          await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
-            for await (const data of source) {
-              const dataStr = new TextDecoder().decode(data);
-              // TODO: remove these logs after we gain some confidence in this exchange
-              console.log('got', dataStr);
+            await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
+              for await (const data of source) {
+                const dataStr = new TextDecoder().decode(data);
+                // TODO: remove these logs after we gain some confidence in this exchange
+                console.log('got', dataStr);
 
-              const { signature }: { signature: string } = JSON.parse(dataStr);
-              console.log('setting arch signature');
-              console.log(signature);
-              archaeologistSignatures.set(arch.profile.archAddress, signature);
-            }
-          }).finally(() => {
+                const { signature }: { signature: string } = JSON.parse(dataStr);
+                console.log('setting arch signature');
+                console.log(signature);
+                archaeologistSignatures.set(arch.profile.archAddress, signature);
+              }
+            }).finally(() => {
               stream.close();
-            }
-          );
-        }));
+            });
+          })
+        );
 
         setArchaeologistSignatures(archaeologistSignatures);
       } catch (err) {

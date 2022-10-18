@@ -12,7 +12,7 @@ export const useSarcophagusData = () => {
     recipientState,
     file,
     selectedArchaeologists,
-    requiredArchaeologists
+    requiredArchaeologists,
   } = useSelector(x => x.embalmState);
 
   const { getStatus } = useStepNavigator();
@@ -26,7 +26,7 @@ export const useSarcophagusData = () => {
     ['PAYLOAD', file ? file.name : notSet],
     ['BUNDLR BALANCE', '0.14 ETH'],
     ['ARCHAEOLOGISTS', selectedArchaeologists.length ? selectedArchaeologists.toString() : notSet],
-    ['REQUIRED ARCHAEOLOGISTS', requiredArchaeologists.toString()]
+    ['REQUIRED ARCHAEOLOGISTS', requiredArchaeologists.toString()],
   ]);
 
   const canCreateSarcophagus = (): boolean => {
@@ -38,7 +38,7 @@ export const useSarcophagusData = () => {
       Step.SetRecipient,
       Step.CreateEncryptionKeypair,
       // Step.SelectArchaeologists,
-      Step.TotalRequiredArchaeologists
+      Step.TotalRequiredArchaeologists,
     ];
 
     return requiredSteps.every(step => {
@@ -48,6 +48,6 @@ export const useSarcophagusData = () => {
 
   return {
     sarcophagusDataMap,
-    canCreateSarcophagus
+    canCreateSarcophagus,
   };
 };
