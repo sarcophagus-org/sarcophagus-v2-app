@@ -19,11 +19,11 @@ import { useLibp2p } from './useLibp2p';
 
 export function useBootLibp2pNode() {
   // The amount of time the web app will listen for discover events
-  const discoveryPeriod = 20_000;
+  const discoveryPeriod = 0;
 
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { handlePublicKeyStream, onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
+  const { onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
 
   const createAndStartNode = useCallback(async (): Promise<Libp2p> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
