@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
-import { doubleHashShard, encrypt, getLowestRewrapInterval, readFileDataAsBase64 } from 'lib/utils/helpers';
+import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { setIsUploading } from 'store/bundlr/actions';
-import { useDispatch, useSelector } from 'store/index';
+import { useSelector } from 'store/index';
 // import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
@@ -46,7 +46,6 @@ async function encryptShards(
 }
 
 export function useCreateSarcophagus() {
-  const dispatch = useDispatch();
   const {
     recipientState,
     file,
@@ -83,28 +82,6 @@ export function useCreateSarcophagus() {
     }
   );
 
-  const incrementStage = (): void => {
-    const currentIndex = createSarcophagusStages.indexOf(currentStage);
-    setCurrentStage(createSarcophagusStages[currentIndex + 1]);
-  };
-
-  const executeStage = async (stageToExecute: Function, ...args: any[]): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      setStageExecuting(true);
-
-      stageToExecute(...args).then((result: any) => {
-        setStageExecuting(false);
-
-        // Set current stage to next stage
-        incrementStage();
-        resolve(result);
-      }).catch((error: any) => {
-        console.log('caught error', error);
-        setStageExecuting(false);
-      });
-    });
-  };
-
   const uploadAndSetEncryptedShards = useCallback(async () => {
     try {
       // Step 1: Split the outer layer private key using shamirs secret sharing
@@ -138,8 +115,7 @@ export function useCreateSarcophagus() {
     requiredArchaeologists,
     outerPrivateKey,
     selectedArchaeologists,
-    uploadArweaveFile,
-    dispatch
+    uploadArweaveFile
   ]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
@@ -157,7 +133,6 @@ export function useCreateSarcophagus() {
 
     setSarcophagusPayloadTxId(payloadTxId);
   }, [
-    dispatch,
     file,
     outerPublicKey,
     recipientState.publicKey,
@@ -168,6 +143,28 @@ export function useCreateSarcophagus() {
   // TODO -- add approval stage
   useEffect(() => {
       (async () => {
+        const incrementStage = (): void => {
+          const currentIndex = createSarcophagusStages.indexOf(currentStage);
+          setCurrentStage(createSarcophagusStages[currentIndex + 1]);
+        };
+
+        const executeStage = async (stageToExecute: Function, ...args: any[]): Promise<any> => {
+          return new Promise((resolve, reject) => {
+            setStageExecuting(true);
+
+            stageToExecute(...args).then((result: any) => {
+              setStageExecuting(false);
+
+              // Set current stage to next stage
+              incrementStage();
+              resolve(result);
+            }).catch((error: any) => {
+              reject(error);
+              setStageExecuting(false);
+            });
+          });
+        };
+
         if (!stageExecuting) {
           switch (currentStage) {
             case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
@@ -224,7 +221,7 @@ export function useCreateSarcophagus() {
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
-  }, [currentStage]);
+  }, []);
 
   return {
     currentStage,

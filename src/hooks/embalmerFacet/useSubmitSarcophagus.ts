@@ -75,7 +75,7 @@ export function useSubmitSarcophagus(
         s
       };
     });
-  }, [selectedArchaeologists, archaeologistShards, archaeologistSignatures]);
+  }, [selectedArchaeologists, archaeologistShards, archaeologistSignatures, isSubmitting]);
 
   const sarcoId = utils.id(name + Date.now().toString());
   const settings: SubmitSarcophagusSettings = {

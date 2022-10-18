@@ -98,7 +98,7 @@ export function useSarcophagusNegotiation() {
         console.error(`Error in initiateSarcophagusNegotiation: ${err}`);
       }
     },
-    [selectedArchaeologists, dispatch]
+    [selectedArchaeologists]
   );
 
   // Update publicKeysReady
