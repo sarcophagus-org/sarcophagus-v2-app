@@ -51,15 +51,15 @@ export function TotalRequiredArchaegologists() {
         size="xs"
       >
         Total Archaeologists Selected: {totalArchaeologists}
-        {!totalArchaeologists && (
-          <Text
-            mt={3}
-            color="error"
-          >
-            Please select at least one archaeologist from the Select Archaeologists page
-          </Text>
-        )}
       </Text>
+      {!totalArchaeologists && (
+        <Text
+          mt={3}
+          color="error"
+        >
+          Please select at least one archaeologist from the Select Archaeologists page
+        </Text>
+      )}
       <Divider my={6} />
       <Text>
         How many archaeologists are
