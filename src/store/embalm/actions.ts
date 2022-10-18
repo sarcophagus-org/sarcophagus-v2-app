@@ -27,7 +27,6 @@ export enum ActionType {
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
-  SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -92,12 +91,11 @@ type EmbalmPayload = {
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetRecipientState]: RecipientState;
-  [ActionType.SetRequiredArchaeologists]: { count: string };
+  [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
-  [ActionType.SetTotalArchaeologists]: { count: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -260,18 +258,9 @@ export function setSelectedArchaeologists(archaeologists: Archaeologist[]): Emba
   };
 }
 
-export function setRequiredArchaeologists(count: string): EmbalmActions {
+export function setRequiredArchaeologists(count: number): EmbalmActions {
   return {
     type: ActionType.SetRequiredArchaeologists,
-    payload: {
-      count,
-    },
-  };
-}
-
-export function setTotalArchaeologists(count: string): EmbalmActions {
-  return {
-    type: ActionType.SetTotalArchaeologists,
     payload: {
       count,
     },

@@ -15,10 +15,9 @@ export enum Step {
   FundBundlr = 2,
   SetRecipient = 3,
   CreateEncryptionKeypair = 4,
-  SetDiggingFees = 5,
+  SelectArchaeologists = 5,
   TotalRequiredArchaeologists = 6,
-  SelectArchaeologists = 7,
-  CreateSarcophagus = 8,
+  CreateSarcophagus = 7,
 }
 
 export interface EmbalmState {
@@ -32,14 +31,13 @@ export interface EmbalmState {
   outerPublicKey: string | null;
   payloadTxId: string;
   recipientState: RecipientState;
-  requiredArchaeologists: string;
+  requiredArchaeologists: number;
   resurrection: number;
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
   shardsTxId: string;
   stepStatuses: { [key: number]: StepStatus };
-  totalArchaeologists: string;
   uploadPrice: string;
   diggingFeesSortDirection: SortDirection;
   diggingFeesFilter: string;
@@ -61,7 +59,7 @@ export const embalmInitialState: EmbalmState = {
   outerPublicKey: null,
   payloadTxId: '',
   recipientState: { publicKey: '', address: '', setByOption: null },
-  requiredArchaeologists: '0',
+  requiredArchaeologists: 1,
   resurrection: 0,
   resurrectionRadioValue: '',
   customResurrectionDate: null,
@@ -71,7 +69,6 @@ export const embalmInitialState: EmbalmState = {
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  totalArchaeologists: '0',
   uploadPrice: '',
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
@@ -164,9 +161,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetName:
       return { ...state, name: action.payload.name };
 
-    case ActionType.SetPublicKeysReady:
-      return { ...state, publicKeysReady: action.payload.publicKeysReady };
-
     case ActionType.SetRecipientState:
       return {
         ...state,
@@ -184,9 +178,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetResurrection:
       return { ...state, resurrection: action.payload.resurrection };
-
-    case ActionType.SetTotalArchaeologists:
-      return { ...state, totalArchaeologists: action.payload.count };
 
     case ActionType.SetRequiredArchaeologists:
       return { ...state, requiredArchaeologists: action.payload.count };

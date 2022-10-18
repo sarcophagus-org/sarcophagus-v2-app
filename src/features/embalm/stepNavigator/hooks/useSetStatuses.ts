@@ -27,15 +27,13 @@ export function validateRecipient(recipient: RecipientState) {
   return true;
 }
 
-export function validateTotalArchaeologists(total: string): boolean {
-  const totalAsNumber = parseInt(total);
+export function validateTotalArchaeologists(total: number): boolean {
+  const totalAsNumber = total;
   return totalAsNumber <= maxTotalArchaeologists && totalAsNumber > 0 && !isNaN(totalAsNumber);
 }
 
-export function validateRequiredArchaeologists(required: string, total: string): boolean {
-  const totalAsNumber = parseInt(total);
-  const requiredAsNumber = parseInt(required);
-  return requiredAsNumber <= totalAsNumber && requiredAsNumber > 0 && !isNaN(requiredAsNumber);
+export function validateRequiredArchaeologists(required: number, total: number): boolean {
+  return required <= total && required > 0 && !isNaN(required);
 }
 
 /**
@@ -45,7 +43,7 @@ export function useSetStatuses() {
   const dispatch = useDispatch();
 
   const {
-    diggingFees,
+    selectedArchaeologists,
     file,
     name,
     outerPrivateKey,
@@ -54,7 +52,6 @@ export function useSetStatuses() {
     requiredArchaeologists,
     resurrection,
     stepStatuses,
-    totalArchaeologists,
   } = useSelector(x => x.embalmState);
   const isConnected = useSelector(x => x.bundlrState.isConnected);
   const { uploadPrice } = useUploadPrice();
@@ -63,7 +60,6 @@ export function useSetStatuses() {
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
-  const diggingFeesStatus = stepStatuses[Step.SetDiggingFees];
   const totalRequiredArchaeologistsStatus = stepStatuses[Step.TotalRequiredArchaeologists];
 
   function nameSarcophagusEffect() {
@@ -109,20 +105,10 @@ export function useSetStatuses() {
     );
   }
 
-  function diggingFeesEffect() {
-    if (parseInt(diggingFees) > 0) {
-      dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Complete));
-    } else {
-      if (diggingFeesStatus !== StepStatus.NotStarted) {
-        dispatch(updateStepStatus(Step.SetDiggingFees, StepStatus.Started));
-      }
-    }
-  }
-
   function totalRequiredArchaeologistsEffect() {
     if (
-      validateRequiredArchaeologists(requiredArchaeologists, totalArchaeologists) &&
-      validateTotalArchaeologists(totalArchaeologists)
+      validateRequiredArchaeologists(requiredArchaeologists, selectedArchaeologists.length) &&
+      validateTotalArchaeologists(selectedArchaeologists.length)
     ) {
       dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Complete));
     } else {
@@ -144,11 +130,10 @@ export function useSetStatuses() {
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
-  useEffect(diggingFeesEffect, [diggingFees, diggingFeesStatus, dispatch]);
   useEffect(totalRequiredArchaeologistsEffect, [
     dispatch,
     requiredArchaeologists,
-    totalArchaeologists,
+    selectedArchaeologists.length,
     totalRequiredArchaeologistsStatus,
   ]);
 }
