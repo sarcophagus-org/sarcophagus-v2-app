@@ -5,7 +5,7 @@ import { useSelector } from '../../store';
 import { getLowestRewrapInterval } from '../../lib/utils/helpers';
 import { ArchaeologistEncryptedShard } from '../../types';
 import { useCallback } from 'react';
-import { CreateSarcophagusStep } from '../../features/embalm/stepContent/hooks/useCreateSarcohpagus';
+import { CreateSarcophagusStage } from '../../features/embalm/stepContent/hooks/useCreateSarcohpagus';
 import { computeAddress } from 'ethers/lib/utils';
 
 export interface ContractArchaeologist {
@@ -31,7 +31,7 @@ export interface SubmitSarcophagusProps {
   archaeologistSignatures: Map<string, string>;
   archaeologistShards: ArchaeologistEncryptedShard[];
   arweaveTxIds: string[];
-  currentStep: CreateSarcophagusStep;
+  currentStage: CreateSarcophagusStage;
 }
 
 export function useSubmitSarcophagus(
@@ -40,7 +40,7 @@ export function useSubmitSarcophagus(
     archaeologistSignatures,
     archaeologistShards,
     arweaveTxIds,
-    currentStep
+    currentStage
   }: SubmitSarcophagusProps
 ) {
 
@@ -55,7 +55,7 @@ export function useSubmitSarcophagus(
     requiredArchaeologists
   } = useSelector(x => x.embalmState);
 
-  const isSubmitting = currentStep === CreateSarcophagusStep.SUBMIT_SARCOPHAGUS;
+  const isSubmitting = currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS;
 
   const contractArchaeologists = useCallback((): ContractArchaeologist[] => {
     if (!isSubmitting) {

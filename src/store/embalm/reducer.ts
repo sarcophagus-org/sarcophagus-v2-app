@@ -50,7 +50,7 @@ export interface EmbalmState {
 
 export const embalmInitialState: EmbalmState = {
   archaeologists: [],
-  currentStep: Step.NameSarcophagus,
+  currentStage: Step.NameSarcophagus,
   diggingFees: '0',
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
@@ -135,7 +135,7 @@ function updateArchProperty(
 export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState {
   switch (action.type) {
     case ActionType.GoToStep:
-      return { ...state, currentStep: action.payload.step };
+      return { ...state, currentStage: action.payload.step };
 
     case ActionType.UpdateStepStatus:
       const newStepStatuses = Object.assign({}, state.stepStatuses);
