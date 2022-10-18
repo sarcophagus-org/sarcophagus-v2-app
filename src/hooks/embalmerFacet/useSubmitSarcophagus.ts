@@ -1,11 +1,49 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useSubmitTransaction } from '../useSubmitTransaction';
-import { useSelector } from 'store/index';
-import { useMemo } from 'react';
+import { useSelector } from '../../store';
 import { getLowestRewrapInterval } from '../../lib/utils/helpers';
+import { ArchaeologistEncryptedShard } from '../../types';
+import { useCallback } from 'react';
+import { CreateSarcophagusStep } from '../../features/embalm/stepContent/hooks/useCreateSarcohpagus';
+import { computeAddress } from 'ethers/lib/utils';
 
-export function useSubmitSarcophagus() {
+export interface ContractArchaeologist {
+  archAddress: string;
+  diggingFee: BigNumber;
+  unencryptedShardDoubleHash: string;
+  v: number;
+  r: string;
+  s: string;
+}
+
+export interface SubmitSarcophagusSettings {
+  name: string;
+  recipient: string;
+  resurrectionTime: BigNumber;
+  minShards: number;
+  timestamp: BigNumber;
+  maximumRewrapInterval: number | BigNumber;
+}
+
+export interface SubmitSarcophagusProps {
+  negotiationTimestamp: number;
+  archaeologistSignatures: Map<string, string>;
+  archaeologistShards: ArchaeologistEncryptedShard[];
+  arweaveTxIds: string[];
+  currentStep: CreateSarcophagusStep;
+}
+
+export function useSubmitSarcophagus(
+  {
+    negotiationTimestamp,
+    archaeologistSignatures,
+    archaeologistShards,
+    arweaveTxIds,
+    currentStep
+  }: SubmitSarcophagusProps
+) {
+
   const toastDescription = 'Sarcophagus created';
   const transactionDescription = 'Create sarcophagus';
 
@@ -14,61 +52,62 @@ export function useSubmitSarcophagus() {
     recipientState,
     resurrection,
     selectedArchaeologists,
-    requiredArchaeologists,
-    payloadTxId,
-    shardsTxId,
-    archaeologistEncryptedShards,
-    signaturesReady,
-    negotiationTimestamp,
+    requiredArchaeologists
   } = useSelector(x => x.embalmState);
 
-  const sarcoId = utils.id(name + Date.now().toString()); //TODO: verify this is correct way to generate
+  const isSubmitting = currentStep === CreateSarcophagusStep.SUBMIT_SARCOPHAGUS;
 
-  const contractArchs = useMemo(() => {
-    if (!signaturesReady) return [];
+  const contractArchaeologists = useCallback((): ContractArchaeologist[] => {
+    if (!isSubmitting) {
+      return [];
+    }
 
     return selectedArchaeologists.map(arch => {
-      const { v, r, s } = ethers.utils.splitSignature(arch.signature!);
+      const { v, r, s } = ethers.utils.splitSignature(archaeologistSignatures.get(arch.profile.archAddress)!);
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(
+        unencryptedShardDoubleHash: archaeologistShards.filter(
           shard => shard.publicKey === arch.publicKey
         )[0].unencryptedShardDoubleHash,
         v,
         r,
-        s,
+        s
       };
     });
-  }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards]);
+  }, [selectedArchaeologists, archaeologistShards, archaeologistSignatures]);
 
-  const maximumRewrapInterval = useMemo(() => {
-    if (!signaturesReady) return ethers.constants.Zero;
+  const sarcoId = utils.id(name + Date.now().toString());
+  const settings: SubmitSarcophagusSettings = {
+    name,
+    recipient: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
+    resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()),
+    minShards: requiredArchaeologists,
+    timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
+    maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists)
+  };
 
-    return getLowestRewrapInterval(selectedArchaeologists);
-  }, [selectedArchaeologists, signaturesReady]);
+  const args =
+    isSubmitting && contractArchaeologists().length ?
+      [
+        sarcoId,
+        {
+          ...settings
+        },
+        contractArchaeologists(),
+        arweaveTxIds
+      ] :
+      [];
 
-  // TODO: validate store-sourced args before making this call
   const { submit } = useSubmitTransaction({
     contractInterface: EmbalmerFacet__factory.abi,
     functionName: 'createSarcophagus',
-    args: [
-      sarcoId,
-      {
-        name,
-        recipient: recipientState.address || '0xa1B1C565b740134aBBd3a11888F1B28bd2B52e96',
-        resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()), // resurrection is in milliseconds, but saved in seconds on the contract,
-        canBeTransferred: false, //TODO: default to false until transfer logic figured out
-        minShards: requiredArchaeologists,
-        timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
-        maximumRewrapInterval,
-      },
-      contractArchs,
-      [payloadTxId, shardsTxId],
-    ],
+    args,
     toastDescription,
-    transactionDescription,
+    transactionDescription
   });
 
-  return { submitSarcophagus: submit };
+  const submitSarcophagus = args.length ? submit : undefined;
+
+  return { submitSarcophagus };
 }

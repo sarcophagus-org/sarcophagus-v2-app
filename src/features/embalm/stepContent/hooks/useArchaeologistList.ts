@@ -11,11 +11,9 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
-import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
-  const { dialSelectedArchaeologists } = useSarcophagusNegotiation();
 
   const dispatch = useDispatch();
 
@@ -37,13 +35,11 @@ export function useArchaeologistList() {
 
   // TODO: Implement Pagination
   const onClickNextPage = useCallback(() => {
-    // TODO: temporary home for "event" that will fire up arch connection attempts. Move as appropriate.
-    dialSelectedArchaeologists();
-  }, [dialSelectedArchaeologists]);
+    // TODO: implement pagination
+  }, []);
 
   const onClickPrevPage = useCallback(() => {
-    // Temporary console log
-    console.log('Will implement pagination when we are loading real archaeologists');
+    // TODO: implement pagination
   }, []);
 
   const handleCheckArchaeologist = useCallback(

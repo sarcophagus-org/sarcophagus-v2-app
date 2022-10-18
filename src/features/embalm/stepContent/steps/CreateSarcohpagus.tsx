@@ -1,26 +1,17 @@
-import { Button, Flex, Heading } from '@chakra-ui/react';
+import { Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { CreateSarcophagusStep, useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
-import { useApprove } from 'hooks/sarcoToken/useApprove';
-import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 import { useSarcophagusData } from '../hooks/useSarcophagusData';
 import { SarcophagusData } from '../components/SarcophagusData';
 
 export function CreateSarcophagus() {
   const {
     currentStep,
-    uploadAndSetEncryptedShards,
     handleCreate,
-    payloadTxId,
-    shardsTxId
   } = useCreateSarcophagus();
 
   const {
-    sarcophagusDataMap,
     canCreateSarcophagus
   } = useSarcophagusData();
-
-  const { approve } = useApprove();
-  const { allowance } = useAllowance();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStep !== CreateSarcophagusStep.NOT_STARTED;
@@ -47,9 +38,49 @@ export function CreateSarcophagus() {
             </>
           ) :
           (
-            <>
-              WE STARTED
-            </>
+            <VStack
+              mt={8}
+              mb={6}
+              justify="space-between"
+              align="left"
+            >
+              <Text
+                color={currentStep === CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS ? 'brand.950' : 'brand.400'}
+                align="left"
+              >
+                1. Dialing Archaeologists
+              </Text>
+              <Text
+                color={currentStep === CreateSarcophagusStep.UPLOAD_ENCRYPTED_SHARDS ? 'brand.950' : 'brand.400'}
+                align="left"
+              >
+                2. Uploading Encrypted Shards to Arweave
+              </Text>
+              <Text
+                color={currentStep === CreateSarcophagusStep.ARCHAEOLOGIST_NEGOTIATION ? 'brand.950' : 'brand.400'}
+                align="left"
+              >
+                3. Getting Archaeologist Signatures
+              </Text>
+              <Text
+                color={currentStep === CreateSarcophagusStep.UPLOAD_PAYLOAD ? 'brand.950' : 'brand.400'}
+                align="left"
+              >
+                4. Uploading Payload to Arweave
+              </Text>
+              <Text
+                color={currentStep === CreateSarcophagusStep.SUBMIT_SARCOPHAGUS ? 'brand.950' : 'brand.400'}
+                align="left"
+              >
+                5. Finalizing Sarcophagus
+              </Text>
+              <Text
+                color={currentStep === CreateSarcophagusStep.COMPLETED ? 'brand.950' : 'brand.400'}
+                align="left"
+              >
+                6. Sarcophagus successfully completed!
+              </Text>
+            </VStack>
           )
       }
     </Flex>

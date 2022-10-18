@@ -1,9 +1,8 @@
 import { ethers } from 'ethers';
-import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
+import { doubleHashShard, encrypt, getLowestRewrapInterval, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { setIsUploading } from 'store/bundlr/actions';
-import { setSarcophagusPayloadTxId, setShardPayloadData } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 // import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
@@ -21,6 +20,7 @@ export enum CreateSarcophagusStep {
   COMPLETED
 }
 
+// Note: order matters here
 const createSarcophagusSteps = [
   CreateSarcophagusStep.NOT_STARTED,
   CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS,
@@ -53,19 +53,34 @@ export function useCreateSarcophagus() {
     outerPrivateKey,
     selectedArchaeologists,
     publicKeysReady,
-    payloadTxId,
     shardsTxId,
     requiredArchaeologists
   } = useSelector(x => x.embalmState);
   const { isUploading } = useSelector(x => x.bundlrState);
   // const { uploadFile } = useBundlr();
   const { uploadArweaveFile } = useArweaveService();
-  const { submitSarcophagus } = useSubmitSarcophagus();
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } = useSarcophagusNegotiation();
   const [currentStep, setCurrentStep] = useState(CreateSarcophagusStep.NOT_STARTED);
   const [stepExecuting, setStepExecuting] = useState(false);
+
+  // Create Sarcophagus State
   const [archaeologistShards, setArchaeologistShards] = useState([] as ArchaeologistEncryptedShard[]);
   const [encryptedShardsTxId, setEncryptedShardsTxId] = useState('');
+  const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState('');
+  const [archaeologistSignatures, setArchaeologistSignatures] = useState(new Map<string, string>([]));
+  const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+
+  const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
+
+  const { submitSarcophagus } = useSubmitSarcophagus(
+    {
+      negotiationTimestamp,
+      archaeologistSignatures,
+      archaeologistShards,
+      arweaveTxIds,
+      currentStep
+    }
+  );
 
   const incrementStep = (): void => {
     const currentIndex = createSarcophagusSteps.indexOf(currentStep);
@@ -83,6 +98,7 @@ export function useCreateSarcophagus() {
         incrementStep();
         resolve(result);
       }).catch((error: any) => {
+        console.log('caught error', error);
         setStepExecuting(false);
       });
     });
@@ -111,7 +127,7 @@ export function useCreateSarcophagus() {
       );
 
       const txId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr, once local testing figured out
-      console.log('setting shards', encShards);
+
       setArchaeologistShards(encShards);
       setEncryptedShardsTxId(txId);
     } catch (error) {
@@ -135,51 +151,74 @@ export function useCreateSarcophagus() {
     const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
-    const sarcophagusPayloadTxId = await uploadArweaveFile(encryptedOuterLayer); // TODO: change to use uploadFile for Bundlr, once local testing figured out
+    const payloadTxId = await uploadArweaveFile(encryptedOuterLayer); // TODO: change to use uploadFile for Bundlr, once local testing figured out
 
-    dispatch(setSarcophagusPayloadTxId(sarcophagusPayloadTxId));
+    setSarcophagusPayloadTxId(payloadTxId);
   }, [
     dispatch,
     file,
     outerPublicKey,
     recipientState.publicKey,
-    uploadArweaveFile
+    uploadArweaveFile,
+    setSarcophagusPayloadTxId
   ]);
 
+  // TODO -- add approval step
   useEffect(() => {
-    (async () => {
-      if (!stepExecuting) {
-        switch (currentStep) {
-          case CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS:
-            await executeStep(
-              dialSelectedArchaeologists
-            );
-            break;
-          case CreateSarcophagusStep.UPLOAD_ENCRYPTED_SHARDS:
-            // TODO -- remove reliance on this global state var
-            if (publicKeysReady) {
+      (async () => {
+        if (!stepExecuting) {
+          switch (currentStep) {
+            case CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS:
               await executeStep(
-                uploadAndSetEncryptedShards
+                dialSelectedArchaeologists
               );
-            }
-            break;
-          case CreateSarcophagusStep.ARCHAEOLOGIST_NEGOTIATION:
-            const archaeologistSignatures = await executeStep(
-              initiateSarcophagusNegotiation,
-              archaeologistShards,
-              encryptedShardsTxId
-            );
-            break;
-          case CreateSarcophagusStep.UPLOAD_PAYLOAD:
-
-            break;
-          case CreateSarcophagusStep.SUBMIT_SARCOPHAGUS:
-
-            break;
+              break;
+            case CreateSarcophagusStep.UPLOAD_ENCRYPTED_SHARDS:
+              // TODO -- remove reliance on this global state var
+              if (publicKeysReady) {
+                await executeStep(
+                  uploadAndSetEncryptedShards
+                );
+              }
+              break;
+            case CreateSarcophagusStep.ARCHAEOLOGIST_NEGOTIATION:
+              await executeStep(
+                initiateSarcophagusNegotiation,
+                archaeologistShards,
+                encryptedShardsTxId,
+                setArchaeologistSignatures,
+                setNegotiationTimestamp
+              );
+              break;
+            case CreateSarcophagusStep.UPLOAD_PAYLOAD:
+              await executeStep(
+                uploadAndSetDoubleEncryptedFile
+              );
+              break;
+            case CreateSarcophagusStep.SUBMIT_SARCOPHAGUS:
+              if (submitSarcophagus) {
+                await executeStep(
+                  submitSarcophagus
+                );
+                break;
+              }
+          }
         }
-      }
-    })();
-  }, [currentStep, stepExecuting, publicKeysReady, archaeologistShards, encryptedShardsTxId]);
+      })();
+    },
+    [
+      currentStep,
+      stepExecuting,
+      publicKeysReady,
+      archaeologistShards,
+      encryptedShardsTxId,
+      setArchaeologistSignatures,
+      uploadAndSetEncryptedShards,
+      initiateSarcophagusNegotiation,
+      uploadAndSetDoubleEncryptedFile,
+      dialSelectedArchaeologists,
+      submitSarcophagus
+    ]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStep(CreateSarcophagusStep.DIAL_ARCHAEOLOGISTS);
@@ -190,7 +229,6 @@ export function useCreateSarcophagus() {
     uploadAndSetEncryptedShards,
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
-    payloadTxId,
     shardsTxId
   };
 }
