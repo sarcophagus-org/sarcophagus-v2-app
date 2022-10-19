@@ -7,8 +7,8 @@ export const mainnetNetworkConfig: NetworkConfig = {
   chainId,
   networkName: 'Etherum Mainnet',
   networkShortName: 'Mainnet',
-  sarcoTokenAddress: contractAddresses[chainId.toString()],
-  diamondDeployAddress: tokenAddresses[chainId.toString()],
+  sarcoTokenAddress: tokenAddresses[chainId.toString()],
+  diamondDeployAddress: contractAddresses[chainId.toString()],
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',

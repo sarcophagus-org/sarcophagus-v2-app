@@ -7,8 +7,8 @@ export const maticNetworkConfig: NetworkConfig = {
   chainId,
   networkName: 'Polygon (Matic)',
   networkShortName: 'Matic',
-  sarcoTokenAddress: contractAddresses[chainId.toString()],
-  diamondDeployAddress: tokenAddresses[chainId.toString()],
+  sarcoTokenAddress: tokenAddresses[chainId.toString()],
+  diamondDeployAddress: contractAddresses[chainId.toString()],
   bundlr: {
     currencyName: 'matic',
     nodeUrl: 'https://node1.bundlr.network',

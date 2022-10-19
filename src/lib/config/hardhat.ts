@@ -7,8 +7,8 @@ export const hardhatNetworkConfig: NetworkConfig = {
   chainId,
   networkName: 'Hardhat Local Network',
   networkShortName: 'HardHat',
-  sarcoTokenAddress: contractAddresses[chainId.toString()],
-  diamondDeployAddress: tokenAddresses[chainId.toString()],
+  sarcoTokenAddress: tokenAddresses[chainId.toString()],
+  diamondDeployAddress: contractAddresses[chainId.toString()],
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://devnet.bundlr.network',
