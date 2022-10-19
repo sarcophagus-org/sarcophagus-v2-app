@@ -5,7 +5,8 @@ import { StepNavigator } from './stepNavigator';
 import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
-import { networkConfigs, supportedChainIds } from 'lib/config/networkConfig';
+import { networkConfigs } from 'lib/config/networkConfig';
+import { supportedChainIds } from 'lib/config/contract_addresses';
 
 export function Embalm() {
   useLoadArchaeologists();
