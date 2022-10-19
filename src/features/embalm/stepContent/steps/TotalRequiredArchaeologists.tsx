@@ -61,14 +61,14 @@ export function TotalRequiredArchaegologists() {
         </Text>
       )}
       <Divider my={6} />
-      <Text>
-        How many archaeologists are
-        required to unwrap the sarcophagus?
-      </Text>
+      <Text>How many archaeologists are required to unwrap the sarcophagus?</Text>
       <FormControl>
         <Flex mt={6}>
           <Flex direction="column">
-            <NumberInput defaultValue={1} min={1} max={totalArchaeologists || 1}
+            <NumberInput
+              defaultValue={1}
+              min={1}
+              max={totalArchaeologists || 1}
               allowMouseWheel
               w="100px"
               color={inputColor}

@@ -11,6 +11,7 @@ export function useSarcophgusName() {
     if (value.length > maxSarcophagusNameLength) {
       return;
     }
+
     dispatch(setName(value));
   }
 
