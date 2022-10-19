@@ -2,6 +2,19 @@ import moment from 'moment';
 import { encrypt as eciesEncrypt } from 'ecies-geth';
 import { ethers } from 'ethers';
 import { hexlify, solidityKeccak256 } from 'ethers/lib/utils';
+import { Archaeologist } from '../../types';
+
+/**
+ * Returns the smallest maximumRewrapInterval value
+ * from the profiles of the archaeologists provided
+ */
+export function getLowestRewrapInterval(archaeologists: Archaeologist[]): number {
+  return Math.min(
+    ...archaeologists.map(arch => {
+      return Number(arch.profile.maximumRewrapInterval);
+    })
+  );
+}
 
 /**
  * Formats an address into a more readable format

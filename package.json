@@ -2,6 +2,14 @@
   "name": "sarco-webapp",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "lint": "npx eslint src/** --fix --no-error-on-unmatched-pattern",
+    "prettier": "npx prettier --write src/**"
+  },
   "dependencies": {
     "@bundlr-network/client": "^0.9.0-b8",
     "@chainsafe/libp2p-noise": "^6.2.0",
@@ -63,14 +71,6 @@
     "url": "^0.11.0",
     "wagmi": "^0.5.5",
     "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
-    "lint": "npx eslint src/**",
-    "prettier": "npx prettier --write src/**"
   },
   "resolutions": {
     "react-scripts/webpack": "5.70.0"

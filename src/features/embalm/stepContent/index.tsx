@@ -6,7 +6,6 @@ import { CreateSarcophagus } from './steps/CreateSarcohpagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';
-import { SetDiggingFees } from './steps/SetDiggingFees';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
@@ -26,9 +25,8 @@ export function StepContent() {
     [Step.FundBundlr]: { component: <FundBundlr />, title: 'Fund Arweave Bundlr' },
     [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: 'Set Recipient' },
     [Step.CreateEncryptionKeypair]: { component: <CreateEncryptionKeypair />, title: '' },
-    [Step.SetDiggingFees]: { component: <SetDiggingFees />, title: '' },
-    [Step.TotalRequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },
     [Step.SelectArchaeologists]: { component: <SelectArchaeologists />, title: '' },
+    [Step.TotalRequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },
     [Step.CreateSarcophagus]: { component: <CreateSarcophagus />, title: '' },
   };
 

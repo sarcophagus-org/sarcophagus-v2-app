@@ -3,6 +3,7 @@ import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contract
 import { useSubmitTransaction } from '../useSubmitTransaction';
 import { useSelector } from 'store/index';
 import { useMemo } from 'react';
+import { getLowestRewrapInterval } from '../../lib/utils/helpers';
 
 export function useSubmitSarcophagus() {
   const toastDescription = 'Sarcophagus created';
@@ -31,26 +32,21 @@ export function useSubmitSarcophagus() {
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(shard => shard.publicKey === arch.publicKey)[0].unencryptedShardDoubleHash,
-        v, r, s,
+        unencryptedShardDoubleHash: archaeologistEncryptedShards.filter(
+          shard => shard.publicKey === arch.publicKey
+        )[0].unencryptedShardDoubleHash,
+        v,
+        r,
+        s,
       };
     });
   }, [signaturesReady, selectedArchaeologists, archaeologistEncryptedShards]);
 
-
   const maximumRewrapInterval = useMemo(() => {
     if (!signaturesReady) return ethers.constants.Zero;
 
-    let maxRewrapInterval = selectedArchaeologists[0].profile.maximumRewrapInterval;
-    selectedArchaeologists.forEach(arch =>
-      maxRewrapInterval = arch.profile.maximumRewrapInterval.lt(maxRewrapInterval) ?
-        arch.profile.maximumRewrapInterval :
-        maxRewrapInterval
-    );
-
-    return maxRewrapInterval;
+    return getLowestRewrapInterval(selectedArchaeologists);
   }, [selectedArchaeologists, signaturesReady]);
-
 
   // TODO: validate store-sourced args before making this call
   const { submit } = useSubmitTransaction({
@@ -63,7 +59,7 @@ export function useSubmitSarcophagus() {
         recipient: recipientState.address || '0xa1B1C565b740134aBBd3a11888F1B28bd2B52e96',
         resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()), // resurrection is in milliseconds, but saved in seconds on the contract,
         canBeTransferred: false, //TODO: default to false until transfer logic figured out
-        minShards: Number.parseInt(requiredArchaeologists),
+        minShards: requiredArchaeologists,
         timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
         maximumRewrapInterval,
       },

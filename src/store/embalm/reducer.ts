@@ -15,10 +15,9 @@ export enum Step {
   FundBundlr = 2,
   SetRecipient = 3,
   CreateEncryptionKeypair = 4,
-  SetDiggingFees = 5,
+  SelectArchaeologists = 5,
   TotalRequiredArchaeologists = 6,
-  SelectArchaeologists = 7,
-  CreateSarcophagus = 8,
+  CreateSarcophagus = 7,
 }
 
 export interface EmbalmState {
@@ -32,14 +31,13 @@ export interface EmbalmState {
   outerPublicKey: string | null;
   payloadTxId: string;
   recipientState: RecipientState;
-  requiredArchaeologists: string;
+  requiredArchaeologists: number;
   resurrection: number;
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
   shardsTxId: string;
   stepStatuses: { [key: number]: StepStatus };
-  totalArchaeologists: string;
   uploadPrice: string;
   diggingFeesSortDirection: SortDirection;
   diggingFeesFilter: string;
@@ -61,7 +59,7 @@ export const embalmInitialState: EmbalmState = {
   outerPublicKey: null,
   payloadTxId: '',
   recipientState: { publicKey: '', address: '', setByOption: null },
-  requiredArchaeologists: '0',
+  requiredArchaeologists: 1,
   resurrection: 0,
   resurrectionRadioValue: '',
   customResurrectionDate: null,
@@ -71,7 +69,6 @@ export const embalmInitialState: EmbalmState = {
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  totalArchaeologists: '0',
   uploadPrice: '',
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
@@ -97,10 +94,10 @@ function updateArchProperty(
   state: EmbalmState,
   peerId: string,
   property: {
-    key: keyof Archaeologist,
-    value: any,
-    updateSelected?: boolean,
-  },
+    key: keyof Archaeologist;
+    value: any;
+    updateSelected?: boolean;
+  }
 ): EmbalmState {
   const { key, value, updateSelected } = property;
   const archaeologistIndex = state.archaeologists.findIndex(a => a.profile.peerId === peerId);
@@ -117,7 +114,9 @@ function updateArchProperty(
 
   // TODO: Time to merge these two lists maybe?
   if (updateSelected) {
-    const selectedArchaeologistIndex = state.selectedArchaeologists.findIndex(a => a.profile.peerId === peerId);
+    const selectedArchaeologistIndex = state.selectedArchaeologists.findIndex(
+      a => a.profile.peerId === peerId
+    );
 
     if (selectedArchaeologistIndex === -1) return state;
     selectedArchaeologistsCopy[selectedArchaeologistIndex] = {
@@ -129,7 +128,7 @@ function updateArchProperty(
   return {
     ...state,
     archaeologists: archaeologistsCopy,
-    selectedArchaeologists: selectedArchaeologistsCopy
+    selectedArchaeologists: selectedArchaeologistsCopy,
   };
 }
 
@@ -162,9 +161,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetName:
       return { ...state, name: action.payload.name };
 
-    case ActionType.SetPublicKeysReady:
-      return { ...state, publicKeysReady: action.payload.publicKeysReady };
-
     case ActionType.SetRecipientState:
       return {
         ...state,
@@ -182,9 +178,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetResurrection:
       return { ...state, resurrection: action.payload.resurrection };
-
-    case ActionType.SetTotalArchaeologists:
-      return { ...state, totalArchaeologists: action.payload.count };
 
     case ActionType.SetRequiredArchaeologists:
       return { ...state, requiredArchaeologists: action.payload.count };
@@ -228,34 +221,26 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return { ...state, archAddressSearch: action.payload.search };
 
     case ActionType.SetArchaeologistFullPeerId:
-      return updateArchProperty(
-        state,
-        action.payload.peerId.toString(), {
+      return updateArchProperty(state, action.payload.peerId.toString(), {
         key: 'fullPeerId',
-        value: action.payload.peerId
+        value: action.payload.peerId,
       });
 
     case ActionType.SetArchaeologistOnlineStatus:
-      return updateArchProperty(
-        state,
-        action.payload.peerId, {
+      return updateArchProperty(state, action.payload.peerId, {
         key: 'isOnline',
-        value: action.payload.isOnline
+        value: action.payload.isOnline,
       });
 
     case ActionType.SetArchaeologistConnection:
-      return updateArchProperty(
-        state,
-        action.payload.peerId, {
+      return updateArchProperty(state, action.payload.peerId, {
         key: 'connection',
         value: action.payload.connection,
         updateSelected: true,
       });
 
     case ActionType.SetArchaeologistSignature:
-      return updateArchProperty(
-        state,
-        action.payload.peerId, {
+      return updateArchProperty(state, action.payload.peerId, {
         key: 'signature',
         value: action.payload.signature,
         updateSelected: true,
@@ -271,22 +256,27 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return { ...state, negotiationTimestamp: action.payload.negotiationTimestamp };
 
     case ActionType.SetArchaeologistPublicKey:
-      return updateArchProperty(
-        state,
-        action.payload.peerId.toString(), {
+      return updateArchProperty(state, action.payload.peerId.toString(), {
         key: 'publicKey',
         value: action.payload.publicKey,
         updateSelected: true,
       });
 
+    case ActionType.SetSarcophagusPayloadTxId:
+      const { sarcophagusPayloadTxId } = action.payload;
+
+      return {
+        ...state,
+        payloadTxId: sarcophagusPayloadTxId,
+      };
+
     case ActionType.SetShardPayloadData:
-      const { shards, encryptedShardsTxId, sarcophagusPayloadTxId } = action.payload;
+      const { shards, encryptedShardsTxId } = action.payload;
 
       return {
         ...state,
         archaeologistEncryptedShards: shards,
         shardsTxId: encryptedShardsTxId,
-        payloadTxId: sarcophagusPayloadTxId,
       };
 
     case ActionType.ResetEmbalmState:

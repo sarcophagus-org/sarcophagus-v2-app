@@ -102,6 +102,7 @@ export function useLibp2p() {
         }
       }).finally(() => {
         // clean up resources
+        console.log('closing the pub key stream');
         stream.close();
       });
     },

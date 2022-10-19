@@ -8,7 +8,7 @@ import {
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
-import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
+import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
 import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
@@ -35,11 +35,8 @@ export function useArchaeologistList() {
     [SortDirection.DESC]: 'desc',
   };
 
-  // TODO: It doesn't make sense to implement pagination any further until we are loading real archaeologists
+  // TODO: Implement Pagination
   const onClickNextPage = useCallback(() => {
-    // Temporary console log
-    console.log('Will implement pagination when we are loading real archaeologists');
-
     // TODO: temporary home for "event" that will fire up arch connection attempts. Move as appropriate.
     dialSelectedArchaeologists();
   }, [dialSelectedArchaeologists]);
@@ -73,10 +70,10 @@ export function useArchaeologistList() {
     diggingFeesSortDirection === SortDirection.NONE
       ? onlineArchaeologists
       : orderBy(
-        onlineArchaeologists,
-        'profile.minimumDiggingFee',
-        sortOrderByMap[diggingFeesSortDirection]
-      );
+          onlineArchaeologists,
+          'profile.minimumDiggingFee',
+          sortOrderByMap[diggingFeesSortDirection]
+        );
 
   const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
     arch =>

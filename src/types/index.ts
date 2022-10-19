@@ -33,9 +33,9 @@ export interface SignatureWithAccount extends Signature {
 }
 
 export interface ArchaeologistEncryptedShard {
-  publicKey: string,
-  encryptedShard: string,
-  unencryptedShardDoubleHash: string,
+  publicKey: string;
+  encryptedShard: string;
+  unencryptedShardDoubleHash: string;
 }
 
 // Temporary

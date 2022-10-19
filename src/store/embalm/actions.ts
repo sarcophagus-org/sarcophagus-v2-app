@@ -27,7 +27,6 @@ export enum ActionType {
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
-  SetTotalArchaeologists = 'EMBALM_SET_TOTAL_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -35,6 +34,7 @@ export enum ActionType {
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
+  SetSarcophagusPayloadTxId = 'EMBALM_SET_SARCOPHAGUS_PAYLOAD_TX_ID',
   SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
@@ -92,22 +92,23 @@ type EmbalmPayload = {
   [ActionType.SetName]: { name: string };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetRecipientState]: RecipientState;
-  [ActionType.SetRequiredArchaeologists]: { count: string };
+  [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
-  [ActionType.SetTotalArchaeologists]: { count: string };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
+  [ActionType.SetSarcophagusPayloadTxId]: {
+    sarcophagusPayloadTxId: string;
+  };
   [ActionType.SetShardPayloadData]: {
-    shards: ArchaeologistEncryptedShard[],
-    sarcophagusPayloadTxId: string,
-    encryptedShardsTxId: string
+    shards: ArchaeologistEncryptedShard[];
+    encryptedShardsTxId: string;
   };
   [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetSignaturesReady]: { signaturesReady: boolean };
@@ -259,18 +260,9 @@ export function setSelectedArchaeologists(archaeologists: Archaeologist[]): Emba
   };
 }
 
-export function setRequiredArchaeologists(count: string): EmbalmActions {
+export function setRequiredArchaeologists(count: number): EmbalmActions {
   return {
     type: ActionType.SetRequiredArchaeologists,
-    payload: {
-      count,
-    },
-  };
-}
-
-export function setTotalArchaeologists(count: string): EmbalmActions {
-  return {
-    type: ActionType.SetTotalArchaeologists,
     payload: {
       count,
     },
@@ -351,10 +343,7 @@ export function setArchaeologistConnection(
   };
 }
 
-export function setArchaeologistSignature(
-  peerId: string,
-  signature: string
-): EmbalmActions {
+export function setArchaeologistSignature(peerId: string, signature: string): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistSignature,
     payload: {
@@ -393,13 +382,24 @@ export function setArchaeologistPublicKey(peerId: string, publicKey: string): Em
   };
 }
 
-export function setShardPayloadData(shards: ArchaeologistEncryptedShard[], sarcophagusPayloadTxId: string, encryptedShardsTxId: string): EmbalmActions {
+export function setSarcophagusPayloadTxId(sarcophagusPayloadTxId: string): EmbalmActions {
+  return {
+    type: ActionType.SetSarcophagusPayloadTxId,
+    payload: {
+      sarcophagusPayloadTxId,
+    },
+  };
+}
+
+export function setShardPayloadData(
+  shards: ArchaeologistEncryptedShard[],
+  encryptedShardsTxId: string
+): EmbalmActions {
   return {
     type: ActionType.SetShardPayloadData,
     payload: {
       shards,
-      sarcophagusPayloadTxId,
-      encryptedShardsTxId
+      encryptedShardsTxId,
     },
   };
 }

@@ -67,7 +67,7 @@ const useArweaveService = () => {
     return decryptedFile.toString() === fileBytes.toString();
   };
 
-  //TODO: remove when archologist do the upload.
+  //TODO: Make this a dev local-env only operation
   const uploadArweaveFile = async (file: string | Buffer): Promise<string> => {
     const arweave = initArweave();
 
