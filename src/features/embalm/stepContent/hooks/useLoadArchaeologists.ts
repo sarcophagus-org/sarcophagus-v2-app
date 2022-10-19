@@ -12,6 +12,7 @@ import { readContract } from 'wagmi/actions';
 export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
+
   const { archaeologists } = useSelector(s => s.embalmState);
 
   useEffect(() => {
@@ -62,5 +63,5 @@ export function useLoadArchaeologists() {
         dispatch(stopLoad());
       }
     })();
-  }, [archaeologists, dispatch, networkConfig.diamondDeployAddress]);
+  }, [archaeologists, dispatch, networkConfig]);
 }

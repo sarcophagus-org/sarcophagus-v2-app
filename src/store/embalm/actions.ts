@@ -38,6 +38,7 @@ export enum ActionType {
   SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
+  ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
 }
 
 export enum RecipientSetByOption {
@@ -112,6 +113,7 @@ type EmbalmPayload = {
   [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetSignaturesReady]: { signaturesReady: boolean };
   [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
+  [ActionType.ResetEmbalmState]: {};
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -399,6 +401,13 @@ export function setShardPayloadData(
       shards,
       encryptedShardsTxId,
     },
+  };
+}
+
+export function resetEmbalmState(): EmbalmActions {
+  return {
+    type: ActionType.ResetEmbalmState,
+    payload: {}
   };
 }
 

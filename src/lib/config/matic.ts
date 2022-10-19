@@ -1,11 +1,14 @@
+import { contractAddresses, tokenAddresses } from './contract_addresses';
 import { NetworkConfig } from './networkConfigType';
 
+const chainId = 137;
+
 export const maticNetworkConfig: NetworkConfig = {
-  chainId: 137,
+  chainId,
   networkName: 'Polygon (Matic)',
   networkShortName: 'Matic',
-  sarcoTokenAddress: '0x0',
-  diamondDeployAddress: '0x0',
+  sarcoTokenAddress: tokenAddresses[chainId.toString()],
+  diamondDeployAddress: contractAddresses[chainId.toString()],
   bundlr: {
     currencyName: 'matic',
     nodeUrl: 'https://node1.bundlr.network',

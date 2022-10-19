@@ -279,6 +279,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         shardsTxId: encryptedShardsTxId,
       };
 
+    case ActionType.ResetEmbalmState:
+      return embalmInitialState;
+
     default:
       return state;
   }

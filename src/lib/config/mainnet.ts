@@ -1,11 +1,14 @@
+import { contractAddresses, tokenAddresses } from './contract_addresses';
 import { NetworkConfig } from './networkConfigType';
 
+const chainId = 1;
+
 export const mainnetNetworkConfig: NetworkConfig = {
-  chainId: 1,
+  chainId,
   networkName: 'Etherum Mainnet',
   networkShortName: 'Mainnet',
-  sarcoTokenAddress: '0x7697B462A7c4Ff5F8b55BDBC2F4076c2aF9cF51A',
-  diamondDeployAddress: '0x0',
+  sarcoTokenAddress: tokenAddresses[chainId.toString()],
+  diamondDeployAddress: contractAddresses[chainId.toString()],
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',
