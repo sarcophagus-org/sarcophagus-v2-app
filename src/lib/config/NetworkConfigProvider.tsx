@@ -1,12 +1,13 @@
 import { NetworkConfigContext } from '.';
 import { useNetwork } from 'wagmi';
-import { AllNetworkConfigs } from './networkConfig';
+import { supportedNetworkConfigs } from './networkConfig';
+import { NetworkConfig } from './networkConfigType';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
 
-  const networkConfig = !!chain
-    ? AllNetworkConfigs[chain.id]
+  const networkConfig: NetworkConfig = !!chain
+    ? supportedNetworkConfigs[chain.id]
     : {
         chainId: 0,
         networkName: '',
@@ -17,7 +18,6 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
           currencyName: '',
           nodeUrl: '',
           providerUrl: '',
-          currencyContractAddress: '',
         },
       };
 

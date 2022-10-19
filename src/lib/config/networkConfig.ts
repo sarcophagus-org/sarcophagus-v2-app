@@ -4,7 +4,7 @@ import { goerliNetworkConfig } from './goerli';
 import { hardhatNetworkConfig } from './hardhat';
 import { maticNetworkConfig } from './matic';
 
-export const AllNetworkConfigs: { [chainId: number]: NetworkConfig } = {
+export const supportedNetworkConfigs: { [chainId: number]: NetworkConfig } = {
   1: mainnetNetworkConfig,
   5: goerliNetworkConfig,
   31337: hardhatNetworkConfig,
