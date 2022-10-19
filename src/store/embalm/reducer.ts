@@ -289,6 +289,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         payloadTxId: sarcophagusPayloadTxId,
       };
 
+    case ActionType.ResetEmbalmState:
+      return embalmInitialState;
+
     default:
       return state;
   }

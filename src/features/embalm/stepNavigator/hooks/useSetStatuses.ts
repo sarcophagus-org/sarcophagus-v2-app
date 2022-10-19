@@ -6,11 +6,13 @@ import {
   RecipientState,
   RecipientSetByOption,
   GeneratePDFState,
+  resetEmbalmState,
 } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
+import { useAccount } from 'wagmi';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -56,9 +58,10 @@ export function useSetStatuses() {
     stepStatuses,
     totalArchaeologists,
   } = useSelector(x => x.embalmState);
-  const isConnected = useSelector(x => x.bundlrState.isConnected);
+  const { isConnected: isBundlrConnected } = useSelector(x => x.bundlrState);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
+  const { isConnected: isWalletConnected } = useAccount();
 
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
@@ -85,7 +88,7 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if (isConnected && parseFloat(balance) > parseFloat(uploadPrice)) {
+    if (isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
@@ -132,6 +135,12 @@ export function useSetStatuses() {
     }
   }
 
+  function walletDisconnectedEffect() {
+    if (!isWalletConnected) {
+      dispatch(resetEmbalmState());
+    }
+  }
+
   useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus, resurrection]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
   useEffect(fundBundlrEffect, [
@@ -139,7 +148,7 @@ export function useSetStatuses() {
     dispatch,
     file,
     fundBundlrStatus,
-    isConnected,
+    isBundlrConnected,
     uploadPrice,
   ]);
   useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
@@ -151,4 +160,5 @@ export function useSetStatuses() {
     totalArchaeologists,
     totalRequiredArchaeologistsStatus,
   ]);
+  useEffect(walletDisconnectedEffect, [dispatch, isWalletConnected]);
 }
