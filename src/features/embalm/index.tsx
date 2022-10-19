@@ -6,6 +6,7 @@ import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
 import { supportedNetworkConfigs } from 'lib/config/networkConfig';
+import { hardhatLocalChainId } from 'lib/config/hardhat';
 
 export function Embalm() {
   useLoadArchaeologists();
@@ -13,7 +14,10 @@ export function Embalm() {
 
   const { isConnected } = useAccount();
   const networkConfig = useNetworkConfig();
-  const supportedNetworks = Object.values(supportedNetworkConfigs).map(config => config.networkShortName);
+
+  const supportedNetworks = Object.values(supportedNetworkConfigs)
+    .filter(config => !(process.env.REACT_APP_USE_LOCAL !== 'true' && config.chainId === hardhatLocalChainId)) // Exclude hardhat if REACT_APP_USE_LOCAL is not set
+    .map(config => config.networkShortName);
 
   return (
     <Flex
@@ -58,7 +62,7 @@ export function Embalm() {
                 <Heading>Please connect wallet to create a sarcophagus</Heading>
               </VStack> :
 
-              networkConfig === undefined ?
+              networkConfig === undefined || (process.env.REACT_APP_USE_LOCAL !== 'true' && networkConfig.chainId === hardhatLocalChainId) ?
 
                 <VStack>
                   <Heading>You are connected on an unsupported Network</Heading>
