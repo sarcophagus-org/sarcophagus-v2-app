@@ -25,7 +25,7 @@ export const useSarcophagusData = () => {
     ['RECIPIENT', recipientState.publicKey ? formatAddress(recipientState.publicKey) : notSet],
     ['PAYLOAD', file ? file.name : notSet],
     ['BUNDLR BALANCE', '0.14 ETH'],
-    ['ARCHAEOLOGISTS', selectedArchaeologists.length ? selectedArchaeologists.toString() : notSet],
+    ['SELECTED ARCHAEOLOGISTS', selectedArchaeologists.length ? `${selectedArchaeologists.length}` : notSet],
     ['REQUIRED ARCHAEOLOGISTS', requiredArchaeologists.toString()],
   ]);
 
@@ -38,7 +38,7 @@ export const useSarcophagusData = () => {
       Step.SetRecipient,
       Step.CreateEncryptionKeypair,
       // Step.SelectArchaeologists,
-      Step.TotalRequiredArchaeologists,
+      Step.RequiredArchaeologists,
     ];
 
     return requiredSteps.every(step => {

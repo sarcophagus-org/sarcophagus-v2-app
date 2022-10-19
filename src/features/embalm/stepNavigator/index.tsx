@@ -48,7 +48,7 @@ export function StepNavigator() {
       />
 
       <StepElement
-        step={Step.TotalRequiredArchaeologists}
+        step={Step.RequiredArchaeologists}
         title="Required Archaeologists"
       />
 

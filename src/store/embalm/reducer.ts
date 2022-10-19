@@ -16,7 +16,7 @@ export enum Step {
   SetRecipient = 3,
   CreateEncryptionKeypair = 4,
   SelectArchaeologists = 5,
-  TotalRequiredArchaeologists = 6,
+  RequiredArchaeologists = 6,
   CreateSarcophagus = 7,
 }
 

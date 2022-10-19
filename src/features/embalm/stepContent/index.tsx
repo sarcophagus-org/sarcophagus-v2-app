@@ -26,7 +26,7 @@ export function StepContent() {
     [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: 'Set Recipient' },
     [Step.CreateEncryptionKeypair]: { component: <CreateEncryptionKeypair />, title: '' },
     [Step.SelectArchaeologists]: { component: <SelectArchaeologists />, title: '' },
-    [Step.TotalRequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },
+    [Step.RequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },
     [Step.CreateSarcophagus]: { component: <CreateSarcophagus />, title: '' },
   };
 
