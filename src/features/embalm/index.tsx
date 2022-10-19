@@ -5,8 +5,7 @@ import { StepNavigator } from './stepNavigator';
 import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
-import { supportedNetworkConfigs } from 'lib/config/networkConfig';
-import { hardhatLocalChainId } from 'lib/config/hardhat';
+import { networkConfigs, supportedChainIds } from 'lib/config/networkConfig';
 
 export function Embalm() {
   useLoadArchaeologists();
@@ -15,8 +14,8 @@ export function Embalm() {
   const { isConnected } = useAccount();
   const networkConfig = useNetworkConfig();
 
-  const supportedNetworks = Object.values(supportedNetworkConfigs)
-    .filter(config => !(process.env.REACT_APP_USE_LOCAL !== 'true' && config.chainId === hardhatLocalChainId)) // Exclude hardhat if REACT_APP_USE_LOCAL is not set
+  const supportedNetworkNames = Object.values(networkConfigs)
+    .filter(config => supportedChainIds.includes(config.chainId))
     .map(config => config.networkShortName);
 
   return (
@@ -62,12 +61,12 @@ export function Embalm() {
                 <Heading>Please connect wallet to create a sarcophagus</Heading>
               </VStack> :
 
-              networkConfig === undefined || (process.env.REACT_APP_USE_LOCAL !== 'true' && networkConfig.chainId === hardhatLocalChainId) ?
+              networkConfig === undefined || !supportedChainIds.includes(networkConfig.chainId) ?
 
                 <VStack>
                   <Heading>You are connected on an unsupported Network</Heading>
                   <Text>Supported Networks</Text>
-                  {supportedNetworks.map(network => <Text key={network}>{network}</Text>)}
+                  {supportedNetworkNames.map(network => <Text key={network}>{network}</Text>)}
                 </VStack> :
 
                 <StepContent />
