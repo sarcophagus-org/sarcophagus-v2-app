@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
-import { setIsUploading } from 'store/bundlr/actions';
+// import { setIsUploading } from 'store/bundlr/actions';
 import { useSelector } from 'store/index';
 // import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
@@ -56,7 +56,7 @@ export function useCreateSarcophagus() {
     shardsTxId,
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
-  const { isUploading } = useSelector(x => x.bundlrState);
+  // const { isUploading } = useSelector(x => x.bundlrState);
   // const { uploadFile } = useBundlr();
   const { uploadArweaveFile } = useArweaveService();
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
