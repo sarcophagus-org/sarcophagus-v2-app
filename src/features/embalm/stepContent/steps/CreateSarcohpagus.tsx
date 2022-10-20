@@ -1,12 +1,11 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
-import { useSarcophagusData } from '../hooks/useSarcophagusData';
-import { SarcophagusData } from '../components/SarcophagusData';
+import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
+import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 
 export function CreateSarcophagus() {
   const { currentStage, handleCreate } = useCreateSarcophagus();
-
-  const { canCreateSarcophagus } = useSarcophagusData();
+  const { isSarcophagusComplete } = useSarcophagusParameters();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
@@ -20,11 +19,11 @@ export function CreateSarcophagus() {
       <Heading>Create Sarcophagus</Heading>
       {!isCreateProcessStarted() ? (
         <>
-          <SarcophagusData />
+          <ReviewSarcophagus />
           <Button
             mt={6}
             onClick={handleCreate}
-            disabled={!canCreateSarcophagus()}
+            disabled={!isSarcophagusComplete()}
           >
             Create Sarcophagus
           </Button>

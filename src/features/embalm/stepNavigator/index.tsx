@@ -49,7 +49,7 @@ export function StepNavigator() {
 
       <StepElement
         step={Step.CreateSarcophagus}
-        title="CreateSarcophagus"
+        title="Create"
       />
     </StepsContainer>
   );
