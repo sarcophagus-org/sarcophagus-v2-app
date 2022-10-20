@@ -35,15 +35,18 @@ export function useLibp2p() {
       dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
       dispatch(setArchaeologistFullPeerId(peerId));
 
-      if (heartbeatTimeouts[peerId.toString()]) {
-        clearTimeout(heartbeatTimeouts[peerId.toString()]);
-        heartbeatTimeouts[peerId.toString()] = undefined;
-      }
-
-      heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
-        console.log(`No longer online: ${peerId.toString()}`);
-        dispatch(setArchaeologistOnlineStatus(peerId.toString(), false));
-      }, pingThreshold);
+      // TODO -- temporarily removed while we have the 20 second discovery limit
+      // if this continues to run, the archs will disappear
+      
+      // if (heartbeatTimeouts[peerId.toString()]) {
+      //   clearTimeout(heartbeatTimeouts[peerId.toString()]);
+      //   heartbeatTimeouts[peerId.toString()] = undefined;
+      // }
+      //
+      // heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
+      //   console.log(`No longer online: ${peerId.toString()}`);
+      //   dispatch(setArchaeologistOnlineStatus(peerId.toString(), false));
+      // }, pingThreshold);
     },
     [dispatch]
   );

@@ -187,13 +187,15 @@ export function useCreateSarcophagus() {
             }
             break;
           case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
-            await executeStage(
-              initiateSarcophagusNegotiation,
-              archaeologistShards,
-              encryptedShardsTxId,
-              setArchaeologistSignatures,
-              setNegotiationTimestamp
-            );
+            setTimeout(async () => {
+              await executeStage(
+                initiateSarcophagusNegotiation,
+                archaeologistShards,
+                encryptedShardsTxId,
+                setArchaeologistSignatures,
+                setNegotiationTimestamp
+              );
+            }, 10000);
             break;
           case CreateSarcophagusStage.UPLOAD_PAYLOAD:
             await executeStage(uploadAndSetDoubleEncryptedFile);
