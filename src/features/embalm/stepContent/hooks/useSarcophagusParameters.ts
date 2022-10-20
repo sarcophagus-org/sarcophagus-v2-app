@@ -7,6 +7,7 @@ export interface SarcophagusParameter {
   name: string;
   value: string | null;
   step: Step;
+  error: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ export const useSarcophagusParameters = () => {
     selectedArchaeologists,
     requiredArchaeologists
   } = useSelector(x => x.embalmState);
+  const { balance } = useSelector(x => x.bundlrState);
 
   const { getStatus } = useStepNavigator();
 
@@ -31,38 +33,45 @@ export const useSarcophagusParameters = () => {
   const sarcophagusParameters: SarcophagusParameter[] = [
     {
       name: 'NAME',
-      value: name || null,
-      step: Step.NameSarcophagus
+      value: name,
+      step: Step.NameSarcophagus,
+      error: !name
     },
     {
       name: 'RESURRECTION',
       value: resurrection ? humanizeUnixTimestamp(resurrection) : null,
-      step: Step.NameSarcophagus
+      step: Step.NameSarcophagus,
+      error: !resurrection
     },
     {
       name: 'RECIPIENT',
       value: recipientState.publicKey ? formatAddress(recipientState.publicKey) : null,
-      step: Step.SetRecipient
+      step: Step.SetRecipient,
+      error: !recipientState.publicKey
     },
     {
       name: 'PAYLOAD',
       value: file ? file.name : null,
-      step: Step.UploadPayload
+      step: Step.UploadPayload,
+      error: !file
     },
     {
       name: 'BUNDLR BALANCE',
-      value: null,
-      step: Step.FundBundlr
+      value: balance,
+      step: Step.FundBundlr,
+      error: balance === '0' || !balance
     },
     {
       name: 'SELECTED ARCHAEOLOGISTS',
-      value: selectedArchaeologists.length ? selectedArchaeologists.length.toString() : null,
-      step: Step.SelectArchaeologists
+      value: selectedArchaeologists.length.toString(),
+      step: Step.SelectArchaeologists,
+      error: selectedArchaeologists.length === 0
     },
     {
       name: 'REQUIRED ARCHAEOLOGISTS',
-      value: requiredArchaeologists ? requiredArchaeologists.toString() : null,
-      step: Step.RequiredArchaeologists
+      value: requiredArchaeologists.toString(),
+      step: Step.RequiredArchaeologists,
+      error: requiredArchaeologists === 0
     }
   ];
 
@@ -75,7 +84,7 @@ export const useSarcophagusParameters = () => {
     const requiredSteps = [
       Step.NameSarcophagus,
       Step.UploadPayload,
-      // Step.FundBundlr,
+      Step.FundBundlr,
       Step.SetRecipient,
       Step.SelectArchaeologists,
       Step.RequiredArchaeologists
