@@ -2,13 +2,12 @@ import { ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
-// import { setIsUploading } from 'store/bundlr/actions';
-import { useSelector } from 'store/index';
-// import { useBundlr } from './useBundlr';
+import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
+import { disableSteps, enableSteps } from 'store/embalm/actions';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -47,6 +46,7 @@ async function encryptShards(
 }
 
 export function useCreateSarcophagus() {
+  const dispatch = useDispatch();
   const {
     recipientState,
     file,
@@ -192,27 +192,31 @@ export function useCreateSarcophagus() {
           case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
             if (submitSarcophagus) {
               await executeStage(submitSarcophagus);
-              break;
             }
+            break;
+          case CreateSarcophagusStage.COMPLETED:
+            dispatch(enableSteps());
+            break;
         }
       }
     })();
   }, [
-    currentStage,
-    stageExecuting,
-    publicKeysReady,
     archaeologistShards,
-    encryptedShardsTxId,
-    setArchaeologistSignatures,
-    uploadAndSetEncryptedShards,
-    initiateSarcophagusNegotiation,
-    uploadAndSetDoubleEncryptedFile,
+    currentStage,
     dialSelectedArchaeologists,
+    dispatch,
+    encryptedShardsTxId,
+    initiateSarcophagusNegotiation,
+    publicKeysReady,
+    stageExecuting,
     submitSarcophagus,
+    uploadAndSetDoubleEncryptedFile,
+    uploadAndSetEncryptedShards,
   ]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
+    dispatch(disableSteps());
   }, []);
 
   return {

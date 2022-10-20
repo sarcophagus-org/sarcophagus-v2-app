@@ -1,21 +1,22 @@
-import { Center, Flex, Spinner, Text, HStack } from '@chakra-ui/react';
+import { Flex, HStack, Spinner, Text } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
+import { useSelector } from 'store/index';
 import { useStepNavigator } from '../hooks/useStepNavigator';
 import { StepStatusIndicator } from './StepStatusIndicator';
-import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useSelector } from 'store/index';
-interface StepProps {
+export interface StepProps {
   title: string;
   step: Step;
   isLoading?: boolean;
+  isDisabled?: boolean;
 }
 
-export function StepElement({ title, step, isLoading }: StepProps) {
+export function StepElement({ title, step, isLoading, isDisabled }: StepProps) {
   const { getStatus, selectStep } = useStepNavigator();
   const status = getStatus(step);
   const { currentStep } = useSelector(x => x.embalmState);
 
   function handleSelect() {
+    if (isDisabled) return;
     selectStep(step);
   }
 
@@ -27,17 +28,22 @@ export function StepElement({ title, step, isLoading }: StepProps) {
     >
       <Flex
         align="center"
-        cursor="pointer"
-        _hover={{
-          textDecoration: 'underline',
-        }}
+        cursor={!isDisabled ? 'pointer' : 'not-allowed'}
+        _hover={
+          !isDisabled
+            ? {
+                textDecoration: 'underline',
+              }
+            : {}
+        }
       >
         <StepStatusIndicator
           status={status}
           index={step}
+          isDisabled={isDisabled}
         />
         <Text
-          color={currentStep === step ? 'brand.950' : 'brand.400'}
+          color={currentStep !== step || isDisabled ? 'brand.400' : 'brand.950'}
           align="left"
           ml={3}
         >
@@ -50,17 +56,6 @@ export function StepElement({ title, step, isLoading }: StepProps) {
           />
         )}
       </Flex>
-      <Center
-        h="24px"
-        w="24px"
-        borderRadius={100}
-        cursor="pointer"
-        _hover={{
-          backgroundColor: 'brand.100',
-        }}
-      >
-        {currentStep === step ? <ChevronRightIcon /> : <ChevronDownIcon />}
-      </Center>
     </HStack>
   );
 }
