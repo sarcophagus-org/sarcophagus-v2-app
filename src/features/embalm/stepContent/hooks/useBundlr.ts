@@ -36,9 +36,7 @@ export function useBundlr() {
       toast(fundStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
-        console.log(parsedAmount);
         await bundlr?.fund(Number(parsedAmount));
-
         toast(fundSuccess());
       } catch (_error) {
         const error = _error as Error;

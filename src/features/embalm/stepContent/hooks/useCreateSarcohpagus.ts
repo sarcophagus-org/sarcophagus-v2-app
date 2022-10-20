@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 // import { setIsUploading } from 'store/bundlr/actions';
 import { useSelector } from 'store/index';
-// import { useBundlr } from './useBundlr';
+import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
@@ -56,8 +56,12 @@ export function useCreateSarcophagus() {
     shardsTxId,
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
+
+  // BUNDLR config
   // const { isUploading } = useSelector(x => x.bundlrState);
-  // const { uploadFile } = useBundlr();
+  const { uploadFile } = useBundlr();
+  const shouldUseBundlr = process.env.NODE_ENV !== 'development' || process.env.REACT_APP_LOCAL_BUNDLR === 'true';
+
   const { uploadArweaveFile } = useArweaveService();
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
     useSarcophagusNegotiation();
@@ -107,7 +111,12 @@ export function useCreateSarcophagus() {
         {}
       );
 
-      const txId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr, once local testing figured out
+      let txId;
+      if (shouldUseBundlr) {
+        txId = await uploadFile(Buffer.from(JSON.stringify(mapping)));
+      } else {
+        txId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
+      }
 
       setArchaeologistShards(encShards);
       setEncryptedShardsTxId(txId);
@@ -126,8 +135,13 @@ export function useCreateSarcophagus() {
     const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
-    // TODO: change to use uploadFile for Bundlr, once local testing figured out
-    const payloadTxId = await uploadArweaveFile(encryptedOuterLayer);
+
+    let payloadTxId;
+    if (shouldUseBundlr) {
+      payloadTxId = await uploadFile(encryptedOuterLayer);
+    } else {
+      payloadTxId = await uploadArweaveFile(encryptedOuterLayer);
+    }
 
     setSarcophagusPayloadTxId(payloadTxId);
   }, [
