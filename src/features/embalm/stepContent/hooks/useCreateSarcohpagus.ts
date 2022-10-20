@@ -2,7 +2,6 @@ import { ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
-// import { setIsUploading } from 'store/bundlr/actions';
 import { useSelector } from 'store/index';
 import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
@@ -59,7 +58,6 @@ export function useCreateSarcophagus() {
   } = useSelector(x => x.embalmState);
 
   // BUNDLR config
-  // const { isUploading } = useSelector(x => x.bundlrState);
   const { uploadFile } = useBundlr();
   const { chain } = useNetwork();
   const shouldUseBundlr = chainId.hardhat === chain!.id;
@@ -113,12 +111,9 @@ export function useCreateSarcophagus() {
         {}
       );
 
-      let txId;
-      if (shouldUseBundlr) {
-        txId = await uploadFile(Buffer.from(JSON.stringify(mapping)));
-      } else {
-        txId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
-      }
+      const txId = shouldUseBundlr ?
+        await uploadFile(Buffer.from(JSON.stringify(mapping))) :
+        await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
 
       setArchaeologistShards(encShards);
       setEncryptedShardsTxId(txId);
@@ -138,12 +133,9 @@ export function useCreateSarcophagus() {
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
 
-    let payloadTxId;
-    if (shouldUseBundlr) {
-      payloadTxId = await uploadFile(encryptedOuterLayer);
-    } else {
-      payloadTxId = await uploadArweaveFile(encryptedOuterLayer);
-    }
+    const payloadTxId = shouldUseBundlr ?
+      await uploadFile(encryptedOuterLayer) :
+      await uploadArweaveFile(encryptedOuterLayer);
 
     setSarcophagusPayloadTxId(payloadTxId);
   }, [
