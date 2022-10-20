@@ -40,5 +40,4 @@ export function ProgressTrackerStage({
       {/* If we want to show additional information on the stage, we can conditionally add it here. */}
     </Flex>
   );
-  //
 }
