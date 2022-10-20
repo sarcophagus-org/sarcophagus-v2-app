@@ -79,7 +79,7 @@ export function useGetBalance() {
     if (intervalId) {
       return () => clearInterval(intervalId);
     }
-  }, [pendingBalance.txId, setBalance, setPendingBalance]);
+  }, [pendingBalance.txId, balance, dispatch, getBalance, intervalId]);
 
   return { balance, getBalance, formattedBalance };
 }

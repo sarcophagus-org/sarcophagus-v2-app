@@ -10,7 +10,6 @@ import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
 import { chainId, useNetwork } from 'wagmi';
 
-// TODO: change to stage
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
@@ -60,7 +59,7 @@ export function useCreateSarcophagus() {
   // BUNDLR config
   const { uploadFile } = useBundlr();
   const { chain } = useNetwork();
-  const shouldUseBundlr = chainId.hardhat === chain!.id;
+  const shouldUseBundlr = chainId.hardhat !== chain!.id;
 
   const { uploadArweaveFile } = useArweaveService();
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
@@ -120,7 +119,8 @@ export function useCreateSarcophagus() {
     } catch (error) {
       console.error(error);
     }
-  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadArweaveFile]);
+  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadArweaveFile, shouldUseBundlr,
+    uploadFile]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     const payload = await readFileDataAsBase64(file!);
@@ -144,6 +144,8 @@ export function useCreateSarcophagus() {
     recipientState.publicKey,
     uploadArweaveFile,
     setSarcophagusPayloadTxId,
+    shouldUseBundlr,
+    uploadFile
   ]);
 
   // TODO -- add approval stage

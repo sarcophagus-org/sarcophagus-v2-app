@@ -52,7 +52,7 @@ export function useBundlr() {
         dispatch(setIsFunding(false));
       }
     },
-    [bundlr, dispatch, toast]
+    [bundlr, dispatch, toast, balance]
   );
 
   /**
