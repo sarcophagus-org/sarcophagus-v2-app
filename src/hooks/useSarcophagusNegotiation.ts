@@ -1,6 +1,6 @@
 import { pipe } from 'it-pipe';
-import React, { useCallback, useEffect } from 'react';
-import { setArchaeologistConnection, setPublicKeysReady } from 'store/embalm/actions';
+import React, { useCallback } from 'react';
+import { setArchaeologistConnection } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import { ArchaeologistEncryptedShard } from 'types';
@@ -26,15 +26,15 @@ export function useSarcophagusNegotiation() {
   const dialSelectedArchaeologists = useCallback(async () => {
     await resetPublicKeyStream();
 
-    selectedArchaeologists.map(async arch => {
+    for await (const arch of selectedArchaeologists) {
       try {
         const connection = await libp2pNode?.dial(arch.fullPeerId!);
         if (!connection) throw Error('No connection obtained from dial');
-        dispatch(setArchaeologistConnection(arch.profile.peerId, connection!));
+        dispatch(setArchaeologistConnection(arch.profile.peerId, connection));
       } catch (e) {
         console.error(`error connecting to ${arch.profile.peerId}`, e);
       }
-    });
+    }
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
   const initiateSarcophagusNegotiation = useCallback(
@@ -95,18 +95,6 @@ export function useSarcophagusNegotiation() {
       }
     },
     [selectedArchaeologists]
-  );
-
-  // Update publicKeysReady
-  useEffect(
-    () =>
-      dispatch(
-        setPublicKeysReady(
-          selectedArchaeologists.length > 0 &&
-            selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
-        )
-      ),
-    [selectedArchaeologists, dispatch]
   );
 
   return {
