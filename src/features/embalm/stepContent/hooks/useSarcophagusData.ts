@@ -36,7 +36,6 @@ export const useSarcophagusData = () => {
       Step.UploadPayload,
       // Step.FundBundlr,
       Step.SetRecipient,
-      Step.CreateEncryptionKeypair,
       // Step.SelectArchaeologists,
       Step.RequiredArchaeologists,
     ];

@@ -38,11 +38,6 @@ export function StepNavigator() {
       />
 
       <StepElement
-        step={Step.CreateEncryptionKeypair}
-        title="Create Encryption Keypair"
-      />
-
-      <StepElement
         step={Step.SelectArchaeologists}
         title="Select Archaeologists"
       />

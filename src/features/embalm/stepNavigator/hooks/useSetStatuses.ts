@@ -89,11 +89,6 @@ export function useSetStatuses() {
     }
   }
 
-  function createEncryptionKeypairEffect() {
-    if (!!outerPrivateKey && !!outerPublicKey) {
-      dispatch(updateStepStatus(Step.CreateEncryptionKeypair, StepStatus.Complete));
-    }
-  }
 
   function setRecipientEffect() {
     dispatch(
@@ -140,7 +135,6 @@ export function useSetStatuses() {
     isBundlrConnected,
     uploadPrice,
   ]);
-  useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [dispatch, selectedArchaeologists, selectedArchaeologistsStatus]);
   useEffect(requiredArchaeologistsEffect, [
