@@ -9,6 +9,7 @@ import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
+import { chainId, useNetwork } from 'wagmi';
 
 // TODO: change to stage
 export enum CreateSarcophagusStage {
@@ -60,7 +61,8 @@ export function useCreateSarcophagus() {
   // BUNDLR config
   // const { isUploading } = useSelector(x => x.bundlrState);
   const { uploadFile } = useBundlr();
-  const shouldUseBundlr = process.env.NODE_ENV !== 'development' || process.env.REACT_APP_LOCAL_BUNDLR === 'true';
+  const { chain } = useNetwork();
+  const shouldUseBundlr = chainId.hardhat === chain!.id;
 
   const { uploadArweaveFile } = useArweaveService();
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
