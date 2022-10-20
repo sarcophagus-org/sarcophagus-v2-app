@@ -1,4 +1,5 @@
 import { Button, Flex, Heading, Text, HStack, VStack } from '@chakra-ui/react';
+import { useSelector } from 'store/index';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
@@ -17,6 +18,7 @@ interface StepContentMap {
 
 export function StepContent() {
   const { currentStep, goToPrev, goToNext } = useStepContent();
+  const areStepsDisabled = useSelector(x => x.embalmState.areStepsDisabled);
 
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {
@@ -31,10 +33,12 @@ export function StepContent() {
   };
 
   function handleClickPrev() {
+    if (areStepsDisabled) return;
     goToPrev();
   }
 
   function handleClickNext() {
+    if (areStepsDisabled) return;
     goToNext();
   }
 
@@ -55,7 +59,7 @@ export function StepContent() {
         <Button
           variant="link"
           width="fit-content"
-          disabled={currentStep.valueOf() === 0}
+          disabled={currentStep.valueOf() === 0 || areStepsDisabled}
           onClick={handleClickPrev}
         >
           <Text fontSize="lg">{'< Prev'}</Text>
@@ -64,6 +68,7 @@ export function StepContent() {
         <Button
           variant="link"
           width="fit-content"
+          disabled={areStepsDisabled}
           onClick={handleClickNext}
         >
           <Text fontSize="lg">{'Next >'}</Text>
