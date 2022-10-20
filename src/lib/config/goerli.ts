@@ -1,7 +1,8 @@
 import { NetworkConfig } from './networkConfigType';
-import { tokenAddresses } from './contract_addresses';
+// TODO -- determine why tokenAddresses[chainId.toString()] isnt working
+// import { tokenAddresses } from './contract_addresses';
 
-const chainId = 31337;
+const chainId = 5;
 
 export const goerliNetworkConfig: NetworkConfig = {
   chainId: chainId,
