@@ -49,7 +49,7 @@ export function useSubmitSarcophagus({
 
   const isSubmitting = currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS;
 
-  const contractArchaeologists = useCallback((): ContractArchaeologist[] => {
+  const getContractArchaeologists = useCallback((): ContractArchaeologist[] => {
     if (!isSubmitting) {
       return [];
     }
@@ -81,14 +81,15 @@ export function useSubmitSarcophagus({
     maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
   };
 
+  const contractArchaeologists = getContractArchaeologists();
   const args =
-    isSubmitting && contractArchaeologists().length
+    isSubmitting && contractArchaeologists.length
       ? [
           sarcoId,
           {
             ...settings,
           },
-          contractArchaeologists(),
+          contractArchaeologists,
           arweaveTxIds,
         ]
       : [];
