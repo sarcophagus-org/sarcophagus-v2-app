@@ -217,7 +217,7 @@ export function useCreateSarcophagus() {
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
     dispatch(disableSteps());
-  }, []);
+  }, [dispatch]);
 
   return {
     currentStage,
