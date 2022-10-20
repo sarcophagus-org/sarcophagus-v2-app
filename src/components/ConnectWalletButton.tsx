@@ -13,15 +13,15 @@ export function ConnectWalletButton() {
           <Flex>
             {!connected ? (
               <Button
-                variant="link"
+                variant="ghost"
                 onClick={openConnectModal}
               >
-                Connect Wallet
+                <Text>Connect Wallet</Text>
               </Button>
             ) : (
               <Flex>
                 <Button
-                  variant="link"
+                  variant="ghost"
                   onClick={openChainModal}
                 >
                   <Text color="brand.500">{chain.name}</Text>
@@ -32,7 +32,7 @@ export function ConnectWalletButton() {
                   orientation="vertical"
                 />
                 <Button
-                  variant="link"
+                  variant="ghost"
                   onClick={openAccountModal}
                 >
                   <Text color="brand.500">
