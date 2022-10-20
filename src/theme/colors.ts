@@ -37,4 +37,7 @@ export const colors = {
   warning: '#c8c884',
   success: '#84c884',
   info: '#84bcc8',
+
+  // WARNING: This color is an abomination and should not be used! But we're using it anway.
+  controversialBlue: '#168FFF',
 };

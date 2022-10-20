@@ -10,7 +10,8 @@ import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
 
-// TODO: change to stage
+// Note: order matters here
+// Also note: The number values of this enum are used to display the stage number
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
