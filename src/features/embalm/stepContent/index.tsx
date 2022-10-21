@@ -1,7 +1,6 @@
-import { Button, Flex, Heading, Text, HStack, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
-import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
 import { CreateSarcophagus } from './steps/CreateSarcohpagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
@@ -16,7 +15,7 @@ interface StepContentMap {
 }
 
 export function StepContent() {
-  const { currentStep, goToPrev, goToNext, stepCount } = useStepContent();
+  const { currentStep, goToPrev, goToNext } = useStepContent();
 
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {
@@ -51,23 +50,29 @@ export function StepContent() {
         justify="space-between"
         spacing={0}
       >
-        <Button
-          variant="link"
-          width="fit-content"
-          disabled={currentStep.valueOf() === 0}
-          onClick={handleClickPrev}
-        >
-          <Text fontSize="lg">{'< Prev'}</Text>
-        </Button>
+        {currentStep.valueOf() > 0 ? (
+          <Button
+            variant="link"
+            width="fit-content"
+            disabled={currentStep.valueOf() === 0}
+            onClick={handleClickPrev}
+          >
+            <Text fontSize="lg">{'< Prev'}</Text>
+          </Button>
+        ) : (
+          // This is here to keep the space filled with something
+          <Flex />
+        )}
 
-        <Button
-          variant="link"
-          width="fit-content"
-          onClick={handleClickNext}
-          disabled={currentStep.valueOf() === stepCount - 1}
-        >
-          <Text fontSize="lg">{'Next >'}</Text>
-        </Button>
+        {currentStep.valueOf() < Object.keys(contentMap).length - 1 && (
+          <Button
+            variant="link"
+            width="fit-content"
+            onClick={handleClickNext}
+          >
+            <Text fontSize="lg">{'Next >'}</Text>
+          </Button>
+        )}
       </HStack>
     </VStack>
   );
