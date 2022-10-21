@@ -9,13 +9,12 @@ import {
   SarcophagusValidationError
 } from 'types';
 import { useLibp2p } from './libp2p/useLibp2p';
-import { BigNumber } from 'ethers';
 import { getLowestRewrapInterval } from '../lib/utils/helpers';
 
 interface SarcophagusNegotiationParams {
   arweaveTxId: string;
   unencryptedShardDoubleHash: string;
-  maxRewrapInterval: BigNumber;
+  maxRewrapInterval: number;
   diggingFee: string;
   timestamp: number;
 }
@@ -82,7 +81,7 @@ export function useSarcophagusNegotiation() {
           const negotiationParams: SarcophagusNegotiationParams = {
             arweaveTxId: encryptedShardsTxId,
             diggingFee: arch.profile.minimumDiggingFee.toString(),
-            maxRewrapInterval: BigNumber.from(lowestRewrapInterval),
+            maxRewrapInterval: lowestRewrapInterval,
             timestamp: negotiationTimestamp,
             unencryptedShardDoubleHash: archaeologistShards.find(
               s => s.publicKey === arch.publicKey
