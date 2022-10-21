@@ -35,7 +35,6 @@ export function ProgressTracker({ title, currentStage, children }: ProgressTrack
     return child;
   });
 
-  // background="linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.09) 100%)"
   return (
     <Flex
       border="1px solid"
