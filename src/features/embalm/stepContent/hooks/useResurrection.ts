@@ -27,11 +27,16 @@ export function useResurrection() {
   const [error, setError] = useState<string | null>(null);
 
   function handleRadioChange(nextValue: string) {
+    console.log(nextValue);
     dispatch(setResurrectionRadioValue(nextValue));
   }
 
   function handleCustomDateChange(date: Date | null) {
     dispatch(setCustomResurrectionDate(date));
+  }
+
+  function handleCustomDateClick() {
+    dispatch(setResurrectionRadioValue('Other'));
   }
 
   // value and onChange are passed in to this hook instead of into a RadioGroup component.
@@ -79,5 +84,6 @@ export function useResurrection() {
     radioValue,
     customResurrectionDate,
     handleCustomDateChange,
+    handleCustomDateClick,
   };
 }

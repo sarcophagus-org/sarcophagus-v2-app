@@ -2,14 +2,16 @@ import { ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
-import { useSelector } from 'store/index';
-import { useBundlr } from './useBundlr';
+import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
 import { chainId, useNetwork } from 'wagmi';
+import { useBundlr } from './useBundlr';
 
+// Note: order matters here
+// Also note: The number values of this enum are used to display the stage number
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
@@ -45,6 +47,7 @@ async function encryptShards(
 }
 
 export function useCreateSarcophagus() {
+  const dispatch = useDispatch();
   const {
     recipientState,
     file,
@@ -110,17 +113,23 @@ export function useCreateSarcophagus() {
         {}
       );
 
-      const txId = shouldUseBundlr ?
-        await uploadFile(Buffer.from(JSON.stringify(mapping))) :
-        await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
+      const txId = shouldUseBundlr
+        ? await uploadFile(Buffer.from(JSON.stringify(mapping)))
+        : await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
 
       setArchaeologistShards(encShards);
       setEncryptedShardsTxId(txId);
     } catch (error) {
       console.error(error);
     }
-  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadArweaveFile, shouldUseBundlr,
-    uploadFile]);
+  }, [
+    requiredArchaeologists,
+    outerPrivateKey,
+    selectedArchaeologists,
+    uploadArweaveFile,
+    shouldUseBundlr,
+    uploadFile,
+  ]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     const payload = await readFileDataAsBase64(file!);
@@ -133,9 +142,9 @@ export function useCreateSarcophagus() {
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
 
-    const payloadTxId = shouldUseBundlr ?
-      await uploadFile(encryptedOuterLayer) :
-      await uploadArweaveFile(encryptedOuterLayer);
+    const payloadTxId = shouldUseBundlr
+      ? await uploadFile(encryptedOuterLayer)
+      : await uploadArweaveFile(encryptedOuterLayer);
 
     setSarcophagusPayloadTxId(payloadTxId);
   }, [
@@ -145,7 +154,7 @@ export function useCreateSarcophagus() {
     uploadArweaveFile,
     setSarcophagusPayloadTxId,
     shouldUseBundlr,
-    uploadFile
+    uploadFile,
   ]);
 
   // TODO -- add approval stage
@@ -203,28 +212,32 @@ export function useCreateSarcophagus() {
           case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
             if (submitSarcophagus) {
               await executeStage(submitSarcophagus);
-              break;
             }
+            break;
+          case CreateSarcophagusStage.COMPLETED:
+            dispatch(enableSteps());
+            break;
         }
       }
     })();
   }, [
-    currentStage,
-    stageExecuting,
-    publicKeysReady,
     archaeologistShards,
-    encryptedShardsTxId,
-    setArchaeologistSignatures,
-    uploadAndSetEncryptedShards,
-    initiateSarcophagusNegotiation,
-    uploadAndSetDoubleEncryptedFile,
+    currentStage,
     dialSelectedArchaeologists,
+    dispatch,
+    encryptedShardsTxId,
+    initiateSarcophagusNegotiation,
+    publicKeysReady,
+    stageExecuting,
     submitSarcophagus,
+    uploadAndSetDoubleEncryptedFile,
+    uploadAndSetEncryptedShards,
   ]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
-  }, []);
+    dispatch(disableSteps());
+  }, [dispatch]);
 
   return {
     currentStage,

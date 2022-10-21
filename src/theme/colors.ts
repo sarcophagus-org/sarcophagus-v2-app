@@ -37,4 +37,8 @@ export const colors = {
   warning: '#c8c884',
   success: '#84c884',
   info: '#84bcc8',
+  disabled: '#737373', // Same as brand.400
+
+  // WARNING: This color is an abomination and should not be used! But we're using it anyway.
+  controversialBlue: '#168FFF',
 };
