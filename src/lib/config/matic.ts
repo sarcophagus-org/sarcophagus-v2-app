@@ -1,17 +1,16 @@
-import { contractAddresses, tokenAddresses } from './contract_addresses';
 import { NetworkConfig } from './networkConfigType';
 
-const chainId = 137;
-
 export const maticNetworkConfig: NetworkConfig = {
-  chainId,
+  chainId: 137,
   networkName: 'Polygon (Matic)',
   networkShortName: 'Matic',
-  sarcoTokenAddress: tokenAddresses[chainId.toString()],
-  diamondDeployAddress: contractAddresses[chainId.toString()],
+  sarcoTokenAddress: '',
+  diamondDeployAddress: '',
+  explorerUrl: '',
+  explorerApiKey: '',
   bundlr: {
     currencyName: 'matic',
     nodeUrl: 'https://node1.bundlr.network',
-    providerUrl: 'https://polygon-rpc.com',
-  },
+    providerUrl: 'https://polygon-rpc.com'
+  }
 };

@@ -10,5 +10,7 @@ export interface NetworkConfig {
   networkShortName: string;
   sarcoTokenAddress: string;
   diamondDeployAddress: string;
+  explorerUrl: string;
+  explorerApiKey: string;
   bundlr: BundlrConfig;
 }
