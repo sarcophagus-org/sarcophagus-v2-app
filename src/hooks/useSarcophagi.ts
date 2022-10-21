@@ -25,8 +25,12 @@ const useSarcophagi = () => {
   });
 
   async function updateSarcophagi() {
+    console.log('start', embalmerAddress);
     const results = await getEmbalmersarcophagi.refetch();
-    const sarcoIds = (results.data as string[]) || [];
+    console.log('results', results);
+    //const sarcoIds = (results.data as string[]) || [];
+    const sarcoIds = ['0xa5abc2cd280c9cab5f4ea0e01dd7b0881a5d1bb473b4e2de888c33bbcc2f9113'];
+    console.log('results', results, sarcoIds);
     const s = await Promise.all(
       sarcoIds.map(async id => {
         const res = await viewStateContract.getSarcophagus(id);
@@ -34,6 +38,7 @@ const useSarcophagi = () => {
         return { ...sarcophagus };
       })
     );
+    console.log(s);
     return setSarcophagi(s.reverse());
   }
 

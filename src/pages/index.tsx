@@ -4,7 +4,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import { ArweaveTestPage } from './ArweaveTestPage';
 import { EmbalmPage } from './EmbalmPage';
-
+import { DashboardPage } from './DashboardPage';
 import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
@@ -13,6 +13,11 @@ export function Pages() {
       path: '/embalm',
       element: <EmbalmPage />,
       label: 'Embalm',
+    },
+    {
+      path: '/dashboard',
+      element: <DashboardPage />,
+      label: 'Dashboard',
     },
     {
       path: '/arweave',
