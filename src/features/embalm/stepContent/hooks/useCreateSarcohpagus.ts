@@ -53,7 +53,6 @@ export function useCreateSarcophagus() {
     outerPublicKey,
     outerPrivateKey,
     selectedArchaeologists,
-    shardsTxId,
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
   // const { isUploading } = useSelector(x => x.bundlrState); // TODO: Dunno what to do with isUploading but it seems important. Uncomment and use as needed.
@@ -256,7 +255,6 @@ export function useCreateSarcophagus() {
     uploadAndSetEncryptedShards,
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
-    shardsTxId,
     stageError,
   };
 }

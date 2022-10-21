@@ -13,7 +13,6 @@ export interface Archaeologist {
   connection?: Connection;
   isOnline: boolean;
   fullPeerId?: PeerId;
-  lastPinged?: Date;
   signature?: string;
 }
 

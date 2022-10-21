@@ -1,4 +1,4 @@
-import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
+import { Archaeologist } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
@@ -11,7 +11,6 @@ export enum ActionType {
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
-  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
@@ -33,11 +32,6 @@ export enum ActionType {
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
-  SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
-  SetSarcophagusPayloadTxId = 'EMBALM_SET_SARCOPHAGUS_PAYLOAD_TX_ID',
-  SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
-  SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
-  SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
   ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
 }
 
@@ -74,14 +68,9 @@ type EmbalmPayload = {
     peerId: string;
     connection: Connection | undefined;
   };
-  [ActionType.SetArchaeologistSignature]: {
-    peerId: string;
-    signature: string;
-  };
   [ActionType.SetArchaeologistOnlineStatus]: {
     peerId: string;
     isOnline: boolean;
-    lastPinged?: Date;
   };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
@@ -103,16 +92,6 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
-  [ActionType.SetSarcophagusPayloadTxId]: {
-    sarcophagusPayloadTxId: string;
-  };
-  [ActionType.SetShardPayloadData]: {
-    shards: ArchaeologistEncryptedShard[];
-    encryptedShardsTxId: string;
-  };
-  [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
-  [ActionType.SetSignaturesReady]: { signaturesReady: boolean };
-  [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
   [ActionType.ResetEmbalmState]: {};
 };
 
@@ -176,24 +155,6 @@ export function setName(name: string): EmbalmActions {
     type: ActionType.SetName,
     payload: {
       name,
-    },
-  };
-}
-
-export function setPublicKeysReady(publicKeysReady: boolean): EmbalmActions {
-  return {
-    type: ActionType.SetPublicKeysReady,
-    payload: {
-      publicKeysReady,
-    },
-  };
-}
-
-export function setSignaturesReady(signaturesReady: boolean): EmbalmActions {
-  return {
-    type: ActionType.SetSignaturesReady,
-    payload: {
-      signaturesReady,
     },
   };
 }
@@ -343,16 +304,6 @@ export function setArchaeologistConnection(
   };
 }
 
-export function setArchaeologistSignature(peerId: string, signature: string): EmbalmActions {
-  return {
-    type: ActionType.SetArchaeologistSignature,
-    payload: {
-      peerId,
-      signature,
-    },
-  };
-}
-
 export function setArchaeologistOnlineStatus(peerId: string, isOnline: boolean): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistOnlineStatus,
@@ -363,43 +314,12 @@ export function setArchaeologistOnlineStatus(peerId: string, isOnline: boolean):
   };
 }
 
-export function setNegotiationTimestamp(negotiationTimestamp: number): EmbalmActions {
-  return {
-    type: ActionType.SetNegotiationTimestamp,
-    payload: {
-      negotiationTimestamp,
-    },
-  };
-}
-
 export function setArchaeologistPublicKey(peerId: string, publicKey: string): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistPublicKey,
     payload: {
       peerId,
       publicKey,
-    },
-  };
-}
-
-export function setSarcophagusPayloadTxId(sarcophagusPayloadTxId: string): EmbalmActions {
-  return {
-    type: ActionType.SetSarcophagusPayloadTxId,
-    payload: {
-      sarcophagusPayloadTxId,
-    },
-  };
-}
-
-export function setShardPayloadData(
-  shards: ArchaeologistEncryptedShard[],
-  encryptedShardsTxId: string
-): EmbalmActions {
-  return {
-    type: ActionType.SetShardPayloadData,
-    payload: {
-      shards,
-      encryptedShardsTxId,
     },
   };
 }
