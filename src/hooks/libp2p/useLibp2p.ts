@@ -15,8 +15,8 @@ import { log } from '../../lib/utils/logger';
 import { PUBLIC_KEY_STREAM } from '../../lib/config/node_config';
 
 // values used to determine if an archaeologist is online
-const pingThreshold = 60000;
-const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
+// const pingThreshold = 60000;
+// const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
 
 interface PublicKeyResponseFromArchaeologist {
   signature: string;

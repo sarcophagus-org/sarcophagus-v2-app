@@ -10,8 +10,6 @@ import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
-import { setOuterLayerKeys } from '../../../../store/embalm/actions';
-import { generateOuterKeys, generateOuterKeysFailure } from '../../../../lib/utils/toast';
 
 // TODO: change to stage
 export enum CreateSarcophagusStage {
@@ -125,7 +123,7 @@ export function useCreateSarcophagus() {
     } catch (error) {
       console.error(error);
     }
-  }, [requiredArchaeologists, outerPrivateKey, outerPublicKey, selectedArchaeologists, uploadArweaveFile]);
+  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadArweaveFile]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     const payload = await readFileDataAsBase64(file!);
