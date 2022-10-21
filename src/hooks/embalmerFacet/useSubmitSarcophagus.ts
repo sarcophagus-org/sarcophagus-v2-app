@@ -5,7 +5,7 @@ import { useSelector } from '../../store';
 import { getLowestRewrapInterval } from '../../lib/utils/helpers';
 import { ArchaeologistEncryptedShard } from '../../types';
 import { useCallback } from 'react';
-import { CreateSarcophagusStage } from '../../features/embalm/stepContent/hooks/useCreateSarcohpagus';
+import { CreateSarcophagusStage } from '../../features/embalm/stepContent/hooks/useCreateSarcophagus';
 import { computeAddress } from 'ethers/lib/utils';
 
 export interface ContractArchaeologist {

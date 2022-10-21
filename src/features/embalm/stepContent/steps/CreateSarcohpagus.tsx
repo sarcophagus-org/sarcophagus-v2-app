@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
-import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
+import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
 import { useSarcophagusData } from '../hooks/useSarcophagusData';
 import { SarcophagusData } from '../components/SarcophagusData';
 
