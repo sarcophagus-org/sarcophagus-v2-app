@@ -144,7 +144,7 @@ export function useRecoverPublicKey() {
         setIsLoading(false);
       }
     },
-    [dispatch, provider]
+    [dispatch, provider, networkConfig.explorerApiKey, networkConfig.explorerUrl]
   );
 
   return { recoverPublicKey, isLoading, errorStatus };
