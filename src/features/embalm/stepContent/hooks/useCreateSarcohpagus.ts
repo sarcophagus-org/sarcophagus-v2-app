@@ -7,6 +7,8 @@ import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
+import { chainId, useNetwork } from 'wagmi';
+import { useBundlr } from './useBundlr';
 import { disableSteps, enableSteps } from 'store/embalm/actions';
 
 // Note: order matters here
@@ -57,8 +59,12 @@ export function useCreateSarcophagus() {
     shardsTxId,
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
-  // const { isUploading } = useSelector(x => x.bundlrState);
-  // const { uploadFile } = useBundlr();
+
+  // BUNDLR config
+  const { uploadFile } = useBundlr();
+  const { chain } = useNetwork();
+  const shouldUseBundlr = chainId.hardhat !== chain!.id;
+
   const { uploadArweaveFile } = useArweaveService();
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
     useSarcophagusNegotiation();
@@ -108,14 +114,23 @@ export function useCreateSarcophagus() {
         {}
       );
 
-      const txId = await uploadArweaveFile(Buffer.from(JSON.stringify(mapping))); // TODO: change to use uploadFile for Bundlr, once local testing figured out
+      const txId = shouldUseBundlr
+        ? await uploadFile(Buffer.from(JSON.stringify(mapping)))
+        : await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
 
       setArchaeologistShards(encShards);
       setEncryptedShardsTxId(txId);
     } catch (error) {
       console.error(error);
     }
-  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadArweaveFile]);
+  }, [
+    requiredArchaeologists,
+    outerPrivateKey,
+    selectedArchaeologists,
+    uploadArweaveFile,
+    shouldUseBundlr,
+    uploadFile,
+  ]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     const payload = await readFileDataAsBase64(file!);
@@ -127,8 +142,10 @@ export function useCreateSarcophagus() {
     const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
-    // TODO: change to use uploadFile for Bundlr, once local testing figured out
-    const payloadTxId = await uploadArweaveFile(encryptedOuterLayer);
+
+    const payloadTxId = shouldUseBundlr
+      ? await uploadFile(encryptedOuterLayer)
+      : await uploadArweaveFile(encryptedOuterLayer);
 
     setSarcophagusPayloadTxId(payloadTxId);
   }, [
@@ -137,6 +154,8 @@ export function useCreateSarcophagus() {
     recipientState.publicKey,
     uploadArweaveFile,
     setSarcophagusPayloadTxId,
+    shouldUseBundlr,
+    uploadFile,
   ]);
 
   // TODO -- add approval stage
@@ -178,13 +197,15 @@ export function useCreateSarcophagus() {
             }
             break;
           case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
-            await executeStage(
-              initiateSarcophagusNegotiation,
-              archaeologistShards,
-              encryptedShardsTxId,
-              setArchaeologistSignatures,
-              setNegotiationTimestamp
-            );
+            setTimeout(async () => {
+              await executeStage(
+                initiateSarcophagusNegotiation,
+                archaeologistShards,
+                encryptedShardsTxId,
+                setArchaeologistSignatures,
+                setNegotiationTimestamp
+              );
+            }, 10000);
             break;
           case CreateSarcophagusStage.UPLOAD_PAYLOAD:
             await executeStage(uploadAndSetDoubleEncryptedFile);

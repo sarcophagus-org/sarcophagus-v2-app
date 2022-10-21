@@ -1,5 +1,6 @@
 import { WebBundlr } from '@bundlr-network/client';
 import { ActionMap } from '../ActionMap';
+import { BundlrPendingBalance } from './reducer';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -10,6 +11,7 @@ export enum ActionType {
   SetBalance = 'EMBALM_SET_BALANCE',
   SetIsFunding = 'EMBALM_SET_IS_FUNDING',
   SetIsUploading = 'EMBALM_SET_IS_UPLOADING',
+  SetPendingBalance = 'EMBALM_SET_PENDING_BALANCE',
   SetTxId = 'BUNDLR_SET_TX_ID',
 }
 
@@ -20,6 +22,7 @@ type BundlrPayload = {
   [ActionType.SetBalance]: { balance: string };
   [ActionType.SetIsUploading]: { isUploading: boolean };
   [ActionType.SetIsFunding]: { isFunding: boolean };
+  [ActionType.SetPendingBalance]: { pendingBalance: BundlrPendingBalance };
   [ActionType.SetTxId]: { txId: string };
 };
 
@@ -69,6 +72,15 @@ export function setIsFunding(isFunding: boolean): BundlrActions {
     type: ActionType.SetIsFunding,
     payload: {
       isFunding,
+    },
+  };
+}
+
+export function setPendingBalance(pendingBalance: BundlrPendingBalance): BundlrActions {
+  return {
+    type: ActionType.SetPendingBalance,
+    payload: {
+      pendingBalance,
     },
   };
 }
