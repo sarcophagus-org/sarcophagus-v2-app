@@ -18,6 +18,13 @@ export function ProgressTrackerStage({
   index = 0,
   children,
 }: ProgressTrackerStageProps) {
+  // Checks that children is a string. If we don't do this and someone tries to put a non-text thing
+  // in the <Text> tag, an error will be thrown in the console but that error is easier to miss and
+  // harder to debug.
+  if (typeof children !== 'string') {
+    throw new Error('ProgressTrackerStage children must be a string');
+  }
+
   return (
     <Flex
       alignItems="center"
