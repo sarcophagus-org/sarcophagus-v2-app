@@ -10,7 +10,8 @@ import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegot
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
 import { chainId, useNetwork } from 'wagmi';
 import { useBundlr } from './useBundlr';
-import { disableSteps, enableSteps, resetEmbalmState } from 'store/embalm/actions';
+import { disableSteps } from 'store/embalm/actions';
+import { useNavigate } from 'react-router-dom';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -59,6 +60,8 @@ export function useCreateSarcophagus() {
     requiredArchaeologists
   } = useSelector(x => x.embalmState);
 
+  const navigate = useNavigate();
+
   // BUNDLR config
   const { uploadFile } = useBundlr();
   const { chain } = useNetwork();
@@ -102,7 +105,7 @@ export function useCreateSarcophagus() {
         setOuterPublicKey(publicKey);
       }
     })();
-  });
+  }, [outerPrivateKey]);
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
     try {
@@ -170,15 +173,16 @@ export function useCreateSarcophagus() {
     uploadFile
   ]);
 
-  const resetLocalEmbalmerState = useCallback(() => {
-    setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
-    setEncryptedShardsTxId('');
-    setSarcophagusPayloadTxId('');
-    setArchaeologistSignatures(new Map<string, string>([]));
-    setNegotiationTimestamp(0);
-    setOuterPrivateKey('');
-    setOuterPublicKey('');
-  }, []);
+  // TODO -- re-enable once figure out state issue at end of createSarcophagus
+  // const resetLocalEmbalmerState = useCallback(() => {
+  //   setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
+  //   setEncryptedShardsTxId('');
+  //   setSarcophagusPayloadTxId('');
+  //   setArchaeologistSignatures(new Map<string, string>([]));
+  //   setNegotiationTimestamp(0);
+  //   setOuterPrivateKey('');
+  //   setOuterPublicKey('');
+  // }, []);
 
   // TODO -- add approval stage
   useEffect(() => {
@@ -238,10 +242,12 @@ export function useCreateSarcophagus() {
             }
             break;
           case CreateSarcophagusStage.COMPLETED:
-            resetLocalEmbalmerState();
             setTimeout(() => {
-              dispatch(resetEmbalmState());
-              dispatch(enableSteps());
+              // TODO: reset state -- having some issues with this
+              // resetLocalEmbalmerState();
+              // dispatch(resetEmbalmState());
+              // dispatch(enableSteps());
+              navigate('/dashboard');
             }, 4000);
 
             break;
@@ -260,7 +266,7 @@ export function useCreateSarcophagus() {
     submitSarcophagus,
     uploadAndSetDoubleEncryptedFile,
     uploadAndSetEncryptedShards,
-    resetLocalEmbalmerState
+    navigate
   ]);
 
   const handleCreate = useCallback(async () => {

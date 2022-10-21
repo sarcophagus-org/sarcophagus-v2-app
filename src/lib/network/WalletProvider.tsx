@@ -6,7 +6,6 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-
   const { chains, provider } = configureChains(
     [chainList.mainnet, chainList.goerli, chainList.hardhat, chainList.polygon],
     [

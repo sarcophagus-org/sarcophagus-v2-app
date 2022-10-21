@@ -1,4 +1,3 @@
-// import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useAccount, useContract, useContractRead, useProvider } from 'wagmi';
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
@@ -17,16 +16,17 @@ const useSarcophagi = () => {
     signerOrProvider: provider,
   });
 
-  const getEmbalmersarcophagi = useContractRead({
+  const getEmbalmerSarcophagi = useContractRead({
     addressOrName: networkConfig.diamondDeployAddress,
     contractInterface: ViewStateFacet__factory.abi,
-    functionName: 'getEmbalmersarcophagi',
-    args: [embalmerAddress],
+    functionName: 'getEmbalmerSarcophagi',
+    args: embalmerAddress,
   });
 
   async function updateSarcophagi() {
-    const results = await getEmbalmersarcophagi.refetch();
+    const results = await getEmbalmerSarcophagi.refetch();
     const sarcoIds = (results.data as string[]) || [];
+
     const s = await Promise.all(
       sarcoIds.map(async id => {
         const res = await viewStateContract.getSarcophagus(id);
@@ -34,6 +34,7 @@ const useSarcophagi = () => {
         return { ...sarcophagus };
       })
     );
+
     return setSarcophagi(s.reverse());
   }
 

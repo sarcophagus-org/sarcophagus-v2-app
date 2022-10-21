@@ -17,7 +17,6 @@ export function useSubmitTransaction(
   const defaultSuccessToast = 'Transaction submitted';
   const defaultTransactionDescription = 'Unknown transaction submitted';
   const toastDuration = 5000;
-
   const toast = useToast();
   const networkConfig = useNetworkConfig();
   const addRecentTransaction = useAddRecentTransaction();

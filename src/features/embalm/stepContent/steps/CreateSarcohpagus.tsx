@@ -19,7 +19,7 @@ export function CreateSarcophagus() {
       w='100%'
     >
       <Heading mb={6}>Create Sarcophagus</Heading>
-      {isCreateProcessStarted() ? (
+      {!isCreateProcessStarted() ? (
         <>
           <ReviewSarcophagus />
           <Flex justifyContent='center'>
