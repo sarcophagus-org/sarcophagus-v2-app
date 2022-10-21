@@ -2,12 +2,17 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { NetworkConfigProvider } from 'lib/config/NetworkConfigProvider';
 import { chain as chainList, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
+import { infuraProvider } from 'wagmi/providers/infura';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
+
   const { chains, provider } = configureChains(
     [chainList.mainnet, chainList.goerli, chainList.hardhat, chainList.polygon],
-    [publicProvider()]
+    [
+      infuraProvider({ infuraId: process.env.REACT_APP_INFURA_API_KEY, priority: 0 }),
+      publicProvider({ priority: 1 }),
+    ]
   );
 
   const { connectors } = getDefaultWallets({
