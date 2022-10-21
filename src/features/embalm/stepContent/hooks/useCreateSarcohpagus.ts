@@ -195,7 +195,8 @@ export function useCreateSarcophagus() {
               if (publicKeysReady) {
                 await executeStage(uploadAndSetEncryptedShards);
               } else {
-                console.log('Not all selected archaeologists responded');
+                const offendingArchs = selectedArchaeologists.filter(arch => arch.exception !== undefined);
+                console.log('Not all selected archaeologists responded', offendingArchs.map(a => `${a.profile.peerId}: ${a.exception!.message}`));
                 // TODO: Point out offending archs -- what should the user do??
               }
               break;
@@ -238,6 +239,7 @@ export function useCreateSarcophagus() {
     uploadAndSetDoubleEncryptedFile,
     dialSelectedArchaeologists,
     submitSarcophagus,
+    selectedArchaeologists,
   ]);
 
   useEffect(

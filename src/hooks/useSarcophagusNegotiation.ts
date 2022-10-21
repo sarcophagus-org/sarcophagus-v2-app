@@ -1,6 +1,6 @@
 import { pipe } from 'it-pipe';
 import React, { useCallback } from 'react';
-import { setArchaeologistConnection } from 'store/embalm/actions';
+import { setArchaeologistConnection, setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import { ArchaeologistEncryptedShard } from 'types';
@@ -33,6 +33,7 @@ export function useSarcophagusNegotiation() {
         dispatch(setArchaeologistConnection(arch.profile.peerId, connection));
       } catch (e) {
         console.error(`error connecting to ${arch.profile.peerId}`, e);
+        dispatch(setArchaeologistException(arch.profile.peerId, { code: '', message: 'Could not establish a connection' }));
       }
     }
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);

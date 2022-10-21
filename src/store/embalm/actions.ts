@@ -1,4 +1,4 @@
-import { Archaeologist } from 'types/index';
+import { Archaeologist, ArchaeologistException } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
@@ -32,6 +32,7 @@ export enum ActionType {
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
+  SetArchaeologistException = 'EMBALM_SET_ARCHAEOLOGIST_EXCEPTION',
   ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
 }
 
@@ -74,6 +75,7 @@ type EmbalmPayload = {
   };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
+  [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
@@ -300,6 +302,19 @@ export function setArchaeologistConnection(
     payload: {
       peerId,
       connection,
+    },
+  };
+}
+
+export function setArchaeologistException(
+  peerId: string,
+  exception: ArchaeologistException
+): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistException,
+    payload: {
+      peerId,
+      exception,
     },
   };
 }

@@ -222,6 +222,13 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         value: action.payload.isOnline,
       });
 
+    case ActionType.SetArchaeologistException:
+      return updateArchProperty(state, action.payload.peerId, {
+        key: 'exception',
+        value: action.payload.exception,
+        updateSelected: true,
+      });
+
     case ActionType.SetArchaeologistConnection:
       return updateArchProperty(state, action.payload.peerId, {
         key: 'connection',

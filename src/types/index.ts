@@ -14,6 +14,12 @@ export interface Archaeologist {
   isOnline: boolean;
   fullPeerId?: PeerId;
   signature?: string;
+  exception?: ArchaeologistException;
+}
+
+export interface ArchaeologistException {
+  code: string;
+  message: string;
 }
 
 export interface ArchaeologistProfile {
