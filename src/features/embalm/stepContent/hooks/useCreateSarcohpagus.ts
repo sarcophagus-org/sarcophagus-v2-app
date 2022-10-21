@@ -239,8 +239,11 @@ export function useCreateSarcophagus() {
             break;
           case CreateSarcophagusStage.COMPLETED:
             resetLocalEmbalmerState();
-            dispatch(resetEmbalmState());
-            dispatch(enableSteps());
+            setTimeout(() => {
+              dispatch(resetEmbalmState());
+              dispatch(enableSteps());
+            }, 4000);
+
             break;
         }
       }
