@@ -4,9 +4,10 @@ import { StepStatus } from 'store/embalm/reducer';
 interface StepStatusIndicatorProps {
   status: StepStatus;
   index: number;
+  isDisabled?: boolean;
 }
 
-export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps) {
+export function StepStatusIndicator({ status, index, isDisabled }: StepStatusIndicatorProps) {
   const statusSize = '25px';
 
   const stepStatusMap = {
@@ -15,8 +16,8 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor="brand.950"
-        backgroundColor="brand.950"
+        borderColor={isDisabled ? 'disabled' : 'brand.950'}
+        backgroundColor={isDisabled ? 'disabled' : 'brand.950'}
         borderRadius={100}
         align="center"
         justifyContent="center"
@@ -34,12 +35,17 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor="brand.950"
+        borderColor={isDisabled ? 'disabled' : 'brand.950'}
         borderRadius={100}
         align="center"
         justifyContent="center"
       >
-        <Text fontSize="xs">{index + 1}</Text>
+        <Text
+          fontSize="xs"
+          color={isDisabled ? 'disabled' : 'brand.950'}
+        >
+          {index + 1}
+        </Text>
       </Flex>
     ),
     [StepStatus.NotStarted]: (
@@ -47,12 +53,17 @@ export function StepStatusIndicator({ status, index }: StepStatusIndicatorProps)
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor="brand.950"
+        borderColor="brand.400"
         borderRadius={100}
         align="center"
         justifyContent="center"
       >
-        <Text fontSize="xs">{index + 1}</Text>
+        <Text
+          fontSize="xs"
+          color={isDisabled ? 'disabled' : 'brand.950'}
+        >
+          {index + 1}
+        </Text>
       </Flex>
     ),
   };

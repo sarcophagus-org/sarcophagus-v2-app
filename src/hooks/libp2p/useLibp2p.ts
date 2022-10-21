@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 import { PUBLIC_KEY_STREAM } from '../../lib/config/node_config';
 
+// TODO -- temporarily removed while we have the 20 second discovery limit
 // values used to determine if an archaeologist is online
 // const pingThreshold = 60000;
 // const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
@@ -35,12 +36,14 @@ export function useLibp2p() {
       dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
       dispatch(setArchaeologistFullPeerId(peerId));
 
-      // TODO: Uncomment this when we remove the timeout for discovery
+      // TODO -- temporarily removed while we have the 20 second discovery limit
+      // if this continues to run, the archs will disappear
+
       // if (heartbeatTimeouts[peerId.toString()]) {
       //   clearTimeout(heartbeatTimeouts[peerId.toString()]);
       //   heartbeatTimeouts[peerId.toString()] = undefined;
       // }
-
+      //
       // heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
       //   console.log(`No longer online: ${peerId.toString()}`);
       //   dispatch(setArchaeologistOnlineStatus(peerId.toString(), false));

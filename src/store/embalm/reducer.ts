@@ -45,6 +45,7 @@ export interface EmbalmState {
   publicKeysReady: boolean;
   signaturesReady: boolean;
   negotiationTimestamp: number;
+  areStepsDisabled: boolean;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -76,6 +77,7 @@ export const embalmInitialState: EmbalmState = {
   publicKeysReady: false,
   signaturesReady: false,
   negotiationTimestamp: 0,
+  areStepsDisabled: false,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -277,6 +279,12 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         archaeologistEncryptedShards: shards,
         shardsTxId: encryptedShardsTxId,
       };
+
+    case ActionType.DisableSteps:
+      return { ...state, areStepsDisabled: true };
+
+    case ActionType.EnableSteps:
+      return { ...state, areStepsDisabled: false };
 
     case ActionType.ResetEmbalmState:
       return embalmInitialState;

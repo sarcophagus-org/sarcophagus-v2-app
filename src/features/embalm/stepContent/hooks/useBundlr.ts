@@ -9,10 +9,10 @@ import {
   uploadSuccess,
   withdrawFailure,
   withdrawStart,
-  withdrawSuccess,
+  withdrawSuccess
 } from 'lib/utils/toast';
 import { useCallback, useState } from 'react';
-import { setIsFunding } from 'store/bundlr/actions';
+import { setIsFunding, setPendingBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 
 export function useBundlr() {
@@ -20,7 +20,7 @@ export function useBundlr() {
   const toast = useToast();
 
   // Pull some bundlr data from store
-  const { bundlr, txId, isConnected, isFunding } = useSelector(x => x.bundlrState);
+  const { bundlr, txId, balance, isConnected, isFunding } = useSelector(x => x.bundlrState);
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -36,8 +36,12 @@ export function useBundlr() {
       toast(fundStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
-        console.log(parsedAmount);
-        await bundlr?.fund(Number(parsedAmount));
+        const response = await bundlr?.fund(Number(parsedAmount));
+
+        dispatch(setPendingBalance({
+          balanceBeforeFund: balance,
+          txId: response!.id
+        }));
 
         toast(fundSuccess());
       } catch (_error) {
@@ -48,7 +52,7 @@ export function useBundlr() {
         dispatch(setIsFunding(false));
       }
     },
-    [bundlr, dispatch, toast]
+    [bundlr, dispatch, toast, balance]
   );
 
   /**
@@ -110,6 +114,6 @@ export function useBundlr() {
     isUploading,
     fund,
     withdraw,
-    uploadFile,
+    uploadFile
   };
 }

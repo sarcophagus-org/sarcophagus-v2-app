@@ -1,13 +1,14 @@
 import { Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import { useSelector } from 'store/index';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
-import { CreateSarcophagus } from './steps/CreateSarcohpagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
+import { CreateSarcophagus } from './steps/CreateSarcohpagus';
 
 interface StepContentMap {
   component: JSX.Element;
@@ -16,6 +17,7 @@ interface StepContentMap {
 
 export function StepContent() {
   const { currentStep, goToPrev, goToNext } = useStepContent();
+  const areStepsDisabled = useSelector(x => x.embalmState.areStepsDisabled);
 
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {
@@ -29,10 +31,12 @@ export function StepContent() {
   };
 
   function handleClickPrev() {
+    if (areStepsDisabled) return;
     goToPrev();
   }
 
   function handleClickNext() {
+    if (areStepsDisabled) return;
     goToNext();
   }
 
