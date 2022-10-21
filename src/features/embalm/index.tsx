@@ -6,19 +6,18 @@ import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
 import { networkConfigs } from 'lib/config/networkConfig';
-import { supportedChainIds } from 'lib/config/contract_addresses';
 
 export function Embalm() {
   useLoadArchaeologists();
   useBootLibp2pNode();
 
+  const supportedChainIds = process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
   const { isConnected } = useAccount();
   const networkConfig = useNetworkConfig();
 
   const supportedNetworkNames = Object.values(networkConfigs)
     .filter(config => supportedChainIds.includes(config.chainId))
     .map(config => config.networkShortName);
-
   return (
     <Flex
       ml="84px"

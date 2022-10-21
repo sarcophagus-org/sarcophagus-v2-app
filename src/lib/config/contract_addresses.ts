@@ -1,7 +1,3 @@
-const envContractAddresses = process.env.REACT_APP_CONTRACT_ADDRESSES;
-const envTokenAddresses = process.env.REACT_APP_TOKEN_ADDRESSES;
+const chainIds = process.env.REACT_APP_SUPPORTED_CHAIN_IDS;
 
-export const contractAddresses = !envContractAddresses ? {} : JSON.parse(envContractAddresses) as Record<string, string>;
-export const tokenAddresses = !envTokenAddresses ? {} : JSON.parse(envTokenAddresses) as Record<string, string>;
-
-export const supportedChainIds = Object.keys(contractAddresses).map(chainId => Number.parseInt(chainId));
+export const supportedChainIds = chainIds?.split(',').map(id => parseInt(id)) || [];
