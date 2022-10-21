@@ -227,7 +227,7 @@ export function useCreateSarcophagus() {
                 setArchaeologistSignatures,
                 setNegotiationTimestamp
               );
-            }, 10000);
+            }, 5000);
             break;
           case CreateSarcophagusStage.UPLOAD_PAYLOAD:
             await executeStage(uploadAndSetDoubleEncryptedFile);
