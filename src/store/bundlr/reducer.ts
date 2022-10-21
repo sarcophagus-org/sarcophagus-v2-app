@@ -18,7 +18,7 @@ export interface BundlrState {
 }
 
 export const bundlrInitialState: BundlrState = {
-  balance: '',
+  balance: '0',
   bundlr: null,
   isConnected: false,
   isFunding: false,

@@ -6,4 +6,8 @@
   body {
     @apply bg-background text-white;
   }
+
+  .activeLink, .activeLink > p {
+    font-weight: bold !important;
+  }
 }

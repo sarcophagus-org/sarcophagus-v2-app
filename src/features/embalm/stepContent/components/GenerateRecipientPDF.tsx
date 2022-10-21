@@ -2,7 +2,6 @@ import {
   VStack,
   Button,
   Text,
-  Image,
   Textarea,
   AlertTitle,
   AlertDescription,
@@ -11,7 +10,6 @@ import { useGenerateRecipientPDF } from '../hooks/useGenerateRecipientPDF';
 import { GeneratePDFState } from 'store/embalm/actions';
 import { useSelector } from 'store/index';
 import { Alert } from 'components/Alert';
-import CursePdfSvg from 'assets/images/curse-pdf.svg';
 
 export function GenerateRecipientPDF() {
   const { generatePublicKey, downloadRecipientPDF, isLoading, generateError } =
@@ -45,33 +43,25 @@ export function GenerateRecipientPDF() {
     ),
     [GeneratePDFState.GENERATED]: (
       <VStack
-        bg="brand.100"
+        border="1px solid"
         p={6}
         spacing={6}
         w="400px"
       >
-        <Image
-          src={CursePdfSvg}
-          h="200px"
-        />
+
         <Text>Download PDF</Text>
-        <VStack
-          p={6}
-          border="1px solid"
-          borderColor="violet.700"
-          bgGradient="linear(to-b, brand.100, brand.200)"
-          spacing="4"
-        >
           <Text align="center">
-            Download and send this to your recipient. Do not store this online or let anyone see.
+            Download and send this to your recipient. Do not store this online or let anyone see it.
           </Text>
+        <Text align="center" color="error">
+          You must download this key to finish creating your sarcophagus.
+        </Text>
           <Button
             w="100%"
             onClick={downloadRecipientPDF}
           >
             Download
           </Button>
-        </VStack>
       </VStack>
     ),
     [GeneratePDFState.DOWNLOADED]: (
