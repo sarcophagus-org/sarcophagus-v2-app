@@ -1,10 +1,14 @@
 import { Box, Flex, Heading, Highlight, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from '@chakra-ui/react';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
+import { useSelector } from '../../../../store';
+import { useGetProtocolFeeAmount } from '../../../../hooks/viewStateFacet';
 
 export function ReviewSarcophagus() {
   const { sarcophagusParameters } = useSarcophagusParameters();
   const { selectStep } = useStepNavigator();
+  const { diggingFees, uploadPrice } = useSelector(x => x.embalmState);
+  const protocolFees = useGetProtocolFeeAmount();
 
   return (
     <VStack
@@ -82,7 +86,14 @@ export function ReviewSarcophagus() {
         </Table>
 
         <Box py={3} bgGradient='linear(rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.09) 100%)'>
-          <Text width='full' textAlign='center'>Fees</Text>
+          <Flex
+            direction='column'>
+            <Text>Fees</Text>
+            <Text width='full'>uploadPrice: {uploadPrice}</Text>
+            <Text width='full'>diggingFees: {diggingFees}</Text>
+            <Text width='full'>protocolFees: {protocolFees}</Text>
+          </Flex>
+
         </Box>
       </Flex>
     </VStack>

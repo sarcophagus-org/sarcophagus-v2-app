@@ -68,7 +68,7 @@ export const embalmInitialState: EmbalmState = {
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  uploadPrice: '',
+  uploadPrice: '0',
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
   archAddressSearch: '',
