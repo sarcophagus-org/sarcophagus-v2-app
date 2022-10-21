@@ -9,6 +9,7 @@ import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
 import { chainId, useNetwork } from 'wagmi';
 import { useBundlr } from './useBundlr';
+import { disableSteps, enableSteps } from 'store/embalm/actions';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
