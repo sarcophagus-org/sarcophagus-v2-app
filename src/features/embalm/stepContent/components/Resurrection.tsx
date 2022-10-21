@@ -21,18 +21,26 @@ export enum ResurrectionRadioValue {
 export function Resurrection({ ...rest }: FlexProps) {
   const options = Object.values(ResurrectionRadioValue);
 
-  const { error, getRadioProps, radioValue, customResurrectionDate, handleCustomDateChange } =
-    useResurrection();
+  const {
+    error,
+    getRadioProps,
+    radioValue,
+    customResurrectionDate,
+    handleCustomDateChange,
+    handleCustomDateClick,
+  } = useResurrection();
 
-  const CustomResurrectionButton = forwardRef(({ value, onClick, disabled }, ref) => (
-    <Button
-      onClick={onClick}
-      ref={ref}
-      disabled={disabled}
-    >
-      {/* this value is an empty string, so this logic evalutate true on null | undefinded | '' */}
-      {value ? value : 'Custom Date'}
-    </Button>
+  const CustomResurrectionButton = forwardRef(({ value, onClick }, ref) => (
+    <Flex>
+      <Button
+        onClick={onClick}
+        ref={ref}
+        variant={radioValue !== 'Other' ? 'disabledLook' : 'main'}
+      >
+        {/* this value is an empty string, so this logic evalutate true on null | undefinded | '' */}
+        {value ? value : 'Custom Date'}
+      </Button>
+    </Flex>
   ));
 
   return (
@@ -66,6 +74,7 @@ export function Resurrection({ ...rest }: FlexProps) {
             <DatePicker
               selected={customResurrectionDate}
               onChange={handleCustomDateChange}
+              onInputClick={handleCustomDateClick}
               showTimeSelect
               minDate={new Date()}
               showPopperArrow={false}
@@ -74,7 +83,6 @@ export function Resurrection({ ...rest }: FlexProps) {
               timeCaption="Time"
               dateFormat="MM/dd/yyyy HH:mm"
               fixedHeight
-              disabled={radioValue !== 'Other'}
               customInput={<CustomResurrectionButton />}
             />
           </Radio>

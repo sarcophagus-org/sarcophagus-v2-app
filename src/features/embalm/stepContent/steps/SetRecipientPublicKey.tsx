@@ -62,6 +62,7 @@ export function SetRecipientPublicKey() {
             onChange={handleOnChange}
             placeholder="Select recipient method"
             options={selectOptionsMap}
+            isSearchable={false}
             focusBorderColor="brand.950"
             selectedOptionColor="brand"
             useBasicStyles

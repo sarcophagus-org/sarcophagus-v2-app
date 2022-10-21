@@ -13,7 +13,7 @@ export function useGetBalance() {
 
   const formattedBalance = useMemo(
     () =>
-      isConnected
+      isConnected && balance
         ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${
             chain?.nativeCurrency?.name || 'ETH'
           }`
