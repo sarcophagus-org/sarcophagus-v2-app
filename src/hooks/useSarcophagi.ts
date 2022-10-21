@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAccount, useContract, useContractRead, useProvider } from 'wagmi';
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { ISarcophagus } from 'types/sarcophagi.interfaces';
@@ -37,10 +37,6 @@ const useSarcophagi = () => {
 
     return setSarcophagi(s.reverse());
   }
-
-  useEffect(() => {
-    updateSarcophagi();
-  }, []);
 
   return { sarcophagi, updateSarcophagi };
 };
