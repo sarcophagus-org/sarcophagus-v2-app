@@ -14,9 +14,10 @@ import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
 import { PUBLIC_KEY_STREAM } from '../../lib/config/node_config';
 
+// TODO -- temporarily removed while we have the 20 second discovery limit
 // values used to determine if an archaeologist is online
-const pingThreshold = 60000;
-const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
+// const pingThreshold = 60000;
+// const heartbeatTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
 
 interface PublicKeyResponseFromArchaeologist {
   signature: string;
@@ -37,7 +38,7 @@ export function useLibp2p() {
 
       // TODO -- temporarily removed while we have the 20 second discovery limit
       // if this continues to run, the archs will disappear
-      
+
       // if (heartbeatTimeouts[peerId.toString()]) {
       //   clearTimeout(heartbeatTimeouts[peerId.toString()]);
       //   heartbeatTimeouts[peerId.toString()] = undefined;
