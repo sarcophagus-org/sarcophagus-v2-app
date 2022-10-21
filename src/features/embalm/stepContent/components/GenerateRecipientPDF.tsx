@@ -2,7 +2,6 @@ import {
   VStack,
   Button,
   Text,
-  Image,
   Textarea,
   AlertTitle,
   AlertDescription,
@@ -11,7 +10,6 @@ import { useGenerateRecipientPDF } from '../hooks/useGenerateRecipientPDF';
 import { GeneratePDFState } from 'store/embalm/actions';
 import { useSelector } from 'store/index';
 import { Alert } from 'components/Alert';
-import CursePdfSvg from 'assets/images/curse-pdf.svg';
 
 export function GenerateRecipientPDF() {
   const { generatePublicKey, downloadRecipientPDF, isLoading, generateError } =

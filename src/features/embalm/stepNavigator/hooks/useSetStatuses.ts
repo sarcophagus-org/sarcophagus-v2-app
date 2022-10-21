@@ -43,8 +43,6 @@ export function useSetStatuses() {
     selectedArchaeologists,
     file,
     name,
-    outerPrivateKey,
-    outerPublicKey,
     recipientState,
     requiredArchaeologists,
     resurrection,

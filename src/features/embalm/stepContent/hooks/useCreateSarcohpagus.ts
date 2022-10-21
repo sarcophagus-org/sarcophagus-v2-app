@@ -9,6 +9,9 @@ import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
+import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
+import { setOuterLayerKeys } from '../../../../store/embalm/actions';
+import { generateOuterKeys, generateOuterKeysFailure } from '../../../../lib/utils/toast';
 
 // TODO: change to stage
 export enum CreateSarcophagusStage {
@@ -29,7 +32,7 @@ const createSarcophagusStages = [
   CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
   CreateSarcophagusStage.UPLOAD_PAYLOAD,
   CreateSarcophagusStage.SUBMIT_SARCOPHAGUS,
-  CreateSarcophagusStage.COMPLETED,
+  CreateSarcophagusStage.COMPLETED
 ];
 
 async function encryptShards(
@@ -40,7 +43,7 @@ async function encryptShards(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
       encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
+      unencryptedShardDoubleHash: doubleHashShard(payload[i])
     }))
   );
 }
@@ -49,12 +52,10 @@ export function useCreateSarcophagus() {
   const {
     recipientState,
     file,
-    outerPublicKey,
-    outerPrivateKey,
     selectedArchaeologists,
     publicKeysReady,
     shardsTxId,
-    requiredArchaeologists,
+    requiredArchaeologists
   } = useSelector(x => x.embalmState);
   // const { isUploading } = useSelector(x => x.bundlrState);
   // const { uploadFile } = useBundlr();
@@ -74,6 +75,8 @@ export function useCreateSarcophagus() {
     new Map<string, string>([])
   );
   const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+  const [outerPrivateKey, setOuterPrivateKey] = useState('');
+  const [outerPublicKey, setOuterPublicKey] = useState('');
 
   const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
 
@@ -82,15 +85,23 @@ export function useCreateSarcophagus() {
     archaeologistSignatures,
     archaeologistShards,
     arweaveTxIds,
-    currentStage,
+    currentStage
   });
+
+  // generates a random key with which to encrypt the outer layer of the sarcophagus
+  useCallback(async () => {
+      const { privateKey, publicKey } = await createEncryptionKeypairAsync();
+      setOuterPrivateKey(privateKey);
+      setOuterPublicKey(publicKey);
+  }, []);
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
     try {
+
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists,
+        threshold: requiredArchaeologists
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -102,7 +113,7 @@ export function useCreateSarcophagus() {
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard,
+          [shard.publicKey]: shard.encryptedShard
         }),
         {}
       );
@@ -114,7 +125,7 @@ export function useCreateSarcophagus() {
     } catch (error) {
       console.error(error);
     }
-  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadArweaveFile]);
+  }, [requiredArchaeologists, outerPrivateKey, outerPublicKey, selectedArchaeologists, uploadArweaveFile]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     const payload = await readFileDataAsBase64(file!);
@@ -135,7 +146,7 @@ export function useCreateSarcophagus() {
     outerPublicKey,
     recipientState.publicKey,
     uploadArweaveFile,
-    setSarcophagusPayloadTxId,
+    setSarcophagusPayloadTxId
   ]);
 
   // TODO -- add approval stage
@@ -207,7 +218,7 @@ export function useCreateSarcophagus() {
     initiateSarcophagusNegotiation,
     uploadAndSetDoubleEncryptedFile,
     dialSelectedArchaeologists,
-    submitSarcophagus,
+    submitSarcophagus
   ]);
 
   const handleCreate = useCallback(async () => {
@@ -219,6 +230,6 @@ export function useCreateSarcophagus() {
     uploadAndSetEncryptedShards,
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
-    shardsTxId,
+    shardsTxId
   };
 }
