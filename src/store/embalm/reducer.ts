@@ -14,10 +14,9 @@ export enum Step {
   UploadPayload = 1,
   FundBundlr = 2,
   SetRecipient = 3,
-  CreateEncryptionKeypair = 4,
-  SelectArchaeologists = 5,
-  RequiredArchaeologists = 6,
-  CreateSarcophagus = 7,
+  SelectArchaeologists = 4,
+  RequiredArchaeologists = 5,
+  CreateSarcophagus = 6,
 }
 
 export interface EmbalmState {
@@ -70,7 +69,7 @@ export const embalmInitialState: EmbalmState = {
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  uploadPrice: '',
+  uploadPrice: '0',
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
   archAddressSearch: '',

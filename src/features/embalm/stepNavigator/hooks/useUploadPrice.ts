@@ -27,7 +27,9 @@ export function useUploadPrice() {
       if (!file || !bundlr) return;
       const price = await bundlr.getPrice(file.size);
       if (!price) return;
-      const convertedPrice = bundlr.utils.unitConverter(price);
+      // pads the price slightly to prevent the user from underfunding
+      const paddedPrice = price.multipliedBy(1.1);
+      const convertedPrice = bundlr.utils.unitConverter(paddedPrice);
       dispatch(setUploadPrice(convertedPrice.toString()));
     })();
   }, [bundlr, dispatch, file]);

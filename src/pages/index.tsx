@@ -2,10 +2,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Link, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
-import { ArweaveTestPage } from './ArweaveTestPage';
 import { EmbalmPage } from './EmbalmPage';
-
-import { ThemeTestPage } from './ThemeTestPage';
 
 export function Pages() {
   const routes = [
@@ -13,16 +10,6 @@ export function Pages() {
       path: '/embalm',
       element: <EmbalmPage />,
       label: 'Embalm',
-    },
-    {
-      path: '/arweave',
-      element: <ArweaveTestPage />,
-      label: 'Arweave Test',
-    },
-    {
-      path: '/theme-test',
-      element: <ThemeTestPage />,
-      label: 'Theme Test',
     },
   ];
 

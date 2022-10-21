@@ -7,9 +7,10 @@ import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
+import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
 import { chainId, useNetwork } from 'wagmi';
 import { useBundlr } from './useBundlr';
-import { disableSteps, enableSteps } from 'store/embalm/actions';
+import { disableSteps, enableSteps, resetEmbalmState } from 'store/embalm/actions';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -31,7 +32,7 @@ const createSarcophagusStages = [
   CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
   CreateSarcophagusStage.UPLOAD_PAYLOAD,
   CreateSarcophagusStage.SUBMIT_SARCOPHAGUS,
-  CreateSarcophagusStage.COMPLETED,
+  CreateSarcophagusStage.COMPLETED
 ];
 
 async function encryptShards(
@@ -42,7 +43,7 @@ async function encryptShards(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
       encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
+      unencryptedShardDoubleHash: doubleHashShard(payload[i])
     }))
   );
 }
@@ -52,12 +53,10 @@ export function useCreateSarcophagus() {
   const {
     recipientState,
     file,
-    outerPublicKey,
-    outerPrivateKey,
     selectedArchaeologists,
     publicKeysReady,
     shardsTxId,
-    requiredArchaeologists,
+    requiredArchaeologists
   } = useSelector(x => x.embalmState);
 
   // BUNDLR config
@@ -81,6 +80,8 @@ export function useCreateSarcophagus() {
     new Map<string, string>([])
   );
   const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+  const [outerPrivateKey, setOuterPrivateKey] = useState('');
+  const [outerPublicKey, setOuterPublicKey] = useState('');
 
   const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
 
@@ -89,7 +90,18 @@ export function useCreateSarcophagus() {
     archaeologistSignatures,
     archaeologistShards,
     arweaveTxIds,
-    currentStage,
+    currentStage
+  });
+
+  // generates a random key with which to encrypt the outer layer of the sarcophagus
+  useEffect(() => {
+    (async () => {
+      if (!outerPrivateKey) {
+        const { privateKey, publicKey } = await createEncryptionKeypairAsync();
+        setOuterPrivateKey(privateKey);
+        setOuterPublicKey(publicKey);
+      }
+    })();
   });
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
@@ -97,7 +109,7 @@ export function useCreateSarcophagus() {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists,
+        threshold: requiredArchaeologists
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -109,7 +121,7 @@ export function useCreateSarcophagus() {
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard,
+          [shard.publicKey]: shard.encryptedShard
         }),
         {}
       );
@@ -129,7 +141,7 @@ export function useCreateSarcophagus() {
     selectedArchaeologists,
     uploadArweaveFile,
     shouldUseBundlr,
-    uploadFile,
+    uploadFile
   ]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
@@ -155,8 +167,18 @@ export function useCreateSarcophagus() {
     uploadArweaveFile,
     setSarcophagusPayloadTxId,
     shouldUseBundlr,
-    uploadFile,
+    uploadFile
   ]);
+
+  const resetLocalEmbalmerState = useCallback(() => {
+    setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
+    setEncryptedShardsTxId('');
+    setSarcophagusPayloadTxId('');
+    setArchaeologistSignatures(new Map<string, string>([]));
+    setNegotiationTimestamp(0);
+    setOuterPrivateKey('');
+    setOuterPublicKey('');
+  }, []);
 
   // TODO -- add approval stage
   useEffect(() => {
@@ -179,8 +201,8 @@ export function useCreateSarcophagus() {
               resolve(result);
             })
             .catch((error: any) => {
-              reject(error);
               setStageExecuting(false);
+              reject(error);
             });
         });
       };
@@ -205,7 +227,7 @@ export function useCreateSarcophagus() {
                 setArchaeologistSignatures,
                 setNegotiationTimestamp
               );
-            }, 10000);
+            }, 5000);
             break;
           case CreateSarcophagusStage.UPLOAD_PAYLOAD:
             await executeStage(uploadAndSetDoubleEncryptedFile);
@@ -216,7 +238,12 @@ export function useCreateSarcophagus() {
             }
             break;
           case CreateSarcophagusStage.COMPLETED:
-            dispatch(enableSteps());
+            resetLocalEmbalmerState();
+            setTimeout(() => {
+              dispatch(resetEmbalmState());
+              dispatch(enableSteps());
+            }, 4000);
+
             break;
         }
       }
@@ -233,6 +260,7 @@ export function useCreateSarcophagus() {
     submitSarcophagus,
     uploadAndSetDoubleEncryptedFile,
     uploadAndSetEncryptedShards,
+    resetLocalEmbalmerState
   ]);
 
   const handleCreate = useCallback(async () => {
@@ -245,6 +273,6 @@ export function useCreateSarcophagus() {
     uploadAndSetEncryptedShards,
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
-    shardsTxId,
+    shardsTxId
   };
 }
