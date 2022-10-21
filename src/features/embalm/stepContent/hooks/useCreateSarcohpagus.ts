@@ -238,7 +238,13 @@ export function useCreateSarcophagus() {
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                await executeStage(submitSarcophagus);
+                await executeStage(submitSarcophagus)
+                  .catch(e => {
+                    // TODO: Might want to handle more specific RPC errors
+                    console.error(e);
+                    setStageError('Failed to submit sarcophagus to contract');
+                  }
+                  );
                 break;
               }
           }
