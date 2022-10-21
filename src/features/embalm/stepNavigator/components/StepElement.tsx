@@ -43,7 +43,7 @@ export function StepElement({ title, step, isLoading, isDisabled }: StepProps) {
           isDisabled={isDisabled}
         />
         <Text
-          color={currentStep !== step || isDisabled ? 'brand.400' : 'brand.950'}
+          color={currentStep !== step || isDisabled ? 'disabled' : 'brand.950'}
           align="left"
           ml={3}
         >

@@ -16,8 +16,8 @@ export function StepStatusIndicator({ status, index, isDisabled }: StepStatusInd
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor={isDisabled ? 'brand.400' : 'brand.950'}
-        backgroundColor={isDisabled ? 'brand.400' : 'brand.950'}
+        borderColor={isDisabled ? 'disabled' : 'brand.950'}
+        backgroundColor={isDisabled ? 'disabled' : 'brand.950'}
         borderRadius={100}
         align="center"
         justifyContent="center"
@@ -35,14 +35,14 @@ export function StepStatusIndicator({ status, index, isDisabled }: StepStatusInd
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor={isDisabled ? 'brand.400' : 'brand.950'}
+        borderColor={isDisabled ? 'disabled' : 'brand.950'}
         borderRadius={100}
         align="center"
         justifyContent="center"
       >
         <Text
           fontSize="xs"
-          color={isDisabled ? 'brand.400' : 'brand.950'}
+          color={isDisabled ? 'disabled' : 'brand.950'}
         >
           {index + 1}
         </Text>
@@ -53,14 +53,14 @@ export function StepStatusIndicator({ status, index, isDisabled }: StepStatusInd
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor={isDisabled ? 'brand.400' : 'brand.400'}
+        borderColor="brand.400"
         borderRadius={100}
         align="center"
         justifyContent="center"
       >
         <Text
           fontSize="xs"
-          color={isDisabled ? 'brand.400' : 'brand.950'}
+          color={isDisabled ? 'disabled' : 'brand.950'}
         >
           {index + 1}
         </Text>
