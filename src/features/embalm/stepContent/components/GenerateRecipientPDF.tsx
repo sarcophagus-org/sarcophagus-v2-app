@@ -89,6 +89,7 @@ export function GenerateRecipientPDF() {
               as="span"
               variant="link"
               onClick={downloadRecipientPDF}
+              cursor="pointer"
             >
               Make sure you downloaded the PDF.
             </Button>
