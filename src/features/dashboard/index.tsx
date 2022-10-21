@@ -1,20 +1,14 @@
 import {
   Flex,
-  Heading,
   VStack,
   Text,
   useTab,
-  useMultiStyleConfig,
   IconButton,
-  Box,
-  Tab,
   TabList,
   TabPanels,
   TabPanel,
   Tabs,
-  useStyles,
   TabProps,
-  HStack,
   useStyleConfig,
   TableContainer,
   Table,
@@ -27,8 +21,6 @@ import {
 import { RepeatIcon } from '@chakra-ui/icons';
 import { BigNumber } from 'ethers';
 import { formatAddress } from 'lib/utils/helpers';
-import { useState } from 'react';
-import { useAccount, useContractRead, useContract, useProvider, useSigner } from 'wagmi';
 import useSarcophagi from 'hooks/useSarcophagi';
 
 interface TabData {

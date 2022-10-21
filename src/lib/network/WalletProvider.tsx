@@ -6,14 +6,12 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  function log() {
-    console.log('log', process.env.REACT_APP_INFURA_API_KEY);
-  }
-  log();
-
   const { chains, provider } = configureChains(
-    [chainList.mainnet, chainList.goerli, chainList.polygon],
-    [infuraProvider({ infuraId: process.env.REACT_APP_INFURA_API_KEY, priority: 0 })]
+    [chainList.mainnet, chainList.goerli, chainList.hardhat, chainList.polygon],
+    [
+      infuraProvider({ infuraId: process.env.REACT_APP_INFURA_API_KEY, priority: 0 }),
+      publicProvider({ priority: 1 }),
+    ]
   );
 
   const { connectors } = getDefaultWallets({
