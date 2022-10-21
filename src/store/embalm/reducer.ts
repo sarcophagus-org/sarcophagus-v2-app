@@ -243,6 +243,13 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         updateSelected: true,
       });
 
+    case ActionType.SetArchaeologistSignature:
+      return updateArchProperty(state, action.payload.peerId.toString(), {
+        key: 'signature',
+        value: action.payload.signature,
+        updateSelected: true,
+      });
+
     case ActionType.ResetEmbalmState:
       return embalmInitialState;
 

@@ -14,6 +14,7 @@ export enum ActionType {
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
+  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
@@ -75,6 +76,7 @@ type EmbalmPayload = {
   };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
+  [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetDiggingFees]: { diggingFees: string };
@@ -335,6 +337,16 @@ export function setArchaeologistPublicKey(peerId: string, publicKey: string): Em
     payload: {
       peerId,
       publicKey,
+    },
+  };
+}
+
+export function setArchaeologistSignature(peerId: string, signature: string): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistSignature,
+    payload: {
+      peerId,
+      signature,
     },
   };
 }

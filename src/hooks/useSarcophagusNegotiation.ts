@@ -1,6 +1,6 @@
 import { pipe } from 'it-pipe';
 import React, { useCallback } from 'react';
-import { setArchaeologistConnection, setArchaeologistException } from 'store/embalm/actions';
+import { setArchaeologistConnection, setArchaeologistException, setArchaeologistSignature } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import {
@@ -108,6 +108,11 @@ export function useSarcophagusNegotiation() {
                   }));
                 } else {
                   archaeologistSignatures.set(arch.profile.archAddress, response.signature);
+
+                  dispatch(setArchaeologistSignature(
+                    arch.profile.peerId,
+                    response.signature
+                  ));
                 }
               }
             }).catch(e => {
