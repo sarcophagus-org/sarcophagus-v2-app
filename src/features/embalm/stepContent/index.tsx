@@ -16,7 +16,7 @@ interface StepContentMap {
 }
 
 export function StepContent() {
-  const { currentStep, goToPrev, goToNext } = useStepContent();
+  const { currentStep, goToPrev, goToNext, stepCount } = useStepContent();
 
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {
@@ -65,6 +65,7 @@ export function StepContent() {
           variant="link"
           width="fit-content"
           onClick={handleClickNext}
+          disabled={currentStep.valueOf() === stepCount - 1}
         >
           <Text fontSize="lg">{'Next >'}</Text>
         </Button>

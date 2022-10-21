@@ -4,10 +4,11 @@ import { createRef, ReactNode, useCallback, useEffect, useState } from 'react';
 interface FileUploaderProps {
   children: ReactNode;
   handleFileDrop: (e: DragEvent) => void;
+  onClick: () => void;
 }
 
 export function FileDragAndDrop(props: FileUploaderProps) {
-  const { children, handleFileDrop } = props;
+  const { children, handleFileDrop, onClick } = props;
 
   const dropAreaRef = createRef<HTMLDivElement>();
   const [isHovering, setIsHovering] = useState(false);
@@ -73,6 +74,7 @@ export function FileDragAndDrop(props: FileUploaderProps) {
       bg={isHovering ? 'brand.100' : 'none'}
       h={200}
       ref={dropAreaRef}
+      onClick={onClick}
     >
       {children}
     </Center>

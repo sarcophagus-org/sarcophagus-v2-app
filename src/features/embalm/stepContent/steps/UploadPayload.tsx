@@ -49,7 +49,10 @@ export function UploadPayload() {
           {error}
         </Alert>
       )}
-      <FileDragAndDrop handleFileDrop={handleFileDrop}>
+      <FileDragAndDrop
+        onClick={handleClickFilePicker}
+        handleFileDrop={handleFileDrop}
+      >
         {file ? (
           <VStack spacing={3}>
             <Text
@@ -63,22 +66,11 @@ export function UploadPayload() {
               {"Bundlr's upload price: "}
               {isConnected ? formattedUploadPrice : 'Not connected to the Bundlr'}
             </Text>
-            <Link
-              textDecor="underline"
-              onClick={handleClickFilePicker}
-            >
-              Upload a different file
-            </Link>
+            <Link textDecor="underline">Upload a different file</Link>
           </VStack>
         ) : (
           <Text>
-            Drag and drop or{' '}
-            <Link
-              textDecor="underline"
-              onClick={handleClickFilePicker}
-            >
-              browse files
-            </Link>
+            Drag and drop or <Link textDecor="underline">browse files</Link>
           </Text>
         )}
       </FileDragAndDrop>
