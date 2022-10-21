@@ -91,35 +91,43 @@ export function useSarcophagusNegotiation() {
 
           const outboundMsg = JSON.stringify(negotiationParams);
 
-          const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
+          try {
+            const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
-          await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
-            for await (const data of source) {
-              const dataStr = new TextDecoder().decode(data);
-              // TODO: remove these logs after we gain some confidence in this exchange
-              console.log('got', dataStr);
+            await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
+              for await (const data of source) {
+                const dataStr = new TextDecoder().decode(data);
+                // TODO: remove these logs after we gain some confidence in this exchange
+                console.log('got', dataStr);
 
-              const response = JSON.parse(dataStr);
-              if (response.error) {
-                dispatch(setArchaeologistException(arch.profile.peerId, {
-                  code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
-                  message: processDeclinedSignatureCode(response.error.code as SarcophagusValidationError, arch.profile.archAddress),
-                }));
-              } else {
-                archaeologistSignatures.set(arch.profile.archAddress, response.signature);
+                const response = JSON.parse(dataStr);
+                if (response.error) {
+                  dispatch(setArchaeologistException(arch.profile.peerId, {
+                    code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
+                    message: processDeclinedSignatureCode(response.error.code as SarcophagusValidationError, arch.profile.archAddress),
+                  }));
+                } else {
+                  archaeologistSignatures.set(arch.profile.archAddress, response.signature);
+                }
               }
-            }
-          }).catch(e => {
+            }).catch(e => {
+              // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
+              const message = `Exception occurred in negotiaton stream for: ${arch.profile.archAddress}`;
+              console.error(`Stream exception on ${arch.profile.peerId}`, e);
+              dispatch(setArchaeologistException(arch.profile.peerId, {
+                code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
+                message
+              }));
+            }).finally(() => stream.close());
+          } catch (e) {
             // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
-            const message = `Exception occurred in negotiaton stream for: ${arch.profile.archAddress}`;
+            const message = `Exception occurred attempting to open stream to: ${arch.profile.archAddress}`;
             console.error(`Stream exception on ${arch.profile.peerId}`, e);
             dispatch(setArchaeologistException(arch.profile.peerId, {
-              code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
+              code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
               message
             }));
-          }).finally(() => {
-            stream.close();
-          });
+          }
         })
       );
 
