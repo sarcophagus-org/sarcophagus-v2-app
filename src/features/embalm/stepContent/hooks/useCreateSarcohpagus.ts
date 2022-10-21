@@ -10,7 +10,7 @@ import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegot
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
 import { chainId, useNetwork } from 'wagmi';
 import { useBundlr } from './useBundlr';
-import { disableSteps, enableSteps } from 'store/embalm/actions';
+import { disableSteps, enableSteps, resetEmbalmState } from 'store/embalm/actions';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -170,6 +170,16 @@ export function useCreateSarcophagus() {
     uploadFile
   ]);
 
+  const resetLocalEmbalmerState = useCallback(() => {
+    setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
+    setEncryptedShardsTxId('');
+    setSarcophagusPayloadTxId('');
+    setArchaeologistSignatures(new Map<string, string>([]));
+    setNegotiationTimestamp(0);
+    setOuterPrivateKey('');
+    setOuterPublicKey('');
+  }, []);
+
   // TODO -- add approval stage
   useEffect(() => {
     (async () => {
@@ -228,6 +238,8 @@ export function useCreateSarcophagus() {
             }
             break;
           case CreateSarcophagusStage.COMPLETED:
+            resetLocalEmbalmerState();
+            dispatch(resetEmbalmState());
             dispatch(enableSteps());
             break;
         }
@@ -244,7 +256,8 @@ export function useCreateSarcophagus() {
     stageExecuting,
     submitSarcophagus,
     uploadAndSetDoubleEncryptedFile,
-    uploadAndSetEncryptedShards
+    uploadAndSetEncryptedShards,
+    resetLocalEmbalmerState
   ]);
 
   const handleCreate = useCallback(async () => {
