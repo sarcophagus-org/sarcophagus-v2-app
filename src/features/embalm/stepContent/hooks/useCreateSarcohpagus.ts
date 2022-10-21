@@ -66,6 +66,7 @@ export function useCreateSarcophagus() {
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
   const [publicKeysReady, setPublicKeysReady] = useState(false);
+  const [signaturesReady, setSignaturesReady] = useState(false);
   const [stageError, setStageError] = useState<string>();
 
   // State variables needed for final submit stage
@@ -134,7 +135,7 @@ export function useCreateSarcophagus() {
     const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
     // Step 3: Upload the double encrypted payload to the arweave bundlr
-    // Use uploadArweaveFile is connected to hardhat local, uploadFile (from bundlr) for any other
+    // Use uploadArweaveFile if connected to hardhat local, uploadFile (from bundlr) for any other
     // TODO: May or may not make more sense to abstract away this check.
     const payloadTxId = networkConfig.chainId === 31337 ?
       await uploadArweaveFile(encryptedOuterLayer) :
@@ -208,7 +209,13 @@ export function useCreateSarcophagus() {
               break;
 
             case CreateSarcophagusStage.UPLOAD_PAYLOAD:
-              await executeStage(uploadAndSetDoubleEncryptedFile);
+              if (signaturesReady) {
+                await executeStage(uploadAndSetDoubleEncryptedFile);
+              } else {
+                const offendingArchs = selectedArchaeologists.filter(arch => arch.exception !== undefined);
+                console.log('Not all selected archaeologists signed off', offendingArchs.map(a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`));
+                // TODO: Point out offending archs: Some might have declined, others may have connection issues. Check `exception.code` on each to determine exception type -- what should the user do??
+              }
               break;
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
@@ -229,6 +236,7 @@ export function useCreateSarcophagus() {
     currentStage,
     stageExecuting,
     publicKeysReady,
+    signaturesReady,
     archaeologistShards,
     encryptedShardsTxId,
     setArchaeologistSignatures,
@@ -241,10 +249,20 @@ export function useCreateSarcophagus() {
   ]);
 
   useEffect(
-    () => setPublicKeysReady(
-      selectedArchaeologists.length > 0 &&
-      selectedArchaeologists.filter(arch => arch.publicKey === undefined).length === 0
-    ),
+    () => {
+      if (selectedArchaeologists.length > 0) {
+        let allPublicKeysReady = true;
+        let allSignaturesReady = true;
+
+        selectedArchaeologists.forEach(arch => {
+          if (!arch.publicKey) allPublicKeysReady = false;
+          if (!arch.signature) allSignaturesReady = false;
+        });
+
+        setPublicKeysReady(allPublicKeysReady);
+        setSignaturesReady(allSignaturesReady);
+      }
+    },
     [selectedArchaeologists]
   );
 
