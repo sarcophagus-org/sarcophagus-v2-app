@@ -33,7 +33,9 @@ export const colors = {
     900: '#0d0a12',
   },
 
+  // TODO: Merge the two error colors, check with design team
   error: '#c88484',
+  errorAlt: '#290e0e',
   warning: '#c8c884',
   success: '#84c884',
   info: '#84bcc8',

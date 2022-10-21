@@ -35,15 +35,16 @@ export function useLibp2p() {
       dispatch(setArchaeologistOnlineStatus(peerId.toString(), true));
       dispatch(setArchaeologistFullPeerId(peerId));
 
-      if (heartbeatTimeouts[peerId.toString()]) {
-        clearTimeout(heartbeatTimeouts[peerId.toString()]);
-        heartbeatTimeouts[peerId.toString()] = undefined;
-      }
+      // TODO: Uncomment this when we remove the timeout for discovery
+      // if (heartbeatTimeouts[peerId.toString()]) {
+      //   clearTimeout(heartbeatTimeouts[peerId.toString()]);
+      //   heartbeatTimeouts[peerId.toString()] = undefined;
+      // }
 
-      heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
-        console.log(`No longer online: ${peerId.toString()}`);
-        dispatch(setArchaeologistOnlineStatus(peerId.toString(), false));
-      }, pingThreshold);
+      // heartbeatTimeouts[peerId.toString()] = setTimeout(() => {
+      //   console.log(`No longer online: ${peerId.toString()}`);
+      //   dispatch(setArchaeologistOnlineStatus(peerId.toString(), false));
+      // }, pingThreshold);
     },
     [dispatch]
   );

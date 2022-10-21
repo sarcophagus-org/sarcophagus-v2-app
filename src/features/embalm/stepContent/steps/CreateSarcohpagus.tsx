@@ -20,13 +20,17 @@ export function CreateSarcophagus() {
       {!isCreateProcessStarted() ? (
         <>
           <ReviewSarcophagus />
-          <Button
-            mt={6}
-            onClick={handleCreate}
-            disabled={!isSarcophagusComplete()}
-          >
-            Create Sarcophagus
-          </Button>
+          <Flex justifyContent="center">
+            <Button
+              w={250}
+              p={6}
+              mt={9}
+              onClick={handleCreate}
+              disabled={!isSarcophagusComplete()}
+            >
+              Create Sarcophagus
+            </Button>
+          </Flex>
         </>
       ) : (
         <VStack

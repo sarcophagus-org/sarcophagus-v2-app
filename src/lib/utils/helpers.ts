@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { encrypt as eciesEncrypt } from 'ecies-geth';
-import { ethers } from 'ethers';
-import { hexlify, solidityKeccak256 } from 'ethers/lib/utils';
+import { BigNumber, ethers } from 'ethers';
+import { formatEther, hexlify, solidityKeccak256 } from 'ethers/lib/utils';
 import { Archaeologist } from '../../types';
 
 /**
@@ -156,4 +156,30 @@ export function doubleHashShard(shard: Uint8Array): string {
   } else {
     return '';
   }
+}
+
+export function formatFee(value: number | string, fixed = 2): string {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+
+  if (fixed <= 0) return '0';
+
+  if (value === 0) {
+    return '0';
+  } else if (value > 0 && value < 1 / 10 ** fixed) {
+    return `< 0.${'0'.repeat(fixed - 1)}1`;
+  } else {
+    return value % 1 === 0 ? value.toString() : value.toFixed(fixed);
+  }
+}
+
+/**
+ * Given a list of archaeologists, sums up their digging fees
+ */
+export function sumDiggingFees(archaeologists: Archaeologist[]): BigNumber {
+  return archaeologists.reduce(
+    (acc, curr) => acc.add(parseInt(formatEther(curr.profile.minimumDiggingFee))),
+    ethers.constants.Zero
+  );
 }

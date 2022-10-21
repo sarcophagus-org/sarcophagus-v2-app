@@ -1,100 +1,51 @@
-import { Box, Flex, Heading, Highlight, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from '@chakra-ui/react';
-import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
-import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
-import { useSelector } from '../../../../store';
-import { useGetProtocolFeeAmount } from '../../../../hooks/viewStateFacet';
+import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { ReviewSarcohpagusTable } from './ReviewSarcophagusTable';
+import { SarcohpagusSummaryFees } from './SarcohpagusSummaryFees';
+import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function ReviewSarcophagus() {
-  const { sarcophagusParameters } = useSarcophagusParameters();
-  const { selectStep } = useStepNavigator();
-  const { diggingFees, uploadPrice } = useSelector(x => x.embalmState);
-  const protocolFees = useGetProtocolFeeAmount();
-
   return (
     <VStack
-      align='left'
+      align="left"
       spacing={6}
       mt={4}
     >
-      <Text>Review your details below. Once you are ready, you can submit your transactions. Be aware, you will make two
-        transactions: (1) encrypt your payload, and (2) upload your payload to Arweave via Bundlr.</Text>
+      <Text>
+        Review your details below. Once you are ready, you can submit your transactions. Be aware,
+        you will make two transactions: (1) encrypt your payload, and (2) upload your payload to
+        Arweave via Bundlr.
+      </Text>
 
       <Flex
         flex={4}
-        height='100%'
-        direction='column'
+        height="100%"
+        direction="column"
       >
-        <Box py={3} bgGradient='linear(rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.09) 100%)'>
-          <Text width='full' textAlign='center'>Sarcophagus Summary</Text>
+        <Box
+          py={3}
+          bgGradient="linear(rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.09) 100%)"
+        >
+          <Text
+            width="full"
+            textAlign="center"
+          >
+            Sarcophagus Summary
+          </Text>
         </Box>
-        <Table variant='simple'>
-          <Thead>
-            <Tr>
-              <Th>
-                <VStack align='left'>
-                  <Text textTransform='none'>
-                    Item
-                  </Text>
-                </VStack>
-              </Th>
-              <Th>
-                <VStack align='left'>
-                  <Text textTransform='none'>
-                    Details
-                  </Text>
-                </VStack>
-              </Th>
-              <Th>
-                <VStack align='left'>
-                  <Text textTransform='none'>
-                    Action
-                  </Text>
-                </VStack>
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {sarcophagusParameters.map(({ name, value, step, error }) => {
-              return (
-                <Tr key={name}>
-                  <Td py={2}>
-                    <Highlight query={name} styles={{ rounded: 'sm', bg: 'brand.200', px: '1' }}>
-                      {name}
-                    </Highlight>
-                  </Td>
-                  <Td py={2}>
-                    {error ?
-                      <Text>
-                        <Highlight query={value || '--'} styles={{ rounded: 'sm', bg: 'red', opacity: '15%', px: '1' }}>
-                          {value || '--'}
-                        </Highlight></Text>
-                      : <Text>{value}</Text>
-                    }
-                  </Td>
-                  <Td py={2}
-                      cursor='pointer'
-                      textTransform='uppercase'
-                      _hover={{
-                        textDecoration: 'underline'
-                      }} onClick={() => {
-                    selectStep(step);
-                  }}>Edit</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-
-        <Box py={3} bgGradient='linear(rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.09) 100%)'>
-          <Flex
-            direction='column'>
-            <Text>Fees</Text>
-            <Text width='full'>uploadPrice: {uploadPrice}</Text>
-            <Text width='full'>diggingFees: {diggingFees}</Text>
-            <Text width='full'>protocolFees: {protocolFees}</Text>
-          </Flex>
-
-        </Box>
+        <ReviewSarcohpagusTable />
+        <SarcohpagusSummaryFees />
+        <Flex
+          mt={3}
+          alignItems="center"
+        >
+          <SummaryErrorIcon />
+          <Text
+            ml={2}
+            color="brand.500"
+          >
+            = missing information
+          </Text>
+        </Flex>
       </Flex>
     </VStack>
   );
