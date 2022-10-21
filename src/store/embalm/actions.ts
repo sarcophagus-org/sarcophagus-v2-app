@@ -8,8 +8,11 @@ import { Connection } from '@libp2p/interface-connection';
 // unexpected behavior.
 export enum ActionType {
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
+  DisableSteps = 'EMBALM_DISABLE_STEPS',
+  EnableSteps = 'EMBALM_ENABLE_STEPS',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
+  SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
@@ -17,22 +20,25 @@ export enum ActionType {
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
+  SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
+  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
+  SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
+  SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetRecipientState = 'EMBALM_SET_RECIPIENT_STATE',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
+  SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
+  SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
-  SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
-  SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetArchaeologistException = 'EMBALM_SET_ARCHAEOLOGIST_EXCEPTION',
   ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
 }
@@ -64,31 +70,34 @@ export interface RecipientState {
 
 type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
+  [ActionType.DisableSteps]: {};
+  [ActionType.EnableSteps]: {};
   [ActionType.GoToStep]: { step: Step };
+  [ActionType.ResetEmbalmState]: {};
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchaeologistConnection]: {
-    peerId: string;
-    connection: Connection | undefined;
-  };
+  [ActionType.SetArchAddressSearch]: { search: string };
+  [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
+  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistOnlineStatus]: {
     peerId: string;
     isOnline: boolean;
   };
-  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
   [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
+  [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
+  [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
+  [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetRecipientState]: RecipientState;
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
-  [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
@@ -354,7 +363,21 @@ export function setArchaeologistSignature(peerId: string, signature: string): Em
 export function resetEmbalmState(): EmbalmActions {
   return {
     type: ActionType.ResetEmbalmState,
-    payload: {}
+    payload: {},
+  };
+}
+
+export function disableSteps(): EmbalmActions {
+  return {
+    type: ActionType.DisableSteps,
+    payload: {},
+  };
+}
+
+export function enableSteps(): EmbalmActions {
+  return {
+    type: ActionType.EnableSteps,
+    payload: {},
   };
 }
 

@@ -1,7 +1,9 @@
-import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading } from '@chakra-ui/react';
+import { ProgressTracker } from '../components/ProgressTracker';
+import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
+import { SarcophagusData } from '../components/SarcophagusData';
 import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
 import { useSarcophagusData } from '../hooks/useSarcophagusData';
-import { SarcophagusData } from '../components/SarcophagusData';
 
 export function CreateSarcophagus() {
   const { currentStage, handleCreate } = useCreateSarcophagus();
@@ -17,7 +19,7 @@ export function CreateSarcophagus() {
       direction="column"
       w="100%"
     >
-      <Heading>Create Sarcophagus</Heading>
+      <Heading mb={6}>Create Sarcophagus</Heading>
       {!isCreateProcessStarted() ? (
         <>
           <SarcophagusData />
@@ -30,65 +32,16 @@ export function CreateSarcophagus() {
           </Button>
         </>
       ) : (
-        <VStack
-          mt={8}
-          mb={6}
-          justify="space-between"
-          align="left"
+        <ProgressTracker
+          title="Creating Sarcophagus"
+          currentStage={currentStage}
         >
-          <Text
-            color={
-              currentStage === CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS
-                ? 'brand.950'
-                : 'brand.400'
-            }
-            align="left"
-          >
-            1. Dialing Archaeologists
-          </Text>
-          <Text
-            color={
-              currentStage === CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS
-                ? 'brand.950'
-                : 'brand.400'
-            }
-            align="left"
-          >
-            2. Uploading Encrypted Shards to Arweave
-          </Text>
-          <Text
-            color={
-              currentStage === CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION
-                ? 'brand.950'
-                : 'brand.400'
-            }
-            align="left"
-          >
-            3. Getting Archaeologist Signatures
-          </Text>
-          <Text
-            color={
-              currentStage === CreateSarcophagusStage.UPLOAD_PAYLOAD ? 'brand.950' : 'brand.400'
-            }
-            align="left"
-          >
-            4. Uploading Payload to Arweave
-          </Text>
-          <Text
-            color={
-              currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS ? 'brand.950' : 'brand.400'
-            }
-            align="left"
-          >
-            5. Finalizing Sarcophagus
-          </Text>
-          <Text
-            color={currentStage === CreateSarcophagusStage.COMPLETED ? 'brand.950' : 'brand.400'}
-            align="left"
-          >
-            6. Sarcophagus successfully completed!
-          </Text>
-        </VStack>
+          <ProgressTrackerStage>Connect to Archaeologists</ProgressTrackerStage>
+          <ProgressTrackerStage>Upload Archaeologist Data to Arweave</ProgressTrackerStage>
+          <ProgressTrackerStage>Retrieve Archaeologist Signatures</ProgressTrackerStage>
+          <ProgressTrackerStage>Upload File Data to Arweave</ProgressTrackerStage>
+          <ProgressTrackerStage>Create Sarcophagus</ProgressTrackerStage>
+        </ProgressTracker>
       )}
     </Flex>
   );

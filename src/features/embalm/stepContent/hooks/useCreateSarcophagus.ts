@@ -2,15 +2,17 @@ import { ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
-// import { setIsUploading } from 'store/bundlr/actions';
-import { useSelector } from 'store/index';
-import { useBundlr } from './useBundlr';
+import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
+import { useBundlr } from './useBundlr';
+import { disableSteps, enableSteps } from 'store/embalm/actions';
 import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 import { useNetworkConfig } from 'lib/config';
 
+// Note: order matters here
+// Also note: The number values of this enum are used to display the stage number
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
@@ -46,6 +48,8 @@ async function encryptShards(
 }
 
 export function useCreateSarcophagus() {
+  const dispatch = useDispatch();
+
   const {
     recipientState,
     file,
@@ -54,9 +58,11 @@ export function useCreateSarcophagus() {
     selectedArchaeologists,
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
-  // const { isUploading } = useSelector(x => x.bundlrState); // TODO: Dunno what to do with isUploading but it seems important. Uncomment and use as needed.
+
+  // BUNDLR config
   const { uploadFile } = useBundlr();
   const { uploadArweaveFile } = useArweaveService();
+
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
     useSarcophagusNegotiation();
 
@@ -117,7 +123,7 @@ export function useCreateSarcophagus() {
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key
-      const archPublicKeys = selectedArchaeologists.filter(arch => arch.publicKey !== undefined).map(x => x.publicKey!);
+      const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
       const encShards = await encryptShards(archPublicKeys, shards);
 
       // Step 3: Create a mapping of arch public keys -> encrypted shards; upload to arweave
@@ -245,8 +251,12 @@ export function useCreateSarcophagus() {
                     setStageError('Failed to submit sarcophagus to contract');
                   }
                   );
-                break;
               }
+              break;
+
+            case CreateSarcophagusStage.COMPLETED:
+              dispatch(enableSteps());
+              break;
           }
         } catch (e: any) {
           // Ideally expecting human readable errors here
@@ -270,6 +280,7 @@ export function useCreateSarcophagus() {
     submitSarcophagus,
     selectedArchaeologists,
     stageError,
+    dispatch,
   ]);
 
   // Update archaeologist public keys, signatures ready status
@@ -291,7 +302,10 @@ export function useCreateSarcophagus() {
     [selectedArchaeologists]
   );
 
-  const handleCreate = async () => setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
+  const handleCreate = useCallback(async () => {
+    setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
+    dispatch(disableSteps());
+  }, [dispatch]);
 
   return {
     currentStage,
