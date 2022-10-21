@@ -17,8 +17,23 @@ export interface Archaeologist {
   exception?: ArchaeologistException;
 }
 
+// TODO: Replace with import from proposed npm package
+export enum SarcophagusValidationError {
+  UNKNOWN_ERROR,
+  MAX_REWRAP_INTERVAL_TOO_LARGE,
+  INVALID_ARWEAVE_SHARD,
+  DIGGING_FEE_TOO_LOW,
+  INVALID_TIMESTAMP,
+}
+
+export enum ArchaeologistExceptionCode {
+  CONNECTION_EXCEPTION,
+  STREAM_EXCEPTION,
+  DECLINED_SIGNATURE,
+}
+
 export interface ArchaeologistException {
-  code: string;
+  code: ArchaeologistExceptionCode;
   message: string;
 }
 

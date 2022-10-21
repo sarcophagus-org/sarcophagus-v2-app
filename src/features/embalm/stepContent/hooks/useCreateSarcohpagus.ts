@@ -8,10 +8,9 @@ import { useBundlr } from './useBundlr';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
-import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
+import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 import { useNetworkConfig } from 'lib/config';
 
-// TODO: change to stage
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
@@ -185,13 +184,10 @@ export function useCreateSarcophagus() {
         try {
           switch (currentStage) {
             case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
-              const archsWithPublicKeys = await executeStage(dialSelectedArchaeologists);
-              console.log('res', archsWithPublicKeys);
-
+              await executeStage(dialSelectedArchaeologists);
               break;
-            case CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS:
-              console.log('upload shards');
 
+            case CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS:
               if (publicKeysReady) {
                 await executeStage(uploadAndSetEncryptedShards);
               } else {
@@ -200,6 +196,7 @@ export function useCreateSarcophagus() {
                 // TODO: Point out offending archs -- what should the user do??
               }
               break;
+
             case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
               await executeStage(
                 initiateSarcophagusNegotiation,
@@ -209,6 +206,7 @@ export function useCreateSarcophagus() {
                 setNegotiationTimestamp
               );
               break;
+
             case CreateSarcophagusStage.UPLOAD_PAYLOAD:
               await executeStage(uploadAndSetDoubleEncryptedFile);
               break;
