@@ -34,7 +34,6 @@ export function useBundlrSession() {
 
   const { address } = useAccount({
     onDisconnect() {
-       console.log('Disconnected');
        disconnectFromBundlr();
     },
   });
