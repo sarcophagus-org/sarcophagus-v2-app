@@ -28,23 +28,18 @@ export interface EmbalmState {
   name: string;
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
-  payloadTxId: string;
   recipientState: RecipientState;
   requiredArchaeologists: number;
   resurrection: number;
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
-  shardsTxId: string;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
   diggingFeesSortDirection: SortDirection;
   diggingFeesFilter: string;
   archAddressSearch: string;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
-  publicKeysReady: boolean;
-  signaturesReady: boolean;
-  negotiationTimestamp: number;
   areStepsDisabled: boolean;
 }
 
@@ -57,14 +52,12 @@ export const embalmInitialState: EmbalmState = {
   name: '',
   outerPrivateKey: null,
   outerPublicKey: null,
-  payloadTxId: '',
   recipientState: { publicKey: '', address: '', setByOption: null },
   requiredArchaeologists: 1,
   resurrection: 0,
   resurrectionRadioValue: '',
   customResurrectionDate: null,
   selectedArchaeologists: [],
-  shardsTxId: '',
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
@@ -74,9 +67,6 @@ export const embalmInitialState: EmbalmState = {
   diggingFeesFilter: '',
   archAddressSearch: '',
   archaeologistEncryptedShards: [],
-  publicKeysReady: false,
-  signaturesReady: false,
-  negotiationTimestamp: 0,
   areStepsDisabled: false,
 };
 
@@ -233,28 +223,19 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         value: action.payload.isOnline,
       });
 
+    case ActionType.SetArchaeologistException:
+      return updateArchProperty(state, action.payload.peerId, {
+        key: 'exception',
+        value: action.payload.exception,
+        updateSelected: true,
+      });
+
     case ActionType.SetArchaeologistConnection:
       return updateArchProperty(state, action.payload.peerId, {
         key: 'connection',
         value: action.payload.connection,
         updateSelected: true,
       });
-
-    case ActionType.SetArchaeologistSignature:
-      return updateArchProperty(state, action.payload.peerId, {
-        key: 'signature',
-        value: action.payload.signature,
-        updateSelected: true,
-      });
-
-    case ActionType.SetPublicKeysReady:
-      return { ...state, publicKeysReady: action.payload.publicKeysReady };
-
-    case ActionType.SetSignaturesReady:
-      return { ...state, signaturesReady: action.payload.signaturesReady };
-
-    case ActionType.SetNegotiationTimestamp:
-      return { ...state, negotiationTimestamp: action.payload.negotiationTimestamp };
 
     case ActionType.SetArchaeologistPublicKey:
       return updateArchProperty(state, action.payload.peerId.toString(), {
@@ -263,22 +244,12 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         updateSelected: true,
       });
 
-    case ActionType.SetSarcophagusPayloadTxId:
-      const { sarcophagusPayloadTxId } = action.payload;
-
-      return {
-        ...state,
-        payloadTxId: sarcophagusPayloadTxId,
-      };
-
-    case ActionType.SetShardPayloadData:
-      const { shards, encryptedShardsTxId } = action.payload;
-
-      return {
-        ...state,
-        archaeologistEncryptedShards: shards,
-        shardsTxId: encryptedShardsTxId,
-      };
+    case ActionType.SetArchaeologistSignature:
+      return updateArchProperty(state, action.payload.peerId.toString(), {
+        key: 'signature',
+        value: action.payload.signature,
+        updateSelected: true,
+      });
 
     case ActionType.DisableSteps:
       return { ...state, areStepsDisabled: true };

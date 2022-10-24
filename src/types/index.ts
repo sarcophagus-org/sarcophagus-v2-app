@@ -13,8 +13,28 @@ export interface Archaeologist {
   connection?: Connection;
   isOnline: boolean;
   fullPeerId?: PeerId;
-  lastPinged?: Date;
   signature?: string;
+  exception?: ArchaeologistException;
+}
+
+// TODO: Replace with import from proposed npm package
+export enum SarcophagusValidationError {
+  UNKNOWN_ERROR,
+  MAX_REWRAP_INTERVAL_TOO_LARGE,
+  INVALID_ARWEAVE_SHARD,
+  DIGGING_FEE_TOO_LOW,
+  INVALID_TIMESTAMP,
+}
+
+export enum ArchaeologistExceptionCode {
+  CONNECTION_EXCEPTION,
+  STREAM_EXCEPTION,
+  DECLINED_SIGNATURE,
+}
+
+export interface ArchaeologistException {
+  code: ArchaeologistExceptionCode;
+  message: string;
 }
 
 export interface ArchaeologistProfile {

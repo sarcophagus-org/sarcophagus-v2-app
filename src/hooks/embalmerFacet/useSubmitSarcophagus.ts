@@ -20,10 +20,10 @@ export interface ContractArchaeologist {
 export interface SubmitSarcophagusSettings {
   name: string;
   recipient: string;
-  resurrectionTime: BigNumber;
+  resurrectionTime: number;
   minShards: number;
-  timestamp: BigNumber;
-  maximumRewrapInterval: number | BigNumber;
+  timestamp: number;
+  maximumRewrapInterval: number;
 }
 
 export interface SubmitSarcophagusProps {
@@ -49,7 +49,7 @@ export function useSubmitSarcophagus({
 
   const isSubmitting = currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS;
 
-  const contractArchaeologists = useCallback((): ContractArchaeologist[] => {
+  const getContractArchaeologists = useCallback((): ContractArchaeologist[] => {
     if (!isSubmitting) {
       return [];
     }
@@ -75,20 +75,21 @@ export function useSubmitSarcophagus({
   const settings: SubmitSarcophagusSettings = {
     name,
     recipient: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
-    resurrectionTime: BigNumber.from(Math.trunc(resurrection / 1000).toString()),
+    resurrectionTime: Math.trunc(resurrection / 1000),
     minShards: requiredArchaeologists,
-    timestamp: BigNumber.from(Math.trunc(negotiationTimestamp / 1000).toString()),
+    timestamp: Math.trunc(negotiationTimestamp / 1000),
     maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
   };
 
+  const contractArchaeologists = getContractArchaeologists();
   const args =
-    isSubmitting && contractArchaeologists().length
+    isSubmitting && contractArchaeologists.length
       ? [
           sarcoId,
           {
             ...settings,
           },
-          contractArchaeologists(),
+          contractArchaeologists,
           arweaveTxIds,
         ]
       : [];

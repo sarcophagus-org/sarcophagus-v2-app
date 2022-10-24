@@ -114,8 +114,8 @@ export function useLibp2p() {
   );
 
   const resetPublicKeyStream = useCallback(async () => {
-    await libp2pNode!.unhandle(PUBLIC_KEY_STREAM);
-    await libp2pNode!.handle([PUBLIC_KEY_STREAM], handlePublicKeyStream);
+    await libp2pNode?.unhandle(PUBLIC_KEY_STREAM);
+    await libp2pNode?.handle([PUBLIC_KEY_STREAM], handlePublicKeyStream);
   }, [handlePublicKeyStream, libp2pNode]);
 
   return {

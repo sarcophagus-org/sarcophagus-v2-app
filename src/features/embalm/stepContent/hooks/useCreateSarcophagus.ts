@@ -6,12 +6,12 @@ import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
-import { useSarcophagusNegotiation } from '../../../../hooks/useSarcophagusNegotiation';
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
-import { chainId, useNetwork } from 'wagmi';
 import { useBundlr } from './useBundlr';
 import { disableSteps } from 'store/embalm/actions';
+import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 import { useNavigate } from 'react-router-dom';
+import { useNetworkConfig } from 'lib/config';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -51,12 +51,11 @@ async function encryptShards(
 
 export function useCreateSarcophagus() {
   const dispatch = useDispatch();
+
   const {
     recipientState,
     file,
     selectedArchaeologists,
-    publicKeysReady,
-    shardsTxId,
     requiredArchaeologists
   } = useSelector(x => x.embalmState);
 
@@ -64,16 +63,21 @@ export function useCreateSarcophagus() {
 
   // BUNDLR config
   const { uploadFile } = useBundlr();
-  const { chain } = useNetwork();
-  const shouldUseBundlr = chainId.hardhat !== chain!.id;
-
   const { uploadArweaveFile } = useArweaveService();
+
   const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
     useSarcophagusNegotiation();
+
+  const networkConfig = useNetworkConfig();
+
+  // State variables to track automated sarcophagus creation flow across `CreateSarcophagusStage`s
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
+  const [publicKeysReady, setPublicKeysReady] = useState(false);
+  const [signaturesReady, setSignaturesReady] = useState(false);
+  const [stageError, setStageError] = useState<string>();
 
-  // Create Sarcophagus State
+  // State variables needed for final submit stage
   const [archaeologistShards, setArchaeologistShards] = useState(
     [] as ArchaeologistEncryptedShard[]
   );
@@ -96,16 +100,31 @@ export function useCreateSarcophagus() {
     currentStage
   });
 
-  // generates a random key with which to encrypt the outer layer of the sarcophagus
+  // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
     (async () => {
-      if (!outerPrivateKey) {
-        const { privateKey, publicKey } = await createEncryptionKeypairAsync();
-        setOuterPrivateKey(privateKey);
-        setOuterPublicKey(publicKey);
-      }
+      const { privateKey, publicKey } = await createEncryptionKeypairAsync();
+      setOuterPrivateKey(privateKey);
+      setOuterPublicKey(publicKey);
     })();
-  }, [outerPrivateKey]);
+  }, []);
+
+  const uploadToArweave = useCallback(async (data: Buffer): Promise<string> => {
+    const txId = networkConfig.chainId === 31337 ?
+      await uploadArweaveFile(data) :
+      await uploadFile(data);
+
+    return txId;
+  }, [uploadArweaveFile, uploadFile, networkConfig.chainId]);
+
+  const processUploadToArweaveError = (error: any) => {
+    console.error(error);
+    if (error.isFromArweave) { // TODO: need to determine if `error` is arweave error, process accordingly
+    } else {
+      // All other errors are unexpected and cannot be handled by the user.
+      throw new Error('Something went wrong');
+    }
+  };
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
     try {
@@ -120,7 +139,7 @@ export function useCreateSarcophagus() {
       const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
       const encShards = await encryptShards(archPublicKeys, shards);
 
-      // Step 3: Upload the encrypted shards mapping to the arweave bundlr
+      // Step 3: Create a mapping of arch public keys -> encrypted shards; upload to arweave
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
@@ -129,48 +148,38 @@ export function useCreateSarcophagus() {
         {}
       );
 
-      const txId = shouldUseBundlr
-        ? await uploadFile(Buffer.from(JSON.stringify(mapping)))
-        : await uploadArweaveFile(Buffer.from(JSON.stringify(mapping)));
+      const txId = await uploadToArweave(Buffer.from(JSON.stringify(mapping)));
 
       setArchaeologistShards(encShards);
       setEncryptedShardsTxId(txId);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      processUploadToArweaveError(error);
     }
-  }, [
-    requiredArchaeologists,
-    outerPrivateKey,
-    selectedArchaeologists,
-    uploadArweaveFile,
-    shouldUseBundlr,
-    uploadFile
-  ]);
+  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadToArweave]);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
-    const payload = await readFileDataAsBase64(file!);
+    try {
+      const payload = await readFileDataAsBase64(file!);
 
-    // Step 1: Encrypt the inner layer
-    const encryptedInnerLayer = await encrypt(recipientState.publicKey, payload);
+      // Step 1: Encrypt the inner layer
+      const encryptedInnerLayer = await encrypt(recipientState.publicKey, payload);
 
-    // Step 2: Encrypt the outer layer
-    const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
+      // Step 2: Encrypt the outer layer
+      const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
-    // Step 3: Upload the double encrypted payload to the arweave bundlr
+      // Step 3: Upload the double encrypted payload to arweave
+      const payloadTxId = await uploadToArweave(encryptedOuterLayer);
 
-    const payloadTxId = shouldUseBundlr
-      ? await uploadFile(encryptedOuterLayer)
-      : await uploadArweaveFile(encryptedOuterLayer);
-
-    setSarcophagusPayloadTxId(payloadTxId);
+      setSarcophagusPayloadTxId(payloadTxId);
+    } catch (error) {
+      processUploadToArweaveError(error);
+    }
   }, [
     file,
     outerPublicKey,
     recipientState.publicKey,
-    uploadArweaveFile,
+    uploadToArweave,
     setSarcophagusPayloadTxId,
-    shouldUseBundlr,
-    uploadFile
   ]);
 
   // TODO -- re-enable once figure out state issue at end of createSarcophagus
@@ -192,38 +201,49 @@ export function useCreateSarcophagus() {
         setCurrentStage(createSarcophagusStages[currentIndex + 1]);
       };
 
-      const executeStage = async (stageToExecute: Function, ...args: any[]): Promise<any> => {
-        return new Promise((resolve, reject) => {
-          setStageExecuting(true);
+      const executeStage = async (
+        stageToExecute: (...args: any[]) => Promise<any>,
+        ...stageArgs: any[]
+      ): Promise<any> => new Promise((resolve, reject) => {
+        setStageExecuting(true);
 
-          stageToExecute(...args)
-            .then((result: any) => {
-              setStageExecuting(false);
+        stageToExecute(...stageArgs)
+          .then((result: any) => {
+            setStageExecuting(false);
 
-              // Set current stage to next stage
-              incrementStage();
-              resolve(result);
-            })
-            .catch((error: any) => {
-              setStageExecuting(false);
-              reject(error);
-            });
-        });
-      };
+            // Set current stage to next stage
+            incrementStage();
+            resolve(result);
+          })
+          .catch((error: any) => {
+            console.log('stage error', error);
+            reject(error);
+            setStageExecuting(false);
+          });
+      });
 
-      if (!stageExecuting) {
-        switch (currentStage) {
-          case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
-            await executeStage(dialSelectedArchaeologists);
-            break;
-          case CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS:
-            // TODO -- remove reliance on this global state var
-            if (publicKeysReady) {
-              await executeStage(uploadAndSetEncryptedShards);
-            }
-            break;
-          case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
-            setTimeout(async () => {
+      // TODO: If `stageError` is never reset when after an exception, only a refresh will unblock this flow. Remember to reset it if error can be resolved safely
+      if (!stageExecuting && !stageError) {
+        try {
+          switch (currentStage) {
+            case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
+              await executeStage(dialSelectedArchaeologists);
+              break;
+
+            case CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS:
+              if (publicKeysReady) {
+                await executeStage(uploadAndSetEncryptedShards);
+              } else {
+                const offendingArchs = selectedArchaeologists.filter(arch => arch.exception !== undefined);
+                console.log('Not all selected archaeologists have responded', offendingArchs.map(a => `${a.profile.peerId}: ${a.exception!.message}`));
+                // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
+                // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
+
+                // TODO: Point out offending archs -- what should the user do??
+              }
+              break;
+
+            case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
               await executeStage(
                 initiateSarcophagusNegotiation,
                 archaeologistShards,
@@ -231,43 +251,87 @@ export function useCreateSarcophagus() {
                 setArchaeologistSignatures,
                 setNegotiationTimestamp
               );
-            }, 5000);
-            break;
-          case CreateSarcophagusStage.UPLOAD_PAYLOAD:
-            await executeStage(uploadAndSetDoubleEncryptedFile);
-            break;
-          case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
-            if (submitSarcophagus) {
-              await executeStage(submitSarcophagus);
-            }
-            break;
-          case CreateSarcophagusStage.COMPLETED:
-            setTimeout(() => {
-              // TODO: reset state -- having some issues with this
-              // resetLocalEmbalmerState();
-              // dispatch(resetEmbalmState());
-              // dispatch(enableSteps());
-              navigate('/dashboard');
-            }, 4000);
+              break;
 
-            break;
+            case CreateSarcophagusStage.UPLOAD_PAYLOAD:
+              if (signaturesReady) {
+                await executeStage(uploadAndSetDoubleEncryptedFile);
+              } else {
+                const offendingArchs = selectedArchaeologists.filter(arch => arch.exception !== undefined);
+                console.log('Not all selected archaeologists have signed off', offendingArchs.map(a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`));
+                // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
+                // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
+
+                // TODO: Point out offending archs: Some might have declined, others may have connection issues. Check `exception.code` on each to determine exception type -- what should the user do??
+              }
+              break;
+
+            case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
+              if (submitSarcophagus) {
+                await executeStage(submitSarcophagus)
+                  .catch(e => {
+                    // TODO: Might want to handle more specific RPC errors
+                    console.error(e);
+                    setStageError('Failed to submit sarcophagus to contract');
+                  }
+                  );
+              }
+              break;
+
+            case CreateSarcophagusStage.COMPLETED:
+              setTimeout(() => {
+                // TODO: reset state -- having some issues with this
+                // resetLocalEmbalmerState();
+                // dispatch(resetEmbalmState());
+                // dispatch(enableSteps());
+                navigate('/dashboard');
+              }, 4000);
+              break;
+          }
+        } catch (e: any) {
+          // Ideally expecting human readable errors here
+          console.error(e);
+          setStageError((e as Error).message);
         }
       }
     })();
   }, [
-    archaeologistShards,
     currentStage,
-    dialSelectedArchaeologists,
-    dispatch,
-    encryptedShardsTxId,
-    initiateSarcophagusNegotiation,
-    publicKeysReady,
     stageExecuting,
-    submitSarcophagus,
-    uploadAndSetDoubleEncryptedFile,
+    publicKeysReady,
+    signaturesReady,
+    archaeologistShards,
+    encryptedShardsTxId,
+    setArchaeologistSignatures,
     uploadAndSetEncryptedShards,
+    initiateSarcophagusNegotiation,
+    uploadAndSetDoubleEncryptedFile,
+    dialSelectedArchaeologists,
+    submitSarcophagus,
+    selectedArchaeologists,
+    stageError,
+    dispatch,
     navigate
   ]);
+
+  // Update archaeologist public keys, signatures ready status
+  useEffect(
+    () => {
+      if (selectedArchaeologists.length > 0) {
+        let allPublicKeysReady = true;
+        let allSignaturesReady = true;
+
+        selectedArchaeologists.forEach(arch => {
+          if (!arch.publicKey) allPublicKeysReady = false;
+          if (!arch.signature) allSignaturesReady = false;
+        });
+
+        setPublicKeysReady(allPublicKeysReady);
+        setSignaturesReady(allSignaturesReady);
+      }
+    },
+    [selectedArchaeologists]
+  );
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
@@ -279,6 +343,6 @@ export function useCreateSarcophagus() {
     uploadAndSetEncryptedShards,
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
-    shardsTxId
+    stageError,
   };
 }
