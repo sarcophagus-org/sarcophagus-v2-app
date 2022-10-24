@@ -1,15 +1,14 @@
-import { Button, Flex, Heading, Text, HStack, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { useSelector } from 'store/index';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
-import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
-import { CreateSarcophagus } from './steps/CreateSarcohpagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
+import { CreateSarcophagus } from './steps/CreateSarcophagus';
 
 interface StepContentMap {
   component: JSX.Element;
@@ -17,7 +16,7 @@ interface StepContentMap {
 }
 
 export function StepContent() {
-  const { currentStep, goToPrev, goToNext, stepCount } = useStepContent();
+  const { currentStep, goToPrev, goToNext } = useStepContent();
   const areStepsDisabled = useSelector(x => x.embalmState.areStepsDisabled);
 
   // Manages which page to render based on the currentStep in the store
@@ -26,7 +25,6 @@ export function StepContent() {
     [Step.UploadPayload]: { component: <UploadPayload />, title: 'Upload your payload' },
     [Step.FundBundlr]: { component: <FundBundlr />, title: 'Fund Arweave Bundlr' },
     [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: 'Set Recipient' },
-    [Step.CreateEncryptionKeypair]: { component: <CreateEncryptionKeypair />, title: '' },
     [Step.SelectArchaeologists]: { component: <SelectArchaeologists />, title: '' },
     [Step.RequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },
     [Step.CreateSarcophagus]: { component: <CreateSarcophagus />, title: '' },
@@ -56,23 +54,29 @@ export function StepContent() {
         justify="space-between"
         spacing={0}
       >
-        <Button
-          variant="link"
-          width="fit-content"
-          disabled={currentStep.valueOf() === 0 || areStepsDisabled}
-          onClick={handleClickPrev}
-        >
-          <Text fontSize="lg">{'< Prev'}</Text>
-        </Button>
+        {currentStep.valueOf() > 0 ? (
+          <Button
+            variant="link"
+            width="fit-content"
+            disabled={currentStep.valueOf() === 0}
+            onClick={handleClickPrev}
+          >
+            <Text fontSize="lg">{'< Prev'}</Text>
+          </Button>
+        ) : (
+          // This is here to keep the space filled with something
+          <Flex />
+        )}
 
-        <Button
-          variant="link"
-          width="fit-content"
-          onClick={handleClickNext}
-          disabled={currentStep.valueOf() === stepCount - 1 || areStepsDisabled}
-        >
-          <Text fontSize="lg">{'Next >'}</Text>
-        </Button>
+        {currentStep.valueOf() < Object.keys(contentMap).length - 1 && (
+          <Button
+            variant="link"
+            width="fit-content"
+            onClick={handleClickNext}
+          >
+            <Text fontSize="lg">{'Next >'}</Text>
+          </Button>
+        )}
       </HStack>
     </VStack>
   );
