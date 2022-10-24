@@ -8,7 +8,7 @@ import { SelectArchaeologists } from './steps/SelectArchaeologists';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
-import { CreateSarcophagus } from './steps/CreateSarcohpagus';
+import { CreateSarcophagus } from './steps/CreateSarcophagus';
 
 interface StepContentMap {
   component: JSX.Element;

@@ -1,6 +1,6 @@
 import { Flex, Text, VStack } from '@chakra-ui/react';
 import React, { FunctionComponentElement } from 'react';
-import { CreateSarcophagusStage } from '../hooks/useCreateSarcohpagus';
+import { CreateSarcophagusStage } from '../hooks/useCreateSarcophagus';
 import { ProgressTrackerStageProps, StageStatus } from './ProgressTrackerStage';
 
 interface ProgressTrackerProps {
