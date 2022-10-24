@@ -1,6 +1,6 @@
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
-import { ReviewSarcohpagusTable } from './ReviewSarcophagusTable';
-import { SarcohpagusSummaryFees } from './SarcohpagusSummaryFees';
+import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
+import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function ReviewSarcophagus() {
@@ -32,8 +32,8 @@ export function ReviewSarcophagus() {
             Sarcophagus Summary
           </Text>
         </Box>
-        <ReviewSarcohpagusTable />
-        <SarcohpagusSummaryFees />
+        <ReviewSarcophagusTable />
+        <SarcophagusSummaryFees />
         <Flex
           mt={3}
           alignItems="center"
