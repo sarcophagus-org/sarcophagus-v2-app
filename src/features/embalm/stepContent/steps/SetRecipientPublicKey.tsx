@@ -53,48 +53,49 @@ export function SetRecipientPublicKey() {
           align="left"
           spacing="5"
         >
-          <Select<IRecipientSetByOption, false, GroupBase<IRecipientSetByOption>>
-            value={
-              recipientState.setByOption
-                ? selectOptionsMap[recipientState.setByOption - 1]
-                : undefined
-            }
-            onChange={handleOnChange}
-            placeholder="Select recipient method"
-            options={selectOptionsMap}
-            isSearchable={false}
-            focusBorderColor="brand.950"
-            selectedOptionColor="brand"
-            useBasicStyles
-            chakraStyles={{
-              menuList: provided => ({
-                ...provided,
-                bg: 'brand.0',
-                fontSize: 'sm',
-                borderColor: 'violet.700',
-              }),
+          <Box cursor="pointer">
+            <Select<IRecipientSetByOption, false, GroupBase<IRecipientSetByOption>>
+              value={
+                recipientState.setByOption
+                  ? selectOptionsMap[recipientState.setByOption - 1]
+                  : undefined
+              }
+              onChange={handleOnChange}
+              placeholder="Select recipient method"
+              options={selectOptionsMap}
+              isSearchable={false}
+              focusBorderColor="brand.950"
+              selectedOptionColor="brand"
+              useBasicStyles
+              chakraStyles={{
+                menuList: provided => ({
+                  ...provided,
+                  bg: 'brand.0',
+                  fontSize: 'sm',
+                  borderColor: 'violet.700',
+                }),
 
-              option: (provided, state) => ({
-                ...provided,
-                background: state.isFocused ? 'brand.100' : provided.background,
-                fontSize: 'sm',
-              }),
+                option: (provided, state) => ({
+                  ...provided,
+                  background: state.isFocused ? 'brand.100' : provided.background,
+                  fontSize: 'sm',
+                }),
 
-              control: provided => ({
-                ...provided,
-                bg: 'brand.0',
-                border: '1px',
-                borderRadius: 0,
-                borderColor: 'brand.950',
-                fontSize: 'sm',
-                _disabled: {
-                  borderColor: 'brand.300',
-                  color: 'brand.300',
-                },
-              }),
-            }}
-          />
-
+                control: provided => ({
+                  ...provided,
+                  bg: 'brand.0',
+                  border: '1px',
+                  borderRadius: 0,
+                  borderColor: 'brand.950',
+                  fontSize: 'sm',
+                  _disabled: {
+                    borderColor: 'brand.300',
+                    color: 'brand.300',
+                  },
+                }),
+              }}
+            />
+          </Box>
           {recipientState.setByOption === RecipientSetByOption.ADDRESS && <RecoverPublicKey />}
           {recipientState.setByOption === RecipientSetByOption.PUBLIC_KEY && (
             <VStack align="left">

@@ -9,7 +9,10 @@ export function Radio(props: RadioProps) {
   const checkbox = getCheckboxProps();
 
   return (
-    <Box as="label">
+    <Box
+      as="label"
+      cursor="pointer"
+    >
       <input {...input} />
       <Flex
         {...checkbox}
