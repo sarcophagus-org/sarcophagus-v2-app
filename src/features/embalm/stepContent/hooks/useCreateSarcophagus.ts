@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
 import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
+import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
 import { useBundlr } from './useBundlr';
-import { disableSteps, enableSteps } from 'store/embalm/actions';
+import { disableSteps } from 'store/embalm/actions';
 import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
+import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
 
 // Note: order matters here
@@ -31,7 +33,7 @@ const createSarcophagusStages = [
   CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
   CreateSarcophagusStage.UPLOAD_PAYLOAD,
   CreateSarcophagusStage.SUBMIT_SARCOPHAGUS,
-  CreateSarcophagusStage.COMPLETED,
+  CreateSarcophagusStage.COMPLETED
 ];
 
 async function encryptShards(
@@ -42,7 +44,7 @@ async function encryptShards(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
       encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
+      unencryptedShardDoubleHash: doubleHashShard(payload[i])
     }))
   );
 }
@@ -53,11 +55,11 @@ export function useCreateSarcophagus() {
   const {
     recipientState,
     file,
-    outerPublicKey,
-    outerPrivateKey,
     selectedArchaeologists,
-    requiredArchaeologists,
+    requiredArchaeologists
   } = useSelector(x => x.embalmState);
+
+  const navigate = useNavigate();
 
   // BUNDLR config
   const { uploadFile } = useBundlr();
@@ -85,6 +87,8 @@ export function useCreateSarcophagus() {
     new Map<string, string>([])
   );
   const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+  const [outerPrivateKey, setOuterPrivateKey] = useState('');
+  const [outerPublicKey, setOuterPublicKey] = useState('');
 
   const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
 
@@ -93,8 +97,17 @@ export function useCreateSarcophagus() {
     archaeologistSignatures,
     archaeologistShards,
     arweaveTxIds,
-    currentStage,
+    currentStage
   });
+
+  // Generates a random key with which to encrypt the outer layer of the sarcophagus
+  useEffect(() => {
+    (async () => {
+      const { privateKey, publicKey } = await createEncryptionKeypairAsync();
+      setOuterPrivateKey(privateKey);
+      setOuterPublicKey(publicKey);
+    })();
+  }, []);
 
   const uploadToArweave = useCallback(async (data: Buffer): Promise<string> => {
     const txId = networkConfig.chainId === 31337 ?
@@ -118,7 +131,7 @@ export function useCreateSarcophagus() {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists,
+        threshold: requiredArchaeologists
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -130,7 +143,7 @@ export function useCreateSarcophagus() {
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard,
+          [shard.publicKey]: shard.encryptedShard
         }),
         {}
       );
@@ -168,6 +181,17 @@ export function useCreateSarcophagus() {
     uploadToArweave,
     setSarcophagusPayloadTxId,
   ]);
+
+  // TODO -- re-enable once figure out state issue at end of createSarcophagus
+  // const resetLocalEmbalmerState = useCallback(() => {
+  //   setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
+  //   setEncryptedShardsTxId('');
+  //   setSarcophagusPayloadTxId('');
+  //   setArchaeologistSignatures(new Map<string, string>([]));
+  //   setNegotiationTimestamp(0);
+  //   setOuterPrivateKey('');
+  //   setOuterPublicKey('');
+  // }, []);
 
   // TODO -- add approval stage
   useEffect(() => {
@@ -255,7 +279,13 @@ export function useCreateSarcophagus() {
               break;
 
             case CreateSarcophagusStage.COMPLETED:
-              dispatch(enableSteps());
+              setTimeout(() => {
+                // TODO: reset state -- having some issues with this
+                // resetLocalEmbalmerState();
+                // dispatch(resetEmbalmState());
+                // dispatch(enableSteps());
+                navigate('/dashboard');
+              }, 4000);
               break;
           }
         } catch (e: any) {
@@ -281,6 +311,7 @@ export function useCreateSarcophagus() {
     selectedArchaeologists,
     stageError,
     dispatch,
+    navigate
   ]);
 
   // Update archaeologist public keys, signatures ready status
