@@ -33,8 +33,14 @@ export const colors = {
     900: '#0d0a12',
   },
 
+  // TODO: Merge the two error colors, check with design team
   error: '#c88484',
+  errorAlt: '#290e0e',
   warning: '#c8c884',
   success: '#84c884',
   info: '#84bcc8',
+  disabled: '#737373', // Same as brand.400
+
+  // WARNING: This color is an abomination and should not be used! But we're using it anyway.
+  controversialBlue: '#168FFF',
 };

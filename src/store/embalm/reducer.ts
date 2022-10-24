@@ -14,10 +14,9 @@ export enum Step {
   UploadPayload = 1,
   FundBundlr = 2,
   SetRecipient = 3,
-  CreateEncryptionKeypair = 4,
-  SelectArchaeologists = 5,
-  TotalRequiredArchaeologists = 6,
-  CreateSarcophagus = 7,
+  SelectArchaeologists = 4,
+  RequiredArchaeologists = 5,
+  CreateSarcophagus = 6,
 }
 
 export interface EmbalmState {
@@ -46,6 +45,7 @@ export interface EmbalmState {
   publicKeysReady: boolean;
   signaturesReady: boolean;
   negotiationTimestamp: number;
+  areStepsDisabled: boolean;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -69,7 +69,7 @@ export const embalmInitialState: EmbalmState = {
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  uploadPrice: '',
+  uploadPrice: '0',
   diggingFeesSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
   archAddressSearch: '',
@@ -77,6 +77,7 @@ export const embalmInitialState: EmbalmState = {
   publicKeysReady: false,
   signaturesReady: false,
   negotiationTimestamp: 0,
+  areStepsDisabled: false,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -278,6 +279,15 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         archaeologistEncryptedShards: shards,
         shardsTxId: encryptedShardsTxId,
       };
+
+    case ActionType.DisableSteps:
+      return { ...state, areStepsDisabled: true };
+
+    case ActionType.EnableSteps:
+      return { ...state, areStepsDisabled: false };
+
+    case ActionType.ResetEmbalmState:
+      return embalmInitialState;
 
     default:
       return state;

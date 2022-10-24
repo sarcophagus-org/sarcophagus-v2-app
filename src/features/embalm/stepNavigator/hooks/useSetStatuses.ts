@@ -6,11 +6,13 @@ import {
   RecipientState,
   RecipientSetByOption,
   GeneratePDFState,
+  resetEmbalmState,
 } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
+import { useAccount } from 'wagmi';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -27,13 +29,8 @@ export function validateRecipient(recipient: RecipientState) {
   return true;
 }
 
-export function validateTotalArchaeologists(total: number): boolean {
-  const totalAsNumber = total;
-  return totalAsNumber <= maxTotalArchaeologists && totalAsNumber > 0 && !isNaN(totalAsNumber);
-}
-
 export function validateRequiredArchaeologists(required: number, total: number): boolean {
-  return required <= total && required > 0 && !isNaN(required);
+  return Number.isInteger(required) && required > 0 && required <= total;
 }
 
 /**
@@ -46,21 +43,21 @@ export function useSetStatuses() {
     selectedArchaeologists,
     file,
     name,
-    outerPrivateKey,
-    outerPublicKey,
     recipientState,
     requiredArchaeologists,
     resurrection,
     stepStatuses,
   } = useSelector(x => x.embalmState);
-  const isConnected = useSelector(x => x.bundlrState.isConnected);
+  const { isConnected: isBundlrConnected } = useSelector(x => x.bundlrState);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
+  const { isConnected: isWalletConnected } = useAccount();
 
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
-  const totalRequiredArchaeologistsStatus = stepStatuses[Step.TotalRequiredArchaeologists];
+  const requiredArchaeologistsStatus = stepStatuses[Step.RequiredArchaeologists];
+  const selectedArchaeologistsStatus = stepStatuses[Step.SelectArchaeologists];
 
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
@@ -81,7 +78,7 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if (isConnected && parseFloat(balance) > parseFloat(uploadPrice)) {
+    if (isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
@@ -90,11 +87,6 @@ export function useSetStatuses() {
     }
   }
 
-  function createEncryptionKeypairEffect() {
-    if (!!outerPrivateKey && !!outerPublicKey) {
-      dispatch(updateStepStatus(Step.CreateEncryptionKeypair, StepStatus.Complete));
-    }
-  }
 
   function setRecipientEffect() {
     dispatch(
@@ -105,16 +97,29 @@ export function useSetStatuses() {
     );
   }
 
-  function totalRequiredArchaeologistsEffect() {
-    if (
-      validateRequiredArchaeologists(requiredArchaeologists, selectedArchaeologists.length) &&
-      validateTotalArchaeologists(selectedArchaeologists.length)
-    ) {
-      dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Complete));
+  function requiredArchaeologistsEffect() {
+    if (validateRequiredArchaeologists(requiredArchaeologists, selectedArchaeologists.length)) {
+      dispatch(updateStepStatus(Step.RequiredArchaeologists, StepStatus.Complete));
     } else {
-      if (totalRequiredArchaeologistsStatus !== StepStatus.NotStarted) {
-        dispatch(updateStepStatus(Step.TotalRequiredArchaeologists, StepStatus.Started));
+      if (requiredArchaeologistsStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.RequiredArchaeologists, StepStatus.Started));
       }
+    }
+  }
+
+  function selectedArchaeologistsEffect() {
+    if (selectedArchaeologists.length > 0 && selectedArchaeologists.length <= maxTotalArchaeologists) {
+      dispatch(updateStepStatus(Step.SelectArchaeologists, StepStatus.Complete));
+    } else {
+      if (selectedArchaeologistsStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.SelectArchaeologists, StepStatus.Started));
+      }
+    }
+  }
+
+  function walletDisconnectedEffect() {
+    if (!isWalletConnected) {
+      dispatch(resetEmbalmState());
     }
   }
 
@@ -125,15 +130,16 @@ export function useSetStatuses() {
     dispatch,
     file,
     fundBundlrStatus,
-    isConnected,
+    isBundlrConnected,
     uploadPrice,
   ]);
-  useEffect(createEncryptionKeypairEffect, [dispatch, outerPrivateKey, outerPublicKey]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
-  useEffect(totalRequiredArchaeologistsEffect, [
+  useEffect(selectedArchaeologistsEffect, [dispatch, selectedArchaeologists, selectedArchaeologistsStatus]);
+  useEffect(requiredArchaeologistsEffect, [
     dispatch,
     requiredArchaeologists,
     selectedArchaeologists.length,
-    totalRequiredArchaeologistsStatus,
+    requiredArchaeologistsStatus,
   ]);
+  useEffect(walletDisconnectedEffect, [dispatch, isWalletConnected]);
 }

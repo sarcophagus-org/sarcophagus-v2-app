@@ -18,9 +18,12 @@ import { useLibp2p } from './useLibp2p';
  */
 
 export function useBootLibp2pNode() {
+  // The amount of time the web app will listen for discover events
+  const discoveryPeriod = 20_000;
+
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { handlePublicKeyStream, onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
+  const { onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
 
   const createAndStartNode = useCallback(async (): Promise<Libp2p> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
@@ -34,6 +37,14 @@ export function useBootLibp2pNode() {
       libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
       libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
       libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
+
+      // TODO: Remove this once we refactor how libp2p works
+      // Sets a limited time discovery period by removing the listener after a certain period of
+      // time. This is a temporary fix to prevent the discovery listener from causing components to
+      // render endlessly.
+      setTimeout(() => {
+        libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
+      }, discoveryPeriod);
     },
     [onPeerDiscovery, onPeerConnect, onPeerDisconnect]
   );
@@ -58,11 +69,5 @@ export function useBootLibp2pNode() {
         console.error(error);
       }
     })();
-  }, [
-    globalLibp2pNode,
-    handlePublicKeyStream,
-    createAndStartNode,
-    dispatch,
-    addNodeEventListeners,
-  ]);
+  }, [addNodeEventListeners, createAndStartNode, dispatch, globalLibp2pNode, onPeerDiscovery]);
 }

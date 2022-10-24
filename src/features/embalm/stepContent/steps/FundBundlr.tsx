@@ -20,6 +20,7 @@ import { setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
+import { uploadPriceDecimals } from 'lib/constants';
 
 export function FundBundlr() {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ export function FundBundlr() {
   const { balance, getBalance, formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
   const file = useSelector(x => x.embalmState.file);
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
 
   const isAmountValid = parseFloat(amount) > 0;
 
@@ -138,7 +139,7 @@ export function FundBundlr() {
                 Disconnect
               </Button>
             </HStack>
-            <Text variant="secondary">Bundlr balance: {formattedBalance}.</Text>
+            <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
             <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
           </VStack>
         </VStack>

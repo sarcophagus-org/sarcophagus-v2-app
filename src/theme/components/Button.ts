@@ -3,8 +3,6 @@ import { withDefaultVariant } from '@chakra-ui/react';
 export const Button = {
   variants: {
     main: {
-      color: 'brand.0',
-      bg: 'brand.950',
       _hover: {
         bg: 'brand.800',
         _disabled: {
@@ -21,12 +19,17 @@ export const Button = {
     },
     link: {
       color: 'brand.950',
+      bg: 'brand.0',
       textDecoration: 'underline',
       fontSize: 'sm',
-      display: 'inline',
+    },
+    disabledLook: {
+      opacity: 0.4,
     },
   },
   baseStyle: {
+    color: 'brand.0',
+    bg: 'brand.950',
     border: 'none',
     borderRadius: 0,
     fontWeight: 400,

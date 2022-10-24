@@ -8,36 +8,39 @@ import { Connection } from '@libp2p/interface-connection';
 // unexpected behavior.
 export enum ActionType {
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
+  DisableSteps = 'EMBALM_DISABLE_STEPS',
+  EnableSteps = 'EMBALM_ENABLE_STEPS',
   GoToStep = 'EMBALM_GO_TO_STEP',
+  ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
+  SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
-  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
-  SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
+  SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
+  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
+  SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
+  SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
+  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
+  SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
+  SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetRecipientState = 'EMBALM_SET_RECIPIENT_STATE',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
-  SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
+  SetSarcophagusPayloadTxId = 'EMBALM_SET_SARCOPHAGUS_PAYLOAD_TX_ID',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
+  SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
+  SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
-  SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
-  SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
-  SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
-  SetSarcophagusPayloadTxId = 'EMBALM_SET_SARCOPHAGUS_PAYLOAD_TX_ID',
-  SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
-  SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
-  SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
 }
 
 export enum RecipientSetByOption {
@@ -67,51 +70,46 @@ export interface RecipientState {
 
 type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
+  [ActionType.DisableSteps]: {};
+  [ActionType.EnableSteps]: {};
   [ActionType.GoToStep]: { step: Step };
+  [ActionType.ResetEmbalmState]: {};
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchaeologistConnection]: {
-    peerId: string;
-    connection: Connection | undefined;
-  };
-  [ActionType.SetArchaeologistSignature]: {
-    peerId: string;
-    signature: string;
-  };
+  [ActionType.SetArchAddressSearch]: { search: string };
+  [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
+  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistOnlineStatus]: {
     peerId: string;
     isOnline: boolean;
     lastPinged?: Date;
   };
-  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
+  [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
+  [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetDiggingFees]: { diggingFees: string };
+  [ActionType.SetDiggingFeesFilter]: { filter: string };
+  [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
+  [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
+  [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetRecipientState]: RecipientState;
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
-  [ActionType.SetCustomResurrectionDate]: { date: Date | null };
+  [ActionType.SetSarcophagusPayloadTxId]: { sarcophagusPayloadTxId: string };
   [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
-  [ActionType.SetUploadPrice]: { price: string };
-  [ActionType.ToggleStep]: { step: Step };
-  [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
-  [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
-  [ActionType.SetDiggingFeesFilter]: { filter: string };
-  [ActionType.SetArchAddressSearch]: { search: string };
-  [ActionType.SetSarcophagusPayloadTxId]: {
-    sarcophagusPayloadTxId: string;
-  };
   [ActionType.SetShardPayloadData]: {
     shards: ArchaeologistEncryptedShard[];
     encryptedShardsTxId: string;
   };
-  [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetSignaturesReady]: { signaturesReady: boolean };
-  [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
+  [ActionType.SetUploadPrice]: { price: string };
+  [ActionType.ToggleStep]: { step: Step };
+  [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -399,6 +397,27 @@ export function setShardPayloadData(
       shards,
       encryptedShardsTxId,
     },
+  };
+}
+
+export function resetEmbalmState(): EmbalmActions {
+  return {
+    type: ActionType.ResetEmbalmState,
+    payload: {},
+  };
+}
+
+export function disableSteps(): EmbalmActions {
+  return {
+    type: ActionType.DisableSteps,
+    payload: {},
+  };
+}
+
+export function enableSteps(): EmbalmActions {
+  return {
+    type: ActionType.EnableSteps,
+    payload: {},
   };
 }
 

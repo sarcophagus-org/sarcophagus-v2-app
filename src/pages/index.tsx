@@ -1,56 +1,49 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { Link, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
-import { ArweaveTestPage } from './ArweaveTestPage';
 import { EmbalmPage } from './EmbalmPage';
-
-import { ThemeTestPage } from './ThemeTestPage';
+import { DashboardPage } from './DashboardPage';
 
 export function Pages() {
   const routes = [
     {
       path: '/embalm',
       element: <EmbalmPage />,
-      label: 'Embalm',
+      label: 'Embalm'
     },
     {
-      path: '/arweave',
-      element: <ArweaveTestPage />,
-      label: 'Arweave Test',
-    },
-    {
-      path: '/theme-test',
-      element: <ThemeTestPage />,
-      label: 'Theme Test',
-    },
+      path: '/dashboard',
+      element: <DashboardPage />,
+      label: 'Dashboard'
+    }
   ];
 
   return (
     <Flex
-      direction="column"
-      height="100vh"
-      overflow="hidden"
+      direction='column'
+      height='100vh'
+      overflow='hidden'
     >
       {/* NavBar */}
       <DevNavbar>
         <Flex
-          justifyContent="space-between"
-          width="100%"
+          justifyContent='space-between'
+          width='100%'
         >
-          <Flex alignItems="center">
+          <Flex alignItems='center'>
             {routes.map(route => (
-              <Link
+              <NavLink
                 key={route.path}
                 to={route.path}
+                className={({ isActive }) => isActive ? 'activeLink' : 'inactiveLink'}
               >
                 <Text
-                  color="brand.500"
                   px={4}
                 >
                   {route.label}
                 </Text>
-              </Link>
+              </NavLink>
             ))}
           </Flex>
         </Flex>
@@ -62,9 +55,10 @@ export function Pages() {
       {/* App Content */}
       <Flex
         flex={1}
-        overflow="auto"
+        overflow='auto'
       >
         <Routes>
+          <Route path='/' element={<Navigate to='/dashboard' />} />
           {routes.map(route => (
             <Route
               key={route.path}

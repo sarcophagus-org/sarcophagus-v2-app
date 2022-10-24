@@ -20,13 +20,13 @@ function Requirement({ valid, children }: RequirementVariantCProps) {
       <CheckCircleIcon
         w="1rem"
         h="1rem"
-        color={valid ? 'brand.950' : 'brand.400'}
+        color={valid ? 'brand.950' : 'disabled'}
         mt={1}
       />
       <Flex
         noOfLines={2}
         mx={3}
-        color={valid ? 'brand.950' : 'brand.400'}
+        color={valid ? 'brand.950' : 'disabled'}
       >
         {children}
       </Flex>

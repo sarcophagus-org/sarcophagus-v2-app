@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useProvider } from 'wagmi';
 import { useDispatch } from 'store/index';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
+import { useNetworkConfig } from '../../../../lib/config';
 
 /**
  * returns a public key from a transaction
@@ -28,6 +29,7 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
   function isEIP2930(type: number | null | undefined): boolean {
     return type === 1;
   }
+
   function isEIP1550(type: number | null | undefined): boolean {
     return type === 2;
   }
@@ -43,17 +45,17 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
     ...(transaction.chainId && { chainId: transaction.chainId }),
 
     ...((isLegacy(transaction.type) || isEIP2930(transaction.type)) && {
-      gasPrice: transaction.gasPrice,
+      gasPrice: transaction.gasPrice
     }),
 
     ...((isEIP2930(transaction.type) || isEIP1550(transaction.type)) && {
-      accessList: transaction.accessList,
+      accessList: transaction.accessList
     }),
 
     ...(isEIP1550(transaction.type) && {
       maxFeePerGas: transaction.maxFeePerGas,
-      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-    }),
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
+    })
   };
 
   const resolvedTx = await ethers.utils.resolveProperties(unsignedTransaction);
@@ -63,7 +65,7 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
   const signature = ethers.utils.splitSignature({
     r: transaction.r || '',
     s: transaction.s || '',
-    v: transaction.v || 0,
+    v: transaction.v || 0
   });
 
   return ethers.utils.recoverPublicKey(msgHash, signature);
@@ -76,13 +78,11 @@ export enum ErrorStatus {
   ERROR,
 }
 
-//TODO: these three consts need to be moved to network config eventually, and then do a supported network check
-const etherscanEndpoint = 'https://api.etherscan.io/api';
-const etherscanApikey = process.env.REACT_APP_ETHERSCAN_APIKEY;
 const getParameters =
   'module=account&action=txlist&startblock=0&endblock=99999999&page=1&offset=1000&sort=asc';
 
 export function useRecoverPublicKey() {
+  const networkConfig = useNetworkConfig();
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -101,7 +101,7 @@ export function useRecoverPublicKey() {
         }
 
         const response = await axios.get(
-          `${etherscanEndpoint}?${getParameters}&address=${address}&apikey=${etherscanApikey}`
+          `${networkConfig.explorerUrl}?${getParameters}&address=${address}&apikey=${networkConfig.explorerApiKey}`
         );
 
         if (response.status !== 200) {
@@ -123,7 +123,7 @@ export function useRecoverPublicKey() {
                 setRecipientState({
                   publicKey: recoveredPublicKey,
                   address: address,
-                  setByOption: RecipientSetByOption.ADDRESS,
+                  setByOption: RecipientSetByOption.ADDRESS
                 })
               );
 
@@ -144,7 +144,7 @@ export function useRecoverPublicKey() {
         setIsLoading(false);
       }
     },
-    [dispatch, provider]
+    [dispatch, provider, networkConfig.explorerApiKey, networkConfig.explorerUrl]
   );
 
   return { recoverPublicKey, isLoading, errorStatus };

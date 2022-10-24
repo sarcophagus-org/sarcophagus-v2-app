@@ -38,23 +38,18 @@ export function StepNavigator() {
       />
 
       <StepElement
-        step={Step.CreateEncryptionKeypair}
-        title="Create Encryption Keypair"
-      />
-
-      <StepElement
         step={Step.SelectArchaeologists}
         title="Select Archaeologists"
       />
 
       <StepElement
-        step={Step.TotalRequiredArchaeologists}
+        step={Step.RequiredArchaeologists}
         title="Required Archaeologists"
       />
 
       <StepElement
         step={Step.CreateSarcophagus}
-        title="CreateSarcophagus"
+        title="Create"
       />
     </StepsContainer>
   );

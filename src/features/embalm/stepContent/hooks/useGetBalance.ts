@@ -1,6 +1,6 @@
 import { bundlrBalanceDecimals } from 'lib/constants';
-import { useCallback, useEffect, useMemo } from 'react';
-import { setBalance } from 'store/bundlr/actions';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { setBalance, setPendingBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { useBundlr } from './useBundlr';
@@ -8,12 +8,13 @@ import { useBundlr } from './useBundlr';
 export function useGetBalance() {
   const dispatch = useDispatch();
   const { bundlr } = useBundlr();
-  const { balance, isConnected } = useSelector(x => x.bundlrState);
+  const { balance, isConnected, pendingBalance } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
+  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>(null);
 
   const formattedBalance = useMemo(
     () =>
-      isConnected
+      isConnected && balance
         ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${
             chain?.nativeCurrency?.name || 'ETH'
           }`
@@ -41,6 +42,44 @@ export function useGetBalance() {
       }
     })();
   }, [bundlr, dispatch, getBalance]);
+
+  useEffect(() => {
+    const queryBalance = async () => {
+      try {
+        const newBalance = await getBalance();
+        console.log('querying balance');
+        // If our new balance is different than current, then funding is complete
+        // update the new balance and clear out our interval
+        if (newBalance !== balance) {
+          console.log('balance is being updated due to funding completion');
+          dispatch(setPendingBalance({
+            balanceBeforeFund: '',
+            txId: ''
+          }));
+          dispatch(setBalance(newBalance));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (pendingBalance.txId) {
+      if (!intervalId) {
+        const id = setInterval(() => {
+          queryBalance();
+        }, 5000);
+        setIntervalId(id);
+      }
+    } else {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    }
+
+    if (intervalId) {
+      return () => clearInterval(intervalId);
+    }
+  }, [pendingBalance.txId, balance, dispatch, getBalance, intervalId]);
 
   return { balance, getBalance, formattedBalance };
 }
