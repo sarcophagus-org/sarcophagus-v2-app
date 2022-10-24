@@ -1,7 +1,7 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
-import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
+import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 
@@ -54,7 +54,7 @@ export function CreateSarcophagus() {
               <Text>Sarcophagus creation successful!</Text>
               <Text mt={2}>Redirecting you to the embalmer dashboard....</Text>
             </Flex>
-            ) : (<></>)}
+          ) : (<></>)}
         </>
       )}
     </Flex>

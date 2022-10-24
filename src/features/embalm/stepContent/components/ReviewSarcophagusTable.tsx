@@ -3,7 +3,7 @@ import { useStepNavigator } from 'features/embalm/stepNavigator/hooks/useStepNav
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
-export function ReviewSarcohpagusTable() {
+export function ReviewSarcophagusTable() {
   const { sarcophagusParameters } = useSarcophagusParameters();
   const { selectStep } = useStepNavigator();
   return (

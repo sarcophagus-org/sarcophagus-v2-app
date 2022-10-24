@@ -4,7 +4,7 @@ import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
 import { formatFee, sumDiggingFees } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 
-export function SarcohpagusSummaryFees() {
+export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
