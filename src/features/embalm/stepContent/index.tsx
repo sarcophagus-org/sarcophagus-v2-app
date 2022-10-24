@@ -3,7 +3,7 @@ import { useSelector } from 'store/index';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
 import { CreateEncryptionKeypair } from './steps/CreateEncryptionPair';
-import { CreateSarcophagus } from './steps/CreateSarcohpagus';
+import { CreateSarcophagus } from './steps/CreateSarcophagus';
 import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';

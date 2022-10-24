@@ -2,7 +2,7 @@ import { Button, Flex, Heading } from '@chakra-ui/react';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { SarcophagusData } from '../components/SarcophagusData';
-import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcohpagus';
+import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
 import { useSarcophagusData } from '../hooks/useSarcophagusData';
 
 export function CreateSarcophagus() {
