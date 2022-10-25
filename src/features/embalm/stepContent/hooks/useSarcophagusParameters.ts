@@ -2,6 +2,8 @@ import { useSelector } from '../../../../store';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
+import { useNetworkConfig } from 'lib/config';
+import { hardhatChainId } from 'lib/config/hardhat';
 
 export interface SarcophagusParameter {
   name: string;
@@ -28,6 +30,9 @@ export const useSarcophagusParameters = () => {
   const { balance } = useSelector(x => x.bundlrState);
 
   const { getStatus } = useStepNavigator();
+  const { chainId } = useNetworkConfig();
+
+  const isHardhatNetwork = chainId === hardhatChainId;
 
   // TODO -- update Bundlr to get actual balance
   const sarcophagusParameters: SarcophagusParameter[] = [
@@ -59,7 +64,7 @@ export const useSarcophagusParameters = () => {
       name: 'BUNDLR BALANCE',
       value: balance,
       step: Step.FundBundlr,
-      error: balance === '0' || !balance
+      error: !isHardhatNetwork && (balance === '0' || !balance)
     },
     {
       name: 'SELECTED ARCHAEOLOGISTS',
@@ -90,7 +95,9 @@ export const useSarcophagusParameters = () => {
       Step.RequiredArchaeologists
     ];
 
-    return requiredSteps.every(step => getStatus(step) === StepStatus.Complete);
+    return requiredSteps
+      .filter(s => !isHardhatNetwork ? true : s !== Step.FundBundlr) // Not checking fund bundlr step when testing in hardhat
+      .every(step => getStatus(step) === StepStatus.Complete);
   };
 
   return {

@@ -12,6 +12,7 @@ import { disableSteps } from 'store/embalm/actions';
 import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
+import { hardhatChainId } from 'lib/config/hardhat';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -110,7 +111,7 @@ export function useCreateSarcophagus() {
   }, []);
 
   const uploadToArweave = useCallback(async (data: Buffer): Promise<string> => {
-    const txId = networkConfig.chainId === 31337 ?
+    const txId = networkConfig.chainId === hardhatChainId ?
       await uploadArweaveFile(data) :
       await uploadFile(data);
 
