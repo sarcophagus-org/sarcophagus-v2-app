@@ -1,6 +1,6 @@
 import { sleep } from '@bundlr-network/client/build/common/utils';
 import { Button, Flex, Text } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   goToStep,
   RecipientSetByOption,
