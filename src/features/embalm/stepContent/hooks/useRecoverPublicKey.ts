@@ -99,14 +99,14 @@ export function useRecoverPublicKey() {
 
           return;
         }
-
+        console.log(`retrieving public key for address ${address}`);
         const response = await axios.get(
           `${networkConfig.explorerUrl}?${getParameters}&address=${address}&apikey=${networkConfig.explorerApiKey}`
         );
 
         if (response.status !== 200) {
           setErrorStatus(ErrorStatus.ERROR);
-          console.log('useReoveryPublicKey 200', response.data.message);
+          console.log('recoverPublicKey error:', response.data.message);
           return;
         }
 
