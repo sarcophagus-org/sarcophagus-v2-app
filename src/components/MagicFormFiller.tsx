@@ -27,7 +27,6 @@ const recipientAddress = '0x32dA65c2692e6F70Cd61bD56097b8f4eDe99bB0E';
 
 /**
  * Component that provides a button that automatically fills out the sarcophagus form.
- * Selects an archaeologist even if it is not online yet.
  * @returns
  */
 export function MagicFormFiller() {
