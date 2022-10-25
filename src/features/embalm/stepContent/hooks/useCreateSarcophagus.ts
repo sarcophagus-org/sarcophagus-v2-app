@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
 import { handleRpcError } from 'lib/utils/rpc-error-handler';
+import { useApprove } from 'hooks/sarcoToken/useApprove';
+import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -101,6 +103,19 @@ export function useCreateSarcophagus() {
     arweaveTxIds,
     currentStage
   });
+
+  // SARCO approval
+  const [hasApproved, setHasApproved] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
+  const { approve, approveError } = useApprove();
+  const { allowance } = useAllowance();
+
+  useEffect(() => {
+    console.log('effect allowance', allowance?.toString());
+    // TODO: compare with pending fees instead
+    setHasApproved(allowance !== undefined && BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))));
+    setIsApproving(false);
+  }, [allowance, approveError]);
 
   // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
@@ -270,11 +285,16 @@ export function useCreateSarcophagus() {
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                await executeStage(submitSarcophagus)
-                  .catch(e => {
-                    let friendlyError = e.reason ? handleRpcError(e.reason) : 'Failed to submit sarcophagus to contract';
-                    setStageError(friendlyError);
-                  });
+                if (!hasApproved) {
+                  setIsApproving(true);
+                  if (!isApproving) approve();
+                } else {
+                  await executeStage(submitSarcophagus)
+                    .catch(e => {
+                      let friendlyError = e.reason ? handleRpcError(e.reason) : 'Failed to submit sarcophagus to contract';
+                      setStageError(friendlyError);
+                    });
+                }
               }
               break;
 
@@ -311,7 +331,11 @@ export function useCreateSarcophagus() {
     selectedArchaeologists,
     stageError,
     dispatch,
-    navigate
+    navigate,
+    approve,
+    allowance,
+    hasApproved,
+    isApproving
   ]);
 
   // Update archaeologist public keys, signatures ready status
@@ -345,5 +369,6 @@ export function useCreateSarcophagus() {
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
     stageError,
+    approveError,
   };
 }
