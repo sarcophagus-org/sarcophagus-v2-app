@@ -54,6 +54,7 @@ export function ArchaeologistList(
   }
 
   // Used for testing archaeologist connection
+  // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
