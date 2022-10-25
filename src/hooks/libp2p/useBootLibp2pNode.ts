@@ -17,9 +17,7 @@ import { useLibp2p } from './useLibp2p';
  * 3. Add event listeners to the node for peer discovery and connection
  */
 
-export function useBootLibp2pNode(
-  discoveryPeriod?: number
-) {
+export function useBootLibp2pNode(discoveryPeriod?: number) {
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
@@ -47,7 +45,7 @@ export function useBootLibp2pNode(
         }, discoveryPeriod);
       }
     },
-    [onPeerDiscovery, onPeerConnect, onPeerDisconnect]
+    [onPeerDiscovery, onPeerConnect, onPeerDisconnect, discoveryPeriod]
   );
 
   useEffect(() => {

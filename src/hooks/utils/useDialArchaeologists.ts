@@ -4,13 +4,10 @@ import { PeerId } from '@libp2p/interface-peer-id';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
 
-
-export function useDialArchaeologists(
-  setIsDialing: React.Dispatch<React.SetStateAction<boolean>>,
-) {
+export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStateAction<boolean>>) {
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
   const toast = useToast();
-  
+
   // Dials the archaeologist and hangs up after an interval
   // sets dial status for use in the UX
   const testDialArchaeologist = useCallback(
@@ -32,10 +29,11 @@ export function useDialArchaeologists(
       } finally {
         setIsDialing(false);
       }
-    }, [libp2pNode]
+    },
+    [libp2pNode, setIsDialing, toast]
   );
 
   return {
-    testDialArchaeologist
+    testDialArchaeologist,
   };
 }

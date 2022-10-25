@@ -5,15 +5,13 @@ export function ArchaeologistsPage() {
   return (
     <Flex
       w="100%"
-      mt='30px'
+      mt="30px"
       justifyContent="center"
       alignItems="center"
       direction="column"
     >
-      <Heading size='lg'>Archaeologists</Heading>
-      <ArchaeologistList
-        includeDialButton={true}
-      />
+      <Heading size="lg">Archaeologists</Heading>
+      <ArchaeologistList includeDialButton={true} />
     </Flex>
   );
 }

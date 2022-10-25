@@ -9,19 +9,19 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const networkConfig: NetworkConfig = !!chain
     ? networkConfigs[chain.id]
     : {
-      chainId: 0,
-      networkName: '',
-      networkShortName: '',
-      sarcoTokenAddress: '',
-      diamondDeployAddress: '',
-      explorerUrl: '',
-      explorerApiKey: '',
-      bundlr: {
-        currencyName: '',
-        nodeUrl: '',
-        providerUrl: ''
-      }
-    };
+        chainId: 0,
+        networkName: '',
+        networkShortName: '',
+        sarcoTokenAddress: '',
+        diamondDeployAddress: '',
+        explorerUrl: '',
+        explorerApiKey: '',
+        bundlr: {
+          currencyName: '',
+          nodeUrl: '',
+          providerUrl: '',
+        },
+      };
 
   return (
     <NetworkConfigContext.Provider value={networkConfig}>{children}</NetworkConfigContext.Provider>

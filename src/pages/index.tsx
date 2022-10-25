@@ -11,44 +11,40 @@ export function Pages() {
     {
       path: '/embalm',
       element: <EmbalmPage />,
-      label: 'Embalm'
+      label: 'Embalm',
     },
     {
       path: '/dashboard',
       element: <DashboardPage />,
-      label: 'Dashboard'
+      label: 'Dashboard',
     },
     {
       path: '/archaeologists',
       element: <ArchaeologistsPage />,
-      label: 'Archaeologists'
-    }
+      label: 'Archaeologists',
+    },
   ];
 
   return (
     <Flex
-      direction='column'
-      height='100vh'
-      overflow='hidden'
+      direction="column"
+      height="100vh"
+      overflow="hidden"
     >
       {/* NavBar */}
       <DevNavbar>
         <Flex
-          justifyContent='space-between'
-          width='100%'
+          justifyContent="space-between"
+          width="100%"
         >
-          <Flex alignItems='center'>
+          <Flex alignItems="center">
             {routes.map(route => (
               <NavLink
                 key={route.path}
                 to={route.path}
-                className={({ isActive }) => isActive ? 'activeLink' : 'inactiveLink'}
+                className={({ isActive }) => (isActive ? 'activeLink' : 'inactiveLink')}
               >
-                <Text
-                  px={4}
-                >
-                  {route.label}
-                </Text>
+                <Text px={4}>{route.label}</Text>
               </NavLink>
             ))}
           </Flex>
@@ -61,10 +57,13 @@ export function Pages() {
       {/* App Content */}
       <Flex
         flex={1}
-        overflow='auto'
+        overflow="auto"
       >
         <Routes>
-          <Route path='/' element={<Navigate to='/dashboard' />} />
+          <Route
+            path="/"
+            element={<Navigate to="/dashboard" />}
+          />
           {routes.map(route => (
             <Route
               key={route.path}

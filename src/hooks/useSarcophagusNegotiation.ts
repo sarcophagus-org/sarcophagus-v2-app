@@ -1,12 +1,16 @@
 import { pipe } from 'it-pipe';
 import React, { useCallback } from 'react';
-import { setArchaeologistConnection, setArchaeologistException, setArchaeologistSignature } from 'store/embalm/actions';
+import {
+  setArchaeologistConnection,
+  setArchaeologistException,
+  setArchaeologistSignature,
+} from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import {
   ArchaeologistEncryptedShard,
   ArchaeologistExceptionCode,
-  SarcophagusValidationError
+  SarcophagusValidationError,
 } from 'types';
 import { useLibp2p } from './libp2p/useLibp2p';
 import { getLowestRewrapInterval } from '../lib/utils/helpers';
@@ -35,15 +39,20 @@ export function useSarcophagusNegotiation() {
         if (!connection) throw Error('No connection obtained from dial');
         dispatch(setArchaeologistConnection(arch.profile.peerId, connection));
       } catch (e) {
-        dispatch(setArchaeologistException(arch.profile.peerId, {
-          code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-          message: 'Could not establish a connection'
-        }));
+        dispatch(
+          setArchaeologistException(arch.profile.peerId, {
+            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+            message: 'Could not establish a connection',
+          })
+        );
       }
     }
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
-  function processDeclinedSignatureCode(code: SarcophagusValidationError, archAddress: string): string {
+  function processDeclinedSignatureCode(
+    code: SarcophagusValidationError,
+    archAddress: string
+  ): string {
     // TODO: These messages will be user-facing. Better phrasing needed.
     switch (code) {
       case SarcophagusValidationError.DIGGING_FEE_TOO_LOW:
@@ -101,36 +110,44 @@ export function useSarcophagusNegotiation() {
 
                 const response = JSON.parse(dataStr);
                 if (response.error) {
-                  dispatch(setArchaeologistException(arch.profile.peerId, {
-                    code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
-                    message: processDeclinedSignatureCode(response.error.code as SarcophagusValidationError, arch.profile.archAddress),
-                  }));
+                  dispatch(
+                    setArchaeologistException(arch.profile.peerId, {
+                      code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
+                      message: processDeclinedSignatureCode(
+                        response.error.code as SarcophagusValidationError,
+                        arch.profile.archAddress
+                      ),
+                    })
+                  );
                 } else {
                   archaeologistSignatures.set(arch.profile.archAddress, response.signature);
 
-                  dispatch(setArchaeologistSignature(
-                    arch.profile.peerId,
-                    response.signature
-                  ));
+                  dispatch(setArchaeologistSignature(arch.profile.peerId, response.signature));
                 }
               }
-            }).catch(e => {
-              // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
-              const message = `Exception occurred in negotiaton stream for: ${arch.profile.archAddress}`;
-              console.error(`Stream exception on ${arch.profile.peerId}`, e);
-              dispatch(setArchaeologistException(arch.profile.peerId, {
-                code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
-                message
-              }));
-            }).finally(() => stream.close());
+            })
+              .catch(e => {
+                // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
+                const message = `Exception occurred in negotiaton stream for: ${arch.profile.archAddress}`;
+                console.error(`Stream exception on ${arch.profile.peerId}`, e);
+                dispatch(
+                  setArchaeologistException(arch.profile.peerId, {
+                    code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
+                    message,
+                  })
+                );
+              })
+              .finally(() => stream.close());
           } catch (e) {
             // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
             const message = `Exception occurred attempting to open stream to: ${arch.profile.archAddress}`;
             console.error(`Stream exception on ${arch.profile.peerId}`, e);
-            dispatch(setArchaeologistException(arch.profile.peerId, {
-              code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-              message
-            }));
+            dispatch(
+              setArchaeologistException(arch.profile.peerId, {
+                code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+                message,
+              })
+            );
           }
         })
       );
