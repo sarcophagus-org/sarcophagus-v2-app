@@ -73,7 +73,6 @@ export function MagicFormFiller() {
     );
 
     // Select archaeologists
-    // This will select the archaeologist before it has been discovered
     await sleep(delay);
     dispatch(goToStep(Step.SelectArchaeologists));
     await sleep(delay);
