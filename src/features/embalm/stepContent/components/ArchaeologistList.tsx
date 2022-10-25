@@ -20,16 +20,19 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { TablePageNavigator } from './TablePageNavigator';
 import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
-import { DiggingFeesInput } from '../components/DiggingFeesInput';
+import { DiggingFeesInput } from './DiggingFeesInput';
 import { ethers } from 'ethers';
+import { useState } from 'react';
+import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
+import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 
-export function ArchaeologistList() {
+export function ArchaeologistList({ includeDialButton }: { includeDialButton?: boolean }) {
   const {
     onClickNextPage,
     onClickPrevPage,
     handleCheckArchaeologist,
     selectedArchaeologists,
-    sortedFilteredArchaeoligist,
+    sortedFilteredArchaeologist,
     onClickSortDiggingFees,
     diggingFeesSortDirection,
     handleChangeAddressSearch,
@@ -47,6 +50,12 @@ export function ArchaeologistList() {
   function setDiggingFees(diggingFees: string) {
     return dispatch(setDiggingFeesFilter(diggingFees));
   }
+
+  // Used for testing archaeologist connection
+  // TODO -- can be removed once we resolve connection issues
+  const [isDialing, setIsDialing] = useState(false);
+  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
+  useBootLibp2pNode();
 
   return (
     <Flex
@@ -75,7 +84,7 @@ export function ArchaeologistList() {
                         textTransform="capitalize"
                         py={3}
                       >
-                        Archaeologists ({sortedFilteredArchaeoligist.length})
+                        Archaeologists ({sortedFilteredArchaeologist.length})
                       </Text>
                       <Input
                         w="200px"
@@ -105,10 +114,11 @@ export function ArchaeologistList() {
                       />
                     </VStack>
                   </Th>
+                  {includeDialButton ? <Th>Dial</Th> : <></>}
                 </Tr>
               </Thead>
               <Tbody>
-                {sortedFilteredArchaeoligist.map(arch => {
+                {sortedFilteredArchaeologist.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId
@@ -118,7 +128,7 @@ export function ArchaeologistList() {
                     <Tr
                       key={arch.profile.archAddress}
                       background={isSelected ? 'brand.700' : ''}
-                      onClick={() => handleCheckArchaeologist(arch)}
+                      onClick={() => (includeDialButton ? {} : handleCheckArchaeologist(arch))}
                       cursor="pointer"
                       _hover={
                         isSelected
@@ -151,6 +161,18 @@ export function ArchaeologistList() {
                           </Text>
                         </Flex>
                       </Td>
+                      {includeDialButton ? (
+                        <Td>
+                          <Button
+                            disabled={isDialing || !!arch.connection}
+                            onClick={() => testDialArchaeologist(arch.fullPeerId!)}
+                          >
+                            {arch.connection ? 'Connected' : 'Dial'}
+                          </Button>
+                        </Td>
+                      ) : (
+                        <></>
+                      )}
                     </Tr>
                   );
                 })}
