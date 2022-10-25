@@ -1,5 +1,6 @@
 import { Flex, Spinner, Text } from '@chakra-ui/react';
 import { StatusIndicator } from './StatusIndicator';
+import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export enum StageStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -10,6 +11,7 @@ export enum StageStatus {
 export interface ProgressTrackerStageProps {
   stageStatus?: StageStatus;
   index?: number;
+  stageError?: string | undefined;
   children: React.ReactNode;
 }
 
@@ -17,6 +19,7 @@ export function ProgressTrackerStage({
   stageStatus = StageStatus.NOT_STARTED,
   index = 0,
   children,
+  stageError,
 }: ProgressTrackerStageProps) {
   // Checks that children is a string. If we don't do this and someone tries to put a non-text thing
   // in the <Text> tag, an error will be thrown in the console but that error is easier to miss and
@@ -43,7 +46,7 @@ export function ProgressTrackerStage({
           {children}
         </Text>
       </Flex>
-      {stageStatus === StageStatus.IN_PROGRESS && <Spinner size="sm" />}
+      {stageStatus === StageStatus.IN_PROGRESS && (stageError ? <SummaryErrorIcon /> : <Spinner size="sm" />)}
       {/* If we want to show additional information on the stage, we can conditionally add it here. */}
     </Flex>
   );

@@ -6,10 +6,11 @@ import { ProgressTrackerStageProps, StageStatus } from './ProgressTrackerStage';
 interface ProgressTrackerProps {
   title: string;
   currentStage: number;
+  stageError: string | undefined;
   children: FunctionComponentElement<ProgressTrackerStageProps>[];
 }
 
-export function ProgressTracker({ title, currentStage, children }: ProgressTrackerProps) {
+export function ProgressTracker({ title, currentStage, stageError, children }: ProgressTrackerProps) {
   // Determine the current stage status using the stage of a child and the current stage passed on a
   // prop.
   function getStageStatus(stage: CreateSarcophagusStage): StageStatus {
@@ -30,6 +31,7 @@ export function ProgressTracker({ title, currentStage, children }: ProgressTrack
         // index is a number but is being used as a value of the CreateSarcophagusStage enum
         stageStatus: getStageStatus(index + 1),
         index,
+        stageError,
       });
     }
     return child;

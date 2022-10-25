@@ -6,7 +6,7 @@ import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 
 export function CreateSarcophagus() {
-  const { currentStage, handleCreate } = useCreateSarcophagus();
+  const { currentStage, handleCreate, stageError } = useCreateSarcophagus();
   const { isSarcophagusComplete } = useSarcophagusParameters();
 
   const isCreateProcessStarted = (): boolean => {
@@ -39,6 +39,7 @@ export function CreateSarcophagus() {
           <ProgressTracker
             title='Creating Sarcophagus'
             currentStage={currentStage}
+            stageError={stageError}
           >
             <ProgressTrackerStage>Connect to Archaeologists</ProgressTrackerStage>
             <ProgressTrackerStage>Upload Archaeologist Data to Arweave</ProgressTrackerStage>

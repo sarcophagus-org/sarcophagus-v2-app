@@ -274,8 +274,7 @@ export function useCreateSarcophagus() {
                     // TODO: Might want to handle more specific RPC errors
                     console.error(e);
                     setStageError('Failed to submit sarcophagus to contract');
-                  }
-                  );
+                  });
               }
               break;
 
@@ -336,6 +335,7 @@ export function useCreateSarcophagus() {
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
+    setStageError(undefined);
     dispatch(disableSteps());
   }, [dispatch]);
 
