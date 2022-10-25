@@ -4,6 +4,7 @@ import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
+import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 
 export function CreateSarcophagus() {
   const { currentStage, handleCreate, stageError } = useCreateSarcophagus();
@@ -47,6 +48,18 @@ export function CreateSarcophagus() {
             <ProgressTrackerStage>Upload File Data to Arweave</ProgressTrackerStage>
             <ProgressTrackerStage>Create Sarcophagus</ProgressTrackerStage>
           </ProgressTracker>
+          {stageError ? <Flex
+            mt={3}
+            alignItems="center"
+          >
+            <SummaryErrorIcon />
+            <Text
+              ml={2}
+              color="brand.500"
+            >
+              = {stageError}
+            </Text>
+          </Flex> : ''}
           {(currentStage === CreateSarcophagusStage.COMPLETED) ? (
             <Flex
               mt={6}
