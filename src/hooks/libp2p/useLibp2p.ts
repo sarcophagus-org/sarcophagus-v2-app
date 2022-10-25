@@ -63,7 +63,6 @@ export function useLibp2p() {
   const onPeerDisconnect = useCallback(
     (evt: CustomEvent<Connection>) => {
       const peerId = evt.detail.remotePeer.toString();
-      dispatch(setArchaeologistOnlineStatus(peerId, false));
       dispatch(setArchaeologistConnection(peerId, undefined));
     },
     [dispatch]

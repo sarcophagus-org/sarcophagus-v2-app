@@ -4,6 +4,7 @@ import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import { EmbalmPage } from './EmbalmPage';
 import { DashboardPage } from './DashboardPage';
+import { ArchaeologistsPage } from './ArchaeologistsPage';
 
 export function Pages() {
   const routes = [
@@ -16,6 +17,11 @@ export function Pages() {
       path: '/dashboard',
       element: <DashboardPage />,
       label: 'Dashboard'
+    },
+    {
+      path: '/archaeologists',
+      element: <ArchaeologistsPage />,
+      label: 'Archaeologists'
     }
   ];
 

@@ -183,3 +183,19 @@ export const copiedToClipboard = (): UseToastOptions => ({
   duration,
   position,
 });
+
+export const dialArchaeologistSuccess = (): UseToastOptions => ({
+  title: 'Connected Successfully!',
+  description: 'Connected to archaeologist',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const dialArchaeologistFailure = (): UseToastOptions => ({
+  title: 'Connection failed',
+  description: 'Unable to connect to archaeologist',
+  status: 'error',
+  duration,
+  position,
+});

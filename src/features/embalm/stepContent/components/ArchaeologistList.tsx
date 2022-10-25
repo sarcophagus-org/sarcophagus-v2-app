@@ -11,7 +11,7 @@ import {
   Tr,
   Button,
   VStack,
-  Input,
+  Input
 } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
@@ -20,78 +20,88 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { TablePageNavigator } from './TablePageNavigator';
 import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
-import { DiggingFeesInput } from '../components/DiggingFeesInput';
+import { DiggingFeesInput } from './DiggingFeesInput';
 import { ethers } from 'ethers';
+import { useState } from 'react';
+import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
+import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 
-export function ArchaeologistList() {
+export function ArchaeologistList(
+  { includeDialButton }: { includeDialButton?: boolean }
+) {
   const {
     onClickNextPage,
     onClickPrevPage,
     handleCheckArchaeologist,
     selectedArchaeologists,
-    sortedFilteredArchaeoligist,
+    sortedFilteredArchaeologist,
     onClickSortDiggingFees,
     diggingFeesSortDirection,
     handleChangeAddressSearch,
     diggingFeesFilter,
-    archAddressSearch,
+    archAddressSearch
   } = useArchaeologistList();
   const dispatch = useDispatch();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
     [SortDirection.NONE]: <ArrowUpDownIcon> </ArrowUpDownIcon>,
     [SortDirection.ASC]: <ArrowUpIcon />,
-    [SortDirection.DESC]: <ArrowDownIcon />,
+    [SortDirection.DESC]: <ArrowDownIcon />
   };
 
   function setDiggingFees(diggingFees: string) {
     return dispatch(setDiggingFeesFilter(diggingFees));
   }
 
+  // Used for testing archaeologist connection
+  const [isDialing, setIsDialing] = useState(false);
+  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
+  useBootLibp2pNode();
+
   return (
     <Flex
-      direction="column"
-      height="100%"
+      direction='column'
+      height='100%'
       mt={6}
     >
       <Flex
         flex={4}
-        height="100%"
-        direction="column"
+        height='100%'
+        direction='column'
       >
         <Loading>
           <TableContainer
-            width="100%"
-            overflowY="auto"
-            maxHeight="650px"
+            width='100%'
+            overflowY='auto'
+            maxHeight='650px'
           >
-            <Table variant="simple">
+            <Table variant='simple'>
               <Thead>
                 <Tr>
                   <Th>
-                    <VStack align="left">
+                    <VStack align='left'>
                       <Text
-                        variant="secondary"
-                        textTransform="capitalize"
+                        variant='secondary'
+                        textTransform='capitalize'
                         py={3}
                       >
-                        Archaeologists ({sortedFilteredArchaeoligist.length})
+                        Archaeologists ({sortedFilteredArchaeologist.length})
                       </Text>
                       <Input
-                        w="200px"
+                        w='200px'
                         onChange={handleChangeAddressSearch}
                         value={archAddressSearch}
-                        placeholder="Search"
-                        borderColor="violet.700"
-                        color="brand.950"
+                        placeholder='Search'
+                        borderColor='violet.700'
+                        color='brand.950'
                       />
                     </VStack>
                   </Th>
                   <Th isNumeric>
                     <VStack>
                       <Button
-                        variant="ghost"
-                        textTransform="capitalize"
+                        variant='ghost'
+                        textTransform='capitalize'
                         rightIcon={sortIconsMap[diggingFeesSortDirection]}
                         onClick={onClickSortDiggingFees}
                       >
@@ -100,15 +110,20 @@ export function ArchaeologistList() {
                       <DiggingFeesInput
                         setDiggingFees={setDiggingFees}
                         value={diggingFeesFilter}
-                        placeholder="Max"
-                        color="brand.950"
+                        placeholder='Max'
+                        color='brand.950'
                       />
                     </VStack>
                   </Th>
+                  {
+                    includeDialButton ? (
+                      <Th>Dial</Th>
+                    ) : <></>
+                  }
                 </Tr>
               </Thead>
               <Tbody>
-                {sortedFilteredArchaeoligist.map(arch => {
+                {sortedFilteredArchaeologist.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId
@@ -118,14 +133,14 @@ export function ArchaeologistList() {
                     <Tr
                       key={arch.profile.archAddress}
                       background={isSelected ? 'brand.700' : ''}
-                      onClick={() => handleCheckArchaeologist(arch)}
-                      cursor="pointer"
+                      onClick={() => includeDialButton ? {} : handleCheckArchaeologist(arch)}
+                      cursor='pointer'
                       _hover={
                         isSelected
                           ? {}
                           : {
-                              background: 'brand.100',
-                            }
+                            background: 'brand.100'
+                          }
                       }
                     >
                       <Td>
@@ -137,11 +152,11 @@ export function ArchaeologistList() {
                         </Text>
                       </Td>
                       <Td isNumeric>
-                        <Flex justify="center">
+                        <Flex justify='center'>
                           <Image
-                            src="sarco-token-icon.png"
-                            w="18px"
-                            h="18px"
+                            src='sarco-token-icon.png'
+                            w='18px'
+                            h='18px'
                           />
                           <Text
                             ml={3}
@@ -151,6 +166,18 @@ export function ArchaeologistList() {
                           </Text>
                         </Flex>
                       </Td>
+                      {
+                        includeDialButton ? (
+                          <Td>
+                            <Button
+                              disabled={isDialing || !!arch.connection}
+                              onClick={() => testDialArchaeologist(arch.fullPeerId!)}
+                            >
+                              { arch.connection ? 'Connected' : 'Dial' }
+                            </Button>
+                          </Td>
+                        ) : <></>
+                      }
                     </Tr>
                   );
                 })}

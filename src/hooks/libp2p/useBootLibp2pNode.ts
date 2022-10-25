@@ -17,10 +17,9 @@ import { useLibp2p } from './useLibp2p';
  * 3. Add event listeners to the node for peer discovery and connection
  */
 
-export function useBootLibp2pNode() {
-  // The amount of time the web app will listen for discover events
-  const discoveryPeriod = 20_000;
-
+export function useBootLibp2pNode(
+  discoveryPeriod?: number
+) {
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
@@ -42,9 +41,11 @@ export function useBootLibp2pNode() {
       // Sets a limited time discovery period by removing the listener after a certain period of
       // time. This is a temporary fix to prevent the discovery listener from causing components to
       // render endlessly.
-      setTimeout(() => {
-        libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
-      }, discoveryPeriod);
+      if (discoveryPeriod) {
+        setTimeout(() => {
+          libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
+        }, discoveryPeriod);
+      }
     },
     [onPeerDiscovery, onPeerConnect, onPeerDisconnect]
   );
