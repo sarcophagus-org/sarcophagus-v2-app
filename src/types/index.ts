@@ -3,10 +3,6 @@ import { ReactNode } from 'react';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 
-export interface ChildrenOnly {
-  children: ReactNode;
-}
-
 export interface Archaeologist {
   publicKey?: string;
   profile: ArchaeologistProfile;
@@ -46,10 +42,6 @@ export interface ArchaeologistProfile {
   cleanups: string[];
   accusals: string[];
   peerId: string;
-}
-
-export interface SignatureWithAccount extends Signature {
-  account: string;
 }
 
 export interface ArchaeologistEncryptedShard {
