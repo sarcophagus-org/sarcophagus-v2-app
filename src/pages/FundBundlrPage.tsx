@@ -1,13 +1,14 @@
 import { Flex, Heading } from '@chakra-ui/react';
-import { FundBundlr } from '../features/fundbundlr/FundBundlr';
+import { FundBundlr } from '../features/fundbundlr';
 
 export function FundBundlrPage() {
   return (
     <Flex
       direction="column"
-      width="70%"
+      width="60%"
       height="%100"
-      p="80px"
+      ml="84px"
+      py="48px"
     >
       <Heading>Fund Arweave Bundlr</Heading>
       <FundBundlr />
