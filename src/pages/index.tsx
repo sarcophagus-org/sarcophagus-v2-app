@@ -22,8 +22,8 @@ export function Pages() {
     {
       path: '/archaeologists',
       element: <ArchaeologistsPage />,
-      label: 'Archaeologists',,
-    },,
+      label: 'Archaeologists',
+    },
     {
       path: '/fundbundlr',
       element: <FundBundlrPage />,
