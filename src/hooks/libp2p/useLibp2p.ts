@@ -73,7 +73,7 @@ export function useLibp2p() {
       pipe(stream, async function (source) {
         for await (const msg of source) {
           try {
-            const decoded = new TextDecoder().decode(msg);
+            const decoded = new TextDecoder().decode(msg.subarray());
             log(`received public key ${decoded}`);
 
             const publicKeyResponse: PublicKeyResponseFromArchaeologist = JSON.parse(decoded);

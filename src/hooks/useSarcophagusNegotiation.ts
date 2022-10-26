@@ -100,11 +100,11 @@ export function useSarcophagusNegotiation() {
           const outboundMsg = JSON.stringify(negotiationParams);
 
           try {
-            const { stream } = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
+            const stream = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
             await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
               for await (const data of source) {
-                const dataStr = new TextDecoder().decode(data);
+                const dataStr = new TextDecoder().decode(data.subarray());
                 // TODO: remove these logs after we gain some confidence in this exchange
                 console.log('got', dataStr);
 
