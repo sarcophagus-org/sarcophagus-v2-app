@@ -25,20 +25,25 @@ export enum CreateSarcophagusStage {
   UPLOAD_ENCRYPTED_SHARDS,
   ARCHAEOLOGIST_NEGOTIATION,
   UPLOAD_PAYLOAD,
+  APPROVE,
   SUBMIT_SARCOPHAGUS,
   COMPLETED,
 }
 
 // Note: order matters here
-const createSarcophagusStages = [
-  CreateSarcophagusStage.NOT_STARTED,
-  CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS,
-  CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS,
-  CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
-  CreateSarcophagusStage.UPLOAD_PAYLOAD,
-  CreateSarcophagusStage.SUBMIT_SARCOPHAGUS,
-  CreateSarcophagusStage.COMPLETED
-];
+const createSarcophagusStages = {
+  [CreateSarcophagusStage.NOT_STARTED]: '',
+  [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
+  [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
+  [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
+  [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
+  [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
+  [CreateSarcophagusStage.APPROVE]: 'Approve',
+  [CreateSarcophagusStage.COMPLETED]: ''
+};
+
+console.log('createSarcophagusStages', createSarcophagusStages);
+
 
 async function encryptShards(
   publicKeys: string[],
@@ -106,16 +111,14 @@ export function useCreateSarcophagus() {
 
   // SARCO approval
   const [hasApproved, setHasApproved] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
-  const { approve, approveError } = useApprove();
+  const { approve } = useApprove();
   const { allowance } = useAllowance();
 
   useEffect(() => {
     console.log('effect allowance', allowance?.toString());
     // TODO: compare with pending fees instead
     setHasApproved(allowance !== undefined && BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))));
-    setIsApproving(false);
-  }, [allowance, approveError]);
+  }, [allowance]);
 
   // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
@@ -214,8 +217,9 @@ export function useCreateSarcophagus() {
   useEffect(() => {
     (async () => {
       const incrementStage = (): void => {
-        const currentIndex = createSarcophagusStages.indexOf(currentStage);
-        setCurrentStage(createSarcophagusStages[currentIndex + 1]);
+        const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
+        const currentIndex = stages.indexOf(currentStage);
+        setCurrentStage(stages[currentIndex + 1]);
       };
 
       const executeStage = async (
@@ -283,17 +287,25 @@ export function useCreateSarcophagus() {
               }
               break;
 
+            case CreateSarcophagusStage.APPROVE:
+              await executeStage(approve)
+                .catch(e => {
+                  let friendlyError = e.reason ? handleRpcError(e.reason) : 'Failed to approve';
+                  setStageError(friendlyError);
+                });
+              break;
+
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                if (!hasApproved) {
-                  setIsApproving(true);
-                  if (!isApproving) approve();
-                } else {
+                if (hasApproved) {
                   await executeStage(submitSarcophagus)
                     .catch(e => {
                       let friendlyError = e.reason ? handleRpcError(e.reason) : 'Failed to submit sarcophagus to contract';
                       setStageError(friendlyError);
                     });
+                } else {
+                  setStageExecuting(false);
+                  setStageError('You need to approved SARCO spending');
                 }
               }
               break;
@@ -334,8 +346,7 @@ export function useCreateSarcophagus() {
     navigate,
     approve,
     allowance,
-    hasApproved,
-    isApproving
+    hasApproved
   ]);
 
   // Update archaeologist public keys, signatures ready status
@@ -369,6 +380,7 @@ export function useCreateSarcophagus() {
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
     stageError,
-    approveError,
+    hasApproved,
+    createSarcophagusStages,
   };
 }

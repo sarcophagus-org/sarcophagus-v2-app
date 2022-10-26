@@ -7,14 +7,12 @@ import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 
 export function CreateSarcophagus() {
-  const { currentStage, handleCreate, stageError, approveError } = useCreateSarcophagus();
+  const { currentStage, handleCreate, stageError, createSarcophagusStages } = useCreateSarcophagus();
   const { isSarcophagusComplete } = useSarcophagusParameters();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
   };
-
-  const errorMsg = !!approveError ? approveError : stageError;
 
   return (
     <Flex
@@ -42,15 +40,13 @@ export function CreateSarcophagus() {
           <ProgressTracker
             title='Creating Sarcophagus'
             currentStage={currentStage}
-            stageError={errorMsg}
+            stageError={stageError}
           >
-            <ProgressTrackerStage>Connect to Archaeologists</ProgressTrackerStage>
-            <ProgressTrackerStage>Upload Archaeologist Data to Arweave</ProgressTrackerStage>
-            <ProgressTrackerStage>Retrieve Archaeologist Signatures</ProgressTrackerStage>
-            <ProgressTrackerStage>Upload File Data to Arweave</ProgressTrackerStage>
-            <ProgressTrackerStage>Create Sarcophagus</ProgressTrackerStage>
+            {Object.values(createSarcophagusStages).filter(text => !!text).map(stage =>
+              <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
+            )}
           </ProgressTracker>
-          {errorMsg ? <Flex
+          {stageError ? <Flex
             mt={3}
             alignItems="center"
           >
@@ -59,7 +55,7 @@ export function CreateSarcophagus() {
               ml={2}
               color="brand.500"
             >
-              = {errorMsg}
+              = {stageError}
             </Text>
           </Flex> : ''}
           {(currentStage === CreateSarcophagusStage.COMPLETED) ? (
