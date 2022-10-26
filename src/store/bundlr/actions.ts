@@ -58,15 +58,6 @@ export function setBalance(balance: string): BundlrActions {
   };
 }
 
-export function setIsUploading(isUploading: boolean): BundlrActions {
-  return {
-    type: ActionType.SetIsUploading,
-    payload: {
-      isUploading,
-    },
-  };
-}
-
 export function setIsFunding(isFunding: boolean): BundlrActions {
   return {
     type: ActionType.SetIsFunding,
@@ -81,15 +72,6 @@ export function setPendingBalance(pendingBalance: BundlrPendingBalance): BundlrA
     type: ActionType.SetPendingBalance,
     payload: {
       pendingBalance,
-    },
-  };
-}
-
-export function setTxId(txId: string): BundlrActions {
-  return {
-    type: ActionType.SetTxId,
-    payload: {
-      txId,
     },
   };
 }

@@ -34,8 +34,6 @@ export enum ActionType {
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
-  SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
-  SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -145,15 +143,6 @@ export function toggleStep(step: Step): EmbalmActions {
   };
 }
 
-export function setDiggingFees(diggingFees: string): EmbalmActions {
-  return {
-    type: ActionType.SetDiggingFees,
-    payload: {
-      diggingFees,
-    },
-  };
-}
-
 export function setExpandedStepIndices(indices: number[]): EmbalmActions {
   return {
     type: ActionType.SetExpandedStepIndices,
@@ -221,15 +210,6 @@ export function setCustomResurrectionDate(date: Date | null): EmbalmActions {
     type: ActionType.SetCustomResurrectionDate,
     payload: {
       date,
-    },
-  };
-}
-
-export function setSelectedArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
-  return {
-    type: ActionType.SetSelectedArchaeologists,
-    payload: {
-      archaeologists,
     },
   };
 }
@@ -370,13 +350,6 @@ export function resetEmbalmState(): EmbalmActions {
 export function disableSteps(): EmbalmActions {
   return {
     type: ActionType.DisableSteps,
-    payload: {},
-  };
-}
-
-export function enableSteps(): EmbalmActions {
-  return {
-    type: ActionType.EnableSteps,
     payload: {},
   };
 }
