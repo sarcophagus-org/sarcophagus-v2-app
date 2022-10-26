@@ -40,9 +40,6 @@ const createSarcophagusStages = {
   [CreateSarcophagusStage.COMPLETED]: ''
 };
 
-console.log('createSarcophagusStages', createSarcophagusStages);
-
-
 async function encryptShards(
   publicKeys: string[],
   payload: Uint8Array[]
