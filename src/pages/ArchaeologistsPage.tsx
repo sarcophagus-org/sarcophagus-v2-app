@@ -1,9 +1,17 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Flex, Heading } from '@chakra-ui/react';
+import { ArchaeologistList } from '../features/embalm/stepContent/components/ArchaeologistList';
 
 export function ArchaeologistsPage() {
   return (
-    <Box height="100%">
+    <Flex
+      w="100%"
+      mt="30px"
+      justifyContent="center"
+      alignItems="center"
+      direction="column"
+    >
       <Heading size="lg">Archaeologists</Heading>
-    </Box>
+      <ArchaeologistList includeDialButton={true} />
+    </Flex>
   );
 }

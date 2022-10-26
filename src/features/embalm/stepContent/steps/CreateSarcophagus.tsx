@@ -16,14 +16,14 @@ export function CreateSarcophagus() {
 
   return (
     <Flex
-      direction='column'
-      w='100%'
+      direction="column"
+      w="100%"
     >
       <Heading mb={6}>Create Sarcophagus</Heading>
       {!isCreateProcessStarted() ? (
         <>
           <ReviewSarcophagus />
-          <Flex justifyContent='center'>
+          <Flex justifyContent="center">
             <Button
               w={250}
               p={6}
@@ -38,7 +38,7 @@ export function CreateSarcophagus() {
       ) : (
         <>
           <ProgressTracker
-            title='Creating Sarcophagus'
+            title="Creating Sarcophagus"
             currentStage={currentStage}
             stageError={stageError}
           >
@@ -65,7 +65,7 @@ export function CreateSarcophagus() {
           {(currentStage === CreateSarcophagusStage.COMPLETED) ? (
             <Flex
               mt={6}
-              direction='column'
+              direction="column"
             >
               <Text>Sarcophagus creation successful!</Text>
               <Text mt={2}>Redirecting you to the embalmer dashboard....</Text>

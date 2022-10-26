@@ -83,7 +83,8 @@ export const fundStart = (): UseToastOptions => ({
 
 export const fundSuccess = (): UseToastOptions => ({
   title: 'Successful Bundlr fund transaction!',
-  description: 'Bundlr transaction is confirmed. It may take a few minutes for your Bundlr balance to update.',
+  description:
+    'Bundlr transaction is confirmed. It may take a few minutes for your Bundlr balance to update.',
   status: 'success',
   duration,
   position,
@@ -180,6 +181,22 @@ export const generateOuterKeysFailure = (errorMessage: string): UseToastOptions 
 export const copiedToClipboard = (): UseToastOptions => ({
   title: 'Text copied to clipboard',
   status: 'info',
+  duration,
+  position,
+});
+
+export const dialArchaeologistSuccess = (): UseToastOptions => ({
+  title: 'Connected Successfully!',
+  description: 'Connected to archaeologist',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const dialArchaeologistFailure = (): UseToastOptions => ({
+  title: 'Connection failed',
+  description: 'Unable to connect to archaeologist',
+  status: 'error',
   duration,
   position,
 });

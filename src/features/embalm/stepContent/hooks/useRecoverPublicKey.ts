@@ -6,6 +6,7 @@ import { useProvider } from 'wagmi';
 import { useDispatch } from 'store/index';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useNetworkConfig } from '../../../../lib/config';
+import { log } from '../../../../lib/utils/logger';
 
 /**
  * returns a public key from a transaction
@@ -84,7 +85,6 @@ const getParameters =
 export function useRecoverPublicKey() {
   const networkConfig = useNetworkConfig();
   const dispatch = useDispatch();
-
   const [isLoading, setIsLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<ErrorStatus | null>(null);
 
@@ -99,14 +99,14 @@ export function useRecoverPublicKey() {
 
           return;
         }
-
+        log(`retrieving public key for address ${address}`);
         const response = await axios.get(
           `${networkConfig.explorerUrl}?${getParameters}&address=${address}&apikey=${networkConfig.explorerApiKey}`
         );
 
         if (response.status !== 200) {
           setErrorStatus(ErrorStatus.ERROR);
-          console.log('useReoveryPublicKey 200', response.data.message);
+          log('recoverPublicKey error:', response.data.message);
           return;
         }
 
@@ -127,8 +127,7 @@ export function useRecoverPublicKey() {
                 })
               );
 
-              //TODO: remove log, this is just for testing
-              console.log('recovered public key', recoveredPublicKey);
+              log('recovered public key', recoveredPublicKey);
               setErrorStatus(ErrorStatus.SUCCESS);
 
               return;
@@ -138,7 +137,7 @@ export function useRecoverPublicKey() {
         setErrorStatus(ErrorStatus.CANNOT_RECOVER);
       } catch (_error) {
         const error = _error as Error;
-        console.log('useReoveryPublicKey error', error);
+        log('useRecoverPublicKey error', error);
         setErrorStatus(ErrorStatus.ERROR);
       } finally {
         setIsLoading(false);

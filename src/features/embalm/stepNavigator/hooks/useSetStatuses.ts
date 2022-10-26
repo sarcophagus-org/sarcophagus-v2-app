@@ -87,7 +87,6 @@ export function useSetStatuses() {
     }
   }
 
-
   function setRecipientEffect() {
     dispatch(
       updateStepStatus(
@@ -108,7 +107,10 @@ export function useSetStatuses() {
   }
 
   function selectedArchaeologistsEffect() {
-    if (selectedArchaeologists.length > 0 && selectedArchaeologists.length <= maxTotalArchaeologists) {
+    if (
+      selectedArchaeologists.length > 0 &&
+      selectedArchaeologists.length <= maxTotalArchaeologists
+    ) {
       dispatch(updateStepStatus(Step.SelectArchaeologists, StepStatus.Complete));
     } else {
       if (selectedArchaeologistsStatus !== StepStatus.NotStarted) {
@@ -134,7 +136,11 @@ export function useSetStatuses() {
     uploadPrice,
   ]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
-  useEffect(selectedArchaeologistsEffect, [dispatch, selectedArchaeologists, selectedArchaeologistsStatus]);
+  useEffect(selectedArchaeologistsEffect, [
+    dispatch,
+    selectedArchaeologists,
+    selectedArchaeologistsStatus,
+  ]);
   useEffect(requiredArchaeologistsEffect, [
     dispatch,
     requiredArchaeologists,

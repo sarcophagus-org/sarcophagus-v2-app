@@ -52,10 +52,12 @@ export function useGetBalance() {
         // update the new balance and clear out our interval
         if (newBalance !== balance) {
           console.log('balance is being updated due to funding completion');
-          dispatch(setPendingBalance({
-            balanceBeforeFund: '',
-            txId: ''
-          }));
+          dispatch(
+            setPendingBalance({
+              balanceBeforeFund: '',
+              txId: '',
+            })
+          );
           dispatch(setBalance(newBalance));
         }
       } catch (error) {

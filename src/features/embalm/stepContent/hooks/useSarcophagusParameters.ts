@@ -1,9 +1,10 @@
 import { useSelector } from '../../../../store';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
 import { Step, StepStatus } from 'store/embalm/reducer';
-import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
+import { formatAddress, getLowestRewrapInterval, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
+import moment from 'moment';
 
 export interface SarcophagusParameter {
   name: string;
@@ -25,7 +26,7 @@ export const useSarcophagusParameters = () => {
     recipientState,
     file,
     selectedArchaeologists,
-    requiredArchaeologists
+    requiredArchaeologists,
   } = useSelector(x => x.embalmState);
   const { balance } = useSelector(x => x.bundlrState);
 
@@ -33,32 +34,40 @@ export const useSarcophagusParameters = () => {
   const { chainId } = useNetworkConfig();
 
   const isHardhatNetwork = chainId === hardhatChainId;
+  const maxRewrapIntervalMs = getLowestRewrapInterval(selectedArchaeologists) * 1000;
 
-  // TODO -- update Bundlr to get actual balance
   const sarcophagusParameters: SarcophagusParameter[] = [
     {
       name: 'NAME',
       value: name,
       step: Step.NameSarcophagus,
-      error: !name
+      error: !name,
     },
     {
       name: 'RESURRECTION',
       value: resurrection ? humanizeUnixTimestamp(resurrection) : null,
       step: Step.NameSarcophagus,
-      error: !resurrection
+      error: !resurrection || resurrection > maxRewrapIntervalMs + Date.now()
+    },
+    {
+      name: 'MAXIMUM REWRAP INTERVAL',
+      value: selectedArchaeologists.length ?
+        `~${moment.duration(maxRewrapIntervalMs).asMonths().toFixed(2).toString()} months`
+        : null,
+      step: Step.SelectArchaeologists,
+      error: !selectedArchaeologists.length
     },
     {
       name: 'RECIPIENT',
       value: recipientState.publicKey ? formatAddress(recipientState.publicKey) : null,
       step: Step.SetRecipient,
-      error: !recipientState.publicKey
+      error: !recipientState.publicKey,
     },
     {
       name: 'PAYLOAD',
       value: file ? file.name : null,
       step: Step.UploadPayload,
-      error: !file
+      error: !file,
     },
     {
       name: 'BUNDLR BALANCE',
@@ -70,16 +79,15 @@ export const useSarcophagusParameters = () => {
       name: 'SELECTED ARCHAEOLOGISTS',
       value: selectedArchaeologists.length.toString(),
       step: Step.SelectArchaeologists,
-      error: selectedArchaeologists.length === 0
+      error: selectedArchaeologists.length === 0,
     },
     {
       name: 'REQUIRED ARCHAEOLOGISTS',
       value: requiredArchaeologists.toString(),
       step: Step.RequiredArchaeologists,
-      error: requiredArchaeologists === 0
-    }
+      error: requiredArchaeologists === 0,
+    },
   ];
-
 
   /**
    * Returns true if all required data for the sarcophagus has been supplied
@@ -92,7 +100,7 @@ export const useSarcophagusParameters = () => {
       Step.FundBundlr,
       Step.SetRecipient,
       Step.SelectArchaeologists,
-      Step.RequiredArchaeologists
+      Step.RequiredArchaeologists,
     ];
 
     return requiredSteps
@@ -102,6 +110,6 @@ export const useSarcophagusParameters = () => {
 
   return {
     sarcophagusParameters,
-    isSarcophagusComplete
+    isSarcophagusComplete,
   };
 };

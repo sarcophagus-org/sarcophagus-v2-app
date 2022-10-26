@@ -11,6 +11,6 @@ export const mainnetNetworkConfig: NetworkConfig = {
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',
-    providerUrl: 'https://rpc.ankr.com/eth'
-  }
+    providerUrl: 'https://rpc.ankr.com/eth',
+  },
 };

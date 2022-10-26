@@ -17,9 +17,26 @@ import { useNetworkConfig } from 'lib/config';
 export function useBundlrSession() {
   const dispatch = useDispatch();
   const { isConnected } = useSelector(x => x.bundlrState);
-  const { address } = useAccount();
   const toast = useToast();
   const networkConfig = useNetworkConfig();
+
+  /**
+   * Disconnects from the arweave bundlr node
+   */
+  const disconnectFromBundlr = useCallback(() => {
+    localStorage.removeItem('publicKey');
+    dispatch(disconnectBundlr());
+    const id = 'disconnectFromBundlr';
+    if (!toast.isActive(id)) {
+      toast({ ...disconnectToast(), id });
+    }
+  }, [dispatch, toast]);
+
+  const { address } = useAccount({
+    onDisconnect() {
+      disconnectFromBundlr();
+    },
+  });
 
   // TODO: Find a way to use the provider from wagmi
   const connector: any = window.ethereum;
@@ -54,18 +71,6 @@ export function useBundlrSession() {
       toast(connectFailure(error.message));
     }
   }, [dispatch, networkConfig, provider, toast]);
-
-  /**
-   * Disconnects from the arweave bundlr node
-   */
-  const disconnectFromBundlr = useCallback(() => {
-    localStorage.removeItem('publicKey');
-    dispatch(disconnectBundlr());
-    const id = 'disconnectFromBundlr';
-    if (!toast.isActive(id)) {
-      toast({ ...disconnectToast(), id });
-    }
-  }, [dispatch, toast]);
 
   /**
    * Manually injects a public key into a bundlr instance, bypassing the signature.

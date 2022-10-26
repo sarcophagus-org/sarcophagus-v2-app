@@ -48,7 +48,7 @@ async function encryptShards(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
       encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i])
+      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
     }))
   );
 }
@@ -56,12 +56,9 @@ async function encryptShards(
 export function useCreateSarcophagus() {
   const dispatch = useDispatch();
 
-  const {
-    recipientState,
-    file,
-    selectedArchaeologists,
-    requiredArchaeologists
-  } = useSelector(x => x.embalmState);
+  const { recipientState, file, selectedArchaeologists, requiredArchaeologists } = useSelector(
+    x => x.embalmState
+  );
 
   const navigate = useNavigate();
 
@@ -101,7 +98,7 @@ export function useCreateSarcophagus() {
     archaeologistSignatures,
     archaeologistShards,
     arweaveTxIds,
-    currentStage
+    currentStage,
   });
 
   // SARCO approval
@@ -129,11 +126,13 @@ export function useCreateSarcophagus() {
       await uploadFile(data);
 
     return txId;
-  }, [uploadArweaveFile, uploadFile, networkConfig.chainId]);
+  }, [uploadArweaveFile, uploadFile, networkConfig.chainId]
+  );
 
   const processUploadToArweaveError = (error: any) => {
     console.error(error);
-    if (error.isFromArweave) { // TODO: need to determine if `error` is arweave error, process accordingly
+    if (error.isFromArweave) {
+      // TODO: need to determine if `error` is arweave error, process accordingly
     } else {
       // All other errors are unexpected and cannot be handled by the user.
       throw new Error('Something went wrong');
@@ -145,7 +144,7 @@ export function useCreateSarcophagus() {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists
+        threshold: requiredArchaeologists,
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -157,7 +156,7 @@ export function useCreateSarcophagus() {
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard
+          [shard.publicKey]: shard.encryptedShard,
         }),
         {}
       );
@@ -188,13 +187,7 @@ export function useCreateSarcophagus() {
     } catch (error) {
       processUploadToArweaveError(error);
     }
-  }, [
-    file,
-    outerPublicKey,
-    recipientState.publicKey,
-    uploadToArweave,
-    setSarcophagusPayloadTxId,
-  ]);
+  }, [file, outerPublicKey, recipientState.publicKey, uploadToArweave, setSarcophagusPayloadTxId]);
 
   // TODO -- re-enable once figure out state issue at end of createSarcophagus
   // const resetLocalEmbalmerState = useCallback(() => {
@@ -227,23 +220,24 @@ export function useCreateSarcophagus() {
       const executeStage = async (
         stageToExecute: (...args: any[]) => Promise<any>,
         ...stageArgs: any[]
-      ): Promise<any> => new Promise((resolve, reject) => {
-        setStageExecuting(true);
+      ): Promise<any> =>
+        new Promise((resolve, reject) => {
+          setStageExecuting(true);
 
-        stageToExecute(...stageArgs)
-          .then((result: any) => {
-            setStageExecuting(false);
+          stageToExecute(...stageArgs)
+            .then((result: any) => {
+              setStageExecuting(false);
 
-            // Set current stage to next stage
-            incrementStage();
-            resolve(result);
-          })
-          .catch((error: any) => {
-            console.log('stage error', error);
-            reject(error);
-            setStageExecuting(false);
-          });
-      });
+              // Set current stage to next stage
+              incrementStage();
+              resolve(result);
+            })
+            .catch((error: any) => {
+              console.log('stage error', error);
+              reject(error);
+              setStageExecuting(false);
+            });
+        });
 
       // TODO: If `stageError` is never reset when after an exception, only a refresh will unblock this flow. Remember to reset it if error can be resolved safely
       if (!stageExecuting && !stageError) {
@@ -257,8 +251,13 @@ export function useCreateSarcophagus() {
               if (publicKeysReady) {
                 await executeStage(uploadAndSetEncryptedShards);
               } else {
-                const offendingArchs = selectedArchaeologists.filter(arch => arch.exception !== undefined);
-                console.log('Not all selected archaeologists have responded', offendingArchs.map(a => `${a.profile.peerId}: ${a.exception!.message}`));
+                const offendingArchs = selectedArchaeologists.filter(
+                  arch => arch.exception !== undefined
+                );
+                console.log(
+                  'Not all selected archaeologists have responded',
+                  offendingArchs.map(a => `${a.profile.peerId}: ${a.exception!.message}`)
+                );
                 // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
                 // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
 
@@ -280,8 +279,15 @@ export function useCreateSarcophagus() {
               if (signaturesReady) {
                 await executeStage(uploadAndSetDoubleEncryptedFile);
               } else {
-                const offendingArchs = selectedArchaeologists.filter(arch => arch.exception !== undefined);
-                console.log('Not all selected archaeologists have signed off', offendingArchs.map(a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`));
+                const offendingArchs = selectedArchaeologists.filter(
+                  arch => arch.exception !== undefined
+                );
+                console.log(
+                  'Not all selected archaeologists have signed off',
+                  offendingArchs.map(
+                    a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`
+                  )
+                );
                 // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
                 // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
 
@@ -352,23 +358,20 @@ export function useCreateSarcophagus() {
   ]);
 
   // Update archaeologist public keys, signatures ready status
-  useEffect(
-    () => {
-      if (selectedArchaeologists.length > 0) {
-        let allPublicKeysReady = true;
-        let allSignaturesReady = true;
+  useEffect(() => {
+    if (selectedArchaeologists.length > 0) {
+      let allPublicKeysReady = true;
+      let allSignaturesReady = true;
 
-        selectedArchaeologists.forEach(arch => {
-          if (!arch.publicKey) allPublicKeysReady = false;
-          if (!arch.signature) allSignaturesReady = false;
-        });
+      selectedArchaeologists.forEach(arch => {
+        if (!arch.publicKey) allPublicKeysReady = false;
+        if (!arch.signature) allSignaturesReady = false;
+      });
 
-        setPublicKeysReady(allPublicKeysReady);
-        setSignaturesReady(allSignaturesReady);
-      }
-    },
-    [selectedArchaeologists]
-  );
+      setPublicKeysReady(allPublicKeysReady);
+      setSignaturesReady(allSignaturesReady);
+    }
+  }, [selectedArchaeologists]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);

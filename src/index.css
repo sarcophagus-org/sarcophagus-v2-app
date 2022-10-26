@@ -7,7 +7,8 @@
     @apply bg-background text-white;
   }
 
-  .activeLink, .activeLink > p {
+  .activeLink,
+  .activeLink > p {
     font-weight: bold !important;
   }
 }
