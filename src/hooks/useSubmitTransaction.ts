@@ -30,27 +30,28 @@ export function useSubmitTransaction(
         status: 'success',
         duration: toastDuration,
         isClosable: true,
-        position: 'bottom-right',
+        position: 'bottom-right'
       });
       addRecentTransaction({
         hash: data.hash,
-        description: contractConfig.transactionDescription || defaultTransactionDescription,
+        description: contractConfig.transactionDescription || defaultTransactionDescription
       });
     },
     onError(error) {
+      console.log('createSarcophagus failed with args\n:', JSON.stringify(contractConfig.args));
       // TODO: Add a click to see more button on the toast message
       toast({
         title: 'Error',
         description: formatToastMessage(error.message),
         status: 'error',
         isClosable: true,
-        position: 'bottom-right',
+        position: 'bottom-right'
       });
     },
-    ...contractConfig,
+    ...contractConfig
   });
 
   return {
-    submit: writeAsync,
+    submit: writeAsync
   };
 }

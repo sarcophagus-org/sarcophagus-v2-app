@@ -1,7 +1,8 @@
 import { useSelector } from '../../../../store';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
 import { Step, StepStatus } from 'store/embalm/reducer';
-import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
+import { formatAddress, getLowestRewrapInterval, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
+import moment from 'moment';
 
 export interface SarcophagusParameter {
   name: string;
@@ -28,8 +29,8 @@ export const useSarcophagusParameters = () => {
   const { balance } = useSelector(x => x.bundlrState);
 
   const { getStatus } = useStepNavigator();
+  const maxRewrapIntervalMs = getLowestRewrapInterval(selectedArchaeologists) * 1000;
 
-  // TODO -- update Bundlr to get actual balance
   const sarcophagusParameters: SarcophagusParameter[] = [
     {
       name: 'NAME',
@@ -41,7 +42,15 @@ export const useSarcophagusParameters = () => {
       name: 'RESURRECTION',
       value: resurrection ? humanizeUnixTimestamp(resurrection) : null,
       step: Step.NameSarcophagus,
-      error: !resurrection,
+      error: !resurrection || resurrection > maxRewrapIntervalMs + Date.now()
+    },
+    {
+      name: 'MAXIMUM REWRAP INTERVAL',
+      value: selectedArchaeologists.length ?
+        `~${moment.duration(maxRewrapIntervalMs).asMonths().toFixed(2).toString()} months`
+        : null,
+      step: Step.SelectArchaeologists,
+      error: !selectedArchaeologists.length
     },
     {
       name: 'RECIPIENT',

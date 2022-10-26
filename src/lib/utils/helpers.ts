@@ -94,9 +94,9 @@ export function humanizeUnixTimestamp(unixTimestamp: number): string {
   return new Date(unixTimestamp).toLocaleDateString('en-US');
 }
 
-export function humanizeDuration(duration: number) {
-  if (duration === 0) return '0 seconds';
-  return moment.duration(duration / 1000).humanize({ d: 7, w: 4 });
+export function humanizeDuration(durationMs: number) {
+  if (durationMs === 0) return '0 seconds';
+  return moment.duration(durationMs).humanize({ d: 7, w: 4 });
 }
 
 export function formatLargeNumber(num: string): string {
