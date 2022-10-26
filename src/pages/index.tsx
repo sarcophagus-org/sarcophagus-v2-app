@@ -5,6 +5,7 @@ import { DevNavbar } from '../components/DevNavbar';
 import { EmbalmPage } from './EmbalmPage';
 import { DashboardPage } from './DashboardPage';
 import { FundBundlrPage } from './FundBundlrPage';
+import { ArchaeologistsPage } from './ArchaeologistsPage';
 
 export function Pages() {
   const routes = [
@@ -18,6 +19,11 @@ export function Pages() {
       element: <DashboardPage />,
       label: 'Dashboard',
     },
+    {
+      path: '/archaeologists',
+      element: <ArchaeologistsPage />,
+      label: 'Archaeologists',,
+    },,
     {
       path: '/fundbundlr',
       element: <FundBundlrPage />,

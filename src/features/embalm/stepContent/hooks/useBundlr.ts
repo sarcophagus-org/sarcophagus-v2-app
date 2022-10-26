@@ -9,7 +9,7 @@ import {
   uploadSuccess,
   withdrawFailure,
   withdrawStart,
-  withdrawSuccess
+  withdrawSuccess,
 } from 'lib/utils/toast';
 import { useCallback, useState } from 'react';
 import { setIsFunding, setPendingBalance } from 'store/bundlr/actions';
@@ -38,10 +38,12 @@ export function useBundlr() {
         const parsedAmount = ethers.utils.parseUnits(amount);
         const response = await bundlr?.fund(Number(parsedAmount));
 
-        dispatch(setPendingBalance({
-          balanceBeforeFund: balance,
-          txId: response!.id
-        }));
+        dispatch(
+          setPendingBalance({
+            balanceBeforeFund: balance,
+            txId: response!.id,
+          })
+        );
 
         toast(fundSuccess());
       } catch (_error) {
@@ -114,6 +116,6 @@ export function useBundlr() {
     isUploading,
     fund,
     withdraw,
-    uploadFile
+    uploadFile,
   };
 }
