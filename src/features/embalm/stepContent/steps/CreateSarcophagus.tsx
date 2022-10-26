@@ -7,7 +7,7 @@ import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 
 export function CreateSarcophagus() {
-  const { currentStage, handleCreate, stageError } = useCreateSarcophagus();
+  const { currentStage, handleCreate, stageError, createSarcophagusStages, hasApproved } = useCreateSarcophagus();
   const { isSarcophagusComplete } = useSarcophagusParameters();
 
   const isCreateProcessStarted = (): boolean => {
@@ -42,11 +42,13 @@ export function CreateSarcophagus() {
             currentStage={currentStage}
             stageError={stageError}
           >
-            <ProgressTrackerStage>Connect to Archaeologists</ProgressTrackerStage>
-            <ProgressTrackerStage>Upload Archaeologist Data to Arweave</ProgressTrackerStage>
-            <ProgressTrackerStage>Retrieve Archaeologist Signatures</ProgressTrackerStage>
-            <ProgressTrackerStage>Upload File Data to Arweave</ProgressTrackerStage>
-            <ProgressTrackerStage>Create Sarcophagus</ProgressTrackerStage>
+            {Object.values(createSarcophagusStages)
+              // Necessarily, a couple of these mappings don't have UI importance, thus no titles.
+              // We exclude those, and, if already approved, also exclude the approve stage
+              .filter(text => !!text && (hasApproved ? text !== createSarcophagusStages[CreateSarcophagusStage.APPROVE] : true))
+              .map(stage =>
+                <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
+              )}
           </ProgressTracker>
           {stageError ? <Flex
             mt={3}

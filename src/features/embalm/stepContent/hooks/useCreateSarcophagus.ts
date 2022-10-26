@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
@@ -14,29 +14,31 @@ import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
 import { handleContractCallException } from 'lib/utils/contract-error-handler';
+import { useApprove } from 'hooks/sarcoToken/useApprove';
+import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 
-// Note: order matters here
-// Also note: The number values of this enum are used to display the stage number
+// Note: ORDER MATTERS HERE
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
   UPLOAD_ENCRYPTED_SHARDS,
   ARCHAEOLOGIST_NEGOTIATION,
   UPLOAD_PAYLOAD,
+  APPROVE,
   SUBMIT_SARCOPHAGUS,
   COMPLETED,
 }
 
-// Note: order matters here
-const createSarcophagusStages = [
-  CreateSarcophagusStage.NOT_STARTED,
-  CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS,
-  CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS,
-  CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
-  CreateSarcophagusStage.UPLOAD_PAYLOAD,
-  CreateSarcophagusStage.SUBMIT_SARCOPHAGUS,
-  CreateSarcophagusStage.COMPLETED
-];
+const createSarcophagusStages = {
+  [CreateSarcophagusStage.NOT_STARTED]: '',
+  [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
+  [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
+  [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
+  [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
+  [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
+  [CreateSarcophagusStage.APPROVE]: 'Approve',
+  [CreateSarcophagusStage.COMPLETED]: ''
+};
 
 async function encryptShards(
   publicKeys: string[],
@@ -101,6 +103,16 @@ export function useCreateSarcophagus() {
     arweaveTxIds,
     currentStage
   });
+
+  // SARCO approval
+  const [hasApproved, setHasApproved] = useState(false);
+  const { approve } = useApprove();
+  const { allowance } = useAllowance();
+
+  useEffect(() => {
+    // TODO: compare with pending fees instead
+    setHasApproved(allowance !== undefined && BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))));
+  }, [allowance]);
 
   // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
@@ -199,8 +211,17 @@ export function useCreateSarcophagus() {
   useEffect(() => {
     (async () => {
       const incrementStage = (): void => {
-        const currentIndex = createSarcophagusStages.indexOf(currentStage);
-        setCurrentStage(createSarcophagusStages[currentIndex + 1]);
+        const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
+        const currentIndex = stages.indexOf(currentStage);
+
+        let nextIndex = currentIndex + 1;
+
+        // Skip approval step if already approved and about to move into that step
+        if (currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
+          nextIndex = currentIndex + 2;
+        }
+
+        setCurrentStage(stages[nextIndex]);
       };
 
       const executeStage = async (
@@ -268,13 +289,26 @@ export function useCreateSarcophagus() {
               }
               break;
 
+            case CreateSarcophagusStage.APPROVE:
+              await executeStage(approve)
+                .catch(e => {
+                  let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
+                  setStageError(friendlyError);
+                });
+              break;
+
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                await executeStage(submitSarcophagus)
-                  .catch(e => {
-                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
-                    setStageError(friendlyError);
-                  });
+                if (hasApproved) {
+                  await executeStage(submitSarcophagus)
+                    .catch(e => {
+                      let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
+                      setStageError(friendlyError);
+                    });
+                } else {
+                  setStageExecuting(false);
+                  setStageError('You need to approved SARCO spending');
+                }
               }
               break;
 
@@ -311,7 +345,10 @@ export function useCreateSarcophagus() {
     selectedArchaeologists,
     stageError,
     dispatch,
-    navigate
+    navigate,
+    approve,
+    allowance,
+    hasApproved
   ]);
 
   // Update archaeologist public keys, signatures ready status
@@ -345,5 +382,7 @@ export function useCreateSarcophagus() {
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
     stageError,
+    hasApproved,
+    createSarcophagusStages,
   };
 }
