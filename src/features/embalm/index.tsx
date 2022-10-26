@@ -13,7 +13,7 @@ const hideMagicFormFiller = false;
 
 export function Embalm() {
   useLoadArchaeologists();
-  useBootLibp2pNode();
+  useBootLibp2pNode(20_000);
 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];

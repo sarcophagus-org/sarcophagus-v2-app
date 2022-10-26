@@ -26,8 +26,8 @@ export const bundlrInitialState: BundlrState = {
   txId: null,
   pendingBalance: {
     txId: null,
-    balanceBeforeFund: ''
-  }
+    balanceBeforeFund: '',
+  },
 };
 
 export function bundlrReducer(state: BundlrState, action: Actions): BundlrState {

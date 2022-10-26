@@ -23,7 +23,7 @@ export function useBundlrSession() {
   /**
    * Disconnects from the arweave bundlr node
    */
-   const disconnectFromBundlr = useCallback(() => {
+  const disconnectFromBundlr = useCallback(() => {
     localStorage.removeItem('publicKey');
     dispatch(disconnectBundlr());
     const id = 'disconnectFromBundlr';
@@ -34,7 +34,7 @@ export function useBundlrSession() {
 
   const { address } = useAccount({
     onDisconnect() {
-       disconnectFromBundlr();
+      disconnectFromBundlr();
     },
   });
 

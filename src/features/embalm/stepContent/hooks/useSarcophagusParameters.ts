@@ -24,7 +24,7 @@ export const useSarcophagusParameters = () => {
     recipientState,
     file,
     selectedArchaeologists,
-    requiredArchaeologists
+    requiredArchaeologists,
   } = useSelector(x => x.embalmState);
   const { balance } = useSelector(x => x.bundlrState);
 
@@ -36,7 +36,7 @@ export const useSarcophagusParameters = () => {
       name: 'NAME',
       value: name,
       step: Step.NameSarcophagus,
-      error: !name
+      error: !name,
     },
     {
       name: 'RESURRECTION',
@@ -56,34 +56,33 @@ export const useSarcophagusParameters = () => {
       name: 'RECIPIENT',
       value: recipientState.publicKey ? formatAddress(recipientState.publicKey) : null,
       step: Step.SetRecipient,
-      error: !recipientState.publicKey
+      error: !recipientState.publicKey,
     },
     {
       name: 'PAYLOAD',
       value: file ? file.name : null,
       step: Step.UploadPayload,
-      error: !file
+      error: !file,
     },
     {
       name: 'BUNDLR BALANCE',
       value: balance,
       step: Step.FundBundlr,
-      error: balance === '0' || !balance
+      error: balance === '0' || !balance,
     },
     {
       name: 'SELECTED ARCHAEOLOGISTS',
       value: selectedArchaeologists.length.toString(),
       step: Step.SelectArchaeologists,
-      error: selectedArchaeologists.length === 0
+      error: selectedArchaeologists.length === 0,
     },
     {
       name: 'REQUIRED ARCHAEOLOGISTS',
       value: requiredArchaeologists.toString(),
       step: Step.RequiredArchaeologists,
-      error: requiredArchaeologists === 0
-    }
+      error: requiredArchaeologists === 0,
+    },
   ];
-
 
   /**
    * Returns true if all required data for the sarcophagus has been supplied
@@ -96,7 +95,7 @@ export const useSarcophagusParameters = () => {
       Step.FundBundlr,
       Step.SetRecipient,
       Step.SelectArchaeologists,
-      Step.RequiredArchaeologists
+      Step.RequiredArchaeologists,
     ];
 
     return requiredSteps.every(step => getStatus(step) === StepStatus.Complete);
@@ -104,6 +103,6 @@ export const useSarcophagusParameters = () => {
 
   return {
     sarcophagusParameters,
-    isSarcophagusComplete
+    isSarcophagusComplete,
   };
 };

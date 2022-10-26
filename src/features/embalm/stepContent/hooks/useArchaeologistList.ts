@@ -62,7 +62,7 @@ export function useArchaeologistList() {
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
   }
 
-  const sortedArchaeoligist =
+  const sortedArchaeologist =
     diggingFeesSortDirection === SortDirection.NONE
       ? onlineArchaeologists
       : orderBy(
@@ -71,7 +71,7 @@ export function useArchaeologistList() {
           sortOrderByMap[diggingFeesSortDirection]
         );
 
-  const sortedFilteredArchaeoligist = sortedArchaeoligist.filter(
+  const sortedFilteredArchaeologist = sortedArchaeologist.filter(
     arch =>
       arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
       arch.profile.minimumDiggingFee.lte(diggingFeesFilter || constants.MaxInt256)
@@ -89,7 +89,7 @@ export function useArchaeologistList() {
     selectedArchaeologists,
     onClickSortDiggingFees,
     diggingFeesSortDirection,
-    sortedFilteredArchaeoligist,
+    sortedFilteredArchaeologist,
     handleChangeAddressSearch,
     diggingFeesFilter,
     archAddressSearch,
