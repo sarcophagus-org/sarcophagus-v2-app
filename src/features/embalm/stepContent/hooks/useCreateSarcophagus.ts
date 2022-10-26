@@ -113,7 +113,6 @@ export function useCreateSarcophagus() {
   const { allowance } = useAllowance();
 
   useEffect(() => {
-    console.log('effect allowance', allowance?.toString());
     // TODO: compare with pending fees instead
     setHasApproved(allowance !== undefined && BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))));
   }, [allowance]);
