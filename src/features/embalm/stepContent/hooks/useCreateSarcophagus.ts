@@ -13,7 +13,7 @@ import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
-import { handleRpcError } from 'lib/utils/rpc-error-handler';
+import { handleContractCallException } from 'lib/utils/contract-error-handler';
 
 // Note: order matters here
 // Also note: The number values of this enum are used to display the stage number
@@ -272,7 +272,7 @@ export function useCreateSarcophagus() {
               if (submitSarcophagus) {
                 await executeStage(submitSarcophagus)
                   .catch(e => {
-                    let friendlyError = e.reason ? handleRpcError(e.reason) : 'Failed to submit sarcophagus to contract';
+                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
                     setStageError(friendlyError);
                   });
               }
