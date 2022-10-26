@@ -17,8 +17,7 @@ import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 
-// Note: order matters here
-// Also note: The number values of this enum are used to display the stage number
+// Note: ORDER MATTERS HERE
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
@@ -30,7 +29,6 @@ export enum CreateSarcophagusStage {
   COMPLETED,
 }
 
-// Note: order matters here
 const createSarcophagusStages = {
   [CreateSarcophagusStage.NOT_STARTED]: '',
   [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
@@ -219,7 +217,15 @@ export function useCreateSarcophagus() {
       const incrementStage = (): void => {
         const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
         const currentIndex = stages.indexOf(currentStage);
-        setCurrentStage(stages[currentIndex + 1]);
+
+        let nextIndex = currentIndex + 1;
+
+        // Skip approval step if already approved and about to move into that step
+        if (currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
+          nextIndex = currentIndex + 2;
+        }
+
+        setCurrentStage(stages[nextIndex]);
       };
 
       const executeStage = async (
