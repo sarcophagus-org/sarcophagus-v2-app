@@ -31,6 +31,17 @@ Also Windows users will need to add .npmrc file with the contents script-shell=p
 Finally, copy `.env.example` into `.env` in root directory and update your environment variables.
 
 Note that for local development with metamask against the archaeologist service and a hardhat node, you'll need to set the chain id to 31337 in custom network settings. Metamask's default is 1337.
+
+## Arweave Local
+To use embalming locally, setup arweave local.
+
+```
+npm install -g arlocal
+npx arlocal
+curl http://localhost:1984/mint/Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4/1000000000000000000000
+curl http://localhost:1984/mine
+```
+
 ## Community
 
 [![Discord](https://img.shields.io/discord/753398645507883099?color=768AD4&label=discord)](https://discord.com/channels/753398645507883099/)
