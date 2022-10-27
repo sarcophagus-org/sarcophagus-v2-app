@@ -96,13 +96,9 @@ export function useBundlr() {
         toast(uploadSuccess());
         return res.data.id;
       } catch (_error) {
-        const error = _error as Error;
-        console.error(error);
-        toast(uploadFailure(error.message));
-      } finally {
         setIsUploading(false);
+        throw _error;
       }
-      return '';
     },
     [bundlr, toast]
   );
