@@ -66,11 +66,6 @@ export function humanizeUnixTimestamp(unixTimestamp: number): string {
   return new Date(unixTimestamp).toLocaleDateString('en-US');
 }
 
-export function t(duration: number) {
-  if (duration === 0) return '0 seconds';
-  return moment.duration(duration / 1000).humanize({ d: 7, w: 4 });
-}
-
 export function removeNonIntChars(value: string): string {
   return value.replace(/[-\.\+e]/g, '').trim();
 }
