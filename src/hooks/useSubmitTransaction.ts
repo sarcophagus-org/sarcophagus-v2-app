@@ -11,7 +11,8 @@ type UseSubmitTransactionsArgs = UseContractWriteArgs & {
 };
 
 export function useSubmitTransaction(
-  contractConfig: Omit<UseSubmitTransactionsArgs, 'addressOrName'>
+  contractConfig: Omit<UseSubmitTransactionsArgs, 'addressOrName'>,
+  address?: string,
 ) {
   // Constants
   const defaultSuccessToast = 'Transaction submitted';
@@ -22,7 +23,7 @@ export function useSubmitTransaction(
   const addRecentTransaction = useAddRecentTransaction();
 
   const { writeAsync } = useContractWrite({
-    addressOrName: networkConfig.diamondDeployAddress,
+    addressOrName: address ?? networkConfig.diamondDeployAddress,
     onSuccess(data) {
       toast({
         title: 'Successful Transaction',
