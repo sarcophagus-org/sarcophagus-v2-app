@@ -134,7 +134,9 @@ export function Bundlr() {
               </Button>
             </HStack>
             <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            {/* <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text> */}
+            {Number(formattedUploadPrice) > 0 ?? (
+              <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
+            )}
           </VStack>
         </VStack>
       )}
