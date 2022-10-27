@@ -1,5 +1,5 @@
-import { Flex, Heading } from '@chakra-ui/react';
-import { FundBundlr } from '../features/fundbundlr';
+import { Flex, Heading, Text } from '@chakra-ui/react';
+import { Bundlr } from '../../src/components/Bundlr';
 
 export function FundBundlrPage() {
   return (
@@ -11,7 +11,13 @@ export function FundBundlrPage() {
       py="48px"
     >
       <Heading>Fund Arweave Bundlr</Heading>
-      <FundBundlr />
+      <Text
+        mb={6}
+        variant="secondary"
+      >
+        Add funds to Bundlr to package your payload and send to Arweave using Ethereum.
+      </Text>
+      <Bundlr />
     </Flex>
   );
 }

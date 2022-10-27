@@ -21,6 +21,11 @@ import { useDispatch, useSelector } from 'store/index';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 import { uploadPriceDecimals } from 'lib/constants';
+// import { Bundlr } from '../../../../../src/components/Bundlr';
+
+// export function FundBundlr() {
+//   return <Bundlr />;
+// }
 
 export function FundBundlr() {
   const dispatch = useDispatch();

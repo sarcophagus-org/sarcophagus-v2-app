@@ -10,25 +10,25 @@ import {
   Text,
   VStack,
   HStack,
-  Box,
+  // Box,
 } from '@chakra-ui/react';
-import { Alert } from 'components/Alert';
+// import { Alert } from 'components/Alert';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { useCallback, useState } from 'react';
 import { setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useBundlrSession } from '../embalm/stepContent/hooks/useBundlrSession';
-import { useGetBalance } from '../embalm/stepContent/hooks/useGetBalance';
+import { useBundlrSession } from '../features/embalm/stepContent/hooks/useBundlrSession';
+import { useGetBalance } from '../features/embalm/stepContent/hooks/useGetBalance';
 import { uploadPriceDecimals } from 'lib/constants';
 
-export function FundBundlr() {
+export function Bundlr() {
   const dispatch = useDispatch();
   const { fund, isFunding } = useBundlr();
   const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
   const { balance, getBalance, formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
-  const file = useSelector(x => x.embalmState.file);
+  // const file = useSelector(x => x.embalmState.file);
   const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
 
   const isAmountValid = parseFloat(amount) > 0;
@@ -49,33 +49,27 @@ export function FundBundlr() {
     dispatch(setBalance(newBalance));
   }, [amount, dispatch, fund, getBalance, isAmountValid]);
 
-  function AlertMessage() {
-    if (!file) {
-      return <Alert status="warning">Upload a payload to get the upload price.</Alert>;
-    }
+  // function AlertMessage() {
+  //   if (!file) {
+  //     return <Alert status="warning">Upload a payload to get the upload price.</Alert>;
+  //   }
 
-    if (parseFloat(balance) < parseFloat(uploadPrice)) {
-      return <Alert status="warning">You need to add funds to Bundlr.</Alert>;
-    }
+  //   if (parseFloat(balance) < parseFloat(uploadPrice)) {
+  //     return <Alert status="warning">You need to add funds to Bundlr.</Alert>;
+  //   }
 
-    return (
-      <Alert status="success">
-        You have enough funds in Bundlr. You can top up your balance or continue to the next step.
-      </Alert>
-    );
-  }
+  //   return (
+  //     <Alert status="success">
+  //       You have enough funds in Bundlr. You can top up your balance or continue to the next step.
+  //     </Alert>
+  //   );
+  // }
 
   return (
     <VStack
       align="left"
       w="100%"
     >
-      <Text
-        mb={6}
-        variant="secondary"
-      >
-        Bundlr will package your payload and send to Arweave using Ethereum.
-      </Text>
       {!isConnected ? (
         <VStack
           py={8}
@@ -116,9 +110,9 @@ export function FundBundlr() {
               </Button>
             </HStack>
           </FormControl>
-          <Box py={3}>
+          {/* <Box py={3}>
             <AlertMessage />
-          </Box>
+          </Box> */}
           <VStack
             border="1px solid "
             borderColor="violet.700"
@@ -140,7 +134,7 @@ export function FundBundlr() {
               </Button>
             </HStack>
             <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
+            {/* <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text> */}
           </VStack>
         </VStack>
       )}
