@@ -1,5 +1,4 @@
-import { BigNumber, Signature } from 'ethers';
-import { ReactNode } from 'react';
+import { BigNumber } from 'ethers';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 
