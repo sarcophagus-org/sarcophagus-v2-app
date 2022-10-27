@@ -30,6 +30,7 @@ export function Bundlr() {
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
   // const file = useSelector(x => x.embalmState.file);
   const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
+  const ONE_WEI = '0.000000000000000001';
 
   const isAmountValid = parseFloat(amount) > 0;
 
@@ -134,8 +135,10 @@ export function Bundlr() {
               </Button>
             </HStack>
             <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            {Number(formattedUploadPrice) > 0 ?? (
+            {formattedUploadPrice > ONE_WEI ? (
               <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
+            ) : (
+              ''
             )}
           </VStack>
         </VStack>

@@ -11,6 +11,7 @@ import {
   VStack,
   HStack,
   Box,
+  Flex,
 } from '@chakra-ui/react';
 import { Alert } from 'components/Alert';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
@@ -21,7 +22,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 import { uploadPriceDecimals } from 'lib/constants';
-// import { Bundlr } from '../../../../../src/components/Bundlr';
+import { Bundlr } from '../../../../../src/components/Bundlr';
 
 // export function FundBundlr() {
 //   return <Bundlr />;
@@ -149,6 +150,9 @@ export function FundBundlr() {
           </VStack>
         </VStack>
       )}
+      <Flex p="15px" />
+      <h1>COMPONENT:</h1>
+      <Bundlr />
     </VStack>
   );
 }
