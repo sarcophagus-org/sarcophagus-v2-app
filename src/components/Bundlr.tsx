@@ -66,7 +66,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           pt={2}
         >
           <FormControl>
-            <FormLabel>Amount</FormLabel>
+            <FormLabel>Deposit Amount</FormLabel>
             <HStack>
               <NumberInput
                 flex={1}

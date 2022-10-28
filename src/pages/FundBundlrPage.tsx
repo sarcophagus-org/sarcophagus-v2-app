@@ -1,5 +1,6 @@
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import { Flex, Heading, Text, FormLabel } from '@chakra-ui/react';
 import { Bundlr } from '../../src/components/Bundlr';
+import { WithdrawBalance } from '../components/WithdrawBalance';
 
 export function FundBundlrPage() {
   return (
@@ -17,7 +18,9 @@ export function FundBundlrPage() {
       >
         Add funds to Bundlr to package your payload and send to Arweave using Ethereum.
       </Text>
-      <Bundlr />
+      <Bundlr>
+        <WithdrawBalance />
+      </Bundlr>
     </Flex>
   );
 }

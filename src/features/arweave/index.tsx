@@ -6,7 +6,7 @@ import { DownloadFile } from './components/DownloadFile';
 import { FundBundlr } from './components/FundBundlr';
 import { NetworkSelector } from './components/NetworkSelector';
 import { UploadFile } from './components/UploadFile';
-import { WithdrawBalance } from './components/WithdrawBalance';
+import { WithdrawBalance } from '../../components/WithdrawBalance';
 
 /**
  * A temporary component that contains the necessary functionality for devs to test the Arweave
