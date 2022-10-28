@@ -52,7 +52,7 @@ export function WithdrawBalance() {
 
   return (
     <Flex direction="column">
-      <FormLabel mt={6}>Withdraw Amount</FormLabel>
+      <FormLabel mt={4}>Withdraw Amount</FormLabel>
 
       {/* <Flex align="center">
         <FormControl
