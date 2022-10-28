@@ -123,10 +123,8 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </Button>
             </HStack>
             <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            {formattedUploadPrice > ONE_WEI ? (
+            {formattedUploadPrice > ONE_WEI && (
               <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
-            ) : (
-              ''
             )}
           </VStack>
         </VStack>
