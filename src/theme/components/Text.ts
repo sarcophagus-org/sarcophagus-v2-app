@@ -6,6 +6,9 @@ export const Text = {
     secondary: {
       color: 'brand.600',
     },
+    bold: {
+      fontWeight: 900,
+    },
   },
   baseStyle: {
     fontWeight: 400,

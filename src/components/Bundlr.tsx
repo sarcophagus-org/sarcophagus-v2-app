@@ -82,9 +82,10 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
                 </NumberInputStepper>
                 <Text
                   p="2.5"
+                  variant="bold"
                   position="absolute"
-                  right="p"
-                  top="O"
+                  right="7"
+                  top="0"
                 >
                   ETH
                 </Text>
