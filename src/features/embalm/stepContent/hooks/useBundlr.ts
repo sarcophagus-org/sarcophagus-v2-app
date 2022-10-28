@@ -4,7 +4,6 @@ import {
   fundFailure,
   fundStart,
   fundSuccess,
-  uploadFailure,
   uploadStart,
   uploadSuccess,
   withdrawFailure,
