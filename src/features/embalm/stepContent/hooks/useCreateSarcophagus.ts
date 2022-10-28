@@ -317,6 +317,7 @@ export function useCreateSarcophagus() {
             case CreateSarcophagusStage.APPROVE:
               await executeStage(approve)
                 .catch(e => {
+                  console.log(e);
                   let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
                   setStageError(friendlyError);
                 });
@@ -324,16 +325,11 @@ export function useCreateSarcophagus() {
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                if (hasApproved) {
-                  await executeStage(submitSarcophagus)
-                    .catch(e => {
-                      let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
-                      setStageError(friendlyError);
-                    });
-                } else {
-                  setStageExecuting(false);
-                  setStageError('You need to approved SARCO spending');
-                }
+                await executeStage(submitSarcophagus)
+                  .catch(e => {
+                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
+                    setStageError(friendlyError);
+                  });
               }
               break;
 

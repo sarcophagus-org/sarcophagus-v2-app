@@ -53,6 +53,6 @@ export function useSubmitTransaction(
   });
 
   return {
-    submit: writeAsync
+    submit: async () => (await writeAsync()).wait()
   };
 }
