@@ -5,7 +5,8 @@ export function FundBundlrPage() {
   return (
     <Flex
       direction="column"
-      width="60%"
+      minWidth={600}
+      w="25%"
       height="%100"
       ml="84px"
       py="48px"
