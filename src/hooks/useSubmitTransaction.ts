@@ -39,7 +39,7 @@ export function useSubmitTransaction(
       });
     },
     onError(error) {
-      console.log('createSarcophagus failed with args\n:', JSON.stringify(contractConfig.args));
+      console.log('Transaction failed with args\n:', JSON.stringify(contractConfig.args));
       // TODO: Add a click to see more button on the toast message
       toast({
         title: 'Error',

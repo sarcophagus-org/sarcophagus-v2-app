@@ -19,7 +19,6 @@ export enum ActionType {
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
-  SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
@@ -33,7 +32,6 @@ export enum ActionType {
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
-  SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -85,7 +83,6 @@ type EmbalmPayload = {
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
-  [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
@@ -96,7 +93,6 @@ type EmbalmPayload = {
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
-  [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -350,6 +346,13 @@ export function resetEmbalmState(): EmbalmActions {
 export function disableSteps(): EmbalmActions {
   return {
     type: ActionType.DisableSteps,
+    payload: {},
+  };
+}
+
+export function enableSteps(): EmbalmActions {
+  return {
+    type: ActionType.EnableSteps,
     payload: {},
   };
 }
