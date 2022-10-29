@@ -4,6 +4,7 @@ import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import { EmbalmPage } from './EmbalmPage';
 import { DashboardPage } from './DashboardPage';
+import { FundBundlrPage } from './FundBundlrPage';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 
 export function Pages() {
@@ -22,6 +23,11 @@ export function Pages() {
       path: '/archaeologists',
       element: <ArchaeologistsPage />,
       label: 'Archaeologists',
+    },
+    {
+      path: '/fundbundlr',
+      element: <FundBundlrPage />,
+      label: 'Fund Bundlr',
     },
   ];
 
