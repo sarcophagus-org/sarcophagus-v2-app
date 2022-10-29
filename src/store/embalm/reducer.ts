@@ -195,7 +195,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       };
 
     case ActionType.SetSelectedArchaeologists:
-      return { ...state, selectedArchaeologists: action.payload.archaeologists };
+      return { ...state, selectedArchaeologists: action.payload.selectedArchaeologists };
 
     case ActionType.SetDiggingFeesSortDirection:
       return { ...state, diggingFeesSortDirection: action.payload.direction };

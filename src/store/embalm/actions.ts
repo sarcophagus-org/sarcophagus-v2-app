@@ -32,6 +32,7 @@ export enum ActionType {
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
+  SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
@@ -93,6 +94,7 @@ type EmbalmPayload = {
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
+  [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: Archaeologist[] };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
