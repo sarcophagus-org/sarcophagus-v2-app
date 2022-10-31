@@ -22,7 +22,6 @@ export enum Step {
 export interface EmbalmState {
   archaeologists: Archaeologist[];
   currentStep: Step;
-  diggingFees: string;
   expandedStepIndices: number[];
   file: File | null;
   name: string;
@@ -46,7 +45,6 @@ export interface EmbalmState {
 export const embalmInitialState: EmbalmState = {
   archaeologists: [],
   currentStep: Step.NameSarcophagus,
-  diggingFees: '0',
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
   name: '',
@@ -136,9 +134,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.ToggleStep:
       return toggleStep(state, action.payload.step);
 
-    case ActionType.SetDiggingFees:
-      return { ...state, diggingFees: action.payload.diggingFees };
-
     case ActionType.SetExpandedStepIndices:
       return { ...state, expandedStepIndices: action.payload.indices };
 
@@ -200,7 +195,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       };
 
     case ActionType.SetSelectedArchaeologists:
-      return { ...state, selectedArchaeologists: action.payload.archaeologists };
+      return { ...state, selectedArchaeologists: action.payload.selectedArchaeologists };
 
     case ActionType.SetDiggingFeesSortDirection:
       return { ...state, diggingFeesSortDirection: action.payload.direction };

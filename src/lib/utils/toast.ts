@@ -178,13 +178,6 @@ export const generateOuterKeysFailure = (errorMessage: string): UseToastOptions 
   position,
 });
 
-export const copiedToClipboard = (): UseToastOptions => ({
-  title: 'Text copied to clipboard',
-  status: 'info',
-  duration,
-  position,
-});
-
 export const dialArchaeologistSuccess = (): UseToastOptions => ({
   title: 'Connected Successfully!',
   description: 'Connected to archaeologist',

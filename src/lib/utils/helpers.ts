@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther, hexlify, solidityKeccak256 } from 'ethers/lib/utils';
@@ -25,13 +24,6 @@ export function getLowestRewrapInterval(archaeologists: Archaeologist[]): number
 export function formatAddress(address: string): string {
   const sliced = `${address.slice(0, 6)}...${address.slice(-4)}`;
   return sliced.replace(/[a-z]/g, char => char.toUpperCase());
-}
-
-/**
- * Async sleep function
- */
-export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export function formatToastMessage(message: string, length: number = 125): string {
@@ -69,44 +61,8 @@ export function removeFromArray<T>(array: T[], value: T) {
   }
 }
 
-// Approximately 1 month
-export function convertMonthsToMs(num: number) {
-  return num * 2_629_746_000;
-}
-
-export function convertWeeksToMs(num: number) {
-  return num * 604_800_000;
-}
-
-export function convertDaysToMs(num: number) {
-  return num * 86_400_000;
-}
-
-export function convertHoursToMs(num: number) {
-  return num * 3_600_000;
-}
-
-export function convertMinutesToMs(num: number) {
-  return num * 60_000;
-}
-
 export function humanizeUnixTimestamp(unixTimestamp: number): string {
   return new Date(unixTimestamp).toLocaleDateString('en-US');
-}
-
-export function humanizeDuration(durationMs: number) {
-  if (durationMs === 0) return '0 seconds';
-  return moment.duration(durationMs).humanize({ d: 7, w: 4 });
-}
-
-export function formatLargeNumber(num: string): string {
-  if (num.length > 9) {
-    return parseInt(num).toExponential(4);
-  } else if (num.length <= 9 && num.length > 4) {
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  } else {
-    return num;
-  }
 }
 
 export function removeNonIntChars(value: string): string {
@@ -118,24 +74,6 @@ export function removeLeadingZeroes(value: string): string {
     value = value.substring(1);
   }
   return value;
-}
-
-export function zeroIfEmpty(value: string): string {
-  return value.trim() === '' ? '0' : value;
-}
-
-/**
- * Generates a fake eth address. This address will be invalid, it's just for the mock archaeologist.
- */
-export function generateFakeAddress(): string {
-  return '0x' + [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-}
-
-/**
- * Generates a random number between min and max.
- */
-export function randomIntFromInterval(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 /**

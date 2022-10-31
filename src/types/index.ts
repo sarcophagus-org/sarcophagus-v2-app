@@ -1,11 +1,6 @@
-import { BigNumber, Signature } from 'ethers';
-import { ReactNode } from 'react';
+import { BigNumber } from 'ethers';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
-
-export interface ChildrenOnly {
-  children: ReactNode;
-}
 
 export interface Archaeologist {
   publicKey?: string;
@@ -46,10 +41,6 @@ export interface ArchaeologistProfile {
   cleanups: string[];
   accusals: string[];
   peerId: string;
-}
-
-export interface SignatureWithAccount extends Signature {
-  account: string;
 }
 
 export interface ArchaeologistEncryptedShard {
