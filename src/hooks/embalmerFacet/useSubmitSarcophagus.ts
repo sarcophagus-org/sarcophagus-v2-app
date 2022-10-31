@@ -7,6 +7,7 @@ import { ArchaeologistEncryptedShard } from '../../types';
 import { useCallback } from 'react';
 import { CreateSarcophagusStage } from '../../features/embalm/stepContent/hooks/useCreateSarcophagus';
 import { computeAddress } from 'ethers/lib/utils';
+import { Abi } from 'abitype';
 
 export interface ContractArchaeologist {
   archAddress: string;
@@ -85,21 +86,22 @@ export function useSubmitSarcophagus({
   const args =
     isSubmitting && contractArchaeologists.length
       ? [
-          sarcoId,
-          {
-            ...settings,
-          },
-          contractArchaeologists,
-          arweaveTxIds,
-        ]
+        sarcoId,
+        {
+          ...settings,
+        },
+        contractArchaeologists,
+        arweaveTxIds,
+      ]
       : [];
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacet__factory.abi,
+    abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'createSarcophagus',
     args,
     toastDescription,
     transactionDescription,
+    mode: 'prepared'
   });
 
   const submitSarcophagus = args.length ? submit : undefined;

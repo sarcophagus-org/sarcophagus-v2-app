@@ -9,7 +9,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
     [chainList.mainnet, chainList.goerli, chainList.hardhat, chainList.polygon],
     [
-      infuraProvider({ infuraId: process.env.REACT_APP_INFURA_API_KEY, priority: 0 }),
+      infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY, priority: 0 }),
       publicProvider({ priority: 1 }),
     ]
   );

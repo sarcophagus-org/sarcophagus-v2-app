@@ -1,5 +1,6 @@
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useSubmitTransaction } from '../useSubmitTransaction';
+import { Abi } from 'abitype';
 
 interface CancelSarcophagusArgs {
   sarcoId: string;
@@ -10,11 +11,12 @@ export function useCancelSarcophagus({ sarcoId }: CancelSarcophagusArgs) {
   const transactionDescription = 'Cancel sarcophagus';
 
   const { submit } = useSubmitTransaction({
-    contractInterface: EmbalmerFacet__factory.abi,
+    abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'cancelSarcophagus',
     args: [sarcoId],
     toastDescription,
     transactionDescription,
+    mode: 'prepared'
   });
 
   return { cancelSarcophagus: submit };
