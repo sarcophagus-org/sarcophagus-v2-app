@@ -10,7 +10,7 @@ export interface SarcophagusParameter {
   name: string;
   value: string | null;
   step: Step;
-  error: boolean;
+  error: string | null;
 }
 
 /**
@@ -41,13 +41,16 @@ export const useSarcophagusParameters = () => {
       name: 'NAME',
       value: name,
       step: Step.NameSarcophagus,
-      error: !name,
+      error: !name ? 'Your Sarchophagus needs a name' : null,
     },
     {
       name: 'RESURRECTION',
       value: resurrection ? humanizeUnixTimestamp(resurrection) : null,
       step: Step.NameSarcophagus,
-      error: !resurrection || resurrection > maxRewrapIntervalMs + Date.now()
+      error: !resurrection ? 'Please set a resurrection time' :
+        resurrection > maxRewrapIntervalMs + Date.now() ?
+          'The resurrection time you have selected is beyond the maximum rewrap interval of your selected archaeologists'
+          : null
     },
     {
       name: 'MAXIMUM REWRAP INTERVAL',
@@ -55,37 +58,37 @@ export const useSarcophagusParameters = () => {
         `~${moment.duration(maxRewrapIntervalMs).asMonths().toFixed(2).toString()} months`
         : null,
       step: Step.SelectArchaeologists,
-      error: !selectedArchaeologists.length
+      error: !selectedArchaeologists.length ? 'You have not selected any archaeologists' : null
     },
     {
       name: 'RECIPIENT',
       value: recipientState.publicKey ? formatAddress(recipientState.publicKey) : null,
       step: Step.SetRecipient,
-      error: !recipientState.publicKey,
+      error: !recipientState.publicKey ? 'You have not set your recipient\'s public key' : null,
     },
     {
       name: 'PAYLOAD',
       value: file ? file.name : null,
       step: Step.UploadPayload,
-      error: !file,
+      error: !file ? 'You have not selected a file to embalm' : null,
     },
     {
       name: 'BUNDLR BALANCE',
       value: balance,
       step: Step.FundBundlr,
-      error: !isHardhatNetwork && (balance === '0' || !balance)
+      error: !isHardhatNetwork && (balance === '0' || !balance) ? 'You do not have enought balance on Bundlr' : null
     },
     {
       name: 'SELECTED ARCHAEOLOGISTS',
       value: selectedArchaeologists.length.toString(),
       step: Step.SelectArchaeologists,
-      error: selectedArchaeologists.length === 0,
+      error: selectedArchaeologists.length === 0 ? 'You have not selected any archaeologists' : null,
     },
     {
       name: 'REQUIRED ARCHAEOLOGISTS',
       value: requiredArchaeologists.toString(),
       step: Step.RequiredArchaeologists,
-      error: requiredArchaeologists === 0,
+      error: requiredArchaeologists === 0 ? 'You need to select how many archaeologists must be present to complete a resurrection' : null,
     },
   ];
 

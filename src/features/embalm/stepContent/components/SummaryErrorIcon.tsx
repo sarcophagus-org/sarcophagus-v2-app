@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 
-export function SummaryErrorIcon() {
+export function SummaryErrorIcon(error: any) {
   return (
     <Flex
       h="1.2rem"
@@ -9,6 +9,7 @@ export function SummaryErrorIcon() {
       background="errorAlt"
       alignItems="center"
       justifyContent="center"
+      onMouseEnter={() => console.log(error)}
     >
       <Text color="red">!</Text>
     </Flex>
