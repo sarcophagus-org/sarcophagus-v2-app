@@ -10,7 +10,6 @@ export enum ActionType {
   SetBundlr = 'BUNDLR_SET',
   SetBalance = 'EMBALM_SET_BALANCE',
   SetIsFunding = 'EMBALM_SET_IS_FUNDING',
-  SetIsUploading = 'EMBALM_SET_IS_UPLOADING',
   SetPendingBalance = 'EMBALM_SET_PENDING_BALANCE',
   SetTxId = 'BUNDLR_SET_TX_ID',
 }
@@ -20,7 +19,6 @@ type BundlrPayload = {
   [ActionType.Disconnect]: {};
   [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
   [ActionType.SetBalance]: { balance: string };
-  [ActionType.SetIsUploading]: { isUploading: boolean };
   [ActionType.SetIsFunding]: { isFunding: boolean };
   [ActionType.SetPendingBalance]: { pendingBalance: BundlrPendingBalance };
   [ActionType.SetTxId]: { txId: string };
@@ -54,15 +52,6 @@ export function setBalance(balance: string): BundlrActions {
     type: ActionType.SetBalance,
     payload: {
       balance,
-    },
-  };
-}
-
-export function setIsUploading(isUploading: boolean): BundlrActions {
-  return {
-    type: ActionType.SetIsUploading,
-    payload: {
-      isUploading,
     },
   };
 }
