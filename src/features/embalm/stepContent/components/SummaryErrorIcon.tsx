@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 
-export function SummaryErrorIcon(error: any) {
+export function SummaryErrorIcon({ error }: { error?: string }) {
   return (
     <Flex
       h="1.2rem"
