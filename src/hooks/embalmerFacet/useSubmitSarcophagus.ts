@@ -95,7 +95,7 @@ export function useSubmitSarcophagus({
       ]
       : [];
 
-  const { submit } = useSubmitTransaction({
+  const { submit, error } = useSubmitTransaction({
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'createSarcophagus',
     args,
@@ -104,7 +104,7 @@ export function useSubmitSarcophagus({
     mode: 'prepared'
   });
 
-  const submitSarcophagus = args.length ? submit : undefined;
+  const submitSarcophagus = args.length && !error ? submit : undefined;
 
   return { submitSarcophagus };
 }

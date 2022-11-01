@@ -14,7 +14,6 @@ export function useSubmitTransaction(
   contractConfig: Omit<UseSubmitTransactionsArgs, 'address'>,
   address?: string,
 ) {
-  // Constants
   const defaultSuccessToast = 'Transaction submitted';
   const defaultTransactionDescription = 'Unknown transaction submitted';
   const toastDuration = 5000;
