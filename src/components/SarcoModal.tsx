@@ -39,10 +39,11 @@ function useSarcoModal() {
 
                 {props.isDismissible && <Box height={5} />}
 
-                {props.coverImage ?? <div />}
-
                 <ModalHeader paddingY={38} fontSize={'20px'} fontWeight={400} textAlign='center'>
-                    {props.title}
+                    <Flex direction='column' alignItems={'center'}>
+                        {props.coverImage ?? <div />}
+                        {props.title}
+                    </Flex>
                 </ModalHeader>
 
                 {props.isDismissible && <ModalCloseButton />}
@@ -59,7 +60,7 @@ function useSarcoModal() {
                     >
                         <Text fontSize={'14px'} textAlign='center'>{props.subtitle ?? ''}</Text>
                         <Box height={30} />
-                        <Button colorScheme='blue' onClick={() => {
+                        <Button onClick={() => {
                             props.primaryButton.onClick();
                             if (props.primaryButton.dismissesModal) onClose();
                         }}>
@@ -68,7 +69,7 @@ function useSarcoModal() {
                     </Flex>
                 </ModalBody>
 
-                <ModalFooter>
+                <ModalFooter alignSelf={'center'}>
                     {props.secondaryButton &&
                         <Button variant='ghost' onClick={() => {
                             props.secondaryButton?.onClick();
