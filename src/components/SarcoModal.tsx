@@ -22,37 +22,30 @@ interface ModalButtonProps {
 
 interface SarcoModalProps {
     isDismissible?: boolean;
-    image?: JSX.Element;
+    coverImage?: JSX.Element;
     title: string;
     subtitle?: string;
     primaryButton: ModalButtonProps,
     secondaryButton?: ModalButtonProps,
 }
 
-function useSarcoModal(props: SarcoModalProps) {
+function useSarcoModal() {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const {
-        title,
-        subtitle,
-        image,
-        primaryButton,
-        secondaryButton,
-        isDismissible = true,
-    } = props;
-
-    const modal = () =>
-        <Modal closeOnOverlayClick={isDismissible} isOpen={isOpen} onClose={onClose} isCentered>
+    const modal = (props: SarcoModalProps) =>
+        <Modal closeOnOverlayClick={props.isDismissible} isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent minWidth='484px' paddingX='46px' paddingY='26px' bgColor={colors.brand[100]}>
 
-                {isDismissible && <Box height={5} />}
+                {props.isDismissible && <Box height={5} />}
+
+                {props.coverImage ?? <div />}
 
                 <ModalHeader paddingY={38} fontSize={'20px'} fontWeight={400} textAlign='center'>
-                    {title}
+                    {props.title}
                 </ModalHeader>
 
-                {isDismissible && <ModalCloseButton />}
+                {props.isDismissible && <ModalCloseButton />}
 
                 <ModalBody >
                     <Flex
@@ -64,24 +57,24 @@ function useSarcoModal(props: SarcoModalProps) {
                         alignContent='center'
                         bgGradient="linear(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 100%)"
                     >
-                        <Text fontSize={'14px'} textAlign='center'>{subtitle ?? ''}</Text>
+                        <Text fontSize={'14px'} textAlign='center'>{props.subtitle ?? ''}</Text>
                         <Box height={30} />
                         <Button colorScheme='blue' onClick={() => {
-                            primaryButton.onClick();
-                            if (primaryButton.dismissesModal) onClose();
+                            props.primaryButton.onClick();
+                            if (props.primaryButton.dismissesModal) onClose();
                         }}>
-                            {primaryButton.label}
+                            {props.primaryButton.label}
                         </Button>
                     </Flex>
                 </ModalBody>
 
                 <ModalFooter>
-                    {secondaryButton &&
+                    {props.secondaryButton &&
                         <Button variant='ghost' onClick={() => {
-                            secondaryButton?.onClick();
-                            if (secondaryButton?.dismissesModal) onClose();
+                            props.secondaryButton?.onClick();
+                            if (props.secondaryButton?.dismissesModal) onClose();
                         }}>
-                            {secondaryButton.label}
+                            {props.secondaryButton.label}
                         </Button>}
                 </ModalFooter>
             </ModalContent>
