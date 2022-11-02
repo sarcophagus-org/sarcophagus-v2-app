@@ -40,6 +40,7 @@ export interface EmbalmState {
   archAddressSearch: string;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
+  currentChainId: number | undefined;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -66,6 +67,7 @@ export const embalmInitialState: EmbalmState = {
   archAddressSearch: '',
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
+  currentChainId: undefined,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -245,6 +247,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         value: action.payload.signature,
         updateSelected: true,
       });
+
+    case ActionType.SetCurrentChainId:
+      return { ...state, currentChainId: action.payload.chainId };
 
     case ActionType.DisableSteps:
       return { ...state, areStepsDisabled: true };

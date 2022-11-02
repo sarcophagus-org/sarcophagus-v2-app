@@ -2,9 +2,10 @@ import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contrac
 import { useNetworkConfig } from 'lib/config';
 import { useEffect } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
-import { setArchaeologists } from 'store/embalm/actions';
+import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { readContract } from 'wagmi/actions';
+import { useNetwork } from 'wagmi';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -12,8 +13,8 @@ import { readContract } from 'wagmi/actions';
 export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
-
-  const { archaeologists } = useSelector(s => s.embalmState);
+  const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
+  const { chain } = useNetwork();
 
   useEffect(() => {
     (async () => {
@@ -21,8 +22,11 @@ export function useLoadArchaeologists() {
         // Only load the archaeologists once when the component mounts. The only reason the
         // archaeologists would need to be loaded from the contract again is when a new
         // archaeologist registers.
-        if (archaeologists.length > 0) return;
+        //
+        // Additoinally we will reload the archeaolgist on network switch.
+        if (archaeologists.length > 0 && currentChainId === chain?.id) return;
         dispatch(startLoad());
+        dispatch(setCurrentChainId(chain?.id));
 
         const addresses: string[] = await readContract({
           addressOrName: networkConfig.diamondDeployAddress,
@@ -63,5 +67,5 @@ export function useLoadArchaeologists() {
         dispatch(stopLoad());
       }
     })();
-  }, [archaeologists, dispatch, networkConfig]);
+  }, [archaeologists, dispatch, networkConfig, chain, currentChainId]);
 }

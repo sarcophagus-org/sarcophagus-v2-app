@@ -38,6 +38,7 @@ export enum ActionType {
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
   SetArchaeologistException = 'EMBALM_SET_ARCHAEOLOGIST_EXCEPTION',
   ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
+  SetCurrentChainId = 'EMBALM_SET_CURRENT_CHAIN_ID',
 }
 
 export enum RecipientSetByOption {
@@ -102,6 +103,7 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: {};
+  [ActionType.SetCurrentChainId]: { chainId: number | undefined };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -356,6 +358,15 @@ export function enableSteps(): EmbalmActions {
   return {
     type: ActionType.EnableSteps,
     payload: {},
+  };
+}
+
+export function setCurrentChainId(chainId: number | undefined): EmbalmActions {
+  return {
+    type: ActionType.SetCurrentChainId,
+    payload: {
+      chainId,
+    },
   };
 }
 
