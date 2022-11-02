@@ -9,6 +9,8 @@ import {
     Button,
     Text,
     useDisclosure,
+    Box,
+    Flex,
 } from '@chakra-ui/react';
 import { colors } from 'theme/colors';
 
@@ -20,7 +22,7 @@ interface ModalButtonProps {
 
 interface SarcoModalProps {
     isDismissible?: boolean;
-    image?: string;
+    image?: JSX.Element;
     title: string;
     subtitle?: string;
     primaryButton: ModalButtonProps,
@@ -42,20 +44,38 @@ function useSarcoModal(props: SarcoModalProps) {
     const modal = () =>
         <Modal closeOnOverlayClick={isDismissible} isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent bgColor={colors.brand[100]}>
-                <ModalHeader>{title}</ModalHeader>
+            <ModalContent minWidth='484px' paddingX='46px' paddingY='26px' bgColor={colors.brand[100]}>
+
+                {isDismissible && <Box height={5} />}
+
+                <ModalHeader paddingY={38} fontSize={'20px'} fontWeight={400} textAlign='center'>
+                    {title}
+                </ModalHeader>
+
                 {isDismissible && <ModalCloseButton />}
-                <ModalBody>
-                    <Text>{subtitle ?? ''}</Text>
+
+                <ModalBody >
+                    <Flex
+                        direction='column'
+                        padding='32px'
+                        border='solid'
+                        borderColor={colors.brand[300]}
+                        borderWidth='1px'
+                        alignContent='center'
+                        bgGradient="linear(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 100%)"
+                    >
+                        <Text fontSize={'14px'} textAlign='center'>{subtitle ?? ''}</Text>
+                        <Box height={30} />
+                        <Button colorScheme='blue' onClick={() => {
+                            primaryButton.onClick();
+                            if (primaryButton.dismissesModal) onClose();
+                        }}>
+                            {primaryButton.label}
+                        </Button>
+                    </Flex>
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme='blue' mr={3} onClick={() => {
-                        primaryButton.onClick();
-                        if (primaryButton.dismissesModal) onClose();
-                    }}>
-                        {primaryButton.label}
-                    </Button>
                     {secondaryButton &&
                         <Button variant='ghost' onClick={() => {
                             secondaryButton?.onClick();
@@ -65,7 +85,7 @@ function useSarcoModal(props: SarcoModalProps) {
                         </Button>}
                 </ModalFooter>
             </ModalContent>
-        </Modal>;
+        </Modal >;
 
     return { SarcoModal: modal, openModal: onOpen };
 }
