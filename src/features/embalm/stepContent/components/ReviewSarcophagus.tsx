@@ -1,9 +1,13 @@
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { useSarcoModal } from 'components/SarcoModal';
 import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
 import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function ReviewSarcophagus() {
+
+  const { SarcoModal, openModal } = useSarcoModal();
+
   return (
     <VStack
       align="left"
@@ -35,6 +39,7 @@ export function ReviewSarcophagus() {
         <ReviewSarcophagusTable />
         <SarcophagusSummaryFees />
         <Flex
+          onClick={openModal}
           mt={3}
           alignItems="center"
         >
@@ -42,10 +47,18 @@ export function ReviewSarcophagus() {
           <Text
             ml={2}
             color="brand.500"
+            textAlign={'center'}
           >
             = missing information
           </Text>
         </Flex>
+        <SarcoModal
+          coverImage={<Flex height={300} width={300} bgColor={'#777'} mb={10} />}
+          title='Download PDF'
+          subtitle='Download and send this to your recipient. Do not store this online or let anyone see.'
+          primaryButton={{ label: 'Download', onClick: () => { }, dismissesModal: true }}
+          secondaryButton={{ label: 'Close', onClick: () => { }, dismissesModal: true }}
+        />
       </Flex>
     </VStack>
   );
