@@ -76,7 +76,7 @@ export const useSarcophagusParameters = () => {
       name: 'BUNDLR BALANCE',
       value: balance,
       step: Step.FundBundlr,
-      error: !isHardhatNetwork && (balance === '0' || !balance) ? 'You do not have enought balance on Bundlr' : null
+      error: !isHardhatNetwork && (balance === '0' || !balance) ? 'You do not have enough balance on Bundlr' : null
     },
     {
       name: 'SELECTED ARCHAEOLOGISTS',
