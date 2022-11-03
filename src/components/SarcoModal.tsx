@@ -20,7 +20,7 @@ interface ModalButtonProps {
 }
 
 interface SarcoModalProps {
-    children: JSX.Element[];
+    children: JSX.Element[] | JSX.Element;
     isDismissible: boolean;
     coverImage?: JSX.Element;
     title?: JSX.Element;
