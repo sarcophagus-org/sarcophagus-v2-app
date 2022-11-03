@@ -1,14 +1,12 @@
-import { Flex, Link } from '@chakra-ui/react';
+import { Flex, Link, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
-import { ArweaveTestPage } from './ArweaveTestPage';
+import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
 import { EmbalmPage } from './EmbalmPage';
-import { TempResurrectionPage } from './TempResurrectionPage';
-import { ThemeTestPage } from './ThemeTestPage';
 import { FundBundlrPage } from './FundBundlrPage';
-import { ArchaeologistsPage } from './ArchaeologistsPage';
+import { TempResurrectionPage } from './TempResurrectionPage';
 
 export function Pages() {
   const routes = [
@@ -32,7 +30,7 @@ export function Pages() {
       element: <FundBundlrPage />,
       label: 'Fund Bundlr',
     },
-        {
+    {
       path: '/temp-resurrection',
       element: <TempResurrectionPage />,
       label: 'TempResurrectionPage',
@@ -64,7 +62,7 @@ export function Pages() {
                 hidden={route.hidden}
               >
                 <Text px={4}>{route.label}</Text>
-              </NavLink>
+              </Link>
             ))}
           </Flex>
         </Flex>

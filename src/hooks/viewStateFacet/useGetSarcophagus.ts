@@ -14,5 +14,5 @@ export function useGetSarcophagus(sarcoId: string | number): Sarcophagus {
     args: [sarcoId !== '' ? sarcoId : ethers.constants.HashZero],
   });
 
-  return { ...data } as Sarcophagus;
+  return data as Sarcophagus;
 }

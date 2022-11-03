@@ -13,7 +13,7 @@ import { combine } from 'shamirs-secret-sharing-ts';
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const sarcophagus = useGetSarcophagus(sarcoId);
-  const archaeologists = useGetSarcophagusArchaeologists(sarcoId, sarcophagus.archaeologists);
+  const archaeologists = useGetSarcophagusArchaeologists(sarcoId, sarcophagus?.archaeologists);
   const [canResurrect, setCanResurrect] = useState(false);
 
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
@@ -69,7 +69,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
     } catch (error) {
       throw new Error(`Error resurrecting sarcophagus: ${error}`);
     }
-  }, [archaeologists, canResurrect, recipientPrivateKey, sarcoId, sarcophagus.arweaveTxIds]);
+  }, [archaeologists, canResurrect, recipientPrivateKey, sarcoId, sarcophagus]);
 
   return { canResurrect, resurrect };
 }

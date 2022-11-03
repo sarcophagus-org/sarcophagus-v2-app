@@ -12,19 +12,12 @@ export function useGetSarcophagusArchaeologists(
   const { data } = useContractReads({
     contracts:
       archaeologistAddresses?.map(address => ({
-        addressOrName: networkConfig.diamondDeployAddress,
-        contractInterface: ViewStateFacet__factory.abi,
+        address: networkConfig.diamondDeployAddress,
+        abi: ViewStateFacet__factory.abi,
         functionName: 'getSarcophagusArchaeologist',
         args: [sarcoId, address],
       })) ?? [],
   });
 
-  return (
-    data?.map(d => ({
-      diggingFee: d?.diggingFee,
-      diggingFeesPaid: d?.diggingFeesPaid,
-      unencryptedShardDoubleHash: d?.unencryptedShardDoubleHash,
-      unencryptedShard: d?.unencryptedShard,
-    })) ?? []
-  );
+  return (data as SarcophagusArchaeologist[]) || [];
 }
