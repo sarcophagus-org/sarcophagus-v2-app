@@ -45,7 +45,7 @@ export function ReviewSarcophagusTable() {
                   >
                     {name}
                   </Highlight>
-                  <Flex ml={3}>{error && <SummaryErrorIcon />}</Flex>
+                  <Flex ml={3}>{error && <SummaryErrorIcon error={error} />}</Flex>
                 </Flex>
               </Td>
               <Td py={2}>
