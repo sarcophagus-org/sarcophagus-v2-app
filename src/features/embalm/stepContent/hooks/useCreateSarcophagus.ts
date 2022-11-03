@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { useDispatch, useSelector } from 'store/index';
 import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
-import { ArchaeologistEncryptedShard } from 'types';
+import { Archaeologist, ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
 import { useBundlr } from './useBundlr';
@@ -133,6 +133,8 @@ export function useCreateSarcophagus() {
     console.error(error);
     if (error.isFromArweave) {
       // TODO: need to determine if `error` is arweave error, process accordingly
+    } else if (error.message) {
+      throw new Error(error.message);
     } else {
       // All other errors are unexpected and cannot be handled by the user.
       throw new Error('Something went wrong');
@@ -189,6 +191,12 @@ export function useCreateSarcophagus() {
     }
   }, [file, outerPublicKey, recipientState.publicKey, uploadToArweave, setSarcophagusPayloadTxId]);
 
+  interface ArchCommsExceptionParams {
+    message: string;
+    offendingArchs: Archaeologist[];
+    sourceStage: CreateSarcophagusStage;
+  }
+
   // TODO -- re-enable once figure out state issue at end of createSarcophagus
   // const resetLocalEmbalmerState = useCallback(() => {
   //   setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
@@ -200,23 +208,40 @@ export function useCreateSarcophagus() {
   //   setOuterPublicKey('');
   // }, []);
 
-  // TODO -- add approval stage
+  const incrementStage = useCallback((forceIndex?: number): void => {
+    const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
+    const currentIndex = stages.indexOf(currentStage);
+
+    let nextIndex = forceIndex ?? currentIndex + 1;
+
+    // Skip approval step if already approved and about to move into that step
+    if (!forceIndex && currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
+      nextIndex = currentIndex + 2;
+    }
+
+    setCurrentStage(stages[nextIndex]);
+  }, [currentStage, hasApproved]);
+
+  const processArchCommsException = useCallback(({ message, offendingArchs, sourceStage }: ArchCommsExceptionParams) => {
+    // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
+    // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
+    if (!!offendingArchs.length) {
+      incrementStage(sourceStage);
+      setStageError(message);
+
+      // TODO: Point out offending archs: Some might have declined, others may have connection issues. What should the user do??
+      console.log(
+        message,
+        offendingArchs.map(
+          a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`
+        )
+      );
+    }
+  }, [incrementStage]);
+
+  // Process each stage as they become active
   useEffect(() => {
     (async () => {
-      const incrementStage = (): void => {
-        const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
-        const currentIndex = stages.indexOf(currentStage);
-
-        let nextIndex = currentIndex + 1;
-
-        // Skip approval step if already approved and about to move into that step
-        if (currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
-          nextIndex = currentIndex + 2;
-        }
-
-        setCurrentStage(stages[nextIndex]);
-      };
-
       const executeStage = async (
         stageToExecute: (...args: any[]) => Promise<any>,
         ...stageArgs: any[]
@@ -254,14 +279,12 @@ export function useCreateSarcophagus() {
                 const offendingArchs = selectedArchaeologists.filter(
                   arch => arch.exception !== undefined
                 );
-                console.log(
-                  'Not all selected archaeologists have responded',
-                  offendingArchs.map(a => `${a.profile.peerId}: ${a.exception!.message}`)
-                );
-                // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
-                // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
 
-                // TODO: Point out offending archs -- what should the user do??
+                processArchCommsException({
+                  offendingArchs,
+                  sourceStage: CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS,
+                  message: 'Not all selected archaeologists responded',
+                });
               }
               break;
 
@@ -282,22 +305,19 @@ export function useCreateSarcophagus() {
                 const offendingArchs = selectedArchaeologists.filter(
                   arch => arch.exception !== undefined
                 );
-                console.log(
-                  'Not all selected archaeologists have signed off',
-                  offendingArchs.map(
-                    a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`
-                  )
-                );
-                // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
-                // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
 
-                // TODO: Point out offending archs: Some might have declined, others may have connection issues. Check `exception.code` on each to determine exception type -- what should the user do??
+                processArchCommsException({
+                  offendingArchs,
+                  sourceStage: CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
+                  message: 'Not all selected archaeologists signed off',
+                });
               }
               break;
 
             case CreateSarcophagusStage.APPROVE:
               await executeStage(approve)
                 .catch(e => {
+                  console.log(e);
                   let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
                   setStageError(friendlyError);
                 });
@@ -305,16 +325,11 @@ export function useCreateSarcophagus() {
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                if (hasApproved) {
-                  await executeStage(submitSarcophagus)
-                    .catch(e => {
-                      let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
-                      setStageError(friendlyError);
-                    });
-                } else {
-                  setStageExecuting(false);
-                  setStageError('You need to approved SARCO spending');
-                }
+                await executeStage(submitSarcophagus)
+                  .catch(e => {
+                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
+                    setStageError(friendlyError);
+                  });
               }
               break;
 
@@ -354,7 +369,9 @@ export function useCreateSarcophagus() {
     navigate,
     approve,
     allowance,
-    hasApproved
+    hasApproved,
+    incrementStage,
+    processArchCommsException
   ]);
 
   // Update archaeologist public keys, signatures ready status
