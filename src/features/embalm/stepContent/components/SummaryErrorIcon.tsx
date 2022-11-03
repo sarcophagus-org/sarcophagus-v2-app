@@ -1,4 +1,4 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Button, Flex, Text, Tooltip } from '@chakra-ui/react';
 
 export function SummaryErrorIcon({ error }: { error?: string }) {
   return (
@@ -16,7 +16,9 @@ export function SummaryErrorIcon({ error }: { error?: string }) {
         alignItems="center"
         justifyContent="center"
       >
-        <Text color="red">!</Text>
+        <Flex h="1.2rem" w="1.2rem" borderRadius={100} background="errorAlt" alignItems="center" justifyContent="center" color="red" >
+          <Button variant="unstyled">!</Button>
+        </Flex>
       </Flex>
     </Tooltip>
   );
