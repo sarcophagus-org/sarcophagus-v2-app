@@ -315,12 +315,13 @@ export function useCreateSarcophagus() {
               break;
 
             case CreateSarcophagusStage.APPROVE:
-              await executeStage(approve)
-                .catch(e => {
-                  console.log(e);
-                  let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
-                  setStageError(friendlyError);
-                });
+              if (approve)
+                await executeStage(approve)
+                  .catch(e => {
+                    console.log(e);
+                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
+                    setStageError(friendlyError);
+                  });
               break;
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:

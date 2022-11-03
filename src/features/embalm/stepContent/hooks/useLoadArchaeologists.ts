@@ -29,28 +29,28 @@ export function useLoadArchaeologists() {
         dispatch(setCurrentChainId(chain?.id));
 
         const addresses: string[] = await readContract({
-          addressOrName: networkConfig.diamondDeployAddress,
-          contractInterface: ViewStateFacet__factory.abi,
+          address: networkConfig.diamondDeployAddress,
+          abi: ViewStateFacet__factory.abi,
           functionName: 'getArchaeologistProfileAddresses',
-        });
+        }) as string[];
 
         if (!addresses || addresses.length === 0) return;
 
         const profiles = await readContract({
-          addressOrName: networkConfig.diamondDeployAddress,
-          contractInterface: ViewStateFacet__factory.abi,
+          address: networkConfig.diamondDeployAddress,
+          abi: ViewStateFacet__factory.abi,
           functionName: 'getArchaeologistProfiles',
           args: [addresses],
-        });
+        }) as any[]; // TODO: Update ABI packages to export const JSON objects instead, then remove these any[]s so wagmi can infer types
 
         const stats = await readContract({
-          addressOrName: networkConfig.diamondDeployAddress,
-          contractInterface: ViewStateFacet__factory.abi,
+          address: networkConfig.diamondDeployAddress,
+          abi: ViewStateFacet__factory.abi,
           functionName: 'getArchaeologistsStatistics',
           args: [addresses],
-        });
+        }) as any[];
 
-        const newArchaeologists = profiles.map((p, i) => ({
+        const newArchaeologists = (profiles).map((p, i) => ({
           profile: {
             ...p,
             archAddress: addresses[i],

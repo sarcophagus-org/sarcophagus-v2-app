@@ -7,8 +7,8 @@ export function useAllowance() {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
-    addressOrName: networkConfig.sarcoTokenAddress,
-    contractInterface: SarcoTokenMock__factory.abi,
+    address: networkConfig.sarcoTokenAddress,
+    abi: SarcoTokenMock__factory.abi,
     functionName: 'allowance',
     args: [address, networkConfig.diamondDeployAddress],
   });

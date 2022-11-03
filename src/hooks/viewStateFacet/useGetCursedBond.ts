@@ -6,8 +6,8 @@ export function useGetCursedBond({ archaeologist }: { archaeologist: string }) {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
-    addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet__factory.abi,
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
     functionName: 'getCursedBond',
     args: [archaeologist],
   });
