@@ -54,7 +54,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
-  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
+  const { testDialArchaeologist, pingArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
   return (
@@ -124,23 +124,30 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       a => a.profile.peerId === arch.profile.peerId
                     ) !== -1;
 
+                  const rowTextColor = isSelected ? (arch.exception ? '' : 'brand.0') : '';
+
                   return (
                     <Tr
                       key={arch.profile.archAddress}
-                      background={isSelected ? 'brand.700' : ''}
-                      onClick={() => (includeDialButton ? {} : handleCheckArchaeologist(arch))}
+                      background={isSelected ? (arch.exception ? 'errorHighlight' : 'brand.700') : ''}
+                      onClick={() => {
+                        if (includeDialButton) return;
+                        if (!isSelected) pingArchaeologist(arch.fullPeerId!);
+                        handleCheckArchaeologist(arch);
+                      }
+                      }
                       cursor="pointer"
                       _hover={
                         isSelected
                           ? {}
                           : {
-                              background: 'brand.100',
-                            }
+                            background: 'brand.100',
+                          }
                       }
                     >
                       <Td>
                         <Text
-                          color={isSelected ? 'brand.0' : ''}
+                          color={rowTextColor}
                           ml={3}
                         >
                           {formatAddress(arch.profile.archAddress)}
@@ -155,7 +162,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                           />
                           <Text
                             ml={3}
-                            color={isSelected ? 'brand.0' : ''}
+                            color={rowTextColor}
                           >
                             {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
                           </Text>
