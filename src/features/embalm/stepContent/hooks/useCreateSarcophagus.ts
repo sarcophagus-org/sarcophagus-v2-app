@@ -1,5 +1,4 @@
-import { BigNumber, ethers } from 'ethers';
-import { doubleHashShard, encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
+import { encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { useDispatch, useSelector } from 'store/index';
@@ -15,7 +14,7 @@ import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
 import { handleContractCallException } from 'lib/utils/contract-error-handler';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
-import { useAllowance } from 'hooks/sarcoToken/useAllowance';
+import { encryptShards } from '../utils/createSarcophagus';
 
 // Note: ORDER MATTERS HERE
 export enum CreateSarcophagusStage {
@@ -29,31 +28,9 @@ export enum CreateSarcophagusStage {
   COMPLETED,
 }
 
-const createSarcophagusStages = {
-  [CreateSarcophagusStage.NOT_STARTED]: '',
-  [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
-  [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
-  [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
-  [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
-  [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
-  [CreateSarcophagusStage.APPROVE]: 'Approve',
-  [CreateSarcophagusStage.COMPLETED]: ''
-};
-
-async function encryptShards(
-  publicKeys: string[],
-  payload: Uint8Array[]
-): Promise<ArchaeologistEncryptedShard[]> {
-  return Promise.all(
-    publicKeys.map(async (publicKey, i) => ({
-      publicKey,
-      encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
-    }))
-  );
-}
-
-export function useCreateSarcophagus() {
+export function useCreateSarcophagus(
+  createSarcophagusStages: Record<number, string>
+) {
   const dispatch = useDispatch();
 
   const { recipientState, file, selectedArchaeologists, requiredArchaeologists } = useSelector(
@@ -98,18 +75,11 @@ export function useCreateSarcophagus() {
     archaeologistSignatures,
     archaeologistShards,
     arweaveTxIds,
-    currentStage,
+    currentStage
   });
 
   // SARCO approval
-  const [hasApproved, setHasApproved] = useState(false);
   const { approve } = useApprove();
-  const { allowance } = useAllowance();
-
-  useEffect(() => {
-    // TODO: compare with pending fees instead
-    setHasApproved(allowance !== undefined && BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))));
-  }, [allowance]);
 
   // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
@@ -121,12 +91,12 @@ export function useCreateSarcophagus() {
   }, []);
 
   const uploadToArweave = useCallback(async (data: Buffer): Promise<string> => {
-    const txId = networkConfig.chainId === hardhatChainId ?
-      await uploadArweaveFile(data) :
-      await uploadFile(data);
+      const txId = networkConfig.chainId === hardhatChainId ?
+        await uploadArweaveFile(data) :
+        await uploadFile(data);
 
-    return txId;
-  }, [uploadArweaveFile, uploadFile, networkConfig.chainId]
+      return txId;
+    }, [uploadArweaveFile, uploadFile, networkConfig.chainId]
   );
 
   const processUploadToArweaveError = (error: any) => {
@@ -146,7 +116,7 @@ export function useCreateSarcophagus() {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists,
+        threshold: requiredArchaeologists
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -158,7 +128,7 @@ export function useCreateSarcophagus() {
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard,
+          [shard.publicKey]: shard.encryptedShard
         }),
         {}
       );
@@ -197,36 +167,14 @@ export function useCreateSarcophagus() {
     sourceStage: CreateSarcophagusStage;
   }
 
-  // TODO -- re-enable once figure out state issue at end of createSarcophagus
-  // const resetLocalEmbalmerState = useCallback(() => {
-  //   setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
-  //   setEncryptedShardsTxId('');
-  //   setSarcophagusPayloadTxId('');
-  //   setArchaeologistSignatures(new Map<string, string>([]));
-  //   setNegotiationTimestamp(0);
-  //   setOuterPrivateKey('');
-  //   setOuterPublicKey('');
-  // }, []);
-
-  const incrementStage = useCallback((forceIndex?: number): void => {
-    const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
-    const currentIndex = stages.indexOf(currentStage);
-
-    let nextIndex = forceIndex ?? currentIndex + 1;
-
-    // Skip approval step if already approved and about to move into that step
-    if (!forceIndex && currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
-      nextIndex = currentIndex + 2;
-    }
-
-    setCurrentStage(stages[nextIndex]);
-  }, [currentStage, hasApproved]);
-
-  const processArchCommsException = useCallback(({ message, offendingArchs, sourceStage }: ArchCommsExceptionParams) => {
+  const processArchCommsException = useCallback(({
+                                                   message,
+                                                   offendingArchs,
+                                                   sourceStage
+                                                 }: ArchCommsExceptionParams) => {
     // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
     // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
     if (!!offendingArchs.length) {
-      incrementStage(sourceStage);
       setStageError(message);
 
       // TODO: Point out offending archs: Some might have declined, others may have connection issues. What should the user do??
@@ -237,11 +185,17 @@ export function useCreateSarcophagus() {
         )
       );
     }
-  }, [incrementStage]);
+  }, []);
 
   // Process each stage as they become active
   useEffect(() => {
     (async () => {
+      const incrementStage = (): void => {
+        const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
+        const currentIndex = stages.indexOf(currentStage);
+        setCurrentStage(stages[currentIndex + 1]);
+      };
+
       const executeStage = async (
         stageToExecute: (...args: any[]) => Promise<any>,
         ...stageArgs: any[]
@@ -283,7 +237,7 @@ export function useCreateSarcophagus() {
                 processArchCommsException({
                   offendingArchs,
                   sourceStage: CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS,
-                  message: 'Not all selected archaeologists responded',
+                  message: 'Not all selected archaeologists responded'
                 });
               }
               break;
@@ -309,7 +263,7 @@ export function useCreateSarcophagus() {
                 processArchCommsException({
                   offendingArchs,
                   sourceStage: CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
-                  message: 'Not all selected archaeologists signed off',
+                  message: 'Not all selected archaeologists signed off'
                 });
               }
               break;
@@ -369,9 +323,6 @@ export function useCreateSarcophagus() {
     dispatch,
     navigate,
     approve,
-    allowance,
-    hasApproved,
-    incrementStage,
     processArchCommsException
   ]);
 
@@ -397,13 +348,23 @@ export function useCreateSarcophagus() {
     dispatch(disableSteps());
   }, [dispatch]);
 
+  // TODO -- re-enable once figure out state issue at end of createSarcophagus
+  // const resetLocalEmbalmerState = useCallback(() => {
+  //   setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
+  //   setEncryptedShardsTxId('');
+  //   setSarcophagusPayloadTxId('');
+  //   setArchaeologistSignatures(new Map<string, string>([]));
+  //   setNegotiationTimestamp(0);
+  //   setOuterPrivateKey('');
+  //   setOuterPublicKey('');
+  // }, []);
+
   return {
     currentStage,
     uploadAndSetEncryptedShards,
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
     stageError,
-    hasApproved,
-    createSarcophagusStages,
+    createSarcophagusStages
   };
 }
