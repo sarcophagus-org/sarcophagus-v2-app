@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import {
   fundFailure,
   fundStart,
@@ -38,7 +38,7 @@ export function useBundlr() {
 
         dispatch(
           setPendingBalance({
-            balanceBeforeFund: balance,
+            balanceBeforeTx: balance,
             txId: response!.id,
           })
         );
@@ -61,20 +61,30 @@ export function useBundlr() {
    * @param amount The amount to withdraw
    */
   const withdraw = useCallback(
-    async (amount: BigNumber) => {
+    async (amount: string) => {
       setIsWithdrawing(true);
       toast(withdrawStart());
       try {
-        await bundlr?.withdrawBalance(Number(amount));
+        const parsedAmount = ethers.utils.parseUnits(amount);
+        const response = await bundlr?.withdrawBalance(Number(parsedAmount));
+
+        dispatch(
+          setPendingBalance({
+            balanceBeforeTx: balance,
+            txId: response!.tx_id,
+          })
+        );
+
         toast(withdrawSuccess());
       } catch (_error) {
         const error = _error as Error;
+        console.error(error);
         toast(withdrawFailure(error.message));
       } finally {
         setIsWithdrawing(false);
       }
     },
-    [bundlr, toast]
+    [bundlr, dispatch, toast, balance]
   );
 
   /**
@@ -91,7 +101,7 @@ export function useBundlr() {
       try {
         const res = await bundlr?.upload(fileBuffer);
         toast(uploadSuccess());
-        return res.data.id;
+        return res.id;
       } catch (_error) {
         throw _error;
       }

@@ -51,10 +51,10 @@ export function useGetBalance() {
         // If our new balance is different than current, then funding is complete
         // update the new balance and clear out our interval
         if (newBalance !== balance) {
-          console.log('balance is being updated due to funding completion');
+          console.log('balance is being updated due to funding/withdrawal completion');
           dispatch(
             setPendingBalance({
-              balanceBeforeFund: '',
+              balanceBeforeTx: '',
               txId: '',
             })
           );

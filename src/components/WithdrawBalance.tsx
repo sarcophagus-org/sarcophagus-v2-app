@@ -1,36 +1,52 @@
 import {
   Button,
   Flex,
-  FormControl,
+  InputGroup,
+  Input,
   FormLabel,
-  NumberInput,
-  NumberInputField,
+  InputRightElement,
   HStack,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useGetBalance } from '../features/embalm/stepContent/hooks/useGetBalance';
+import { useDispatch } from 'store/index';
+import { setBalance } from 'store/bundlr/actions';
 
-/**
- * This is a temporary component meant to be used as a showcase for the arweave bundlr functionality
- */
 export function WithdrawBalance() {
+  const dispatch = useDispatch();
+  const { getBalance } = useGetBalance();
   const { bundlr, withdraw, isWithdrawing } = useBundlr();
   const { balance } = useGetBalance();
   const [amount, setAmount] = useState('');
 
-  function handleChangeAmount(valueAsString: string) {
-    setAmount(valueAsString);
+  // function handleChangeAmount(valueAsString: string) {
+  //   setAmount(valueAsString);
+  // }
+
+  const isAmountValid = parseFloat(amount) > 0;
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { value } = event.target;
+    if (Number(value) < 0 || !ethers.utils.parseEther(value)) return;
+    const inputLimit = 46;
+    setAmount(value.slice(0, inputLimit));
   }
 
-  async function handleWithdrawAmount() {
-    const parsedAmount = ethers.utils.parseUnits(amount);
-    await withdraw(parsedAmount);
-  }
+  // async function handleWithdrawAmount() {
+  //   if (!isAmountValid) return;
+  //   // const parsedAmount = ethers.utils.parseUnits(amount);
+  //   // await withdraw(parsedAmount);
+  //   await withdraw(amount);
+  // }
+
+  const handleWithdrawAmount = useCallback(async () => {
+    if (!isAmountValid) return;
+    await withdraw(amount);
+    const newBalance = await getBalance();
+    dispatch(setBalance(newBalance));
+  }, [amount, dispatch, withdraw, getBalance, isAmountValid]);
 
   function handleClickMax() {
     setAmount(balance);
@@ -46,9 +62,9 @@ export function WithdrawBalance() {
     );
   }
 
-  function isInputDisabled() {
-    return !bundlr || isWithdrawing;
-  }
+  // function isInputDisabled() {
+  //   return !bundlr || isWithdrawing;
+  // }
 
   return (
     <Flex direction="column">
@@ -88,7 +104,7 @@ export function WithdrawBalance() {
 
       {/* NEW FORM */}
 
-      <HStack mb="8">
+      {/* <HStack mb="8">
         <NumberInput
           flex={1}
           mr={3}
@@ -115,6 +131,38 @@ export function WithdrawBalance() {
           onClick={handleWithdrawAmount}
           disabled={isButtonDisabled()}
           isLoading={isWithdrawing}
+        >
+          Withdraw
+        </Button>
+      </HStack> */}
+
+      <HStack mb="8">
+        <InputGroup
+          flex={1}
+          mr={1}
+        >
+          <Input
+            onChange={handleInputChange}
+            value={amount}
+            // readOnly={true}
+            type="text"
+            placeholder="0.00000000"
+            _placeholder={{ color: 'inherit' }}
+          />
+          <InputRightElement fontWeight={700}>ETH</InputRightElement>
+        </InputGroup>
+        <Button
+          variant="link"
+          onClick={handleClickMax}
+        >
+          Max
+        </Button>
+        <Button
+          float="right"
+          w="150px"
+          disabled={isButtonDisabled()}
+          isLoading={isWithdrawing}
+          onClick={handleWithdrawAmount}
         >
           Withdraw
         </Button>

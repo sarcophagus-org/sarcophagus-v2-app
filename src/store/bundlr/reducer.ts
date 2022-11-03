@@ -4,7 +4,7 @@ import { ActionType } from './actions';
 
 export interface BundlrPendingBalance {
   txId: string | null;
-  balanceBeforeFund: string;
+  balanceBeforeTx: string;
 }
 
 export interface BundlrState {
@@ -26,7 +26,7 @@ export const bundlrInitialState: BundlrState = {
   txId: null,
   pendingBalance: {
     txId: null,
-    balanceBeforeFund: '',
+    balanceBeforeTx: '',
   },
 };
 
