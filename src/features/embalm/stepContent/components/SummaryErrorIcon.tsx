@@ -1,4 +1,4 @@
-import { Button, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Button, Flex, Tooltip } from '@chakra-ui/react';
 
 export function SummaryErrorIcon({ error }: { error?: string }) {
   return (
