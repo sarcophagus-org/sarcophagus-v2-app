@@ -4,7 +4,6 @@ import {
   fundFailure,
   fundStart,
   fundSuccess,
-  uploadFailure,
   uploadStart,
   uploadSuccess,
   withdrawFailure,
@@ -24,7 +23,6 @@ export function useBundlr() {
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
 
   /**
    * Funds the bundlr node
@@ -89,20 +87,14 @@ export function useBundlr() {
         throw new Error('Bundlr not connected');
       }
 
-      setIsUploading(true);
       toast(uploadStart());
       try {
         const res = await bundlr?.upload(fileBuffer);
         toast(uploadSuccess());
         return res.data.id;
       } catch (_error) {
-        const error = _error as Error;
-        console.error(error);
-        toast(uploadFailure(error.message));
-      } finally {
-        setIsUploading(false);
+        throw _error;
       }
-      return '';
     },
     [bundlr, toast]
   );
@@ -113,7 +105,6 @@ export function useBundlr() {
     isConnected,
     isFunding,
     isWithdrawing,
-    isUploading,
     fund,
     withdraw,
     uploadFile,

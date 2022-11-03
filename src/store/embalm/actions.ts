@@ -19,7 +19,6 @@ export enum ActionType {
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
-  SetDiggingFees = 'EMBALM_SET_DIGGING_FEES',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
@@ -34,13 +33,12 @@ export enum ActionType {
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
   SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
-  SetShardPayloadData = 'EMBALM_SET_SHARD_PAYLOAD_DATA',
-  SetSignaturesReady = 'EMBALM_SET_SIGNATURES_READY',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
   SetArchaeologistException = 'EMBALM_SET_ARCHAEOLOGIST_EXCEPTION',
   ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
+  SetCurrentChainId = 'EMBALM_SET_CURRENT_CHAIN_ID',
 }
 
 export enum RecipientSetByOption {
@@ -87,7 +85,6 @@ type EmbalmPayload = {
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
-  [ActionType.SetDiggingFees]: { diggingFees: string };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
   [ActionType.SetName]: { name: string };
@@ -98,7 +95,7 @@ type EmbalmPayload = {
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
-  [ActionType.SetSelectedArchaeologists]: { archaeologists: Archaeologist[] };
+  [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: Archaeologist[] };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -106,6 +103,7 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: {};
+  [ActionType.SetCurrentChainId]: { chainId: number | undefined };
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -141,15 +139,6 @@ export function toggleStep(step: Step): EmbalmActions {
     type: ActionType.ToggleStep,
     payload: {
       step,
-    },
-  };
-}
-
-export function setDiggingFees(diggingFees: string): EmbalmActions {
-  return {
-    type: ActionType.SetDiggingFees,
-    payload: {
-      diggingFees,
     },
   };
 }
@@ -221,15 +210,6 @@ export function setCustomResurrectionDate(date: Date | null): EmbalmActions {
     type: ActionType.SetCustomResurrectionDate,
     payload: {
       date,
-    },
-  };
-}
-
-export function setSelectedArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
-  return {
-    type: ActionType.SetSelectedArchaeologists,
-    payload: {
-      archaeologists,
     },
   };
 }
@@ -378,6 +358,15 @@ export function enableSteps(): EmbalmActions {
   return {
     type: ActionType.EnableSteps,
     payload: {},
+  };
+}
+
+export function setCurrentChainId(chainId: number | undefined): EmbalmActions {
+  return {
+    type: ActionType.SetCurrentChainId,
+    payload: {
+      chainId,
+    },
   };
 }
 

@@ -52,9 +52,6 @@ export function bundlrReducer(state: BundlrState, action: Actions): BundlrState 
       const txId = action.payload.txId;
       return { ...state, txId };
 
-    case ActionType.SetIsUploading:
-      return { ...state, isUploading: action.payload.isUploading };
-
     case ActionType.SetPendingBalance:
       return { ...state, pendingBalance: action.payload.pendingBalance };
 

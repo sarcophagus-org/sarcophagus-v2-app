@@ -19,7 +19,6 @@ import {
   Td,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
-import { BigNumber } from 'ethers';
 import { formatAddress } from 'lib/utils/helpers';
 import useSarcophagi from 'hooks/useSarcophagi';
 
@@ -27,23 +26,6 @@ interface TabData {
   label: string;
   value: string;
   component: JSX.Element;
-}
-
-export interface ISarcophagus {
-  archaeologists: string[];
-  arweaveArchaeologist: string;
-  arweaveTxId: string;
-  canBeTransferred: boolean;
-  embalmer: string;
-  maxResurrectionInterval: BigNumber;
-  minShards: number;
-  name: string;
-  recipientAddress: string;
-  resurrectionTime: BigNumber;
-  state: number;
-  storageFee: BigNumber;
-  sarcoId: string;
-  confirmations: number;
 }
 
 interface MyTabProps extends TabProps {
@@ -54,7 +36,7 @@ export function Dashboard() {
 
   function CustomTab(props: MyTabProps) {
     const tabProps = useTab(props);
-    const isSelected = !!tabProps['aria-selected'];
+    const isSelected = tabProps['aria-selected'];
     const styles = useStyleConfig('Tab');
 
     return (

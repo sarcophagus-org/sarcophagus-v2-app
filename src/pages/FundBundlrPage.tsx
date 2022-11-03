@@ -6,9 +6,9 @@ export function FundBundlrPage() {
   return (
     <Flex
       direction="column"
-      width="60%"
-      height="%100"
-      ml="84px"
+      maxWidth={640}
+      w="90%"
+      ml="5%"
       py="48px"
     >
       <Heading>Fund/Withdraw from Arweave Bundlr</Heading>

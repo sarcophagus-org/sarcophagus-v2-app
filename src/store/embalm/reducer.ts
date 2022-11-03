@@ -22,7 +22,6 @@ export enum Step {
 export interface EmbalmState {
   archaeologists: Archaeologist[];
   currentStep: Step;
-  diggingFees: string;
   expandedStepIndices: number[];
   file: File | null;
   name: string;
@@ -41,12 +40,12 @@ export interface EmbalmState {
   archAddressSearch: string;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
+  currentChainId: number | undefined;
 }
 
 export const embalmInitialState: EmbalmState = {
   archaeologists: [],
   currentStep: Step.NameSarcophagus,
-  diggingFees: '0',
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
   name: '',
@@ -68,6 +67,7 @@ export const embalmInitialState: EmbalmState = {
   archAddressSearch: '',
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
+  currentChainId: undefined,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -136,9 +136,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.ToggleStep:
       return toggleStep(state, action.payload.step);
 
-    case ActionType.SetDiggingFees:
-      return { ...state, diggingFees: action.payload.diggingFees };
-
     case ActionType.SetExpandedStepIndices:
       return { ...state, expandedStepIndices: action.payload.indices };
 
@@ -200,7 +197,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       };
 
     case ActionType.SetSelectedArchaeologists:
-      return { ...state, selectedArchaeologists: action.payload.archaeologists };
+      return { ...state, selectedArchaeologists: action.payload.selectedArchaeologists };
 
     case ActionType.SetDiggingFeesSortDirection:
       return { ...state, diggingFeesSortDirection: action.payload.direction };
@@ -250,6 +247,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         value: action.payload.signature,
         updateSelected: true,
       });
+
+    case ActionType.SetCurrentChainId:
+      return { ...state, currentChainId: action.payload.chainId };
 
     case ActionType.DisableSteps:
       return { ...state, areStepsDisabled: true };

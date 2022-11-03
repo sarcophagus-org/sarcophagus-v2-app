@@ -2,11 +2,9 @@ import {
   Button,
   FormControl,
   FormLabel,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
+  InputGroup,
+  Input,
+  InputRightElement,
   Text,
   VStack,
   HStack,
@@ -15,25 +13,28 @@ import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { useCallback, useState } from 'react';
 import { setBalance } from 'store/bundlr/actions';
-import { useDispatch } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
 import { useBundlrSession } from '../features/embalm/stepContent/hooks/useBundlrSession';
 import { useGetBalance } from '../features/embalm/stepContent/hooks/useGetBalance';
 import { uploadPriceDecimals } from 'lib/constants';
+import { ethers } from 'ethers';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const dispatch = useDispatch();
   const { fund, isFunding } = useBundlr();
   const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
   const { getBalance, formattedBalance } = useGetBalance();
-  const { uploadPrice, formattedUploadPrice } = useUploadPrice();
+  const { uploadPrice, formattedUploadPrice, uploadPriceBN } = useUploadPrice();
   const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
-  const ONE_WEI = '0.000000000000000001';
+  const { pendingBalance } = useSelector(x => x.bundlrState);
 
   const isAmountValid = parseFloat(amount) > 0;
 
-  function handleAmountChange(valueAsString: string, valueAsNumber: number) {
-    if (valueAsNumber < 0) return;
-    setAmount(valueAsString);
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { value } = event.target;
+    if (Number(value) < 0 || !ethers.utils.parseEther(value)) return;
+    const inputLimit = 46;
+    setAmount(value.slice(0, inputLimit));
   }
 
   function handleDisconnect() {
@@ -68,19 +69,20 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           <FormControl>
             <FormLabel>Deposit Amount</FormLabel>
             <HStack>
-              <NumberInput
+              <InputGroup
                 flex={1}
-                onChange={handleAmountChange}
-                value={amount}
-                isDisabled={isFunding}
                 mr={3}
               >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+                <Input
+                  onChange={handleInputChange}
+                  value={amount}
+                  isDisabled={isFunding}
+                  type="text"
+                  placeholder="0.00000000"
+                  _placeholder={{ color: 'inherit' }}
+                />
+                <InputRightElement fontWeight={700}>ETH</InputRightElement>
+              </InputGroup>
               <Button
                 float="right"
                 w="150px"
@@ -92,6 +94,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </Button>
             </HStack>
           </FormControl>
+
           {children}
           <VStack
             border="1px solid "
@@ -114,12 +117,18 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </Button>
             </HStack>
             <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            {formattedUploadPrice > ONE_WEI ? (
+            {uploadPriceBN.gt(0) && (
               <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
-            ) : (
-              ''
             )}
           </VStack>
+          {pendingBalance.txId && (
+            <Text
+              mt={3}
+              color="error"
+            >
+              You have a pending balance update. Your balance should be updated in a few minutes
+            </Text>
+          )}
         </VStack>
       )}
     </VStack>
