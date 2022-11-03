@@ -34,6 +34,7 @@
     "assert": "^2.0.0",
     "authereum": "^0.1.14",
     "axios": "^0.27.2",
+    "bignumber.js": "^9.1.0",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
     "chakra-react-select": "^4.2.5",
