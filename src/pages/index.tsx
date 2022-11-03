@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Link } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
@@ -45,13 +45,18 @@ export function Pages() {
         >
           <Flex alignItems="center">
             {routes.map(route => (
-              <NavLink
+              <Link
+                textDecor="bold"
+                as={NavLink}
+                _activeLink={{ color: 'brand.950', fontWeight: 'bold' }}
+                _hover={{ textDecor: 'none' }}
                 key={route.path}
                 to={route.path}
-                className={({ isActive }) => (isActive ? 'activeLink' : 'inactiveLink')}
+                color="brand.700"
+                px={5}
               >
-                <Text px={4}>{route.label}</Text>
-              </NavLink>
+                {route.label}
+              </Link>
             ))}
           </Flex>
         </Flex>

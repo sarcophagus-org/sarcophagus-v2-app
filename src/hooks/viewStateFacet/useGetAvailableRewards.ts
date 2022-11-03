@@ -6,8 +6,8 @@ export function useGetAvailableRewards({ archaeologist }: { archaeologist: strin
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
-    addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet__factory.abi,
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
     functionName: 'getAvailableRewards',
     args: [archaeologist],
   });

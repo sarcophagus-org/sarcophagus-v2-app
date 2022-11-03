@@ -11,16 +11,16 @@ const useSarcophagi = () => {
   const networkConfig = useNetworkConfig();
 
   const viewStateContract = useContract({
-    addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet__factory.abi,
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
     signerOrProvider: provider,
   });
 
   const getEmbalmerSarcophagi = useContractRead({
-    addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet__factory.abi,
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
     functionName: 'getEmbalmerSarcophagi',
-    args: embalmerAddress,
+    args: [embalmerAddress],
   });
 
   async function updateSarcophagi() {
@@ -29,7 +29,7 @@ const useSarcophagi = () => {
 
     const s = await Promise.all(
       sarcoIds.map(async id => {
-        const res = await viewStateContract.getSarcophagus(id);
+        const res = await viewStateContract!.getSarcophagus(id);
         const sarcophagus = { ...(res as ISarcophagus), sarcoId: id };
         return { ...sarcophagus };
       })

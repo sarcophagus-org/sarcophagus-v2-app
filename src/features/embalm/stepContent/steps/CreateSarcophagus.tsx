@@ -54,7 +54,7 @@ export function CreateSarcophagus() {
             mt={3}
             alignItems="center"
           >
-            <SummaryErrorIcon />
+            <SummaryErrorIcon error={stageError} />
             <Text
               ml={2}
               color="brand.500"

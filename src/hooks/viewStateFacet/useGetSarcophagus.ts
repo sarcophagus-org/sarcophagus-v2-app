@@ -6,8 +6,8 @@ export function useGetSarcophagus({ sarcoId }: { sarcoId: string | number }) {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
-    addressOrName: networkConfig.diamondDeployAddress,
-    contractInterface: ViewStateFacet__factory.abi,
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
     functionName: 'getSarcophagus',
     args: [sarcoId],
   });
