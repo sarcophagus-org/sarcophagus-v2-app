@@ -5,9 +5,9 @@ import { NetworkConfig } from './networkConfigType';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
-  // TODO: when will chain be empty? Should there be a network config in that scenario?
   const networkConfig: NetworkConfig = !!chain
     ? networkConfigs[chain.id]
+      // fallback to empty config if there is no connected wallet
     : {
         chainId: 0,
         networkName: '',
