@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react';
-import { ethers, BigNumber } from 'ethers';
+import { ethers } from 'ethers';
 import {
   fundFailure,
   fundStart,
