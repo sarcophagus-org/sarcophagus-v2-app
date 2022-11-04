@@ -53,6 +53,8 @@ export function CreateSarcophagus() {
       setCreateSarcophagusStages(
         stepsCopy
       );
+    } else {
+      setCreateSarcophagusStages(defaultCreateSarcophagusStages);
     }
   }, [allowance, signer]);
 
