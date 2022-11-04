@@ -25,7 +25,7 @@ export function TempResurrectionPage() {
     setSarcoId(e.target.value);
   }
 
-  function handleCangePrivateKey(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChangePrivateKey(e: React.ChangeEvent<HTMLInputElement>) {
     setPrivateKey(e.target.value);
   }
 
@@ -48,7 +48,7 @@ export function TempResurrectionPage() {
         <Input
           placeholder="Private Key"
           value={privateKey}
-          onChange={handleCangePrivateKey}
+          onChange={handleChangePrivateKey}
         />
         <Button
           w="100%"
