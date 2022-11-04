@@ -80,7 +80,10 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if ((isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) || chain?.id === hardhatChainId) {
+    if (
+      (isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) ||
+      chain?.id === hardhatChainId
+    ) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
