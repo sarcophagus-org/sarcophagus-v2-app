@@ -17,6 +17,6 @@ export function useAllowance() {
   return {
     allowance: data as BigNumber | undefined,
     isError,
-    isLoading
+    isLoading,
   };
 }

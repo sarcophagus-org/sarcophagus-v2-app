@@ -46,17 +46,17 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
     ...(transaction.chainId && { chainId: transaction.chainId }),
 
     ...((isLegacy(transaction.type) || isEIP2930(transaction.type)) && {
-      gasPrice: transaction.gasPrice
+      gasPrice: transaction.gasPrice,
     }),
 
     ...((isEIP2930(transaction.type) || isEIP1550(transaction.type)) && {
-      accessList: transaction.accessList
+      accessList: transaction.accessList,
     }),
 
     ...(isEIP1550(transaction.type) && {
       maxFeePerGas: transaction.maxFeePerGas,
-      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-    })
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+    }),
   };
 
   const resolvedTx = await ethers.utils.resolveProperties(unsignedTransaction);
@@ -66,7 +66,7 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
   const signature = ethers.utils.splitSignature({
     r: transaction.r || '',
     s: transaction.s || '',
-    v: transaction.v || 0
+    v: transaction.v || 0,
   });
 
   return ethers.utils.recoverPublicKey(msgHash, signature);
@@ -123,7 +123,7 @@ export function useRecoverPublicKey() {
                 setRecipientState({
                   publicKey: recoveredPublicKey,
                   address: address,
-                  setByOption: RecipientSetByOption.ADDRESS
+                  setByOption: RecipientSetByOption.ADDRESS,
                 })
               );
 

@@ -3,20 +3,18 @@ import React, { useCallback } from 'react';
 import {
   setArchaeologistConnection,
   setArchaeologistException,
-  setArchaeologistSignature
+  setArchaeologistSignature,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
 import {
   ArchaeologistEncryptedShard,
   ArchaeologistExceptionCode,
-  SarcophagusValidationError
+  SarcophagusValidationError,
 } from 'types';
 import { useLibp2p } from './libp2p/useLibp2p';
 import { getLowestRewrapInterval } from '../lib/utils/helpers';
-import {
-  CreateSarcophagusStage
-} from '../features/embalm/stepContent/utils/createSarcophagus';
+import { CreateSarcophagusStage } from '../features/embalm/stepContent/utils/createSarcophagus';
 import { createSarcophagusErrors } from '../features/embalm/stepContent/utils/errors';
 
 interface SarcophagusNegotiationParams {
@@ -47,7 +45,7 @@ export function useSarcophagusNegotiation() {
         dispatch(
           setArchaeologistException(arch.profile.peerId, {
             code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-            message: 'Could not establish a connection'
+            message: 'Could not establish a connection',
           })
         );
         dialFailedArchaeologists.push(arch.profile.peerId);
@@ -104,7 +102,7 @@ export function useSarcophagusNegotiation() {
             timestamp: negotiationTimestamp,
             unencryptedShardDoubleHash: archaeologistShards.find(
               s => s.publicKey === arch.publicKey
-            )!.unencryptedShardDoubleHash
+            )!.unencryptedShardDoubleHash,
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
@@ -126,7 +124,7 @@ export function useSarcophagusNegotiation() {
                       message: processDeclinedSignatureCode(
                         response.error.code as SarcophagusValidationError,
                         arch.profile.archAddress
-                      )
+                      ),
                     })
                   );
                 } else {
@@ -143,7 +141,7 @@ export function useSarcophagusNegotiation() {
                 dispatch(
                   setArchaeologistException(arch.profile.peerId, {
                     code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
-                    message
+                    message,
                   })
                 );
                 throw Error('stream exception');
@@ -153,7 +151,7 @@ export function useSarcophagusNegotiation() {
             throw Error(`stream exception: ${e}`);
           }
         })
-      ).catch((error) => {
+      ).catch(error => {
         throw Error(`Error retrieving arch signatures ${error}`);
       });
 
@@ -168,6 +166,6 @@ export function useSarcophagusNegotiation() {
 
   return {
     dialSelectedArchaeologists,
-    initiateSarcophagusNegotiation
+    initiateSarcophagusNegotiation,
   };
 }

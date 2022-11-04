@@ -10,10 +10,9 @@ export async function encryptShards(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
       encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i])
+      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
     }))
   );
-
 } // Note: ORDER MATTERS HERE
 export enum CreateSarcophagusStage {
   NOT_STARTED,
@@ -34,6 +33,5 @@ export const defaultCreateSarcophagusStages: Record<number, string> = {
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
   [CreateSarcophagusStage.APPROVE]: 'Approve',
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
-  [CreateSarcophagusStage.COMPLETED]: ''
+  [CreateSarcophagusStage.COMPLETED]: '',
 };
-

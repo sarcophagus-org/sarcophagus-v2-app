@@ -20,7 +20,7 @@ export const createSarcophagusErrors: Record<number, string> = {
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
   [CreateSarcophagusStage.APPROVE]: 'Approve',
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
-  [CreateSarcophagusStage.COMPLETED]: ''
+  [CreateSarcophagusStage.COMPLETED]: '',
 };
 
 export const formatCreateSarcophagusError = (
@@ -31,13 +31,13 @@ export const formatCreateSarcophagusError = (
   switch (sourceStage) {
     case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
     case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
-      const offendingArchs = selectedArchaeologists!.filter(
-        arch => arch.exception !== undefined
-      );
+      const offendingArchs = selectedArchaeologists!.filter(arch => arch.exception !== undefined);
       processArchCommsException(offendingArchs);
       return e.message;
     case CreateSarcophagusStage.APPROVE:
-      return e.reason ? formatContractCallException(e.reason) : 'Failed to approve sarco token allowance.';
+      return e.reason
+        ? formatContractCallException(e.reason)
+        : 'Failed to approve sarco token allowance.';
     case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
       return e.reason ? formatContractCallException(e.reason) : 'Failed to create sarcophagus.';
     default:

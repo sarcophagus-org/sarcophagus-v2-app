@@ -44,8 +44,7 @@ export function formatSubmitSarcophagusArgs({
   archaeologistSignatures,
   archaeologistShards,
   arweaveTxIds,
- }: SubmitSarcophagusProps) {
-
+}: SubmitSarcophagusProps) {
   const getContractArchaeologists = (): ContractArchaeologist[] => {
     return selectedArchaeologists.map(arch => {
       const { v, r, s } = ethers.utils.splitSignature(
@@ -59,7 +58,7 @@ export function formatSubmitSarcophagusArgs({
         )[0].unencryptedShardDoubleHash,
         v,
         r,
-        s
+        s,
       };
     });
   };
@@ -71,17 +70,17 @@ export function formatSubmitSarcophagusArgs({
     resurrectionTime: Math.trunc(resurrection / 1000),
     minShards: requiredArchaeologists,
     timestamp: Math.trunc(negotiationTimestamp / 1000),
-    maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists)
+    maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
   };
 
   const contractArchaeologists = getContractArchaeologists();
   const args = [
     sarcoId,
     {
-      ...settings
+      ...settings,
     },
     contractArchaeologists,
-    arweaveTxIds
+    arweaveTxIds,
   ];
 
   return { submitSarcophagusArgs: args };

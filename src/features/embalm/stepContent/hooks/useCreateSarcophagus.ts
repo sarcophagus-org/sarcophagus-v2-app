@@ -23,9 +23,14 @@ export function useCreateSarcophagus(
 ) {
   const dispatch = useDispatch();
 
-  const { name, recipientState, resurrection, file, selectedArchaeologists, requiredArchaeologists } = useSelector(
-    x => x.embalmState
-  );
+  const {
+    name,
+    recipientState,
+    resurrection,
+    file,
+    selectedArchaeologists,
+    requiredArchaeologists,
+  } = useSelector(x => x.embalmState);
 
   const navigate = useNavigate();
 
@@ -67,13 +72,16 @@ export function useCreateSarcophagus(
     })();
   }, []);
 
-  const uploadToArweave = useCallback(async (data: Buffer): Promise<string> => {
-      const txId = networkConfig.chainId === hardhatChainId ?
-        await uploadArweaveFile(data) :
-        await uploadFile(data);
+  const uploadToArweave = useCallback(
+    async (data: Buffer): Promise<string> => {
+      const txId =
+        networkConfig.chainId === hardhatChainId
+          ? await uploadArweaveFile(data)
+          : await uploadFile(data);
 
       return txId;
-    }, [uploadArweaveFile, uploadFile, networkConfig.chainId]
+    },
+    [uploadArweaveFile, uploadFile, networkConfig.chainId]
   );
 
   const processUploadToArweaveError = (error: any) => {
@@ -88,7 +96,7 @@ export function useCreateSarcophagus(
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
         shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists
+        threshold: requiredArchaeologists,
       });
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
@@ -100,7 +108,7 @@ export function useCreateSarcophagus(
       const mapping: Record<string, string> = encShards.reduce(
         (acc, shard) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard
+          [shard.publicKey]: shard.encryptedShard,
         }),
         {}
       );
@@ -135,7 +143,8 @@ export function useCreateSarcophagus(
 
   const approveSarcoToken = useCallback(async () => {
     const tx = await sarcoToken.approve(
-      networkConfig.diamondDeployAddress, ethers.constants.MaxUint256
+      networkConfig.diamondDeployAddress,
+      ethers.constants.MaxUint256
     );
 
     await tx.wait();
@@ -153,12 +162,10 @@ export function useCreateSarcophagus(
       negotiationTimestamp,
       archaeologistSignatures,
       archaeologistShards,
-      arweaveTxIds
+      arweaveTxIds,
     });
 
-    const tx = await embalmerFacet.createSarcophagus(
-      ...submitSarcophagusArgs
-    );
+    const tx = await embalmerFacet.createSarcophagus(...submitSarcophagusArgs);
 
     await tx.wait();
   }, [
@@ -172,7 +179,7 @@ export function useCreateSarcophagus(
     requiredArchaeologists,
     negotiationTimestamp,
     archaeologistSignatures,
-    archaeologistShards
+    archaeologistShards,
   ]);
 
   // Process each stage as they become active
@@ -256,7 +263,11 @@ export function useCreateSarcophagus(
           }
         } catch (e: any) {
           console.error(e);
-          const stageErrorMessage = formatCreateSarcophagusError(currentStage, e, selectedArchaeologists);
+          const stageErrorMessage = formatCreateSarcophagusError(
+            currentStage,
+            e,
+            selectedArchaeologists
+          );
           setStageError(stageErrorMessage);
         }
       }
@@ -279,7 +290,7 @@ export function useCreateSarcophagus(
     selectedArchaeologists,
     stageError,
     dispatch,
-    navigate
+    navigate,
   ]);
 
   // Update archaeologist public keys, signatures ready status
@@ -321,6 +332,6 @@ export function useCreateSarcophagus(
     uploadAndSetDoubleEncryptedFile,
     handleCreate,
     stageError,
-    createSarcophagusStages
+    createSarcophagusStages,
   };
 }
