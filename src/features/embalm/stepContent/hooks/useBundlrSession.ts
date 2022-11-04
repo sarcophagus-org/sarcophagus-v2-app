@@ -78,7 +78,7 @@ export function useBundlrSession() {
       const error = _error as Error;
       toast(connectFailure(error.message));
     }
-  }, [dispatch, networkConfig, provider, toast]);
+  }, [dispatch, networkConfig, provider, toast, isHardhatNetwork]);
 
   /**
    * Manually injects a public key into a bundlr instance, bypassing the signature.

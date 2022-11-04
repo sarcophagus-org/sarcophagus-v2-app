@@ -139,6 +139,7 @@ export function useSetStatuses() {
     fundBundlrStatus,
     isBundlrConnected,
     uploadPrice,
+    chain?.id,
   ]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [
