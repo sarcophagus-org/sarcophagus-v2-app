@@ -28,7 +28,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
    */
   const resurrect = useCallback(async (): Promise<{ fileName: string; data: string }> => {
     try {
-      if (!canResurrect) return { fileName: '', data: '' };
+      if (!canResurrect) {
+        throw new Error('Cannot resurrect');
+      }
 
       // Get the payload txId from the contract using the sarcoId
       // The sarcophagus should always have arweave tx ids
@@ -62,7 +64,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       const { fileName, data } = JSON.parse(decryptedPayload.toString());
 
       if (!fileName || !data) {
-        return { fileName: '', data: '' };
+        throw new Error('The payload is missing the fileName or data');
       }
 
       return { fileName, data };
