@@ -36,7 +36,7 @@ export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStat
     [libp2pNode, setIsDialing, toast]
   );
 
-  const pingArchaeologist = useCallback(async (peerId: PeerId) => {
+  const pingArchaeologist = useCallback(async (peerId: PeerId, onComplete: Function) => {
     const pingTimeout = 5000;
 
     const couldNotConnect = setTimeout(() => {
@@ -46,6 +46,7 @@ export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStat
         peerId.toString(),
         { code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION, message: 'Ping timeout' }
       ));
+      onComplete();
     }, pingTimeout);
 
     console.log('pinging...');
@@ -54,7 +55,10 @@ export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStat
     console.log('latency: ', latency);
 
 
-    if (!!latency) clearTimeout(couldNotConnect);
+    if (!!latency) {
+      clearTimeout(couldNotConnect);
+      onComplete();
+    }
   }, [libp2pNode, dispatch]);
 
   return {

@@ -12,6 +12,7 @@ import {
   Button,
   VStack,
   Input,
+  Spinner,
 } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
@@ -22,9 +23,87 @@ import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from './DiggingFeesInput';
 import { ethers } from 'ethers';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
+import { Archaeologist } from 'types';
+
+interface ArchaeologistListItemProps {
+  archaeologist: Archaeologist;
+  isSelected: boolean;
+  includeDialButton: boolean;
+  isDialing: boolean;
+  setIsDialing: Dispatch<SetStateAction<boolean>>;
+  onClick: () => void;
+}
+
+function ArchaeologistListItem({
+  isSelected,
+  archaeologist,
+  includeDialButton,
+  isDialing,
+  setIsDialing,
+  onClick,
+
+}: ArchaeologistListItemProps) {
+  const [isPinging, setIsPinging] = useState(false);
+  const { testDialArchaeologist, pingArchaeologist } = useDialArchaeologists(setIsDialing);
+
+  const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.0') : '';
+
+  return (<Tr
+    background={isSelected ? (archaeologist.exception ? 'errorHighlight' : 'brand.700') : ''}
+    onClick={() => {
+      onClick();
+
+      if (!isSelected) {
+        setIsPinging(true);
+        pingArchaeologist(archaeologist.fullPeerId!, () => setIsPinging(false));
+      }
+    }}
+    cursor="pointer"
+    _hover={isSelected ? {} : { background: 'brand.100' }}
+  >
+    <Td>
+      <Flex>
+        {isPinging ? <Spinner size="sm" /> : <></>}
+        <Text
+          color={rowTextColor}
+          ml={3}
+        >
+          {formatAddress(archaeologist.profile.archAddress)}
+        </Text>
+      </Flex>
+    </Td>
+    <Td isNumeric>
+      <Flex justify="center">
+        <Image
+          src="sarco-token-icon.png"
+          w="18px"
+          h="18px"
+        />
+        <Text
+          ml={3}
+          color={rowTextColor}
+        >
+          {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
+        </Text>
+      </Flex>
+    </Td>
+    {includeDialButton ? (
+      <Td>
+        <Button
+          disabled={isDialing || !!archaeologist.connection}
+          onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
+        >
+          {archaeologist.connection ? 'Connected' : 'Dial'}
+        </Button>
+      </Td>
+    ) : (
+      <></>
+    )}
+  </Tr>);
+}
 
 export function ArchaeologistList({ includeDialButton }: { includeDialButton?: boolean }) {
   const {
@@ -54,7 +133,6 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
-  const { testDialArchaeologist, pingArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
   return (
@@ -124,64 +202,18 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       a => a.profile.peerId === arch.profile.peerId
                     ) !== -1;
 
-                  const rowTextColor = isSelected ? (arch.exception ? '' : 'brand.0') : '';
-
-                  return (
-                    <Tr
-                      key={arch.profile.archAddress}
-                      background={isSelected ? (arch.exception ? 'errorHighlight' : 'brand.700') : ''}
-                      onClick={() => {
-                        if (includeDialButton) return;
-                        if (!isSelected) pingArchaeologist(arch.fullPeerId!);
-                        handleCheckArchaeologist(arch);
-                      }
-                      }
-                      cursor="pointer"
-                      _hover={
-                        isSelected
-                          ? {}
-                          : {
-                            background: 'brand.100',
-                          }
-                      }
-                    >
-                      <Td>
-                        <Text
-                          color={rowTextColor}
-                          ml={3}
-                        >
-                          {formatAddress(arch.profile.archAddress)}
-                        </Text>
-                      </Td>
-                      <Td isNumeric>
-                        <Flex justify="center">
-                          <Image
-                            src="sarco-token-icon.png"
-                            w="18px"
-                            h="18px"
-                          />
-                          <Text
-                            ml={3}
-                            color={rowTextColor}
-                          >
-                            {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
-                          </Text>
-                        </Flex>
-                      </Td>
-                      {includeDialButton ? (
-                        <Td>
-                          <Button
-                            disabled={isDialing || !!arch.connection}
-                            onClick={() => testDialArchaeologist(arch.fullPeerId!)}
-                          >
-                            {arch.connection ? 'Connected' : 'Dial'}
-                          </Button>
-                        </Td>
-                      ) : (
-                        <></>
-                      )}
-                    </Tr>
-                  );
+                  return <ArchaeologistListItem
+                    key={arch.profile.archAddress}
+                    archaeologist={arch}
+                    onClick={() => {
+                      if (includeDialButton) return;
+                      handleCheckArchaeologist(arch);
+                    }}
+                    includeDialButton={!!includeDialButton}
+                    isDialing={isDialing}
+                    setIsDialing={setIsDialing}
+                    isSelected={isSelected}
+                  />;
                 })}
               </Tbody>
             </Table>
