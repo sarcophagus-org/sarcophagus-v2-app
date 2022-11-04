@@ -48,7 +48,7 @@ const errorMessageMapping = new Map<string, string | Function>([
 /**
  * Parses the text in RPC errors' `.reason` field and returns more readable error messages
  * */
-export function handleContractCallException(e: string) {
+export function formatContractCallException(e: string): string {
     for (let [key, value] of errorMessageMapping) {
         if (e.includes(key)) {
             if (typeof value === 'function') {

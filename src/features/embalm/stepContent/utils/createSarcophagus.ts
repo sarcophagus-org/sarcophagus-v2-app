@@ -36,3 +36,4 @@ export const defaultCreateSarcophagusStages: Record<number, string> = {
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
   [CreateSarcophagusStage.COMPLETED]: ''
 };
+

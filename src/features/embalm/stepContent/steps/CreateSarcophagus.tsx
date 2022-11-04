@@ -14,7 +14,7 @@ import { EmbalmerFacet__factory, SarcoTokenMock__factory } from '@sarcophagus-or
 import { useNetworkConfig } from '../../../../lib/config';
 
 export function CreateSarcophagus() {
-  const { allowance, isLoading } = useAllowance();
+  const { allowance } = useAllowance();
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(defaultCreateSarcophagusStages);
 
   const networkConfig = useNetworkConfig();
@@ -45,18 +45,16 @@ export function CreateSarcophagus() {
   };
 
   useEffect(() => {
-    if (!isLoading) {
-      // remove approval step if approval is complete
-      // TODO: compare with pending fees instead
-      if (BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('1000')))) {
-        const stepsCopy = { ...defaultCreateSarcophagusStages };
-        delete stepsCopy[CreateSarcophagusStage.APPROVE];
-        setCreateSarcophagusStages(
-          stepsCopy
-        );
-      }
+    // remove approval step if user has allowance on sarco token
+    // TODO: compare with pending fees instead
+    if (BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('1000')))) {
+      const stepsCopy = { ...defaultCreateSarcophagusStages };
+      delete stepsCopy[CreateSarcophagusStage.APPROVE];
+      setCreateSarcophagusStages(
+        stepsCopy
+      );
     }
-  }, [isLoading, allowance]);
+  }, [allowance, signer]);
 
   return (
     <Flex

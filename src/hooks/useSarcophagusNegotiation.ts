@@ -14,6 +14,10 @@ import {
 } from 'types';
 import { useLibp2p } from './libp2p/useLibp2p';
 import { getLowestRewrapInterval } from '../lib/utils/helpers';
+import {
+  CreateSarcophagusStage
+} from '../features/embalm/stepContent/utils/createSarcophagus';
+import { createSarcophagusErrors } from '../features/embalm/stepContent/utils/errors';
 
 interface SarcophagusNegotiationParams {
   arweaveTxId: string;
@@ -51,7 +55,7 @@ export function useSarcophagusNegotiation() {
     }
 
     if (dialFailedArchaeologists.length) {
-      throw Error('Could not connect to all archaeologists');
+      throw Error(createSarcophagusErrors[CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]);
     }
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 

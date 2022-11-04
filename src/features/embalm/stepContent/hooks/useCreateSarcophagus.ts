@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { useDispatch, useSelector } from 'store/index';
 import { formatSubmitSarcophagusArgs } from 'hooks/embalmerFacet';
-import { Archaeologist, ArchaeologistEncryptedShard } from 'types';
+import { ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
 import { useBundlr } from './useBundlr';
@@ -12,9 +12,9 @@ import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
 import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
-import { handleContractCallException } from 'lib/utils/contract-error-handler';
 import { CreateSarcophagusStage, encryptShards } from '../utils/createSarcophagus';
 import { ethers } from 'ethers';
+import { formatCreateSarcophagusError } from '../utils/errors';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -77,15 +77,10 @@ export function useCreateSarcophagus(
   );
 
   const processUploadToArweaveError = (error: any) => {
-    console.error(error);
-    if (error.isFromArweave) {
-      // TODO: need to determine if `error` is arweave error, process accordingly
-    } else if (error.message) {
-      throw new Error(error.message);
-    } else {
-      // All other errors are unexpected and cannot be handled by the user.
-      throw new Error('Something went wrong');
-    }
+    // TODO: need to determine if `error` is bundlr error, process accordingly
+    // We may want to have the user sign out / sign back in from Bundlr
+    // before retrying an upload
+    throw new Error(error.message || 'Error uploading to Bundlr');
   };
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
@@ -180,31 +175,6 @@ export function useCreateSarcophagus(
     archaeologistShards
   ]);
 
-  interface ArchCommsExceptionParams {
-    message: string;
-    offendingArchs: Archaeologist[];
-    sourceStage: CreateSarcophagusStage;
-  }
-
-  const processArchCommsException = useCallback(({
-                                                   message,
-                                                   offendingArchs
-                                                 }: ArchCommsExceptionParams) => {
-    // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
-    // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
-    if (!!offendingArchs.length) {
-      setStageError(message);
-
-      // TODO: Point out offending archs: Some might have declined, others may have connection issues. What should the user do??
-      console.log(
-        message,
-        offendingArchs.map(
-          a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`
-        )
-      );
-    }
-  }, []);
-
   // Process each stage as they become active
   useEffect(() => {
     (async () => {
@@ -247,16 +217,6 @@ export function useCreateSarcophagus(
             case CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS:
               if (publicKeysReady) {
                 await executeStage(uploadAndSetEncryptedShards);
-              } else {
-                const offendingArchs = selectedArchaeologists.filter(
-                  arch => arch.exception !== undefined
-                );
-
-                processArchCommsException({
-                  offendingArchs,
-                  sourceStage: CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS,
-                  message: 'Not all selected archaeologists responded'
-                });
               }
               break;
 
@@ -273,34 +233,15 @@ export function useCreateSarcophagus(
             case CreateSarcophagusStage.UPLOAD_PAYLOAD:
               if (signaturesReady) {
                 await executeStage(uploadAndSetDoubleEncryptedFile);
-              } else {
-                const offendingArchs = selectedArchaeologists.filter(
-                  arch => arch.exception !== undefined
-                );
-
-                processArchCommsException({
-                  offendingArchs,
-                  sourceStage: CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION,
-                  message: 'Not all selected archaeologists signed off'
-                });
               }
               break;
 
             case CreateSarcophagusStage.APPROVE:
-              await executeStage(approveSarcoToken)
-                .catch(e => {
-                  console.log(e);
-                  let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
-                  setStageError(friendlyError);
-                });
+              await executeStage(approveSarcoToken);
               break;
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
-              await executeStage(submitSarcophagus)
-                .catch(e => {
-                  let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
-                  setStageError(friendlyError);
-                });
+              await executeStage(submitSarcophagus);
               break;
 
             case CreateSarcophagusStage.COMPLETED:
@@ -314,9 +255,9 @@ export function useCreateSarcophagus(
               break;
           }
         } catch (e: any) {
-          // Ideally expecting human readable errors here
           console.error(e);
-          setStageError((e as Error).message);
+          const stageErrorMessage = formatCreateSarcophagusError(currentStage, e, selectedArchaeologists);
+          setStageError(stageErrorMessage);
         }
       }
     })();
@@ -338,8 +279,7 @@ export function useCreateSarcophagus(
     selectedArchaeologists,
     stageError,
     dispatch,
-    navigate,
-    processArchCommsException
+    navigate
   ]);
 
   // Update archaeologist public keys, signatures ready status
