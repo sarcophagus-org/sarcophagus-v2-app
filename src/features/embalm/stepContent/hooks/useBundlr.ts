@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import {
   fundFailure,
   fundStart,
@@ -66,16 +66,11 @@ export function useBundlr() {
       toast(withdrawStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
-        console.log('max amount', parsedAmount.toString());
+        const bundlrAddress = await bundlr?.utils.getBundlerAddress(bundlr?.currency);
+        const networkFee = await bundlr?.currencyConfig.getFee(Number(parsedAmount), bundlrAddress);
+        const withdrawAmount = parsedAmount.sub(Number(networkFee));
 
-        console.log('balance', balance);
-
-        console.log(
-          'getBalance',
-          (await bundlr!.utils.getBalance('0xc5e92e7f2E1cf916B97DB500587B79Da23FadeB1')).toString()
-        );
-
-        const response = await bundlr?.withdrawBalance(Number(parsedAmount));
+        const response = await bundlr?.withdrawBalance(Number(withdrawAmount));
 
         dispatch(
           setPendingBalance({
