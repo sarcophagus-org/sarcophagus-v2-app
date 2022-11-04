@@ -66,6 +66,15 @@ export function useBundlr() {
       toast(withdrawStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
+        console.log('max amount', parsedAmount.toString());
+
+        console.log('balance', balance);
+
+        console.log(
+          'getBalance',
+          (await bundlr!.utils.getBalance('0xc5e92e7f2E1cf916B97DB500587B79Da23FadeB1')).toString()
+        );
+
         const response = await bundlr?.withdrawBalance(Number(parsedAmount));
 
         dispatch(
