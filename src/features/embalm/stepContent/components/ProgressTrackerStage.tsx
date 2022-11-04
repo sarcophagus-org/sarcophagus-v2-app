@@ -46,7 +46,8 @@ export function ProgressTrackerStage({
           {children}
         </Text>
       </Flex>
-      {stageStatus === StageStatus.IN_PROGRESS && (stageError ? <SummaryErrorIcon error={stageError} /> : <Spinner size="sm" />)}
+      {stageStatus === StageStatus.IN_PROGRESS &&
+        (stageError ? <SummaryErrorIcon error={stageError} /> : <Spinner size="sm" />)}
       {/* If we want to show additional information on the stage, we can conditionally add it here. */}
     </Flex>
   );

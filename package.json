@@ -8,7 +8,8 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "npx eslint src/** --fix --no-error-on-unmatched-pattern",
-    "prettier": "npx prettier --write src/**"
+    "prettier": "npx prettier --write .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@bundlr-network/client": "^0.9.0-b8",
@@ -110,6 +111,7 @@
     "prettier": "^2.7.0",
     "process": "^0.11.10",
     "react-app-rewired": "^2.2.1",
-    "tailwindcss": "^3.1.2"
+    "tailwindcss": "^3.1.2",
+    "husky": "^8.0.0"
   }
 }

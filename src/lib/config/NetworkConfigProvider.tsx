@@ -7,8 +7,8 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const { chain } = useNetwork();
   const networkConfig: NetworkConfig = !!chain
     ? networkConfigs[chain.id]
-      // fallback to empty config if there is no connected wallet
-    : {
+    : // fallback to empty config if there is no connected wallet
+      {
         chainId: 0,
         networkName: '',
         networkShortName: '',

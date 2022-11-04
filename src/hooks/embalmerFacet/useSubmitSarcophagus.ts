@@ -86,13 +86,13 @@ export function useSubmitSarcophagus({
   const args =
     isSubmitting && contractArchaeologists.length
       ? [
-        sarcoId,
-        {
-          ...settings,
-        },
-        contractArchaeologists,
-        arweaveTxIds,
-      ]
+          sarcoId,
+          {
+            ...settings,
+          },
+          contractArchaeologists,
+          arweaveTxIds,
+        ]
       : [];
 
   const { submit, error } = useSubmitTransaction({
@@ -101,7 +101,7 @@ export function useSubmitSarcophagus({
     args,
     toastDescription,
     transactionDescription,
-    mode: 'prepared'
+    mode: 'prepared',
   });
 
   const submitSarcophagus = args.length && !error ? submit : undefined;

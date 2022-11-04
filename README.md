@@ -4,7 +4,9 @@
 [![Twitter](https://img.shields.io/twitter/follow/sarcophagusio?style=social)](https://twitter.com/sarcophagusio)
 
 Sarcophagus is a decentralized dead man's switch built on Ethereum and Arweave.
+
 # Local Development Guide
+
 ## Clone the repo and install dependencies
 
 ```jsx
@@ -46,10 +48,10 @@ curl http://localhost:1984/mine
 5. Inside of settings > networks > localhost:8545, change the localhost:8545 network’s chain id to 31337
 6. Start a local hardhat node (see the v2 contracts repo for more detailed instructions)
 7. Import the private key for an account funded with SARCO and Ether on the local hardhat network.
-    - The first account generated when the node is run from the v2 contracts project will be funded. Its private key is `0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d`
+   - The first account generated when the node is run from the v2 contracts project will be funded. Its private key is `0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d`
 8. Ensure that at least one archaeologist has been registered on your local hardhat node and is running on the local hardhat network
-    - If your node is restarted, you will need to reregister your archaeologist
- 
+   - If your node is restarted, you will need to reregister your archaeologist
+
 ## Community
 
 [![Discord](https://img.shields.io/discord/753398645507883099?color=768AD4&label=discord)](https://discord.com/channels/753398645507883099/)
