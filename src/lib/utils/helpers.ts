@@ -87,7 +87,7 @@ export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffe
 }
 
 export async function decrypt(privateKey: string, payload: Buffer): Promise<Buffer> {
-  return eciesDecrypt(Buffer.from(ethers.utils.arrayify(privateKey)), Buffer.from(payload));
+  return eciesDecrypt(Buffer.from(ethers.utils.arrayify(privateKey)), payload);
 }
 
 export function doubleHashShard(shard: Uint8Array): string {
