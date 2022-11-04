@@ -13,4 +13,26 @@ export async function encryptShards(
       unencryptedShardDoubleHash: doubleHashShard(payload[i])
     }))
   );
+
+} // Note: ORDER MATTERS HERE
+export enum CreateSarcophagusStage {
+  NOT_STARTED,
+  DIAL_ARCHAEOLOGISTS,
+  UPLOAD_ENCRYPTED_SHARDS,
+  ARCHAEOLOGIST_NEGOTIATION,
+  UPLOAD_PAYLOAD,
+  APPROVE,
+  SUBMIT_SARCOPHAGUS,
+  COMPLETED,
 }
+
+export const defaultCreateSarcophagusStages: Record<number, string> = {
+  [CreateSarcophagusStage.NOT_STARTED]: '',
+  [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
+  [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
+  [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
+  [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
+  [CreateSarcophagusStage.APPROVE]: 'Approve',
+  [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
+  [CreateSarcophagusStage.COMPLETED]: ''
+};

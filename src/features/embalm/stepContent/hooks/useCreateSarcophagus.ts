@@ -2,7 +2,7 @@ import { encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { useDispatch, useSelector } from 'store/index';
-import { useSubmitSarcophagus } from 'hooks/embalmerFacet';
+import { formatSubmitSarcophagusArgs } from 'hooks/embalmerFacet';
 import { Archaeologist, ArchaeologistEncryptedShard } from 'types';
 import useArweaveService from 'hooks/useArweaveService';
 import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
@@ -13,27 +13,17 @@ import { useNavigate } from 'react-router-dom';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
 import { handleContractCallException } from 'lib/utils/contract-error-handler';
-import { useApprove } from 'hooks/sarcoToken/useApprove';
-import { encryptShards } from '../utils/createSarcophagus';
-
-// Note: ORDER MATTERS HERE
-export enum CreateSarcophagusStage {
-  NOT_STARTED,
-  DIAL_ARCHAEOLOGISTS,
-  UPLOAD_ENCRYPTED_SHARDS,
-  ARCHAEOLOGIST_NEGOTIATION,
-  UPLOAD_PAYLOAD,
-  APPROVE,
-  SUBMIT_SARCOPHAGUS,
-  COMPLETED,
-}
+import { CreateSarcophagusStage, encryptShards } from '../utils/createSarcophagus';
+import { ethers } from 'ethers';
 
 export function useCreateSarcophagus(
-  createSarcophagusStages: Record<number, string>
+  createSarcophagusStages: Record<number, string>,
+  embalmerFacet: ethers.Contract,
+  sarcoToken: ethers.Contract
 ) {
   const dispatch = useDispatch();
 
-  const { recipientState, file, selectedArchaeologists, requiredArchaeologists } = useSelector(
+  const { name, recipientState, resurrection, file, selectedArchaeologists, requiredArchaeologists } = useSelector(
     x => x.embalmState
   );
 
@@ -67,19 +57,6 @@ export function useCreateSarcophagus(
   const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
   const [outerPrivateKey, setOuterPrivateKey] = useState('');
   const [outerPublicKey, setOuterPublicKey] = useState('');
-
-  const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
-
-  const { submitSarcophagus } = useSubmitSarcophagus({
-    negotiationTimestamp,
-    archaeologistSignatures,
-    archaeologistShards,
-    arweaveTxIds,
-    currentStage
-  });
-
-  // SARCO approval
-  const { approve } = useApprove();
 
   // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
@@ -161,6 +138,48 @@ export function useCreateSarcophagus(
     }
   }, [file, outerPublicKey, recipientState.publicKey, uploadToArweave, setSarcophagusPayloadTxId]);
 
+  const approveSarcoToken = useCallback(async () => {
+    const tx = await sarcoToken.approve(
+      networkConfig.diamondDeployAddress, ethers.constants.MaxUint256
+    );
+
+    await tx.wait();
+  }, [sarcoToken, networkConfig.diamondDeployAddress]);
+
+  const submitSarcophagus = useCallback(async () => {
+    const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
+
+    const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({
+      name,
+      recipientState,
+      resurrection,
+      selectedArchaeologists,
+      requiredArchaeologists,
+      negotiationTimestamp,
+      archaeologistSignatures,
+      archaeologistShards,
+      arweaveTxIds
+    });
+
+    const tx = await embalmerFacet.createSarcophagus(
+      ...submitSarcophagusArgs
+    );
+
+    await tx.wait();
+  }, [
+    embalmerFacet,
+    name,
+    recipientState,
+    encryptedShardsTxId,
+    sarcophagusPayloadTxId,
+    resurrection,
+    selectedArchaeologists,
+    requiredArchaeologists,
+    negotiationTimestamp,
+    archaeologistSignatures,
+    archaeologistShards
+  ]);
+
   interface ArchCommsExceptionParams {
     message: string;
     offendingArchs: Archaeologist[];
@@ -169,8 +188,7 @@ export function useCreateSarcophagus(
 
   const processArchCommsException = useCallback(({
                                                    message,
-                                                   offendingArchs,
-                                                   sourceStage
+                                                   offendingArchs
                                                  }: ArchCommsExceptionParams) => {
     // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
     // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
@@ -269,23 +287,20 @@ export function useCreateSarcophagus(
               break;
 
             case CreateSarcophagusStage.APPROVE:
-              if (approve)
-                await executeStage(approve)
-                  .catch(e => {
-                    console.log(e);
-                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
-                    setStageError(friendlyError);
-                  });
+              await executeStage(approveSarcoToken)
+                .catch(e => {
+                  console.log(e);
+                  let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
+                  setStageError(friendlyError);
+                });
               break;
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
-              if (submitSarcophagus) {
-                await executeStage(submitSarcophagus)
-                  .catch(e => {
-                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
-                    setStageError(friendlyError);
-                  });
-              }
+              await executeStage(submitSarcophagus)
+                .catch(e => {
+                  let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
+                  setStageError(friendlyError);
+                });
               break;
 
             case CreateSarcophagusStage.COMPLETED:
@@ -314,15 +329,16 @@ export function useCreateSarcophagus(
     encryptedShardsTxId,
     setArchaeologistSignatures,
     uploadAndSetEncryptedShards,
+    createSarcophagusStages,
     initiateSarcophagusNegotiation,
     uploadAndSetDoubleEncryptedFile,
+    approveSarcoToken,
     dialSelectedArchaeologists,
     submitSarcophagus,
     selectedArchaeologists,
     stageError,
     dispatch,
     navigate,
-    approve,
     processArchCommsException
   ]);
 

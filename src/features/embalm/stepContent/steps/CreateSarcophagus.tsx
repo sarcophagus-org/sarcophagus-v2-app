@@ -1,32 +1,41 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
-import { CreateSarcophagusStage, useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
+import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
+import { useContract, useSigner } from 'wagmi';
+import { EmbalmerFacet__factory, SarcoTokenMock__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { useNetworkConfig } from '../../../../lib/config';
 
 export function CreateSarcophagus() {
-  // SARCO approval
   const { allowance, isLoading } = useAllowance();
+  const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(defaultCreateSarcophagusStages);
 
-  const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>({
-    [CreateSarcophagusStage.NOT_STARTED]: '',
-    [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
-    [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
-    [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
-    [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
-    [CreateSarcophagusStage.APPROVE]: 'Approve',
-    [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
-    [CreateSarcophagusStage.COMPLETED]: ''
+  const networkConfig = useNetworkConfig();
+  const { data: signer } = useSigner();
+
+  const embalmerFacet = useContract({
+    address: networkConfig.diamondDeployAddress,
+    abi: EmbalmerFacet__factory.abi,
+    signerOrProvider: signer,
   });
 
+  const sarcoToken = useContract({
+    address: networkConfig.sarcoTokenAddress,
+    abi: SarcoTokenMock__factory.abi,
+    signerOrProvider: signer,
+  });
 
   const { currentStage, handleCreate, stageError } = useCreateSarcophagus(
-    createSarcophagusStages
+    createSarcophagusStages,
+    embalmerFacet!,
+    sarcoToken!
   );
 
   const { isSarcophagusComplete } = useSarcophagusParameters();
@@ -40,14 +49,14 @@ export function CreateSarcophagus() {
       // remove approval step if approval is complete
       // TODO: compare with pending fees instead
       if (BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('1000')))) {
-        const stepsCopy = { ...createSarcophagusStages };
+        const stepsCopy = { ...defaultCreateSarcophagusStages };
         delete stepsCopy[CreateSarcophagusStage.APPROVE];
         setCreateSarcophagusStages(
           stepsCopy
         );
       }
     }
-  }, [isLoading]);
+  }, [isLoading, allowance]);
 
   return (
     <Flex
