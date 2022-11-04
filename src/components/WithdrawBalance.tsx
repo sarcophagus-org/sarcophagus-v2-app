@@ -21,10 +21,6 @@ export function WithdrawBalance() {
   const { balance } = useGetBalance();
   const [amount, setAmount] = useState('');
 
-  // function handleChangeAmount(valueAsString: string) {
-  //   setAmount(valueAsString);
-  // }
-
   const isAmountValid = parseFloat(amount) > 0;
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -33,13 +29,6 @@ export function WithdrawBalance() {
     const inputLimit = 46;
     setAmount(value.slice(0, inputLimit));
   }
-
-  // async function handleWithdrawAmount() {
-  //   if (!isAmountValid) return;
-  //   // const parsedAmount = ethers.utils.parseUnits(amount);
-  //   // await withdraw(parsedAmount);
-  //   await withdraw(amount);
-  // }
 
   const handleWithdrawAmount = useCallback(async () => {
     if (!isAmountValid) return;
@@ -62,79 +51,9 @@ export function WithdrawBalance() {
     );
   }
 
-  // function isInputDisabled() {
-  //   return !bundlr || isWithdrawing;
-  // }
-
   return (
     <Flex direction="column">
       <FormLabel mt={4}>Withdraw Amount</FormLabel>
-
-      {/* <Flex align="center">
-        <FormControl
-          width="100%"
-          alignItems="center"
-        >
-          <NumberInput
-            mt={1}
-            value={amount}
-            onChange={handleChangeAmount}
-            isDisabled={isInputDisabled()}
-          >
-            <NumberInputField />
-          </NumberInput>
-        </FormControl>
-        <Button
-          ml={3}
-          variant="link"
-          onClick={handleClickMax}
-        >
-          Max
-        </Button>
-        <Button
-          ml={3}
-          w="150px"
-          onClick={handleWithdrawAmount}
-          disabled={isButtonDisabled()}
-          isLoading={isWithdrawing}
-        >
-          Withdraw
-        </Button>
-      </Flex> */}
-
-      {/* NEW FORM */}
-
-      {/* <HStack mb="8">
-        <NumberInput
-          flex={1}
-          mr={3}
-          value={amount}
-          onChange={handleChangeAmount}
-          isDisabled={isInputDisabled()}
-        >
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-        <Button
-          ml={3}
-          variant="link"
-          onClick={handleClickMax}
-        >
-          Max
-        </Button>
-        <Button
-          float="right"
-          w="150px"
-          onClick={handleWithdrawAmount}
-          disabled={isButtonDisabled()}
-          isLoading={isWithdrawing}
-        >
-          Withdraw
-        </Button>
-      </HStack> */}
 
       <HStack mb="8">
         <InputGroup
@@ -144,6 +63,7 @@ export function WithdrawBalance() {
           <Input
             onChange={handleInputChange}
             value={amount}
+            // for withdrawal testing purpouses I commented out readOnly
             // readOnly={true}
             type="text"
             placeholder="0.00000000"
