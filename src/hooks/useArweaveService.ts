@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Arweave from 'arweave';
 import { decrypt, encrypt } from 'ecies-geth';
 import { ethers, utils } from 'ethers';
 import { hexlify } from 'ethers/lib/utils';
+import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
+import { hardhatChainId } from '../lib/config/hardhat';
+import { useNetworkConfig } from '../lib/config';
 
 const initArweave = () => {
   return Arweave.init({
@@ -28,6 +31,9 @@ const useArweaveService = () => {
     status: null,
     confirmations: 0,
   });
+
+  const { uploadFile } = useBundlr();
+  const networkConfig = useNetworkConfig();
 
   const encryptShard = async (shard: string, publicKey: string): Promise<string> => {
     const encrypted = await encrypt(
@@ -68,7 +74,7 @@ const useArweaveService = () => {
   };
 
   //TODO: Make this a dev local-env only operation
-  const uploadArweaveFile = async (file: string | Buffer): Promise<string> => {
+  const uploadArweaveFile = useCallback(async (file: string | Buffer): Promise<string> => {
     const arweave = initArweave();
 
     const key = {
@@ -97,7 +103,7 @@ const useArweaveService = () => {
       );
     }
     return tx.id;
-  };
+  }, []);
 
   const updateStatus = async (arweaveTxId: string) => {
     const arweave = initArweave();
@@ -134,6 +140,13 @@ const useArweaveService = () => {
     return transactionStatus.confirmations;
   };
 
+  const uploadToArweave = useCallback(
+    async (data: Buffer): Promise<string> => {
+      return networkConfig.chainId === hardhatChainId ? uploadArweaveFile(data) : uploadFile(data);
+    },
+    [uploadArweaveFile, uploadFile, networkConfig.chainId]
+  );
+
   return {
     uploadArweaveFile,
     updateStatus,
@@ -141,6 +154,7 @@ const useArweaveService = () => {
     getConfirmations,
     isArweaveFileValid,
     encryptShard,
+    uploadToArweave,
   };
 };
 export default useArweaveService;

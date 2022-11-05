@@ -35,11 +35,13 @@ export const formatCreateSarcophagusError = (
       processArchCommsException(offendingArchs);
       return e.message;
     case CreateSarcophagusStage.APPROVE:
-      return e.reason
-        ? formatContractCallException(e.reason)
+      return e.reason || e.message
+        ? formatContractCallException(e.reason || e.message)
         : 'Failed to approve sarco token allowance.';
     case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
-      return e.reason ? formatContractCallException(e.reason) : 'Failed to create sarcophagus.';
+      return e.reason || e.message
+        ? formatContractCallException(e.reason || e.message)
+        : 'Failed to create sarcophagus.';
     default:
       return e.message;
   }

@@ -11,23 +11,24 @@ const errorMessageMapping = new Map<string, string | Function>([
       return `Not enough reward. Available: ${ethers.utils.formatEther(available)} SARCO`;
     },
   ],
-  ['insufficient allowance', 'Insufficient allowance'],
+  ['insufficient allowance', 'Insufficient SARCO allowance.'],
   [
     'transfer amount exceeds balance',
-    'Insufficient balance. Add some SARCO to your account to continue',
+    'Insufficient balance. Add some SARCO to your account to continue.',
   ],
-  ['SarcophagusDoesNotExist', 'No Sarcophagus found matching provided ID'],
-  ['SarcophagusNotCleanable', 'This Sarcophagus cannot be cleaned at this time'],
+  ['SarcophagusDoesNotExist', 'No Sarcophagus found matching provided ID.'],
+  ['SarcophagusNotCleanable', 'This Sarcophagus cannot be cleaned at this time.'],
   [
     'SarcophagusIsUnwrappable',
-    'This Sarcophagus is ready to be unwrapped, so archaeologists cannot be accused of leaking',
+    'This Sarcophagus is ready to be unwrapped, so archaeologists cannot be accused of leaking.',
   ],
   [
     'AccuseNotEnoughProof',
-    'You have not provided enough unencrypted shard hashes to fully raise an accusal',
+    'You have not provided enough unencrypted shard hashes to fully raise an accusal.',
   ],
-  ['AccuseIncorrectProof', 'One or more of the proofs provided is incorrect'],
-  ['InvalidSignature', 'One or more archaeologists signatures was rejected by the contract'],
+  ['AccuseIncorrectProof', 'One or more of the proofs provided is incorrect.'],
+  ['InvalidSignature', 'One or more archaeologists signatures was rejected by the contract.'],
+  ['User denied transaction', 'Transaction signature was rejected.'],
 ]);
 
 /**
@@ -35,6 +36,7 @@ const errorMessageMapping = new Map<string, string | Function>([
  * */
 export function formatContractCallException(e: string): string {
   for (let [key, value] of errorMessageMapping) {
+    console.log('me e', e);
     if (e.includes(key)) {
       if (typeof value === 'function') {
         return value(e);

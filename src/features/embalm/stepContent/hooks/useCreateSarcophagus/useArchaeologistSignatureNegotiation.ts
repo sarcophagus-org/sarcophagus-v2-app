@@ -1,23 +1,16 @@
 import { pipe } from 'it-pipe';
 import React, { useCallback } from 'react';
-import {
-  setArchaeologistConnection,
-  setArchaeologistException,
-  setArchaeologistSignature,
-} from 'store/embalm/actions';
-import { useDispatch, useSelector } from '../store';
-import { NEGOTIATION_SIGNATURE_STREAM } from '../lib/config/node_config';
+import { setArchaeologistException, setArchaeologistSignature } from 'store/embalm/actions';
+import { useDispatch, useSelector } from '../../../../../store';
+import { NEGOTIATION_SIGNATURE_STREAM } from '../../../../../lib/config/node_config';
 import {
   ArchaeologistEncryptedShard,
   ArchaeologistExceptionCode,
   SarcophagusValidationError,
 } from 'types';
-import { useLibp2p } from './libp2p/useLibp2p';
-import { getLowestRewrapInterval } from '../lib/utils/helpers';
-import { CreateSarcophagusStage } from '../features/embalm/stepContent/utils/createSarcophagus';
-import { createSarcophagusErrors } from '../features/embalm/stepContent/utils/errors';
+import { getLowestRewrapInterval } from '../../../../../lib/utils/helpers';
 
-interface SarcophagusNegotiationParams {
+interface ArchaeologistSignatureNegotiationParams {
   arweaveTxId: string;
   unencryptedShardDoubleHash: string;
   maxRewrapInterval: number;
@@ -25,37 +18,9 @@ interface SarcophagusNegotiationParams {
   timestamp: number;
 }
 
-export function useSarcophagusNegotiation() {
+export function useArchaeologistSignatureNegotiation() {
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
-
-  const { resetPublicKeyStream } = useLibp2p();
-  const libp2pNode = useSelector(s => s.appState.libp2pNode);
-
-  const dialSelectedArchaeologists = useCallback(async () => {
-    await resetPublicKeyStream();
-
-    const dialFailedArchaeologists = [];
-    for await (const arch of selectedArchaeologists) {
-      try {
-        const connection = await libp2pNode?.dial(arch.fullPeerId!);
-        if (!connection) throw Error('No connection obtained from dial');
-        dispatch(setArchaeologistConnection(arch.profile.peerId, connection));
-      } catch (e) {
-        dispatch(
-          setArchaeologistException(arch.profile.peerId, {
-            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-            message: 'Could not establish a connection',
-          })
-        );
-        dialFailedArchaeologists.push(arch.profile.peerId);
-      }
-    }
-
-    if (dialFailedArchaeologists.length) {
-      throw Error(createSarcophagusErrors[CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]);
-    }
-  }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
   function processDeclinedSignatureCode(
     code: SarcophagusValidationError,
@@ -95,7 +60,7 @@ export function useSarcophagusNegotiation() {
           if (!arch.connection)
             throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
 
-          const negotiationParams: SarcophagusNegotiationParams = {
+          const negotiationParams: ArchaeologistSignatureNegotiationParams = {
             arweaveTxId: encryptedShardsTxId,
             diggingFee: arch.profile.minimumDiggingFee.toString(),
             maxRewrapInterval: lowestRewrapInterval,
@@ -165,7 +130,6 @@ export function useSarcophagusNegotiation() {
   );
 
   return {
-    dialSelectedArchaeologists,
     initiateSarcophagusNegotiation,
   };
 }

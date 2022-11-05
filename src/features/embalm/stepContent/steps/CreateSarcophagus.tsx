@@ -1,7 +1,7 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
-import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus';
+import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
@@ -52,16 +52,18 @@ export function CreateSarcophagus() {
   useEffect(() => {
     // remove approval step if user has allowance on sarco token
     // TODO: compare with pending fees instead
-    if (
-      BigNumber.from(allowance).gte(
-        ethers.constants.MaxUint256.sub(ethers.utils.parseEther('1000'))
-      )
-    ) {
-      const stepsCopy = { ...defaultCreateSarcophagusStages };
-      delete stepsCopy[CreateSarcophagusStage.APPROVE];
-      setCreateSarcophagusStages(stepsCopy);
-    } else {
-      setCreateSarcophagusStages(defaultCreateSarcophagusStages);
+    if (allowance) {
+      if (
+        BigNumber.from(allowance).gte(
+          ethers.constants.MaxUint256.sub(ethers.utils.parseEther('1000'))
+        )
+      ) {
+        const stepsCopy = { ...defaultCreateSarcophagusStages };
+        delete stepsCopy[CreateSarcophagusStage.APPROVE];
+        setCreateSarcophagusStages(stepsCopy);
+      } else {
+        setCreateSarcophagusStages(defaultCreateSarcophagusStages);
+      }
     }
   }, [allowance, signer]);
 

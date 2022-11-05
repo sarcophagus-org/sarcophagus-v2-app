@@ -1,20 +1,18 @@
-import { encrypt, readFileDataAsBase64 } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
-import { split } from 'shamirs-secret-sharing-ts';
-import { useDispatch, useSelector } from 'store/index';
-import { formatSubmitSarcophagusArgs } from 'hooks/embalmerFacet';
+import { useDispatch, useSelector } from '../../../../../store';
 import { ArchaeologistEncryptedShard } from 'types';
-import useArweaveService from 'hooks/useArweaveService';
-import { createEncryptionKeypairAsync } from './useCreateEncryptionKeypair';
-import { useBundlr } from './useBundlr';
+import { createEncryptionKeypairAsync } from '../useCreateEncryptionKeypair';
 import { disableSteps } from 'store/embalm/actions';
-import { useSarcophagusNegotiation } from 'hooks/useSarcophagusNegotiation';
+import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { useNavigate } from 'react-router-dom';
-import { useNetworkConfig } from 'lib/config';
-import { hardhatChainId } from 'lib/config/hardhat';
-import { CreateSarcophagusStage, encryptShards } from '../utils/createSarcophagus';
+import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { ethers } from 'ethers';
-import { formatCreateSarcophagusError } from '../utils/errors';
+import { formatCreateSarcophagusError } from '../../utils/errors';
+import { useDialArchaeologists } from './useDialArchaeologists';
+import { useUploadEncryptedShards } from './useUploadEncryptedShards';
+import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
+import { useApproveSarcoToken } from './useApproveSarcoToken';
+import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -22,48 +20,22 @@ export function useCreateSarcophagus(
   sarcoToken: ethers.Contract
 ) {
   const dispatch = useDispatch();
-
-  const {
-    name,
-    recipientState,
-    resurrection,
-    file,
-    selectedArchaeologists,
-    requiredArchaeologists,
-  } = useSelector(x => x.embalmState);
-
   const navigate = useNavigate();
-
-  // BUNDLR config
-  const { uploadFile } = useBundlr();
-  const { uploadArweaveFile } = useArweaveService();
-
-  const { dialSelectedArchaeologists, initiateSarcophagusNegotiation } =
-    useSarcophagusNegotiation();
-
-  const networkConfig = useNetworkConfig();
 
   // State variables to track automated sarcophagus creation flow across `CreateSarcophagusStage`s
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
-  const [publicKeysReady, setPublicKeysReady] = useState(false);
-  const [signaturesReady, setSignaturesReady] = useState(false);
   const [stageError, setStageError] = useState<string>();
 
-  // State variables needed for final submit stage
-  const [archaeologistShards, setArchaeologistShards] = useState(
-    [] as ArchaeologistEncryptedShard[]
-  );
-  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState('');
-  const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState('');
-  const [archaeologistSignatures, setArchaeologistSignatures] = useState(
-    new Map<string, string>([])
-  );
-  const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+  // Global state from embalm steps, used to create sarcophagus
+  const { file, selectedArchaeologists } = useSelector(x => x.embalmState);
+
+  /**
+   * Stage 0 - Generate Outer Layer Key Pair
+   */
   const [outerPrivateKey, setOuterPrivateKey] = useState('');
   const [outerPublicKey, setOuterPublicKey] = useState('');
 
-  // Generates a random key with which to encrypt the outer layer of the sarcophagus
   useEffect(() => {
     (async () => {
       const { privateKey, publicKey } = await createEncryptionKeypairAsync();
@@ -72,115 +44,60 @@ export function useCreateSarcophagus(
     })();
   }, []);
 
-  const uploadToArweave = useCallback(
-    async (data: Buffer): Promise<string> => {
-      const txId =
-        networkConfig.chainId === hardhatChainId
-          ? await uploadArweaveFile(data)
-          : await uploadFile(data);
+  /**
+   * Stage 1 - Dial Archaeologists
+   */
+  const { dialSelectedArchaeologists } = useDialArchaeologists();
+  const [publicKeysReady, setPublicKeysReady] = useState(false);
 
-      return txId;
-    },
-    [uploadArweaveFile, uploadFile, networkConfig.chainId]
+  /**
+   * Stage 2 - Generate + Upload Archaeologist Encrypted Shards to Bundlr
+   */
+  const [archaeologistShards, setArchaeologistShards] = useState(
+    [] as ArchaeologistEncryptedShard[]
+  );
+  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState('');
+  const { uploadAndSetEncryptedShards } = useUploadEncryptedShards(
+    outerPrivateKey,
+    setArchaeologistShards,
+    setEncryptedShardsTxId
   );
 
-  const processUploadToArweaveError = (error: any) => {
-    // TODO: need to determine if `error` is bundlr error, process accordingly
-    // We may want to have the user sign out / sign back in from Bundlr
-    // before retrying an upload
-    throw new Error(error.message || 'Error uploading to Bundlr');
-  };
+  /**
+   * Stage 3 - Archaeologist Signature Negotiation
+   */
+  const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+  const [archaeologistSignatures, setArchaeologistSignatures] = useState(
+    new Map<string, string>([])
+  );
+  const [signaturesReady, setSignaturesReady] = useState(false);
+  const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
 
-  const uploadAndSetEncryptedShards = useCallback(async () => {
-    try {
-      // Step 1: Split the outer layer private key using shamirs secret sharing
-      const shards: Uint8Array[] = split(outerPrivateKey, {
-        shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists,
-      });
+  /**
+   * Stage 4 - Upload File Payload (double encrypted) to Bundlr
+   */
+  const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState('');
+  const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile(
+    file,
+    outerPublicKey,
+    setSarcophagusPayloadTxId
+  );
 
-      // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
-      // key
-      const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
-      const encShards = await encryptShards(archPublicKeys, shards);
+  /**
+   * Stage 5a (if necessary) - Approve Sarco Token
+   */
+  const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
 
-      // Step 3: Create a mapping of arch public keys -> encrypted shards; upload to arweave
-      const mapping: Record<string, string> = encShards.reduce(
-        (acc, shard) => ({
-          ...acc,
-          [shard.publicKey]: shard.encryptedShard,
-        }),
-        {}
-      );
-
-      const txId = await uploadToArweave(Buffer.from(JSON.stringify(mapping)));
-
-      setArchaeologistShards(encShards);
-      setEncryptedShardsTxId(txId);
-    } catch (error: any) {
-      processUploadToArweaveError(error);
-    }
-  }, [requiredArchaeologists, outerPrivateKey, selectedArchaeologists, uploadToArweave]);
-
-  const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
-    try {
-      const payload = await readFileDataAsBase64(file!);
-
-      // Step 1: Encrypt the inner layer
-      const encryptedInnerLayer = await encrypt(recipientState.publicKey, payload);
-
-      // Step 2: Encrypt the outer layer
-      const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
-
-      // Step 3: Upload the double encrypted payload to arweave
-      const payloadTxId = await uploadToArweave(encryptedOuterLayer);
-
-      setSarcophagusPayloadTxId(payloadTxId);
-    } catch (error) {
-      processUploadToArweaveError(error);
-    }
-  }, [file, outerPublicKey, recipientState.publicKey, uploadToArweave, setSarcophagusPayloadTxId]);
-
-  const approveSarcoToken = useCallback(async () => {
-    const tx = await sarcoToken.approve(
-      networkConfig.diamondDeployAddress,
-      ethers.constants.MaxUint256
-    );
-
-    await tx.wait();
-  }, [sarcoToken, networkConfig.diamondDeployAddress]);
-
-  const submitSarcophagus = useCallback(async () => {
-    const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
-
-    const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({
-      name,
-      recipientState,
-      resurrection,
-      selectedArchaeologists,
-      requiredArchaeologists,
-      negotiationTimestamp,
-      archaeologistSignatures,
-      archaeologistShards,
-      arweaveTxIds,
-    });
-
-    const tx = await embalmerFacet.createSarcophagus(...submitSarcophagusArgs);
-
-    await tx.wait();
-  }, [
+  /**
+   * Stage 5b - Finalize Create Sarcophagus
+   */
+  const { submitSarcophagus } = useSubmitSarcophagus(
     embalmerFacet,
-    name,
-    recipientState,
-    encryptedShardsTxId,
-    sarcophagusPayloadTxId,
-    resurrection,
-    selectedArchaeologists,
-    requiredArchaeologists,
     negotiationTimestamp,
     archaeologistSignatures,
     archaeologistShards,
-  ]);
+    [sarcophagusPayloadTxId, encryptedShardsTxId]
+  );
 
   // Process each stage as they become active
   useEffect(() => {
@@ -201,13 +118,10 @@ export function useCreateSarcophagus(
           stageToExecute(...stageArgs)
             .then((result: any) => {
               setStageExecuting(false);
-
-              // Set current stage to next stage
               incrementStage();
               resolve(result);
             })
             .catch((error: any) => {
-              console.log('stage error', error);
               reject(error);
               setStageExecuting(false);
             });
@@ -261,11 +175,11 @@ export function useCreateSarcophagus(
               }, 4000);
               break;
           }
-        } catch (e: any) {
-          console.error(e);
+        } catch (error: any) {
+          console.error(error);
           const stageErrorMessage = formatCreateSarcophagusError(
             currentStage,
-            e,
+            error,
             selectedArchaeologists
           );
           setStageError(stageErrorMessage);
