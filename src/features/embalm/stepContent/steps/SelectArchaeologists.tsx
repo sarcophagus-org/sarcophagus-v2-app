@@ -1,12 +1,8 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
-import { sumDiggingFees } from 'lib/utils/helpers';
-import { useSelector } from 'store/index';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
 
 export function SelectArchaeologists() {
-  const { selectedArchaeologists } = useSelector(x => x.embalmState);
-
   return (
     <Flex
       direction="column"

@@ -61,7 +61,6 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
     <Flex
       direction="column"
       height="100%"
-      mt={6}
     >
       <Flex
         flex={4}
