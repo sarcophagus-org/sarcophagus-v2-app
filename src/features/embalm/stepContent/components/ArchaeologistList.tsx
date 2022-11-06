@@ -12,6 +12,8 @@ import {
   Button,
   VStack,
   Input,
+  Checkbox,
+  HStack,
 } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
@@ -57,6 +59,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
+  console.log(sortedFilteredArchaeologist);
   return (
     <Flex
       direction="column"
@@ -79,7 +82,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                   <Th>
                     <VStack align="left">
                       <Text
-                        variant="secondary"
+                        variant="primary"
                         textTransform="capitalize"
                         py={3}
                       >
@@ -103,12 +106,48 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                         rightIcon={sortIconsMap[diggingFeesSortDirection]}
                         onClick={onClickSortDiggingFees}
                       >
-                        Digging Fee
+                        <Text> Fees </Text>
                       </Button>
                       <DiggingFeesInput
                         setDiggingFees={setDiggingFees}
                         value={diggingFeesFilter}
-                        placeholder="Max"
+                        placeholder="max"
+                        color="brand.950"
+                      />
+                    </VStack>
+                  </Th>
+                  <Th isNumeric>
+                    <VStack>
+                      <Button
+                        variant="ghost"
+                        textTransform="capitalize"
+                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                        // onClick={onClickSortDiggingFees}
+                      >
+                        <Text> Unwraps </Text>
+                      </Button>
+                      <DiggingFeesInput
+                        setDiggingFees={setDiggingFees}
+                        value={diggingFeesFilter}
+                        placeholder="max"
+                        color="brand.950"
+                      />
+                    </VStack>
+                  </Th>
+                  <Th isNumeric>
+                    <VStack>
+                      <Button
+                        variant="ghost"
+                        textTransform="capitalize"
+                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                        // onClick={onClickSortDiggingFees}
+                      >
+                        <Text> Fails </Text>
+                      </Button>
+                      <DiggingFeesInput
+                        setDiggingFees={setDiggingFees}
+                        value={diggingFeesFilter}
+                        placeholder="min"
                         color="brand.950"
                       />
                     </VStack>
@@ -138,12 +177,15 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       }
                     >
                       <Td>
-                        <Text
-                          color={isSelected ? 'brand.0' : ''}
-                          ml={3}
-                        >
-                          {formatAddress(arch.profile.archAddress)}
-                        </Text>
+                        <HStack>
+                          <Checkbox></Checkbox>
+                          <Text
+                            color={isSelected ? 'brand.0' : ''}
+                            ml={3}
+                          >
+                            {formatAddress(arch.profile.archAddress)}
+                          </Text>
+                        </HStack>
                       </Td>
                       <Td isNumeric>
                         <Flex justify="center">
@@ -157,6 +199,26 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                             color={isSelected ? 'brand.0' : ''}
                           >
                             {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
+                          </Text>
+                        </Flex>
+                      </Td>
+                      <Td isNumeric>
+                        <Flex justify="center">
+                          <Text
+                            ml={3}
+                            color={isSelected ? 'brand.0' : ''}
+                          >
+                            {arch.profile.successes.toString()}
+                          </Text>
+                        </Flex>
+                      </Td>
+                      <Td isNumeric>
+                        <Flex justify="center">
+                          <Text
+                            ml={3}
+                            color={isSelected ? 'brand.0' : ''}
+                          >
+                            {arch.profile.cleanups.toString()}
                           </Text>
                         </Flex>
                       </Td>

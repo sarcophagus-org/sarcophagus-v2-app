@@ -11,6 +11,7 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
+import { mochArchaeologists } from '../mocks/mockArchaeologists';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
@@ -25,7 +26,12 @@ export function useArchaeologistList() {
     archAddressSearch,
   } = useSelector(s => s.embalmState);
 
-  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  const NUMBER_MOCK_ARCH = 5;
+
+  const onlineArchaeologists =
+    NUMBER_MOCK_ARCH > 0
+      ? mochArchaeologists(NUMBER_MOCK_ARCH)
+      : archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
