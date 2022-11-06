@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from '../../../../../store';
 import { ArchaeologistEncryptedShard } from 'types';
 import { createEncryptionKeypairAsync } from '../useCreateEncryptionKeypair';
 import { disableSteps } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
-import { useNavigate } from 'react-router-dom';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { ethers } from 'ethers';
 import { formatCreateSarcophagusError } from '../../utils/errors';
@@ -20,9 +19,8 @@ export function useCreateSarcophagus(
   sarcoToken: ethers.Contract
 ) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  // State variables to track automated sarcophagus creation flow across `CreateSarcophagusStage`s
+  // State variables to track automated sarcophagus creation flow across all stages
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
   const [stageError, setStageError] = useState<string>();
@@ -47,8 +45,16 @@ export function useCreateSarcophagus(
   /**
    * Stage 1 - Dial Archaeologists
    */
-  const { dialSelectedArchaeologists } = useDialArchaeologists();
   const [publicKeysReady, setPublicKeysReady] = useState(false);
+  const { dialSelectedArchaeologists } = useDialArchaeologists();
+
+  // Archaeologists have callback function on successful dial to send
+  // their public keys. When all archs have sent their pub keys, the next stage can begin
+  useEffect(() => {
+    if (selectedArchaeologists.length > 0) {
+      setPublicKeysReady(selectedArchaeologists.every(arch => !!arch.publicKey));
+    }
+  }, [selectedArchaeologists]);
 
   /**
    * Stage 2 - Generate + Upload Archaeologist Encrypted Shards to Bundlr
@@ -70,8 +76,12 @@ export function useCreateSarcophagus(
   const [archaeologistSignatures, setArchaeologistSignatures] = useState(
     new Map<string, string>([])
   );
-  const [signaturesReady, setSignaturesReady] = useState(false);
-  const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
+  const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation(
+    archaeologistShards,
+    encryptedShardsTxId,
+    setArchaeologistSignatures,
+    setNegotiationTimestamp
+  );
 
   /**
    * Stage 4 - Upload File Payload (double encrypted) to Bundlr
@@ -98,6 +108,24 @@ export function useCreateSarcophagus(
     archaeologistShards,
     [sarcophagusPayloadTxId, encryptedShardsTxId]
   );
+
+  const stagesMap = useMemo(() => {
+    return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
+      [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
+      [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS, uploadAndSetEncryptedShards],
+      [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
+      [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetDoubleEncryptedFile],
+      [CreateSarcophagusStage.APPROVE, approveSarcoToken],
+      [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, submitSarcophagus],
+    ]);
+  }, [
+    dialSelectedArchaeologists,
+    uploadAndSetEncryptedShards,
+    initiateSarcophagusNegotiation,
+    uploadAndSetDoubleEncryptedFile,
+    approveSarcoToken,
+    submitSarcophagus,
+  ]);
 
   // Process each stage as they become active
   useEffect(() => {
@@ -127,53 +155,15 @@ export function useCreateSarcophagus(
             });
         });
 
-      // TODO: If `stageError` is never reset when after an exception, only a refresh will unblock this flow. Remember to reset it if error can be resolved safely
       if (!stageExecuting && !stageError) {
         try {
-          switch (currentStage) {
-            case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
-              await executeStage(dialSelectedArchaeologists);
-              break;
+          if (currentStage === CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS && !publicKeysReady) {
+            return;
+          }
 
-            case CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS:
-              if (publicKeysReady) {
-                await executeStage(uploadAndSetEncryptedShards);
-              }
-              break;
-
-            case CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION:
-              await executeStage(
-                initiateSarcophagusNegotiation,
-                archaeologistShards,
-                encryptedShardsTxId,
-                setArchaeologistSignatures,
-                setNegotiationTimestamp
-              );
-              break;
-
-            case CreateSarcophagusStage.UPLOAD_PAYLOAD:
-              if (signaturesReady) {
-                await executeStage(uploadAndSetDoubleEncryptedFile);
-              }
-              break;
-
-            case CreateSarcophagusStage.APPROVE:
-              await executeStage(approveSarcoToken);
-              break;
-
-            case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
-              await executeStage(submitSarcophagus);
-              break;
-
-            case CreateSarcophagusStage.COMPLETED:
-              setTimeout(() => {
-                // TODO: reset state -- having some issues with this
-                // resetLocalEmbalmerState();
-                // dispatch(resetEmbalmState());
-                // dispatch(enableSteps());
-                navigate('/dashboard');
-              }, 4000);
-              break;
+          const currentStageFunction = stagesMap.get(currentStage);
+          if (currentStageFunction) {
+            await executeStage(currentStageFunction);
           }
         } catch (error: any) {
           console.error(error);
@@ -189,39 +179,13 @@ export function useCreateSarcophagus(
   }, [
     currentStage,
     stageExecuting,
-    publicKeysReady,
-    signaturesReady,
-    archaeologistShards,
-    encryptedShardsTxId,
-    setArchaeologistSignatures,
-    uploadAndSetEncryptedShards,
-    createSarcophagusStages,
-    initiateSarcophagusNegotiation,
-    uploadAndSetDoubleEncryptedFile,
-    approveSarcoToken,
-    dialSelectedArchaeologists,
-    submitSarcophagus,
-    selectedArchaeologists,
+    stagesMap,
     stageError,
     dispatch,
-    navigate,
+    publicKeysReady,
+    createSarcophagusStages,
+    selectedArchaeologists,
   ]);
-
-  // Update archaeologist public keys, signatures ready status
-  useEffect(() => {
-    if (selectedArchaeologists.length > 0) {
-      let allPublicKeysReady = true;
-      let allSignaturesReady = true;
-
-      selectedArchaeologists.forEach(arch => {
-        if (!arch.publicKey) allPublicKeysReady = false;
-        if (!arch.signature) allSignaturesReady = false;
-      });
-
-      setPublicKeysReady(allPublicKeysReady);
-      setSignaturesReady(allSignaturesReady);
-    }
-  }, [selectedArchaeologists]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
