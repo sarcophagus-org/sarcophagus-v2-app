@@ -33,7 +33,7 @@ export function useArchaeologistList() {
       NUMBER_MOCK_ARCH > 0
         ? mochArchaeologists(NUMBER_MOCK_ARCH)
         : archaeologists.filter(a => a.isOnline),
-    [archaeologists]
+    [NUMBER_MOCK_ARCH, archaeologists]
   );
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
@@ -76,7 +76,9 @@ export function useArchaeologistList() {
       ? onlineArchaeologists
       : orderBy(
           onlineArchaeologists,
-          'profile.minimumDiggingFee',
+          function (o) {
+            return new Number(o.profile.minimumDiggingFee);
+          },
           sortOrderByMap[diggingFeesSortDirection]
         );
 

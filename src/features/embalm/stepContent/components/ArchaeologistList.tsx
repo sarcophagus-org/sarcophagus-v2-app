@@ -102,7 +102,6 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                     <VStack>
                       <Button
                         variant="ghost"
-                        textTransform="capitalize"
                         rightIcon={sortIconsMap[diggingFeesSortDirection]}
                         onClick={onClickSortDiggingFees}
                       >
@@ -198,7 +197,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                             ml={3}
                             color={isSelected ? 'brand.0' : ''}
                           >
-                            {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
+                            {Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))}
                           </Text>
                         </Flex>
                       </Td>
