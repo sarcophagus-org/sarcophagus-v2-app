@@ -10,7 +10,12 @@ interface ProgressTrackerProps {
   children: FunctionComponentElement<ProgressTrackerStageProps>[];
 }
 
-export function ProgressTracker({ title, currentStage, stageError, children }: ProgressTrackerProps) {
+export function ProgressTracker({
+  title,
+  currentStage,
+  stageError,
+  children,
+}: ProgressTrackerProps) {
   // Determine the current stage status using the stage of a child and the current stage passed on a
   // prop.
   function getStageStatus(stage: CreateSarcophagusStage): StageStatus {

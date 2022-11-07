@@ -13,12 +13,14 @@ import { connect, disconnect as disconnectBundlr, setBundlr } from 'store/bundlr
 import { useDispatch, useSelector } from 'store/index';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
+import { hardhatChainId } from '../../../../lib/config/hardhat';
 
 export function useBundlrSession() {
   const dispatch = useDispatch();
   const { isConnected } = useSelector(x => x.bundlrState);
   const toast = useToast();
   const networkConfig = useNetworkConfig();
+  const isHardhatNetwork = networkConfig.chainId === hardhatChainId;
 
   /**
    * Disconnects from the arweave bundlr node
@@ -43,6 +45,12 @@ export function useBundlrSession() {
   const provider = useMemo(() => new ethers.providers.Web3Provider(connector), [connector]);
 
   const connectToBundlr = useCallback(async (): Promise<void> => {
+    if (isHardhatNetwork) {
+      console.error(
+        'Bundlr cannot be used with the hardhat local network. Switch to Goerli or Mainnet to interact with bunldr.'
+      );
+      return;
+    }
     let newBundlr = new WebBundlr(
       networkConfig.bundlr.nodeUrl,
       networkConfig.bundlr.currencyName,
@@ -70,7 +78,7 @@ export function useBundlrSession() {
       const error = _error as Error;
       toast(connectFailure(error.message));
     }
-  }, [dispatch, networkConfig, provider, toast]);
+  }, [dispatch, networkConfig, provider, toast, isHardhatNetwork]);
 
   /**
    * Manually injects a public key into a bundlr instance, bypassing the signature.

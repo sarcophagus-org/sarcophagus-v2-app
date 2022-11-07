@@ -5,7 +5,6 @@ import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function ReviewSarcophagus() {
-
   const { SarcoModal, openModal, closeModal } = useSarcoModal();
 
   return (
@@ -54,15 +53,33 @@ export function ReviewSarcophagus() {
         </Flex>
         <SarcoModal
           isDismissible={false}
-          coverImage={<Flex height={300} width={300} bgColor={'#777'} mb={10} />}
-          title={<Text fontSize={'20px'} fontWeight={400} textAlign='center'>Download PDF</Text>}
-          secondaryButton={{ label: 'Close', onClick: () => { }, dismissesModal: true }}
+          coverImage={
+            <Flex
+              height={300}
+              width={300}
+              bgColor={'#777'}
+              mb={10}
+            />
+          }
+          title={
+            <Text
+              fontSize={'20px'}
+              fontWeight={400}
+              textAlign="center"
+            >
+              Download PDF
+            </Text>
+          }
+          secondaryButton={{ label: 'Close', onClick: () => {}, dismissesModal: true }}
         >
-          <Text fontSize={'14px'} textAlign='center'>Download and send this to your recipient. Do not store this online or let anyone see.</Text>
+          <Text
+            fontSize={'14px'}
+            textAlign="center"
+          >
+            Download and send this to your recipient. Do not store this online or let anyone see.
+          </Text>
           <Box height={30} />
-          <Button onClick={() => closeModal()}>
-            Download
-          </Button>
+          <Button onClick={() => closeModal()}>Download</Button>
         </SarcoModal>
       </Flex>
     </VStack>

@@ -11,8 +11,8 @@ export const hardhatNetworkConfig: NetworkConfig = {
   explorerUrl: '',
   explorerApiKey: '',
   bundlr: {
-    currencyName: 'ethereum',
-    nodeUrl: 'https://devnet.bundlr.network',
-    providerUrl: 'https://rpc.ankr.com/eth_goerli',
+    currencyName: '',
+    nodeUrl: '',
+    providerUrl: '',
   },
 };

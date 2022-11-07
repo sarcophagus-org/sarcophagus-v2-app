@@ -37,7 +37,7 @@ const createSarcophagusStages = {
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
   [CreateSarcophagusStage.APPROVE]: 'Approve',
-  [CreateSarcophagusStage.COMPLETED]: ''
+  [CreateSarcophagusStage.COMPLETED]: '',
 };
 
 async function encryptShards(
@@ -108,7 +108,12 @@ export function useCreateSarcophagus() {
 
   useEffect(() => {
     // TODO: compare with pending fees instead
-    setHasApproved(allowance !== undefined && BigNumber.from(allowance).gte(ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))));
+    setHasApproved(
+      allowance !== undefined &&
+        BigNumber.from(allowance).gte(
+          ethers.constants.MaxUint256.sub(ethers.utils.parseEther('100'))
+        )
+    );
   }, [allowance]);
 
   // Generates a random key with which to encrypt the outer layer of the sarcophagus
@@ -120,13 +125,16 @@ export function useCreateSarcophagus() {
     })();
   }, []);
 
-  const uploadToArweave = useCallback(async (data: Buffer): Promise<string> => {
-    const txId = networkConfig.chainId === hardhatChainId ?
-      await uploadArweaveFile(data) :
-      await uploadFile(data);
+  const uploadToArweave = useCallback(
+    async (data: Buffer): Promise<string> => {
+      const txId =
+        networkConfig.chainId === hardhatChainId
+          ? await uploadArweaveFile(data)
+          : await uploadFile(data);
 
-    return txId;
-  }, [uploadArweaveFile, uploadFile, networkConfig.chainId]
+      return txId;
+    },
+    [uploadArweaveFile, uploadFile, networkConfig.chainId]
   );
 
   const processUploadToArweaveError = (error: any) => {
@@ -208,36 +216,42 @@ export function useCreateSarcophagus() {
   //   setOuterPublicKey('');
   // }, []);
 
-  const incrementStage = useCallback((forceIndex?: number): void => {
-    const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
-    const currentIndex = stages.indexOf(currentStage);
+  const incrementStage = useCallback(
+    (forceIndex?: number): void => {
+      const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
+      const currentIndex = stages.indexOf(currentStage);
 
-    let nextIndex = forceIndex ?? currentIndex + 1;
+      let nextIndex = forceIndex ?? currentIndex + 1;
 
-    // Skip approval step if already approved and about to move into that step
-    if (!forceIndex && currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
-      nextIndex = currentIndex + 2;
-    }
+      // Skip approval step if already approved and about to move into that step
+      if (!forceIndex && currentIndex === CreateSarcophagusStage.APPROVE - 1 && hasApproved) {
+        nextIndex = currentIndex + 2;
+      }
 
-    setCurrentStage(stages[nextIndex]);
-  }, [currentStage, hasApproved]);
+      setCurrentStage(stages[nextIndex]);
+    },
+    [currentStage, hasApproved]
+  );
 
-  const processArchCommsException = useCallback(({ message, offendingArchs, sourceStage }: ArchCommsExceptionParams) => {
-    // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
-    // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
-    if (!!offendingArchs.length) {
-      incrementStage(sourceStage);
-      setStageError(message);
+  const processArchCommsException = useCallback(
+    ({ message, offendingArchs, sourceStage }: ArchCommsExceptionParams) => {
+      // This is only a problem if `offendingArchs` is not empty. If empty, we simply haven't yet heard back from some of them.
+      // We might consider implementing a timeout of sorts, to avoid waiting too long if no exceptions are thrown but no response ever comes in.
+      if (!!offendingArchs.length) {
+        incrementStage(sourceStage);
+        setStageError(message);
 
-      // TODO: Point out offending archs: Some might have declined, others may have connection issues. What should the user do??
-      console.log(
-        message,
-        offendingArchs.map(
-          a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`
-        )
-      );
-    }
-  }, [incrementStage]);
+        // TODO: Point out offending archs: Some might have declined, others may have connection issues. What should the user do??
+        console.log(
+          message,
+          offendingArchs.map(
+            a => `${a.profile.peerId}:\n ${a.exception!.code}: ${a.exception!.message}`
+          )
+        );
+      }
+    },
+    [incrementStage]
+  );
 
   // Process each stage as they become active
   useEffect(() => {
@@ -316,21 +330,23 @@ export function useCreateSarcophagus() {
 
             case CreateSarcophagusStage.APPROVE:
               if (approve)
-                await executeStage(approve)
-                  .catch(e => {
-                    console.log(e);
-                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to approve';
-                    setStageError(friendlyError);
-                  });
+                await executeStage(approve).catch(e => {
+                  console.log(e);
+                  let friendlyError = e.reason
+                    ? handleContractCallException(e.reason)
+                    : 'Failed to approve';
+                  setStageError(friendlyError);
+                });
               break;
 
             case CreateSarcophagusStage.SUBMIT_SARCOPHAGUS:
               if (submitSarcophagus) {
-                await executeStage(submitSarcophagus)
-                  .catch(e => {
-                    let friendlyError = e.reason ? handleContractCallException(e.reason) : 'Failed to submit sarcophagus to contract';
-                    setStageError(friendlyError);
-                  });
+                await executeStage(submitSarcophagus).catch(e => {
+                  let friendlyError = e.reason
+                    ? handleContractCallException(e.reason)
+                    : 'Failed to submit sarcophagus to contract';
+                  setStageError(friendlyError);
+                });
               }
               break;
 
@@ -372,7 +388,7 @@ export function useCreateSarcophagus() {
     allowance,
     hasApproved,
     incrementStage,
-    processArchCommsException
+    processArchCommsException,
   ]);
 
   // Update archaeologist public keys, signatures ready status
