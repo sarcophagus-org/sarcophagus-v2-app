@@ -14,7 +14,6 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     sarcophagusPayloadTxId,
     encryptedShardsTxId,
   } = useContext(CreateSarcophagusContext);
-  const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
 
   const submitSarcophagus = useCallback(async () => {
     const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({
@@ -26,7 +25,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
       negotiationTimestamp,
       archaeologistSignatures,
       archaeologistShards,
-      arweaveTxIds,
+      arweaveTxIds: [sarcophagusPayloadTxId, encryptedShardsTxId],
     });
 
     const tx = await embalmerFacet.createSarcophagus(...submitSarcophagusArgs);
@@ -42,7 +41,8 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     negotiationTimestamp,
     archaeologistSignatures,
     archaeologistShards,
-    arweaveTxIds,
+    sarcophagusPayloadTxId,
+    encryptedShardsTxId,
   ]);
 
   return {
