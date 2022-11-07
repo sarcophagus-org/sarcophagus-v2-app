@@ -35,8 +35,11 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
     handleCheckArchaeologist,
     selectedArchaeologists,
     sortedFilteredArchaeologist,
+    sortedArchaeologist,
     onClickSortDiggingFees,
+    onClickSortUnwraps,
     diggingFeesSortDirection,
+    unwrapsSortDirection,
     handleChangeAddressSearch,
     diggingFeesFilter,
     archAddressSearch,
@@ -59,7 +62,6 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
-  console.log('selectedArchaeologists', selectedArchaeologists);
   return (
     <Flex
       direction="column"
@@ -86,7 +88,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                         textTransform="capitalize"
                         py={3}
                       >
-                        Archaeologists ({sortedFilteredArchaeologist.length})
+                        Archaeologists ({sortedFilteredArchaeologist?.length})
                       </Text>
                       <Input
                         w="200px"
@@ -119,9 +121,8 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                     <VStack>
                       <Button
                         variant="ghost"
-                        textTransform="capitalize"
-                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
-                        // onClick={onClickSortDiggingFees}
+                        rightIcon={sortIconsMap[unwrapsSortDirection]}
+                        onClick={onClickSortUnwraps}
                       >
                         <Text> Unwraps </Text>
                       </Button>
@@ -137,8 +138,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                     <VStack>
                       <Button
                         variant="ghost"
-                        textTransform="capitalize"
-                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                        // rightIcon={sortIconsMap[diggingFeesSortDirection]}
                         // onClick={onClickSortDiggingFees}
                       >
                         <Text> Fails </Text>
@@ -155,7 +155,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                 </Tr>
               </Thead>
               <Tbody>
-                {sortedFilteredArchaeologist.map(arch => {
+                {sortedFilteredArchaeologist?.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId
@@ -197,7 +197,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                             ml={3}
                             color={isSelected ? 'brand.0' : ''}
                           >
-                            {Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))}
+                            {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
                           </Text>
                         </Flex>
                       </Td>

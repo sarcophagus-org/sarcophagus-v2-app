@@ -36,6 +36,7 @@ export interface EmbalmState {
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
   diggingFeesSortDirection: SortDirection;
+  unwrapsSortDirection: SortDirection;
   diggingFeesFilter: string;
   archAddressSearch: string;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
@@ -63,6 +64,7 @@ export const embalmInitialState: EmbalmState = {
   ),
   uploadPrice: '0',
   diggingFeesSortDirection: SortDirection.NONE,
+  unwrapsSortDirection: SortDirection.NONE,
   diggingFeesFilter: '',
   archAddressSearch: '',
   archaeologistEncryptedShards: [],
@@ -201,6 +203,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetDiggingFeesSortDirection:
       return { ...state, diggingFeesSortDirection: action.payload.direction };
+
+    case ActionType.SetUnwrapsSortDirection:
+      return { ...state, unwrapsSortDirection: action.payload.direction };
 
     case ActionType.SetDiggingFeesFilter:
       return { ...state, diggingFeesFilter: action.payload.filter };
