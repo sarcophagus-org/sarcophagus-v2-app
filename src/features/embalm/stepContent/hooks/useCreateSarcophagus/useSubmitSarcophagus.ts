@@ -1,18 +1,20 @@
-import { ArchaeologistEncryptedShard } from '../../../../../types';
 import { ethers } from 'ethers';
 import { useSelector } from '../../../../../store';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagusArgs';
+import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 
-export function useSubmitSarcophagus(
-  embalmerFacet: ethers.Contract,
-  negotiationTimestamp: number,
-  archaeologistSignatures: Map<string, string>,
-  archaeologistShards: ArchaeologistEncryptedShard[],
-  arweaveTxIds: string[]
-) {
+export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
   const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
     useSelector(x => x.embalmState);
+  const {
+    negotiationTimestamp,
+    archaeologistSignatures,
+    archaeologistShards,
+    sarcophagusPayloadTxId,
+    encryptedShardsTxId,
+  } = useContext(CreateSarcophagusContext);
+  const arweaveTxIds = [sarcophagusPayloadTxId, encryptedShardsTxId];
 
   const submitSarcophagus = useCallback(async () => {
     const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({

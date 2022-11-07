@@ -1,15 +1,13 @@
-import React, { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { encrypt, readFileDataAsBase64 } from '../../../../../lib/utils/helpers';
 import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
+import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 
-export function useUploadDoubleEncryptedFile(
-  file: File | null,
-  outerPublicKey: string,
-  setSarcophagusPayloadTxId: React.Dispatch<React.SetStateAction<string>>
-) {
+export function useUploadDoubleEncryptedFile() {
   const { uploadToArweave } = useArweaveService();
-  const { recipientState } = useSelector(x => x.embalmState);
+  const { file, recipientState } = useSelector(x => x.embalmState);
+  const { outerPublicKey, setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     try {

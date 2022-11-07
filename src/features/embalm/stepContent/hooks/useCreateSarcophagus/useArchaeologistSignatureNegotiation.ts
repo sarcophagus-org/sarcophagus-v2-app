@@ -1,14 +1,11 @@
 import { pipe } from 'it-pipe';
-import React, { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../../../../../lib/config/node_config';
-import {
-  ArchaeologistEncryptedShard,
-  ArchaeologistExceptionCode,
-  SarcophagusValidationError,
-} from 'types';
+import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import { getLowestRewrapInterval } from '../../../../../lib/utils/helpers';
+import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 
 interface ArchaeologistSignatureNegotiationParams {
   arweaveTxId: string;
@@ -18,14 +15,15 @@ interface ArchaeologistSignatureNegotiationParams {
   timestamp: number;
 }
 
-export function useArchaeologistSignatureNegotiation(
-  archaeologistShards: ArchaeologistEncryptedShard[],
-  encryptedShardsTxId: string,
-  setArchaeologistSignatures: React.Dispatch<React.SetStateAction<Map<string, string>>>,
-  setNegotiationTimestamp: React.Dispatch<React.SetStateAction<number>>
-) {
+export function useArchaeologistSignatureNegotiation() {
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
+  const {
+    archaeologistShards,
+    encryptedShardsTxId,
+    setArchaeologistSignatures,
+    setNegotiationTimestamp,
+  } = useContext(CreateSarcophagusContext);
 
   function processDeclinedSignatureCode(
     code: SarcophagusValidationError,

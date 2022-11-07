@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from '../../../../../store';
-import { ArchaeologistEncryptedShard } from 'types';
-import { createEncryptionKeypairAsync } from '../useCreateEncryptionKeypair';
 import { disableSteps } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
@@ -12,6 +10,7 @@ import { useUploadEncryptedShards } from './useUploadEncryptedShards';
 import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
 import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
+import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -19,95 +18,23 @@ export function useCreateSarcophagus(
   sarcoToken: ethers.Contract
 ) {
   const dispatch = useDispatch();
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
 
-  // State variables to track automated sarcophagus creation flow across all stages
+  // State variables to track sarcophagus creation flow across all stages
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
   const [stageError, setStageError] = useState<string>();
 
-  // Global state from embalm steps, used to create sarcophagus
-  const { file, selectedArchaeologists } = useSelector(x => x.embalmState);
+  // Returns true when all public keys have been received from archaoelogists
+  const { publicKeysReady } = useContext(CreateSarcophagusContext);
 
-  /**
-   * Stage 0 - Generate Outer Layer Key Pair
-   */
-  const [outerPrivateKey, setOuterPrivateKey] = useState('');
-  const [outerPublicKey, setOuterPublicKey] = useState('');
-
-  useEffect(() => {
-    (async () => {
-      const { privateKey, publicKey } = await createEncryptionKeypairAsync();
-      setOuterPrivateKey(privateKey);
-      setOuterPublicKey(publicKey);
-    })();
-  }, []);
-
-  /**
-   * Stage 1 - Dial Archaeologists
-   */
-  const [publicKeysReady, setPublicKeysReady] = useState(false);
+  // Each hook represents a stage in the create sarcophagus process
   const { dialSelectedArchaeologists } = useDialArchaeologists();
-
-  // Archaeologists have callback function on successful dial to send
-  // their public keys. When all archs have sent their pub keys, the next stage can begin
-  useEffect(() => {
-    if (selectedArchaeologists.length > 0) {
-      setPublicKeysReady(selectedArchaeologists.every(arch => !!arch.publicKey));
-    }
-  }, [selectedArchaeologists]);
-
-  /**
-   * Stage 2 - Generate + Upload Archaeologist Encrypted Shards to Bundlr
-   */
-  const [archaeologistShards, setArchaeologistShards] = useState(
-    [] as ArchaeologistEncryptedShard[]
-  );
-  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState('');
-  const { uploadAndSetEncryptedShards } = useUploadEncryptedShards(
-    outerPrivateKey,
-    setArchaeologistShards,
-    setEncryptedShardsTxId
-  );
-
-  /**
-   * Stage 3 - Archaeologist Signature Negotiation
-   */
-  const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
-  const [archaeologistSignatures, setArchaeologistSignatures] = useState(
-    new Map<string, string>([])
-  );
-  const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation(
-    archaeologistShards,
-    encryptedShardsTxId,
-    setArchaeologistSignatures,
-    setNegotiationTimestamp
-  );
-
-  /**
-   * Stage 4 - Upload File Payload (double encrypted) to Bundlr
-   */
-  const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState('');
-  const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile(
-    file,
-    outerPublicKey,
-    setSarcophagusPayloadTxId
-  );
-
-  /**
-   * Stage 5a (if necessary) - Approve Sarco Token
-   */
+  const { uploadAndSetEncryptedShards } = useUploadEncryptedShards();
+  const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
+  const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile();
   const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
-
-  /**
-   * Stage 5b - Finalize Create Sarcophagus
-   */
-  const { submitSarcophagus } = useSubmitSarcophagus(
-    embalmerFacet,
-    negotiationTimestamp,
-    archaeologistSignatures,
-    archaeologistShards,
-    [sarcophagusPayloadTxId, encryptedShardsTxId]
-  );
+  const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
 
   const stagesMap = useMemo(() => {
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
@@ -137,13 +64,12 @@ export function useCreateSarcophagus(
       };
 
       const executeStage = async (
-        stageToExecute: (...args: any[]) => Promise<any>,
-        ...stageArgs: any[]
+        stageToExecute: (...args: any[]) => Promise<any>
       ): Promise<any> =>
         new Promise((resolve, reject) => {
           setStageExecuting(true);
 
-          stageToExecute(...stageArgs)
+          stageToExecute()
             .then((result: any) => {
               setStageExecuting(false);
               incrementStage();
@@ -193,23 +119,9 @@ export function useCreateSarcophagus(
     dispatch(disableSteps());
   }, [dispatch]);
 
-  // TODO -- re-enable once figure out state issue at end of createSarcophagus
-  // const resetLocalEmbalmerState = useCallback(() => {
-  //   setArchaeologistShards([] as ArchaeologistEncryptedShard[]);
-  //   setEncryptedShardsTxId('');
-  //   setSarcophagusPayloadTxId('');
-  //   setArchaeologistSignatures(new Map<string, string>([]));
-  //   setNegotiationTimestamp(0);
-  //   setOuterPrivateKey('');
-  //   setOuterPublicKey('');
-  // }, []);
-
   return {
     currentStage,
-    uploadAndSetEncryptedShards,
-    uploadAndSetDoubleEncryptedFile,
     handleCreate,
     stageError,
-    createSarcophagusStages,
   };
 }

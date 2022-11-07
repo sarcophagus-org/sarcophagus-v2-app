@@ -1,16 +1,14 @@
-import React, { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
 import { encryptShards } from '../../utils/createSarcophagus';
-import { ArchaeologistEncryptedShard } from '../../../../../types';
 import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
+import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 
-export function useUploadEncryptedShards(
-  outerPrivateKey: string,
-  setArchaeologistShards: React.Dispatch<React.SetStateAction<ArchaeologistEncryptedShard[]>>,
-  setEncryptedShardsTxId: React.Dispatch<React.SetStateAction<string>>
-) {
+export function useUploadEncryptedShards() {
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
+  const { outerPrivateKey, setArchaeologistShards, setEncryptedShardsTxId } =
+    useContext(CreateSarcophagusContext);
 
   const { uploadToArweave } = useArweaveService();
 
