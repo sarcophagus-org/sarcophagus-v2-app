@@ -63,9 +63,7 @@ export function useCreateSarcophagus(
         setCurrentStage(stages[currentIndex + 1]);
       };
 
-      const executeStage = async (
-        stageToExecute: (...args: any[]) => Promise<any>
-      ): Promise<any> =>
+      const executeStage = async (stageToExecute: (...args: any[]) => Promise<any>): Promise<any> =>
         new Promise((resolve, reject) => {
           setStageExecuting(true);
 
@@ -113,6 +111,10 @@ export function useCreateSarcophagus(
     selectedArchaeologists,
   ]);
 
+  const retryStage = useCallback(async () => {
+    setStageError(undefined);
+  }, []);
+
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
     setStageError(undefined);
@@ -123,5 +125,6 @@ export function useCreateSarcophagus(
     currentStage,
     handleCreate,
     stageError,
+    retryStage,
   };
 }

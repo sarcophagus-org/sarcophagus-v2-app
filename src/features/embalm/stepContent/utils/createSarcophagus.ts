@@ -13,7 +13,9 @@ export async function encryptShards(
       unencryptedShardDoubleHash: doubleHashShard(payload[i]),
     }))
   );
-} // Note: ORDER MATTERS HERE
+}
+
+// Note: ORDER MATTERS HERE
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,

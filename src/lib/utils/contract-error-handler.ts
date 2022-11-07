@@ -36,7 +36,6 @@ const errorMessageMapping = new Map<string, string | Function>([
  * */
 export function formatContractCallException(e: string): string {
   for (let [key, value] of errorMessageMapping) {
-    console.log('me e', e);
     if (e.includes(key)) {
       if (typeof value === 'function') {
         return value(e);

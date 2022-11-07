@@ -7,6 +7,7 @@ interface ProgressTrackerProps {
   title: string;
   currentStage: number;
   stageError: string | undefined;
+  retryStage: () => void;
   children: FunctionComponentElement<ProgressTrackerStageProps>[];
 }
 
@@ -14,6 +15,7 @@ export function ProgressTracker({
   title,
   currentStage,
   stageError,
+  retryStage,
   children,
 }: ProgressTrackerProps) {
   // Determine the current stage status using the stage of a child and the current stage passed on a
@@ -39,6 +41,7 @@ export function ProgressTracker({
         ),
         index,
         stageError,
+        retryStage,
       });
     }
     return child;

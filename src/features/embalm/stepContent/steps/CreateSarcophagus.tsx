@@ -37,7 +37,7 @@ export function CreateSarcophagus() {
     signerOrProvider: signer,
   });
 
-  const { currentStage, handleCreate, stageError } = useCreateSarcophagus(
+  const { currentStage, handleCreate, stageError, retryStage } = useCreateSarcophagus(
     createSarcophagusStages,
     embalmerFacet!,
     sarcoToken!
@@ -94,6 +94,7 @@ export function CreateSarcophagus() {
             title="Creating Sarcophagus"
             currentStage={currentStage}
             stageError={stageError}
+            retryStage={retryStage}
           >
             {Object.values(createSarcophagusStages)
               // Necessarily, a couple of these mappings don't have UI importance, thus no titles.
