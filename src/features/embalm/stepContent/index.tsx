@@ -9,6 +9,7 @@ import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
 import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologists';
 import { UploadPayload } from './steps/UploadPayload';
 import { CreateSarcophagus } from './steps/CreateSarcophagus';
+import { CreateSarcophagusContextProvider } from './context/CreateSarcophagusContext';
 
 interface StepContentMap {
   component: JSX.Element;
@@ -27,7 +28,14 @@ export function StepContent() {
     [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: 'Set Recipient' },
     [Step.SelectArchaeologists]: { component: <SelectArchaeologists />, title: '' },
     [Step.RequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },
-    [Step.CreateSarcophagus]: { component: <CreateSarcophagus />, title: '' },
+    [Step.CreateSarcophagus]: {
+      component: (
+        <CreateSarcophagusContextProvider>
+          <CreateSarcophagus />
+        </CreateSarcophagusContextProvider>
+      ),
+      title: ''
+    },
   };
 
   function handleClickPrev() {

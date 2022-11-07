@@ -36,33 +36,37 @@ export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStat
     [libp2pNode, setIsDialing, toast]
   );
 
-  const pingArchaeologist = useCallback(async (peerId: PeerId, onComplete: Function) => {
-    const pingTimeout = 5000;
+  const pingArchaeologist = useCallback(
+    async (peerId: PeerId, onComplete: Function) => {
+      const pingTimeout = 5000;
 
-    const couldNotConnect = setTimeout(() => {
-      console.log('ping timeout!');
+      const couldNotConnect = setTimeout(() => {
+        console.log('ping timeout!');
 
-      dispatch(setArchaeologistException(
-        peerId.toString(),
-        { code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION, message: 'Ping timeout' }
-      ));
-      onComplete();
-    }, pingTimeout);
+        dispatch(
+          setArchaeologistException(peerId.toString(), {
+            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+            message: 'Ping timeout',
+          })
+        );
+        onComplete();
+      }, pingTimeout);
 
-    console.log('pinging...');
+      console.log(`pinging ${peerId.toString()}`);
 
-    const latency = await libp2pNode?.ping(peerId);
-    console.log('latency: ', latency);
+      const latency = await libp2pNode?.ping(peerId);
+      console.log('latency: ', latency);
 
-
-    if (!!latency) {
-      clearTimeout(couldNotConnect);
-      onComplete();
-    }
-  }, [libp2pNode, dispatch]);
+      if (!!latency) {
+        clearTimeout(couldNotConnect);
+        onComplete();
+      }
+    },
+    [libp2pNode, dispatch]
+  );
 
   return {
     testDialArchaeologist,
-    pingArchaeologist
+    pingArchaeologist,
   };
 }
