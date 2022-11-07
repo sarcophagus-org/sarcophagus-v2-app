@@ -59,7 +59,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
-  console.log(sortedFilteredArchaeologist);
+  console.log('selectedArchaeologists', selectedArchaeologists);
   return (
     <Flex
       direction="column"

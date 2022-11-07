@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   deselectArchaeologist,
   selectArchaeologist,
@@ -28,10 +28,13 @@ export function useArchaeologistList() {
 
   const NUMBER_MOCK_ARCH = 5;
 
-  const onlineArchaeologists =
-    NUMBER_MOCK_ARCH > 0
-      ? mochArchaeologists(NUMBER_MOCK_ARCH)
-      : archaeologists.filter(a => a.isOnline);
+  const onlineArchaeologists = useMemo(
+    () =>
+      NUMBER_MOCK_ARCH > 0
+        ? mochArchaeologists(NUMBER_MOCK_ARCH)
+        : archaeologists.filter(a => a.isOnline),
+    [archaeologists]
+  );
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
