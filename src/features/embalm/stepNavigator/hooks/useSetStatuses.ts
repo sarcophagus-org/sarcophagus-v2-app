@@ -12,7 +12,8 @@ import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
+import { hardhatChainId } from '../../../../lib/config/hardhat';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -52,6 +53,7 @@ export function useSetStatuses() {
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
   const { isConnected: isWalletConnected } = useAccount();
+  const { chain } = useNetwork();
 
   // Need to declare this here to prevent infinite effect loop
   const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
@@ -78,7 +80,10 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if (isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) {
+    if (
+      (isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) ||
+      chain?.id === hardhatChainId
+    ) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
@@ -134,6 +139,7 @@ export function useSetStatuses() {
     fundBundlrStatus,
     isBundlrConnected,
     uploadPrice,
+    chain?.id,
   ]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [

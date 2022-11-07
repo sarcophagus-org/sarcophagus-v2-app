@@ -16,7 +16,7 @@ export function useBurySarcophagus({ sarcoId }: BurySarcophagusArgs) {
     args: [sarcoId],
     toastDescription,
     transactionDescription,
-    mode: 'prepared'
+    mode: 'prepared',
   });
 
   return { burySarcophagus: submit };

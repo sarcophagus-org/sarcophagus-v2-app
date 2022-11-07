@@ -76,14 +76,14 @@ export function MagicFormFiller() {
     await sleep(delay);
     dispatch(goToStep(Step.SelectArchaeologists));
     await sleep(delay);
-    dispatch(selectArchaeologist(archaeologists[0]));
+    dispatch(selectArchaeologist(onlineArchaeologists[0]));
 
     // Create sarcophagus
     await sleep(delay);
     dispatch(goToStep(Step.CreateSarcophagus));
 
     setIsWorking(false);
-  }, [archaeologists, dispatch]);
+  }, [dispatch, onlineArchaeologists]);
 
   return (
     <Flex

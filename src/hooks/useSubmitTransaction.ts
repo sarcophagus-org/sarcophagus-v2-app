@@ -12,7 +12,7 @@ type UseSubmitTransactionsArgs = UseContractWriteArgs & {
 
 export function useSubmitTransaction(
   contractConfig: Omit<UseSubmitTransactionsArgs, 'address'>,
-  address?: string,
+  address?: string
 ) {
   const defaultSuccessToast = 'Transaction submitted';
   const defaultTransactionDescription = 'Unknown transaction submitted';
@@ -23,7 +23,7 @@ export function useSubmitTransaction(
 
   const { config, error } = usePrepareContractWrite({
     address: address ?? networkConfig.diamondDeployAddress,
-    ...contractConfig
+    ...contractConfig,
   });
 
   const { writeAsync } = useContractWrite({
@@ -34,11 +34,11 @@ export function useSubmitTransaction(
         status: 'success',
         duration: toastDuration,
         isClosable: true,
-        position: 'bottom-right'
+        position: 'bottom-right',
       });
       addRecentTransaction({
         hash: data.hash,
-        description: contractConfig.transactionDescription || defaultTransactionDescription
+        description: contractConfig.transactionDescription || defaultTransactionDescription,
       });
     },
     onError(e) {
@@ -49,10 +49,10 @@ export function useSubmitTransaction(
         description: formatToastMessage(e.message),
         status: 'error',
         isClosable: true,
-        position: 'bottom-right'
+        position: 'bottom-right',
       });
     },
-    ...config
+    ...config,
   });
 
   return {

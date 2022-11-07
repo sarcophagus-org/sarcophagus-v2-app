@@ -1,16 +1,23 @@
 import { Flex, Text, VStack } from '@chakra-ui/react';
 import React, { FunctionComponentElement } from 'react';
-import { CreateSarcophagusStage } from '../hooks/useCreateSarcophagus';
 import { ProgressTrackerStageProps, StageStatus } from './ProgressTrackerStage';
+import { CreateSarcophagusStage } from '../utils/createSarcophagus';
 
 interface ProgressTrackerProps {
   title: string;
   currentStage: number;
   stageError: string | undefined;
+  retryStage: () => void;
   children: FunctionComponentElement<ProgressTrackerStageProps>[];
 }
 
-export function ProgressTracker({ title, currentStage, stageError, children }: ProgressTrackerProps) {
+export function ProgressTracker({
+  title,
+  currentStage,
+  stageError,
+  retryStage,
+  children,
+}: ProgressTrackerProps) {
   // Determine the current stage status using the stage of a child and the current stage passed on a
   // prop.
   function getStageStatus(stage: CreateSarcophagusStage): StageStatus {
@@ -29,9 +36,12 @@ export function ProgressTracker({ title, currentStage, stageError, children }: P
     if (React.isValidElement(child)) {
       return React.cloneElement<ProgressTrackerStageProps>(child, {
         // index is a number but is being used as a value of the CreateSarcophagusStage enum
-        stageStatus: getStageStatus(index + 1),
+        stageStatus: getStageStatus(
+          currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS ? index + 2 : index + 1
+        ),
         index,
         stageError,
+        retryStage,
       });
     }
     return child;

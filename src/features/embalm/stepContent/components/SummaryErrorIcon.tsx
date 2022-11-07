@@ -3,7 +3,7 @@ import { Button, Flex, Tooltip } from '@chakra-ui/react';
 export function SummaryErrorIcon({ error }: { error?: string }) {
   return (
     <Tooltip
-      placement='top'
+      placement="top"
       closeDelay={500}
       label={error}
       isDisabled={!error}
@@ -16,7 +16,15 @@ export function SummaryErrorIcon({ error }: { error?: string }) {
         alignItems="center"
         justifyContent="center"
       >
-        <Flex h="1.2rem" w="1.2rem" borderRadius={100} background="errorAlt" alignItems="center" justifyContent="center" color="red" >
+        <Flex
+          h="1.2rem"
+          w="1.2rem"
+          borderRadius={100}
+          background="errorAlt"
+          alignItems="center"
+          justifyContent="center"
+          color="red"
+        >
           <Button variant="unstyled">!</Button>
         </Flex>
       </Flex>

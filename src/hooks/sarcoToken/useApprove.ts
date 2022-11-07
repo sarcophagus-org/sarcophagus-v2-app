@@ -10,15 +10,17 @@ export function useApprove() {
   const toastDescription = 'Approved';
   const transactionDescription = 'Approve SARCO spending';
 
-  const { submit } = useSubmitTransaction({
-    abi: SarcoTokenMock__factory.abi as Abi,
-    functionName: 'approve',
-    args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
-    toastDescription,
-    transactionDescription,
-    mode: 'prepared',
-  }, networkConfig.sarcoTokenAddress);
-
+  const { submit } = useSubmitTransaction(
+    {
+      abi: SarcoTokenMock__factory.abi as Abi,
+      functionName: 'approve',
+      args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
+      toastDescription,
+      transactionDescription,
+      mode: 'prepared',
+    },
+    networkConfig.sarcoTokenAddress
+  );
 
   return { approve: submit };
 }

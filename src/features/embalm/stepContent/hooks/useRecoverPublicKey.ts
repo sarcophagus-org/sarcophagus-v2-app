@@ -2,11 +2,12 @@ import { ethers, UnsignedTransaction } from 'ethers';
 import { TransactionResponse } from '@ethersproject/providers';
 import { useState, useCallback } from 'react';
 import axios from 'axios';
-import { useProvider } from 'wagmi';
+import { useNetwork, useProvider } from 'wagmi';
 import { useDispatch } from 'store/index';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useNetworkConfig } from '../../../../lib/config';
 import { log } from '../../../../lib/utils/logger';
+import { hardhatChainId } from '../../../../lib/config/hardhat';
 
 /**
  * returns a public key from a transaction
@@ -46,17 +47,17 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
     ...(transaction.chainId && { chainId: transaction.chainId }),
 
     ...((isLegacy(transaction.type) || isEIP2930(transaction.type)) && {
-      gasPrice: transaction.gasPrice
+      gasPrice: transaction.gasPrice,
     }),
 
     ...((isEIP2930(transaction.type) || isEIP1550(transaction.type)) && {
-      accessList: transaction.accessList
+      accessList: transaction.accessList,
     }),
 
     ...(isEIP1550(transaction.type) && {
       maxFeePerGas: transaction.maxFeePerGas,
-      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-    })
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+    }),
   };
 
   const resolvedTx = await ethers.utils.resolveProperties(unsignedTransaction);
@@ -66,7 +67,7 @@ async function getPublicKeyFromTransactionResponse(transaction: TransactionRespo
   const signature = ethers.utils.splitSignature({
     r: transaction.r || '',
     s: transaction.s || '',
-    v: transaction.v || 0
+    v: transaction.v || 0,
   });
 
   return ethers.utils.recoverPublicKey(msgHash, signature);
@@ -87,7 +88,7 @@ export function useRecoverPublicKey() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<ErrorStatus | null>(null);
-
+  const { chain } = useNetwork();
   const provider = useProvider();
 
   const recoverPublicKey = useCallback(
@@ -96,7 +97,11 @@ export function useRecoverPublicKey() {
         setIsLoading(true);
         if (!ethers.utils.isAddress(address.toLowerCase())) {
           setErrorStatus(ErrorStatus.INVALID_ADDRESS);
-
+          return;
+        }
+        if (chain?.id === hardhatChainId) {
+          console.error('Key recovery is not available on local hardhat networks');
+          setErrorStatus(ErrorStatus.ERROR);
           return;
         }
         log(`retrieving public key for address ${address}`);
@@ -123,7 +128,7 @@ export function useRecoverPublicKey() {
                 setRecipientState({
                   publicKey: recoveredPublicKey,
                   address: address,
-                  setByOption: RecipientSetByOption.ADDRESS
+                  setByOption: RecipientSetByOption.ADDRESS,
                 })
               );
 
@@ -143,7 +148,7 @@ export function useRecoverPublicKey() {
         setIsLoading(false);
       }
     },
-    [dispatch, provider, networkConfig.explorerApiKey, networkConfig.explorerUrl]
+    [dispatch, provider, networkConfig.explorerApiKey, networkConfig.explorerUrl, chain?.id]
   );
 
   return { recoverPublicKey, isLoading, errorStatus };

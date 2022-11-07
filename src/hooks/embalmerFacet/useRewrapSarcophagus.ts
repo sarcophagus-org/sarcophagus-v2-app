@@ -17,7 +17,7 @@ export function useRewrapSarcophagus({ sarcoId, resurrectionTime }: RewrapSarcop
     args: [sarcoId, resurrectionTime],
     toastDescription,
     transactionDescription,
-    mode: 'prepared'
+    mode: 'prepared',
   });
 
   return { rewrapSarcophagus: submit };

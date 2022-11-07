@@ -6,7 +6,7 @@ export function DashboardPage() {
     <Flex
       direction="column"
       width="100%"
-      height="%100"
+      height="100%"
     >
       <Dashboard />
     </Flex>

@@ -1,13 +1,8 @@
 import { BigNumber, ethers, utils } from 'ethers';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useSubmitTransaction } from '../useSubmitTransaction';
-import { useSelector } from '../../store';
-import { getLowestRewrapInterval } from '../../lib/utils/helpers';
-import { ArchaeologistEncryptedShard } from '../../types';
-import { useCallback } from 'react';
-import { CreateSarcophagusStage } from '../../features/embalm/stepContent/hooks/useCreateSarcophagus';
+import { getLowestRewrapInterval } from '../../../../lib/utils/helpers';
+import { Archaeologist, ArchaeologistEncryptedShard } from '../../../../types';
 import { computeAddress } from 'ethers/lib/utils';
-import { Abi } from 'abitype';
+import { RecipientState } from '../../../../store/embalm/actions';
 
 export interface ContractArchaeologist {
   archAddress: string;
@@ -28,33 +23,29 @@ export interface SubmitSarcophagusSettings {
 }
 
 export interface SubmitSarcophagusProps {
+  name: string;
+  recipientState: RecipientState;
+  resurrection: number;
+  selectedArchaeologists: Archaeologist[];
+  requiredArchaeologists: number;
   negotiationTimestamp: number;
   archaeologistSignatures: Map<string, string>;
   archaeologistShards: ArchaeologistEncryptedShard[];
   arweaveTxIds: string[];
-  currentStage: CreateSarcophagusStage;
 }
 
-export function useSubmitSarcophagus({
+export function formatSubmitSarcophagusArgs({
+  name,
+  recipientState,
+  resurrection,
+  selectedArchaeologists,
+  requiredArchaeologists,
   negotiationTimestamp,
   archaeologistSignatures,
   archaeologistShards,
   arweaveTxIds,
-  currentStage,
 }: SubmitSarcophagusProps) {
-  const toastDescription = 'Sarcophagus created';
-  const transactionDescription = 'Create sarcophagus';
-
-  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
-    useSelector(x => x.embalmState);
-
-  const isSubmitting = currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS;
-
-  const getContractArchaeologists = useCallback((): ContractArchaeologist[] => {
-    if (!isSubmitting) {
-      return [];
-    }
-
+  const getContractArchaeologists = (): ContractArchaeologist[] => {
     return selectedArchaeologists.map(arch => {
       const { v, r, s } = ethers.utils.splitSignature(
         archaeologistSignatures.get(arch.profile.archAddress)!
@@ -70,7 +61,7 @@ export function useSubmitSarcophagus({
         s,
       };
     });
-  }, [selectedArchaeologists, archaeologistShards, archaeologistSignatures, isSubmitting]);
+  };
 
   const sarcoId = utils.id(name + Date.now().toString());
   const settings: SubmitSarcophagusSettings = {
@@ -83,28 +74,15 @@ export function useSubmitSarcophagus({
   };
 
   const contractArchaeologists = getContractArchaeologists();
-  const args =
-    isSubmitting && contractArchaeologists.length
-      ? [
-        sarcoId,
-        {
-          ...settings,
-        },
-        contractArchaeologists,
-        arweaveTxIds,
-      ]
-      : [];
 
-  const { submit, error } = useSubmitTransaction({
-    abi: EmbalmerFacet__factory.abi as Abi,
-    functionName: 'createSarcophagus',
-    args,
-    toastDescription,
-    transactionDescription,
-    mode: 'prepared'
-  });
+  const args = [
+    sarcoId,
+    {
+      ...settings,
+    },
+    contractArchaeologists,
+    arweaveTxIds,
+  ];
 
-  const submitSarcophagus = args.length && !error ? submit : undefined;
-
-  return { submitSarcophagus };
+  return { submitSarcophagusArgs: args };
 }

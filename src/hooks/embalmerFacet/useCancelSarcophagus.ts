@@ -16,7 +16,7 @@ export function useCancelSarcophagus({ sarcoId }: CancelSarcophagusArgs) {
     args: [sarcoId],
     toastDescription,
     transactionDescription,
-    mode: 'prepared'
+    mode: 'prepared',
   });
 
   return { cancelSarcophagus: submit };

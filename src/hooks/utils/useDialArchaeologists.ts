@@ -1,12 +1,15 @@
 import React, { useCallback } from 'react';
-import { useSelector } from '../../store';
+import { useDispatch, useSelector } from '../../store';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
+import { setArchaeologistException } from 'store/embalm/actions';
+import { ArchaeologistExceptionCode } from 'types';
 
 export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStateAction<boolean>>) {
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
   const toast = useToast();
+  const dispatch = useDispatch();
 
   // Dials the archaeologist and hangs up after an interval
   // sets dial status for use in the UX
@@ -33,7 +36,37 @@ export function useDialArchaeologists(setIsDialing: React.Dispatch<React.SetStat
     [libp2pNode, setIsDialing, toast]
   );
 
+  const pingArchaeologist = useCallback(
+    async (peerId: PeerId, onComplete: Function) => {
+      const pingTimeout = 5000;
+
+      const couldNotConnect = setTimeout(() => {
+        console.log('ping timeout!');
+
+        dispatch(
+          setArchaeologistException(peerId.toString(), {
+            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+            message: 'Ping timeout',
+          })
+        );
+        onComplete();
+      }, pingTimeout);
+
+      console.log(`pinging ${peerId.toString()}`);
+
+      const latency = await libp2pNode?.ping(peerId);
+      console.log('latency: ', latency);
+
+      if (!!latency) {
+        clearTimeout(couldNotConnect);
+        onComplete();
+      }
+    },
+    [libp2pNode, dispatch]
+  );
+
   return {
     testDialArchaeologist,
+    pingArchaeologist,
   };
 }
