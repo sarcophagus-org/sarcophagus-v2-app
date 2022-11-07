@@ -74,6 +74,7 @@ export function formatSubmitSarcophagusArgs({
   };
 
   const contractArchaeologists = getContractArchaeologists();
+
   const args = [
     sarcoId,
     {
