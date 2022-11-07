@@ -1,18 +1,15 @@
 import { BigNumber } from 'ethers';
 
 export interface ISarcophagus {
-  archaeologists: string[];
-  arweaveArchaeologist: string;
-  arweaveTxId: string;
-  canBeTransferred: boolean;
-  embalmer: string;
-  maxResurrectionInterval: BigNumber;
-  minShards: number;
   name: string;
-  recipientAddress: string;
-  resurrectionTime: BigNumber;
   state: number;
-  storageFee: BigNumber;
+  canBeTransferred: boolean;
+  minShards: number;
+  resurrectionTime: BigNumber;
+  maximumRewrapInterval: BigNumber;
+  arweaveTxIds: string[];
+  embalmer: string;
+  recipientAddress: string;
+  archaeologists: string[];
   sarcoId: string;
-  confirmations: number;
 }

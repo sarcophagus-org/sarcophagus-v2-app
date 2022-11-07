@@ -21,6 +21,10 @@ import {
 import { RepeatIcon } from '@chakra-ui/icons';
 import { formatAddress } from 'lib/utils/helpers';
 import useSarcophagi from 'hooks/useSarcophagi';
+import moment from 'moment';
+import { BigNumber } from 'ethers';
+import { useState } from 'react';
+import { SarcophagusDetail } from './SarcohpgusDetail';
 
 interface TabData {
   label: string;
@@ -33,6 +37,7 @@ interface MyTabProps extends TabProps {
 }
 export function Dashboard() {
   const { sarcophagi, updateSarcophagi } = useSarcophagi();
+  const [sarcoId, setSarcoId] = useState<string | undefined>(undefined);
 
   function CustomTab(props: MyTabProps) {
     const tabProps = useTab(props);
@@ -72,44 +77,65 @@ export function Dashboard() {
     );
   }
 
+  const resurectionDuration = (resurectionTime: BigNumber) => {
+    const differance = resurectionTime.mul(1000).sub(Date.now());
+    return differance.isNegative() ? 'past' : moment.duration(differance.toNumber()).humanize();
+  };
+
   const tabData: TabData[] = [
     {
       label: 'SARCOPHAGI',
       value: '0',
       component: (
         <VStack>
-          <IconButton
-            alignSelf="flex-end"
-            size="sm"
-            variant="ghost"
-            aria-label="Previous page"
-            icon={<RepeatIcon />}
-            onClick={updateSarcophagi}
-          />
-          <TableContainer
-            width="100%"
-            overflowY="auto"
-            maxHeight="650px"
-          >
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Sarco ID</Th>
-                  <Th>Name</Th>
-                  <Th>State</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {sarcophagi.map((s, index) => (
-                  <Tr key={index}>
-                    <Td>{formatAddress(s.sarcoId)}</Td>
-                    <Td>{s.name}</Td>
-                    <Td>{s.state}</Td>
+          <VStack>
+            <IconButton
+              alignSelf="flex-end"
+              size="sm"
+              variant="ghost"
+              aria-label="Previous page"
+              icon={<RepeatIcon />}
+              onClick={updateSarcophagi}
+            />
+            <TableContainer
+              width="100%"
+              overflowY="auto"
+              maxHeight="650px"
+            >
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th>Sarco ID</Th>
+                    <Th>Name</Th>
+                    <Th>State</Th>
+                    <Th>Ressurection</Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+                </Thead>
+                <Tbody>
+                  {sarcophagi.map((s, index) => (
+                    <Tr key={index}>
+                      <Td
+                        onClick={() => {
+                          setSarcoId(s.sarcoId);
+                        }}
+                        textDecor="underline"
+                        cursor="pointer"
+                      >
+                        {formatAddress(s.sarcoId)}
+                      </Td>
+                      <Td>{s.name}</Td>
+                      <Td>{s.state}</Td>
+                      <Td>
+                        {new Date(s.resurrectionTime.mul(1000).toNumber()).toDateString()} (
+                        {resurectionDuration(s.resurrectionTime)})
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </VStack>
+          <SarcophagusDetail id={sarcoId} />
         </VStack>
       ),
     },
