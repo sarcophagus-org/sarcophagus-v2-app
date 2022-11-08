@@ -1,7 +1,8 @@
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther, keccak256 } from 'ethers/lib/utils';
-import { Archaeologist } from '../../types';
+import moment from 'moment';
+import { Archaeologist } from 'types';
 
 /**
  * Returns the smallest maximumRewrapInterval value
@@ -122,4 +123,22 @@ export function sumDiggingFees(archaeologists: Archaeologist[]): BigNumber {
     (acc, curr) => acc.add(parseInt(formatEther(curr.profile.minimumDiggingFee))),
     ethers.constants.Zero
   );
+}
+
+/**
+ * Builds a resurrection date string from a BigNumber
+ * Ex: 09.22.2022 7:30pm (12 Days)
+ * @param resurrectionTime
+ * @returns The resurrection string
+ */
+export function buildResurrectionDateString(
+  resurrectionTime: BigNumber,
+  format = 'MM.DD.YYYY h:mmA'
+): string {
+  const resurrectionDateString = moment.unix(resurrectionTime.toNumber()).format(format);
+  const msUntilResurrection = resurrectionTime.toNumber() * 1000 - Date.now();
+  const timeUntilResurrection = `${msUntilResurrection < 0 && '-'}${moment
+    .duration(msUntilResurrection)
+    .humanize()}`;
+  return `${resurrectionDateString} (${timeUntilResurrection})`;
 }

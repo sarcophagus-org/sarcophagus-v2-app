@@ -2,7 +2,7 @@ import { useContractRead } from 'wagmi';
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
 
-export function useGetRecipientSarcophagi({ recipient }: { recipient: string }) {
+export function useGetRecipientSarcophagi(recipient: string): string[] {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
@@ -12,5 +12,5 @@ export function useGetRecipientSarcophagi({ recipient }: { recipient: string }) 
     args: [recipient],
   });
 
-  return data;
+  return data as string[];
 }
