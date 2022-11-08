@@ -226,6 +226,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                           <Text
                             color={isSelected ? 'brand.0' : ''}
                             ml={3}
+                            bg={'brand.100'}
+                            p={0.5}
+                            pl={2}
+                            pr={2}
                           >
                             {formatAddress(arch.profile.archAddress)}
                           </Text>
@@ -241,6 +245,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                           <Text
                             ml={3}
                             color={isSelected ? 'brand.0' : ''}
+                            bg={'brand.100'}
+                            p={0.5}
+                            pl={2}
+                            pr={2}
                           >
                             {ethers.utils.formatEther(arch.profile.minimumDiggingFee)}
                           </Text>
@@ -251,6 +259,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                           <Text
                             ml={3}
                             color={isSelected ? 'brand.0' : ''}
+                            bg={'brand.100'}
+                            p={0.5}
+                            pl={2}
+                            pr={2}
                           >
                             {arch.profile.successes.toString()}
                           </Text>
@@ -261,6 +273,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                           <Text
                             ml={3}
                             color={isSelected ? 'brand.0' : ''}
+                            bg={'brand.100'}
+                            p={0.5}
+                            pl={2}
+                            pr={2}
                           >
                             {arch.profile.cleanups.toString()}
                           </Text>
@@ -309,12 +325,14 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
               </Flex>
 
               <HStack mr={2}>
-                <Text>Show (10) hidden</Text>
+                <Text variant="secondary">Show (10) hidden</Text>
                 <Popover trigger={'hover'}>
                   <PopoverTrigger>
                     <Icon
                       as={QuestionIcon}
-                      color="brand.950"
+                      color="brand.500"
+                      w={2}
+                      h={2}
                     ></Icon>
                   </PopoverTrigger>
                   <PopoverContent background="black">
