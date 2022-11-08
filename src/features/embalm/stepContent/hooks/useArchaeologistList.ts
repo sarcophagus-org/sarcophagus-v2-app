@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
-import { constants } from 'ethers';
+import { constants, ethers, BigNumber } from 'ethers';
 import { mochArchaeologists } from '../mocks/mockArchaeologists';
 
 export function useArchaeologistList() {
@@ -77,7 +77,7 @@ export function useArchaeologistList() {
     const length = keys(SortDirection).length / 2;
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
-    setFailsSortDirection(SortDirection.NONE);
+    dispatch(setFailsSortDirection(SortDirection.NONE));
     dispatch(setArchsSortDirection(SortDirection.NONE));
   }
 
@@ -85,7 +85,7 @@ export function useArchaeologistList() {
     const length = keys(SortDirection).length / 2;
     dispatch(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
-    setFailsSortDirection(SortDirection.NONE);
+    dispatch(setFailsSortDirection(SortDirection.NONE));
     dispatch(setArchsSortDirection(SortDirection.NONE));
   }
 
@@ -149,11 +149,14 @@ export function useArchaeologistList() {
   const sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
     arch =>
       arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-      arch.profile.minimumDiggingFee.lte(diggingFeesFilter || constants.MaxInt256)
+      BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
+        diggingFeesFilter || constants.MaxInt256
+      )
     // &&
     // arch.profile.successes //verify to keep?
   );
 
+  console.log(diggingFeesFilter);
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     dispatch(setArchAddressSearch(value));

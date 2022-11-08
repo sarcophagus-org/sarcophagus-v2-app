@@ -23,7 +23,7 @@ import { TablePageNavigator } from './TablePageNavigator';
 import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from './DiggingFeesInput';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
@@ -129,10 +129,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       >
                         <Text> Unwraps </Text>
                       </Button>
-                      <DiggingFeesInput
-                        setDiggingFees={setDiggingFees}
-                        value={diggingFeesFilter}
-                        placeholder="max"
+                      <Input
+                        w="150px"
+                        placeholder="min"
+                        borderColor="violet.700"
                         color="brand.950"
                       />
                     </VStack>
@@ -146,10 +146,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       >
                         <Text> Fails </Text>
                       </Button>
-                      <DiggingFeesInput
-                        setDiggingFees={setDiggingFees}
-                        value={diggingFeesFilter}
+                      <Input
+                        w="150px"
                         placeholder="min"
+                        borderColor="violet.700"
                         color="brand.950"
                       />
                     </VStack>

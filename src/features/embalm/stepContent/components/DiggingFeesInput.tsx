@@ -7,6 +7,7 @@ import {
   InputGroup,
   NumberInputProps,
 } from '@chakra-ui/react';
+import { ethers, BigNumber } from 'ethers';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 
 interface DiggingFeesInputProps extends NumberInputProps {
@@ -28,8 +29,13 @@ export function DiggingFeesInput({
       valueAsNumber = 0;
     }
 
-    if (valueAsString.length > 18) return;
+    // if (valueAsString.length > 18) return;
 
+    // const convertBN = valueAsString ? ethers.utils.parseEther(valueAsString) : '0';
+
+    // const convertBN = Number(ethers.utils.parseEther(valueAsString)).toString();
+
+    // const convertBN: BigNumber = ethers.utils.parseEther(valueAsString);
     setDiggingFees(valueAsString);
   }
 
