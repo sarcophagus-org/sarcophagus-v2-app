@@ -11,10 +11,17 @@ export function useUploadDoubleEncryptedFile() {
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     try {
-      const payload = await readFileDataAsBase64(file!);
+      const data = await readFileDataAsBase64(file!);
+      const payload = {
+        fileName: file?.name,
+        data,
+      };
 
       // Step 1: Encrypt the inner layer
-      const encryptedInnerLayer = await encrypt(recipientState.publicKey, payload);
+      const encryptedInnerLayer = await encrypt(
+        recipientState.publicKey,
+        Buffer.from(JSON.stringify(payload))
+      );
 
       // Step 2: Encrypt the outer layer
       const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);

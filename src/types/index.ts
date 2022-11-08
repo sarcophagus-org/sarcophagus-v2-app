@@ -32,6 +32,13 @@ export interface ArchaeologistException {
   message: string;
 }
 
+export interface SarcophagusArchaeologist {
+  diggingFee: number;
+  diggingFeesPaid: number;
+  unencryptedShardDoubleHash: string;
+  unencryptedShard: string;
+}
+
 export interface ArchaeologistProfile {
   archAddress: string;
   exists: boolean;
@@ -52,4 +59,13 @@ export interface ArchaeologistEncryptedShard {
 // Temporary
 export interface Sarcophagus {
   id: string;
+  name: string;
+  state: string;
+  minShards: number;
+  resurrectionTime: BigNumber;
+  maximumRewrapInterval: BigNumber;
+  arweaveTxIds: string[];
+  embalmer: string;
+  recipientAddress: string;
+  archaeologists: string[];
 }

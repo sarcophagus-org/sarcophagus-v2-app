@@ -16,14 +16,14 @@ import { Step } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 
 // The delay between actions in ms. Set to 0 for the form to fill instantaneously.
-const delay = 500;
+const delay = 100;
 const sarcohagusName = 'Sarcophagus Name';
 const resurrectionDate = new Date();
-resurrectionDate.setMinutes(resurrectionDate.getMinutes() + 30);
+resurrectionDate.setMinutes(resurrectionDate.getMinutes() + 1);
 const file = new File(['Hello'], 'hello.txt', { type: 'text/plain' });
 const recipientPublicKey =
-  '0x0412cac174c12fb6eb4e550a9c4a00016a59c8d70ab3ad879507aa3bae5a3c2bef8668ed69619ad13277dabc1f39dd1476e037b034754aa7beaafd4537399b02bf';
-const recipientAddress = '0x32dA65c2692e6F70Cd61bD56097b8f4eDe99bB0E';
+  '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
+const recipientAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
 
 /**
  * Component that provides a button that automatically fills out the sarcophagus form.

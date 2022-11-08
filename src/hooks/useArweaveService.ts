@@ -1,21 +1,11 @@
-import { useCallback, useState } from 'react';
-import Arweave from 'arweave';
-import { decrypt, encrypt } from 'ecies-geth';
-import { ethers, utils } from 'ethers';
+import { encrypt } from 'ecies-geth';
+import { ethers } from 'ethers';
 import { hexlify } from 'ethers/lib/utils';
+import { decryptArweaveFile, fetchArweaveFile, initArweave } from 'lib/utils/arweave';
+import { useCallback, useState } from 'react';
 import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
-import { hardhatChainId } from '../lib/config/hardhat';
 import { useNetworkConfig } from '../lib/config';
-
-const initArweave = () => {
-  return Arweave.init({
-    host: 'localhost', // 'arweave.net', // Hostname or IP address for a Arweave host
-    port: 1984, //443, // Port
-    protocol: 'http', // 'https', // Network protocol http or https
-    timeout: 20000, // Network request timeouts in milliseconds
-    logging: false, // Enable network request logging
-  });
-};
+import { hardhatChainId } from '../lib/config/hardhat';
 
 export enum ArweaveTxStatus {
   PENDING,
@@ -43,31 +33,13 @@ const useArweaveService = () => {
     return hexlify(encrypted);
   };
 
-  const fetchAndDecryptArweaveFile = async (
-    arweaveTxId: string,
-    privateKey: string
-  ): Promise<Buffer> => {
-    const arweave = initArweave();
-    const data = await arweave.transactions.getData(arweaveTxId, { decode: true });
-    const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
-
-    const outerDecrypt = await decrypt(privateKeyAsBytes, Buffer.from(data as string));
-
-    const innerDecrypt = await decrypt(
-      Buffer.from(
-        utils.arrayify('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') // TODO: innerDecrypt using default address and private key for testing instead of real recipient
-      ),
-      outerDecrypt
-    );
-    return innerDecrypt;
-  };
-
   const isArweaveFileValid = async (
     arweaveTxId: string,
     privateKey: string,
     originalFile: ArrayBuffer
   ): Promise<boolean> => {
-    const decryptedFile = await fetchAndDecryptArweaveFile(arweaveTxId, privateKey);
+    const arweaveFile = await fetchArweaveFile(arweaveTxId);
+    const decryptedFile = await decryptArweaveFile(arweaveFile, privateKey);
     const fileBytes = Buffer.from(new Uint8Array(originalFile));
 
     return decryptedFile.toString() === fileBytes.toString();
