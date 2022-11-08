@@ -30,6 +30,7 @@ export function useArchaeologistList() {
     archsSortDirection,
     diggingFeesFilter,
     unwrapsFilter,
+    failsFilter,
     archAddressSearch,
   } = useSelector(s => s.embalmState);
 
@@ -153,7 +154,8 @@ export function useArchaeologistList() {
       BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
         diggingFeesFilter || constants.MaxInt256
       ) &&
-      BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256)
+      BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
+      BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
   );
 
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
@@ -178,6 +180,7 @@ export function useArchaeologistList() {
     handleChangeAddressSearch,
     diggingFeesFilter,
     unwrapsFilter,
+    failsFilter,
     archAddressSearch,
     sortedArchaeologist,
   };

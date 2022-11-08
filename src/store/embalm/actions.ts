@@ -21,6 +21,7 @@ export enum ActionType {
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
+  SetFailsFilter = 'EMBALM_SET_FAILS_FILTER',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
   SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
@@ -108,7 +109,7 @@ type EmbalmPayload = {
   [ActionType.SetArchsSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetUnwrapsFilter]: { filter: string };
-
+  [ActionType.SetFailsFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: {};
   [ActionType.SetCurrentChainId]: { chainId: number | undefined };
@@ -306,6 +307,15 @@ export function setDiggingFeesFilter(filter: string): EmbalmActions {
 export function setUnwrapsFilter(filter: string): EmbalmActions {
   return {
     type: ActionType.SetUnwrapsFilter,
+    payload: {
+      filter,
+    },
+  };
+}
+
+export function setFailsFilter(filter: string): EmbalmActions {
+  return {
+    type: ActionType.SetFailsFilter,
     payload: {
       filter,
     },
