@@ -16,7 +16,13 @@ import {
   HStack,
   Box,
   Icon,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
 } from '@chakra-ui/react';
+import { SummaryErrorIcon } from './SummaryErrorIcon';
+
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
@@ -133,10 +139,20 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                         >
                           <Text> Fees </Text>
                         </Button>
-                        <Icon
-                          as={QuestionIcon}
-                          color="brand.950"
-                        ></Icon>
+                        <Popover trigger={'hover'}>
+                          <PopoverTrigger>
+                            <Icon
+                              as={QuestionIcon}
+                              color="brand.950"
+                            ></Icon>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            background="black"
+                            color="brand.950"
+                          >
+                            <PopoverBody textAlign={'left'}>Lorem ipsum dolor sit amet</PopoverBody>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                       <DiggingFeesInput
                         setDiggingFees={setDiggingFees}
@@ -294,12 +310,40 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
 
               <HStack mr={2}>
                 <Text>Show (10) hidden</Text>
-                <Icon
-                  as={QuestionIcon}
-                  color="brand.950"
-                ></Icon>
+                <Popover trigger={'hover'}>
+                  <PopoverTrigger>
+                    <Icon
+                      as={QuestionIcon}
+                      color="brand.950"
+                    ></Icon>
+                  </PopoverTrigger>
+                  <PopoverContent background="black">
+                    <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
+                  </PopoverContent>
+                </Popover>
               </HStack>
             </Flex>
+            <HStack mr={2}>
+              <SummaryErrorIcon
+                error={
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                }
+              />
+              <Text
+                ml={2}
+                color="brand.500"
+                textAlign={'center'}
+              >
+                = accused archaeologists
+              </Text>
+              <Text
+                text-align={'bottom'}
+                as="i"
+                fontSize={'12'}
+              >
+                (show)
+              </Text>
+            </HStack>
           </Box>
         </Loading>
       </Flex>
