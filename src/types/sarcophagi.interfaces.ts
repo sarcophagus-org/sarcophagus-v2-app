@@ -4,7 +4,6 @@ export interface ISarcophagus {
   archaeologists: string[];
   arweaveArchaeologist: string;
   arweaveTxId: string;
-  canBeTransferred: boolean;
   embalmer: string;
   maxResurrectionInterval: BigNumber;
   minShards: number;
@@ -14,5 +13,4 @@ export interface ISarcophagus {
   state: number;
   storageFee: BigNumber;
   sarcoId: string;
-  confirmations: number;
 }
