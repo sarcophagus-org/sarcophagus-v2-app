@@ -14,8 +14,10 @@ import {
   Input,
   Checkbox,
   HStack,
+  Box,
+  Icon,
 } from '@chakra-ui/react';
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
@@ -107,6 +109,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                         variant="ghost"
                         rightIcon={sortIconsMap[archsSortDirection]}
                         onClick={onClickSortArchs}
+                        color="brand.950"
                       >
                         Archaeologists ({sortedFilteredArchaeologist?.length})
                       </Button>
@@ -122,13 +125,19 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                   </Th>
                   <Th isNumeric>
                     <VStack>
-                      <Button
-                        variant="ghost"
-                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
-                        onClick={onClickSortDiggingFees}
-                      >
-                        <Text> Fees </Text>
-                      </Button>
+                      <div>
+                        <Button
+                          variant="ghost"
+                          rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                          onClick={onClickSortDiggingFees}
+                        >
+                          <Text> Fees </Text>
+                        </Button>
+                        <Icon
+                          as={QuestionIcon}
+                          color="brand.950"
+                        ></Icon>
+                      </div>
                       <DiggingFeesInput
                         setDiggingFees={setDiggingFees}
                         value={diggingFeesFilter}
@@ -259,12 +268,39 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
               </Tbody>
             </Table>
           </TableContainer>
-          <TablePageNavigator
-            onClickNext={onClickNextPage}
-            onClickPrevious={onClickPrevPage}
-            currentPage={1}
-            totalPages={10}
-          />
+
+          <Box>
+            <Flex
+              border={1}
+              align={'center'}
+              justifyContent={'space-between'}
+            >
+              <Flex px={3}>
+                <HStack direction="row">
+                  <HStack>
+                    <Text>Items per page: 5</Text>
+                  </HStack>
+                </HStack>
+              </Flex>
+
+              <Flex>
+                <TablePageNavigator
+                  onClickNext={onClickNextPage}
+                  onClickPrevious={onClickPrevPage}
+                  currentPage={1}
+                  totalPages={10}
+                />
+              </Flex>
+
+              <HStack mr={2}>
+                <Text>Show (10) hidden</Text>
+                <Icon
+                  as={QuestionIcon}
+                  color="brand.950"
+                ></Icon>
+              </HStack>
+            </Flex>
+          </Box>
         </Loading>
       </Flex>
     </Flex>
