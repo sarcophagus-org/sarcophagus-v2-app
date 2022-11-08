@@ -5,12 +5,13 @@ import {
   SortDirection,
   setDiggingFeesSortDirection,
   setUnwrapsSortDirection,
+  setFailsSortDirection,
   setArchAddressSearch,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
-import { orderBy, keys, sortBy } from 'lodash';
+import { orderBy, keys } from 'lodash';
 import { constants } from 'ethers';
 import { mochArchaeologists } from '../mocks/mockArchaeologists';
 
@@ -24,6 +25,7 @@ export function useArchaeologistList() {
     selectedArchaeologists,
     diggingFeesSortDirection,
     unwrapsSortDirection,
+    failsSortDirection,
     diggingFeesFilter,
     archAddressSearch,
   } = useSelector(s => s.embalmState);
@@ -68,21 +70,30 @@ export function useArchaeologistList() {
     [dispatch, selectedArchaeologists]
   );
 
+  // create a function that takes an argument?
   function onClickSortDiggingFees() {
     const length = keys(SortDirection).length / 2;
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
+    setFailsSortDirection(SortDirection.NONE);
   }
 
   function onClickSortUnwraps() {
     const length = keys(SortDirection).length / 2;
     dispatch(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
+    setFailsSortDirection(SortDirection.NONE);
+  }
+
+  function onClickSortFails() {
+    const length = keys(SortDirection).length / 2;
+    dispatch(setFailsSortDirection((failsSortDirection + 1) % length));
+    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
+    dispatch(setUnwrapsSortDirection(SortDirection.NONE));
   }
 
   const sortedArchaeologist = () => {
     if (diggingFeesSortDirection !== SortDirection.NONE) {
-      console.log('diggingFeesSortDirection true');
       return orderBy(
         onlineArchaeologists,
         function (arch) {
@@ -91,9 +102,7 @@ export function useArchaeologistList() {
         [sortOrderByMap[diggingFeesSortDirection]!]
       );
     }
-
     if (unwrapsSortDirection !== SortDirection.NONE) {
-      console.log('unwrapsSortDirection true');
       return orderBy(
         onlineArchaeologists,
         function (arch) {
@@ -103,6 +112,15 @@ export function useArchaeologistList() {
       );
     }
 
+    if (failsSortDirection !== SortDirection.NONE) {
+      return orderBy(
+        onlineArchaeologists,
+        function (arch) {
+          return Number(arch.profile.cleanups);
+        },
+        [sortOrderByMap[failsSortDirection]!]
+      );
+    }
     return onlineArchaeologists;
   };
 
@@ -126,8 +144,10 @@ export function useArchaeologistList() {
     selectedArchaeologists,
     onClickSortDiggingFees,
     onClickSortUnwraps,
+    onClickSortFails,
     diggingFeesSortDirection,
     unwrapsSortDirection,
+    failsSortDirection,
     sortedFilteredArchaeologist,
     handleChangeAddressSearch,
     diggingFeesFilter,

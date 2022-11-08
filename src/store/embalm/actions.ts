@@ -22,6 +22,7 @@ export enum ActionType {
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
+  SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
@@ -102,6 +103,7 @@ type EmbalmPayload = {
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetUnwrapsSortDirection]: { direction: SortDirection };
+  [ActionType.SetFailsSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: {};
@@ -264,6 +266,15 @@ export function setDiggingFeesSortDirection(direction: SortDirection): EmbalmAct
 export function setUnwrapsSortDirection(direction: SortDirection): EmbalmActions {
   return {
     type: ActionType.SetUnwrapsSortDirection,
+    payload: {
+      direction,
+    },
+  };
+}
+
+export function setFailsSortDirection(direction: SortDirection): EmbalmActions {
+  return {
+    type: ActionType.SetFailsSortDirection,
     payload: {
       direction,
     },

@@ -35,11 +35,12 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
     handleCheckArchaeologist,
     selectedArchaeologists,
     sortedFilteredArchaeologist,
-    sortedArchaeologist,
     onClickSortDiggingFees,
     onClickSortUnwraps,
+    onClickSortFails,
     diggingFeesSortDirection,
     unwrapsSortDirection,
+    failsSortDirection,
     handleChangeAddressSearch,
     diggingFeesFilter,
     archAddressSearch,
@@ -138,8 +139,8 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                     <VStack>
                       <Button
                         variant="ghost"
-                        // rightIcon={sortIconsMap[diggingFeesSortDirection]}
-                        // onClick={onClickSortDiggingFees}
+                        rightIcon={sortIconsMap[failsSortDirection]}
+                        onClick={onClickSortFails}
                       >
                         <Text> Fails </Text>
                       </Button>
