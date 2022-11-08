@@ -80,46 +80,21 @@ export function useArchaeologistList() {
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
   }
 
-  // const sortedArchaeologist =
-  //   diggingFeesSortDirection && unwrapsSortDirection === SortDirection.NONE
-  //     ? onlineArchaeologists
-  //     : orderBy(
-  //         onlineArchaeologists,
-  //         [
-  //           function (o) {
-  //             return new Number(o.profile.minimumDiggingFee);
-  //           },
-  //           function (o) {
-  //             return new Number(o.profile.successes);
-  //           },
-  //         ],
-  //         sortOrderByMap[diggingFeesSortDirection] // here
-  //       );
-
-  // reset arrow when you move to different filter
-
-  // function resetDirections() {
-  //   setDiggingFeesSortDirection(SortDirection.NONE);
-  //   setUnwrapsSortDirection(SortDirection.NONE);
-  // }
-
-  console.log('dig fees direction', sortOrderByMap[diggingFeesSortDirection]);
-
-  console.log('unwraps  direction', sortOrderByMap[unwrapsSortDirection]);
-
   const sortedArchaeologist = () => {
-    if (diggingFeesSortDirection + unwrapsSortDirection === 4) {
-      return onlineArchaeologists;
-    } else if (diggingFeesSortDirection !== 2) {
-      return sortBy(
+    if (diggingFeesSortDirection !== SortDirection.NONE) {
+      console.log('diggingFeesSortDirection true');
+      return orderBy(
         onlineArchaeologists,
         function (arch) {
           return Number(arch.profile.minimumDiggingFee);
         },
         [sortOrderByMap[diggingFeesSortDirection]!]
       );
-    } else if (unwrapsSortDirection !== 2) {
-      return sortBy(
+    }
+
+    if (unwrapsSortDirection !== SortDirection.NONE) {
+      console.log('unwrapsSortDirection true');
+      return orderBy(
         onlineArchaeologists,
         function (arch) {
           return Number(arch.profile.successes);
@@ -127,79 +102,9 @@ export function useArchaeologistList() {
         [sortOrderByMap[unwrapsSortDirection]!]
       );
     }
+
+    return onlineArchaeologists;
   };
-
-  console.log('sortedArchaeologist', sortedArchaeologist());
-  // unwrapsSortDirection === SortDirection.NONE
-  // ? onlineArchaeologists
-  // : orderBy(
-  //     onlineArchaeologists,
-  //     function (o) {
-  //       return new Number(o.profile.success);
-  //     },
-  //     sortOrderByMap[unwrapsSortDirection]
-  //   );
-
-  // useEffect(
-  //   () => {
-  //     const subscription = props.source.subscribe();
-  //     return () => {
-  //       subscription.unsubscribe();
-  //     };
-  //   },
-  //   [onClickSortDiggingFees],
-  // );
-
-  // function sortedArchaeologist(): Archaeologist[] {
-  //   const unwrapsDirection = sortOrderByMap[unwrapsSortDirection];
-  //   const diggingFeesDirection = sortOrderByMap[diggingFeesSortDirection];
-
-  //   if (diggingFeesSortDirection && unwrapsSortDirection === SortDirection.NONE) {
-  //     return onlineArchaeologists;
-  //   } else {
-  //     return orderBy(
-  //       onlineArchaeologists,
-  //       ['profile.successes', 'profile.minimumDiggingFee'],
-  //       [unwrapsDirection!, diggingFeesDirection!]
-  //     );
-  //   }
-  // }
-
-  // function sortedArchaeologist(): Archaeologist[] {
-  //   resetDirections();
-  //   if (diggingFeesSortDirection && unwrapsSortDirection === SortDirection.NONE) {
-  //     return onlineArchaeologists;
-  //   } else if (
-  //     unwrapsSortDirection === SortDirection.NONE &&
-  //     diggingFeesSortDirection !== SortDirection.NONE
-  //   ) {
-  //     return orderBy(
-  //       onlineArchaeologists,
-  //       [
-  //         function (o) {
-  //           return new Number(o.profile.successes);
-  //         },
-  //         function (o) {
-  //           return new Number(o.profile.minimumDiggingFee);
-  //         },
-  //       ],
-  //       sortOrderByMap[diggingFeesSortDirection]
-  //     );
-  //   } else {
-  //     return orderBy(
-  //       onlineArchaeologists,
-  //       [
-  //         function (o) {
-  //           return new Number(o.profile.successes);
-  //         },
-  //         function (o) {
-  //           return new Number(o.profile.minimumDiggingFee);
-  //         },
-  //       ],
-  //       sortOrderByMap[unwrapsSortDirection]
-  //     );
-  //   }
-  // }
 
   const sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
     arch =>
