@@ -6,6 +6,7 @@ import {
   setDiggingFeesSortDirection,
   setUnwrapsSortDirection,
   setFailsSortDirection,
+  setArchsSortDirection,
   setArchAddressSearch,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -26,6 +27,7 @@ export function useArchaeologistList() {
     diggingFeesSortDirection,
     unwrapsSortDirection,
     failsSortDirection,
+    archsSortDirection,
     diggingFeesFilter,
     archAddressSearch,
   } = useSelector(s => s.embalmState);
@@ -76,6 +78,7 @@ export function useArchaeologistList() {
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
     setFailsSortDirection(SortDirection.NONE);
+    dispatch(setArchsSortDirection(SortDirection.NONE));
   }
 
   function onClickSortUnwraps() {
@@ -83,11 +86,21 @@ export function useArchaeologistList() {
     dispatch(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
     setFailsSortDirection(SortDirection.NONE);
+    dispatch(setArchsSortDirection(SortDirection.NONE));
   }
 
   function onClickSortFails() {
     const length = keys(SortDirection).length / 2;
     dispatch(setFailsSortDirection((failsSortDirection + 1) % length));
+    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
+    dispatch(setUnwrapsSortDirection(SortDirection.NONE));
+    dispatch(setArchsSortDirection(SortDirection.NONE));
+  }
+
+  function onClickSortArchs() {
+    const length = keys(SortDirection).length / 2;
+    dispatch(setArchsSortDirection((archsSortDirection + 1) % length));
+    dispatch(setFailsSortDirection(SortDirection.NONE));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
   }
@@ -111,7 +124,6 @@ export function useArchaeologistList() {
         [sortOrderByMap[unwrapsSortDirection]!]
       );
     }
-
     if (failsSortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
@@ -119,6 +131,16 @@ export function useArchaeologistList() {
           return Number(arch.profile.cleanups);
         },
         [sortOrderByMap[failsSortDirection]!]
+      );
+    }
+
+    if (archsSortDirection !== SortDirection.NONE) {
+      return orderBy(
+        onlineArchaeologists,
+        function (arch) {
+          return Number(arch.profile.archAddress);
+        },
+        [sortOrderByMap[archsSortDirection]!]
       );
     }
     return onlineArchaeologists;
@@ -145,9 +167,11 @@ export function useArchaeologistList() {
     onClickSortDiggingFees,
     onClickSortUnwraps,
     onClickSortFails,
+    onClickSortArchs,
     diggingFeesSortDirection,
     unwrapsSortDirection,
     failsSortDirection,
+    archsSortDirection,
     sortedFilteredArchaeologist,
     handleChangeAddressSearch,
     diggingFeesFilter,
