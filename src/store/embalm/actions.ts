@@ -20,6 +20,7 @@ export enum ActionType {
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
+  SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
   SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
@@ -76,7 +77,6 @@ type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: {};
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistOnlineStatus]: {
@@ -107,6 +107,8 @@ type EmbalmPayload = {
   [ActionType.SetFailsSortDirection]: { direction: SortDirection };
   [ActionType.SetArchsSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
+  [ActionType.SetUnwrapsFilter]: { filter: string };
+
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: {};
   [ActionType.SetCurrentChainId]: { chainId: number | undefined };
@@ -295,6 +297,15 @@ export function setArchsSortDirection(direction: SortDirection): EmbalmActions {
 export function setDiggingFeesFilter(filter: string): EmbalmActions {
   return {
     type: ActionType.SetDiggingFeesFilter,
+    payload: {
+      filter,
+    },
+  };
+}
+
+export function setUnwrapsFilter(filter: string): EmbalmActions {
+  return {
+    type: ActionType.SetUnwrapsFilter,
     payload: {
       filter,
     },

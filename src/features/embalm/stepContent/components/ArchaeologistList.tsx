@@ -20,10 +20,12 @@ import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { TablePageNavigator } from './TablePageNavigator';
-import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
+import { SortDirection, setDiggingFeesFilter, setUnwrapsFilter } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from './DiggingFeesInput';
-import { ethers, BigNumber } from 'ethers';
+import { UnwrapsInput } from './UnwrapsInput';
+
+import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
@@ -45,6 +47,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
     archsSortDirection,
     handleChangeAddressSearch,
     diggingFeesFilter,
+    unwrapsFilter,
     archAddressSearch,
   } = useArchaeologistList();
   const dispatch = useDispatch();
@@ -57,6 +60,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
 
   function setDiggingFees(diggingFees: string) {
     return dispatch(setDiggingFeesFilter(diggingFees));
+  }
+
+  function setUnwraps(unwraps: string) {
+    return dispatch(setUnwrapsFilter(unwraps));
   }
 
   // Used for testing archaeologist connection
@@ -129,10 +136,10 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       >
                         <Text> Unwraps </Text>
                       </Button>
-                      <Input
-                        w="150px"
+                      <UnwrapsInput
+                        setUnwraps={setUnwraps}
+                        value={unwrapsFilter}
                         placeholder="min"
-                        borderColor="violet.700"
                         color="brand.950"
                       />
                     </VStack>
