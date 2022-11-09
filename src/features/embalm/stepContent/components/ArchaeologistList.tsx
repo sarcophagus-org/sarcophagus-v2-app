@@ -22,7 +22,7 @@ import {
   PopoverBody,
 } from '@chakra-ui/react';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
-
+import { Archaeologist } from '../../../../types/index';
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
@@ -44,7 +44,13 @@ import { useState } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 
-export function ArchaeologistList({ includeDialButton }: { includeDialButton?: boolean }) {
+export function ArchaeologistList({
+  includeDialButton,
+  currentPageData,
+}: {
+  includeDialButton?: boolean;
+  currentPageData: Archaeologist[];
+}) {
   const {
     onClickNextPage,
     onClickPrevPage,
@@ -201,7 +207,7 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                 </Tr>
               </Thead>
               <Tbody>
-                {sortedFilteredArchaeologist?.map(arch => {
+                {currentPageData?.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId

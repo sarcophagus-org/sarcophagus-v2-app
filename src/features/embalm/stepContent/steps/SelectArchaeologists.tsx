@@ -13,17 +13,74 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from '@ajna/pagination';
+import { useArchaeologistList } from '../hooks/useArchaeologistList';
 
 export function SelectArchaeologists() {
-  const { currentPage, setCurrentPage, pagesCount, pages, setPageSize } = usePagination({
-    pagesCount: 3,
-    initialState: { currentPage: 1 },
-  });
+  const [archsTotal, setArchsTotal] = useState<number | undefined>(undefined);
+  const [archs, setArchs] = useState<any[]>([]);
+
+  // constants
+  const outerLimit = 1;
+  const innerLimit = 1;
+  const { sortedFilteredArchaeologist } = useArchaeologistList();
+
+  const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
+    usePagination({
+      total: sortedFilteredArchaeologist.length,
+      pagesCount: 3,
+      initialState: { currentPage: 1, pageSize: 3 },
+      limits: {
+        outer: outerLimit,
+        inner: innerLimit,
+      },
+    });
+
+  console.log('offset', offset);
+  console.log('sortedFilteredArchaeologist', sortedFilteredArchaeologist);
+
+  // fetchUsingOffset(pageSize, offset).then(data => {
+  //   // use data
+  // });
+
+  const currentPageData = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
+  console.log('currentPageData', currentPageData);
+
+  // const fetchPokemons = async (
+  //   pageSize: number,
+  //   offset: number
+  // ): Promise<any> => {
+  //   return await fetch(
+  //     `https://pokeapi.co/api/v2/pokemon?limit=${pageSize}&offset=${offset}`
+  //   ).then(async (res) => await res.json());
+  // };
+
+  // fetchArchs(pageSize, offset).then(data => {
+  //   console.log(data);
+  // });
+
+  // useEffect(() => {
+  //   fetchArchs(pageSize, offset).then(data => {
+  //     console.log(data);
+  //   });
+  // }, []);
+
+  // effects
+  // useEffect(() => {
+  //   fetchPokemons(pageSize, offset)
+  //     .then((pokemons) => {
+  //       setPokemonsTotal(pokemons.count);
+  //       setPokemons(pokemons.results);
+  //     })
+  //     .catch((error) => console.log("App =>", error));
+  // }, [currentPage, pageSize, offset]);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    const pageSize = Number(event.target.value);
+    const newPageSize = Number(event.target.value);
+    setPageSize(newPageSize);
+  };
 
-    setPageSize(pageSize);
+  const handlePageChange = (nextPage: number): void => {
+    setCurrentPage(nextPage);
   };
 
   return (
@@ -48,11 +105,11 @@ export function SelectArchaeologists() {
       <Pagination
         pagesCount={pagesCount}
         currentPage={currentPage}
-        onPageChange={setCurrentPage}
+        onPageChange={handlePageChange}
       >
         <PaginationContainer justify="space-between">
           <VStack>
-            <ArchaeologistList />
+            <ArchaeologistList currentPageData={currentPageData} />
             <Flex>
               <PaginationPrevious>Previous</PaginationPrevious>
               <PaginationPageGroup
