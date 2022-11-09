@@ -5,7 +5,7 @@ import { DevNavbar } from '../components/DevNavbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
 import { EmbalmPage } from './EmbalmPage';
-import { FundBundlrPage } from './FundBundlrPage';
+import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 
 export function Pages() {
@@ -26,9 +26,9 @@ export function Pages() {
       label: 'Archaeologists',
     },
     {
-      path: '/fundbundlr',
-      element: <FundBundlrPage />,
-      label: 'Fund Bundlr',
+      path: '/bundlr',
+      element: <BundlrPage />,
+      label: 'Bundlr',
     },
     {
       path: '/temp-resurrection',
