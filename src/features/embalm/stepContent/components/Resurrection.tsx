@@ -78,10 +78,10 @@ export function Resurrection({ ...rest }: FlexProps) {
               showTimeSelect
               minDate={new Date()}
               showPopperArrow={false}
-              timeFormat="HH:mm"
               timeIntervals={30}
               timeCaption="Time"
-              dateFormat="MM/dd/yyyy HH:mm"
+              timeFormat="hh:mma"
+              dateFormat="MM.dd.yyyy hh:mma"
               fixedHeight
               customInput={<CustomResurrectionButton />}
             />

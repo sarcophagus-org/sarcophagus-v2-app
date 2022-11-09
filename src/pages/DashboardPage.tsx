@@ -1,6 +1,5 @@
 import { Flex } from '@chakra-ui/react';
 import { Dashboard } from '../features/dashboard';
-import { useParams } from 'react-router-dom';
 
 export function DashboardPage() {
   return (

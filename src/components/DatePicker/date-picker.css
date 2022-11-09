@@ -35,6 +35,13 @@
   border-color: var(--chakra-colors-violet-700);
 }
 
+.react-datepicker__time-container {
+  width: 100px;
+}
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+  width: 100px;
+}
+
 .react-datepicker__header:not(.react-datepicker__header--has-time-select) {
   border-radius: 0;
 }
@@ -84,8 +91,15 @@
 }
 
 .react-datepicker__day--disabled {
-  color: var(--chakra-colors-brand-400);
-  font-size: 12px;
+  color: var(--chakra-colors-brand-300);
+}
+
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box
+  ul.react-datepicker__time-list
+  li.react-datepicker__time-list-item--disabled {
+  color: var(--chakra-colors-brand-300);
 }
 
 .react-datepicker__day--keyboard-selected {

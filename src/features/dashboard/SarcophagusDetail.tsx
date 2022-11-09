@@ -4,27 +4,28 @@ import {
   HStack,
   VStack,
   Heading,
-  Input,
   Button,
   Link,
   forwardRef,
+  AlertTitle,
+  AlertDescription,
 } from '@chakra-ui/react';
-import { formatAddress } from 'lib/utils/helpers';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import moment from 'moment';
 import { BigNumber } from 'ethers';
 import { DatePicker } from 'components/DatePicker';
+import { Alert } from 'components/Alert';
 
 export function SarcophagusDetail({ id }: { id: string | undefined }) {
   const { sarcophagus } = useGetSarcophagusDetails({ sarcoId: id });
-  const { write, resurectionTime, setResurectionTime } = useRewrapSarcophagus({
-    sarcoId: sarcophagus?.sarcoId,
-  });
+  const { rewrap, resurectionTime, setResurectionTime, isLoading, isRewrapping, isSuccess } =
+    useRewrapSarcophagus({
+      sarcoId: sarcophagus?.sarcoId,
+    });
 
-  const [customResurrectionDate, setCustomResurrectionDate] = useState<Date | null>(null);
   const navigate = useNavigate();
 
   function useQuery() {
@@ -53,12 +54,24 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
   const currentAction = query.get('action');
   const isRewrap = currentAction === 'rewrap';
 
-  const diggingFee = 25;
+  const diggingFee = 25; //TODO: need to calculate digging fee
   const protocalFee = diggingFee * 0.1;
 
   function handleCustomDateChange(date: Date | null) {
-    setCustomResurrectionDate(date);
+    setResurectionTime(date);
   }
+
+  const maximumResurectionDate =
+    sarcophagus && sarcophagus.resurrectionTime
+      ? new Date(sarcophagus.resurrectionTime.mul(1000).toNumber())
+      : undefined;
+
+  const filterInvalidTime = (time: Date) => {
+    const resurectionDate = new Date(maximumResurectionDate || 0).getTime();
+    const selectedDate = new Date(time).getTime();
+
+    return resurectionDate >= selectedDate && Date.now() < selectedDate;
+  };
 
   const CustomResurrectionButton = forwardRef(({ value, onClick }, ref) => (
     <Flex>
@@ -93,10 +106,11 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
               onClick={() => navigate(-1)}
               color="brand.400"
               _hover={{ color: 'brand.950', textDecor: 'underline' }}
+              textDecor="none"
             >
               Details
             </Button>
-            <Text> / Rewarp</Text>
+            <Text> / Rewrap</Text>
           </HStack>
         ) : (
           <Text>Details</Text>
@@ -107,49 +121,92 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
         <Text
           color="green"
           fontSize="xs"
+          pb={6}
         >
           TODO:Status
         </Text>
-        {isRewrap ? (
-          <VStack align="left">
-            <Text>Rewrap</Text>
-            <Text variant="secondary">
-              Please set a new time when you want your Sarcophagus resurrected.
-            </Text>
+        {isSuccess ? (
+          <Alert status="success">
+            <AlertTitle>Rewrap Successful</AlertTitle>
+            <AlertDescription>
+              <Text as="span">Return to the </Text>
+              <Link
+                as={NavLink}
+                to="/dashboard"
+                color="brand.400"
+                _hover={{ color: 'brand.950', textDecor: 'underline' }}
+              >
+                Dashboard
+              </Link>
+            </AlertDescription>
+          </Alert>
+        ) : isRewrap ? (
+          <VStack
+            align="left"
+            spacing={8}
+            pointerEvents={isRewrapping || isSuccess ? 'none' : 'all'}
+          >
+            <VStack
+              align="left"
+              spacing={0}
+            >
+              <Text>Rewrap</Text>
+              <Text variant="secondary">
+                Please set a new time when you want your Sarcophagus resurrected.
+              </Text>
+            </VStack>
+
             <VStack
               border="1px solid "
               borderColor="violet.700"
               p={6}
               align="left"
+              maxW="640px"
             >
               <DatePicker
-                selected={customResurrectionDate}
+                selected={resurectionTime}
                 onChange={handleCustomDateChange}
-                //                onInputClick={handleCustomDateClick}
                 showTimeSelect
                 minDate={new Date()}
+                maxDate={maximumResurectionDate}
+                filterTime={filterInvalidTime}
                 showPopperArrow={false}
-                timeFormat="HH:mm"
                 timeIntervals={30}
                 timeCaption="Time"
-                dateFormat="MM/dd/yyyy HH:mm"
+                timeFormat="hh:mma"
+                dateFormat="MM.dd.yyyy hh:mma"
                 fixedHeight
                 customInput={<CustomResurrectionButton />}
               />
               <Text variant="secondary">Furthest allowed rewrap time: {formatDate()}</Text>
             </VStack>
+
             <VStack
               align="left"
               spacing={0}
             >
               <Text>Fees</Text>
-              <Text variant="secondary">Digging fee TODO: {diggingFee}</Text>
+              <Text variant="secondary">Digging fee: {diggingFee}</Text>
               <Text variant="secondary">Protocal fee: {protocalFee}</Text>
             </VStack>
+            <HStack>
+              <Button
+                variant="outline"
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => rewrap?.()}
+                isDisabled={!!!resurectionTime || !rewrap}
+                isLoading={isLoading}
+              >
+                {isRewrapping ? 'Rewrapping...' : 'Rewrap'}
+              </Button>
+            </HStack>
           </VStack>
         ) : (
           <VStack
-            pt={8}
             spacing={0}
             align="left"
           >

@@ -7,17 +7,19 @@ import { useNetworkConfig } from 'lib/config';
 export function useRewrapSarcophagus({ sarcoId }: { sarcoId: string | undefined }) {
   const networkConfig = useNetworkConfig();
 
-  const [resurectionTime, setResurectionTime] = useState('');
+  const [resurectionTime, setResurectionTime] = useState<Date | null>(null);
 
-  const { config } = usePrepareContractWrite({
+  const timeInSeconds = resurectionTime ? Math.trunc(resurectionTime.getTime()) / 1000 : 0;
+
+  const { config, isLoading } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'rewrapSarcophagus',
     enabled: Boolean(resurectionTime),
-    args: [sarcoId, resurectionTime],
+    args: [sarcoId, timeInSeconds],
   });
 
-  const { write } = useContractWrite(config);
+  const { write, isLoading: isRewrapping, isSuccess } = useContractWrite(config);
 
-  return { resurectionTime, setResurectionTime, write };
+  return { resurectionTime, setResurectionTime, rewrap: write, isLoading, isRewrapping, isSuccess };
 }
