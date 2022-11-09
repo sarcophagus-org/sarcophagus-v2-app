@@ -14,20 +14,17 @@ import {
   Input,
   Checkbox,
   HStack,
-  Box,
   Icon,
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
 } from '@chakra-ui/react';
-import { SummaryErrorIcon } from './SummaryErrorIcon';
 import { Archaeologist } from '../../../../types/index';
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import { TablePageNavigator } from './TablePageNavigator';
 
 import {
   SortDirection,
@@ -52,8 +49,6 @@ export function ArchaeologistList({
   currentPageData: Archaeologist[];
 }) {
   const {
-    onClickNextPage,
-    onClickPrevPage,
     handleCheckArchaeologist,
     selectedArchaeologists,
     sortedFilteredArchaeologist,
@@ -111,7 +106,7 @@ export function ArchaeologistList({
           <TableContainer
             width="100%"
             overflowY="auto"
-            maxHeight="650px"
+            maxHeight="auto"
           >
             <Table variant="simple">
               <Thead>
@@ -307,69 +302,6 @@ export function ArchaeologistList({
               </Tbody>
             </Table>
           </TableContainer>
-
-          <Box>
-            <Flex
-              border={1}
-              align={'center'}
-              justifyContent={'space-between'}
-            >
-              <Flex px={3}>
-                <HStack direction="row">
-                  <HStack>
-                    <Text>Items per page: 5</Text>
-                  </HStack>
-                </HStack>
-              </Flex>
-
-              <Flex>
-                <TablePageNavigator
-                  onClickNext={onClickNextPage}
-                  onClickPrevious={onClickPrevPage}
-                  currentPage={1}
-                  totalPages={10}
-                />
-              </Flex>
-
-              <HStack mr={2}>
-                <Text variant="secondary">Show (10) hidden</Text>
-                <Popover trigger={'hover'}>
-                  <PopoverTrigger>
-                    <Icon
-                      as={QuestionIcon}
-                      color="brand.500"
-                      w={2}
-                      h={2}
-                    ></Icon>
-                  </PopoverTrigger>
-                  <PopoverContent background="black">
-                    <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </HStack>
-            </Flex>
-            <HStack mr={2}>
-              <SummaryErrorIcon
-                error={
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                }
-              />
-              <Text
-                ml={2}
-                color="brand.500"
-                textAlign={'center'}
-              >
-                = accused archaeologists
-              </Text>
-              <Text
-                text-align={'bottom'}
-                as="i"
-                fontSize={'12'}
-              >
-                (show)
-              </Text>
-            </HStack>
-          </Box>
         </Loading>
       </Flex>
     </Flex>

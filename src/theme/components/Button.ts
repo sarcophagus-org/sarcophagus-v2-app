@@ -20,6 +20,13 @@ export const Button = {
         bg: 'brand.200',
       },
     },
+    paginator: {
+      fontWeight: 400,
+      fontSize: 14,
+      _hover: {
+        bg: 'brand.200',
+      },
+    },
     link: {
       color: 'brand.950',
       bg: 'brand.0',

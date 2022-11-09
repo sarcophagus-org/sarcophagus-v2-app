@@ -34,7 +34,7 @@ export function useArchaeologistList() {
     archAddressSearch,
   } = useSelector(s => s.embalmState);
 
-  const NUMBER_MOCK_ARCH = 5;
+  const NUMBER_MOCK_ARCH = 30;
 
   const onlineArchaeologists = useMemo(
     () =>
@@ -49,15 +49,6 @@ export function useArchaeologistList() {
     [SortDirection.ASC]: 'asc',
     [SortDirection.DESC]: 'desc',
   };
-
-  // TODO: Implement Pagination
-  const onClickNextPage = useCallback(() => {
-    // TODO: implement pagination
-  }, []);
-
-  const onClickPrevPage = useCallback(() => {
-    // TODO: implement pagination
-  }, []);
 
   const handleCheckArchaeologist = useCallback(
     (archaeologist: Archaeologist) => {
@@ -164,8 +155,6 @@ export function useArchaeologistList() {
   }
 
   return {
-    onClickNextPage,
-    onClickPrevPage,
     handleCheckArchaeologist,
     selectedArchaeologists,
     onClickSortDiggingFees,
