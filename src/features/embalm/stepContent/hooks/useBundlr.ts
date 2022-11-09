@@ -91,7 +91,7 @@ export function useBundlr() {
       try {
         const res = await bundlr?.upload(fileBuffer);
         toast(uploadSuccess());
-        return res.id;
+        return res.data.id;
       } catch (_error) {
         throw _error;
       }

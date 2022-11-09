@@ -11,6 +11,7 @@
     "prettier": "npx prettier --write src/**"
   },
   "dependencies": {
+    "@ajna/pagination": "^1.4.19",
     "@bundlr-network/client": "^0.9.0-b8",
     "@chainsafe/libp2p-noise": "^10.0.0",
     "@chakra-ui/icons": "^2.0.11",

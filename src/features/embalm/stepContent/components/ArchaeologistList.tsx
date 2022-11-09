@@ -28,6 +28,7 @@ import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { TablePageNavigator } from './TablePageNavigator';
+
 import {
   SortDirection,
   setDiggingFeesFilter,
