@@ -1,5 +1,15 @@
 import { BigNumber } from 'ethers';
 
+export enum SarcophagusState {
+  DoesNotExist,
+  Active,
+  Resurrecting,
+  Resurrected,
+  Buried,
+  Cleaned,
+  Accused
+}
+
 export interface ISarcophagus {
   archaeologists: string[];
   arweaveArchaeologist: string;
@@ -11,7 +21,7 @@ export interface ISarcophagus {
   name: string;
   recipientAddress: string;
   resurrectionTime: BigNumber;
-  state: number;
+  state: SarcophagusState;
   storageFee: BigNumber;
   sarcoId: string;
   confirmations: number;
