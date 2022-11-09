@@ -1,6 +1,7 @@
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther, keccak256 } from 'ethers/lib/utils';
+import { ISarcophagus, SarcophagusState } from 'types/sarcophagi.interfaces';
 import { Archaeologist } from '../../types';
 
 /**
@@ -123,3 +124,24 @@ export function sumDiggingFees(archaeologists: Archaeologist[]): BigNumber {
     ethers.constants.Zero
   );
 }
+
+const sarcoStateMap = {
+  [SarcophagusState.DoesNotExist]: '',
+  [SarcophagusState.Active]: 'Active',
+  [SarcophagusState.Resurrecting]: 'Resurrecting',
+  [SarcophagusState.Resurrected]: 'Resurrected',
+  [SarcophagusState.Buried]: 'Buried',
+  [SarcophagusState.Cleaned]: 'Cleaned',
+  [SarcophagusState.Accused]: 'Accused',
+};
+
+export const parseSarcophagusState = (sarco: ISarcophagus, gracePeriod: BigNumber) => {
+  if (sarco.state === SarcophagusState.Resurrecting) {
+    const nowSeconds = Date.now() / 1000;
+    if (nowSeconds < sarco.resurrectionTime.add(gracePeriod).toNumber()) {
+      return 'Failed';
+    }
+  }
+
+  return sarcoStateMap[sarco.state];
+};
