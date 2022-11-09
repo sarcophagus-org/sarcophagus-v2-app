@@ -1,5 +1,5 @@
 import { Flex, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { SarcoTab } from 'features/sarcophagi/components/SarcoTab';
@@ -17,7 +17,8 @@ export function Bundlr() {
   }
 
   function handleWithdraw(amount: string) {
-    withdraw(BigNumber.from(amount));
+    const parsedAmount = ethers.utils.parseUnits(amount);
+    withdraw(BigNumber.from(parsedAmount));
   }
 
   function handleConnect() {
