@@ -1,12 +1,12 @@
 import { useContractRead } from 'wagmi';
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
-import { ISarcophagus } from 'types/sarcophagi.interfaces';
+import { Sarcophagus } from 'types';
 import { useEffect, useState } from 'react';
 
 export function useGetSarcophagusDetails({ sarcoId }: { sarcoId: string | undefined }) {
   const networkConfig = useNetworkConfig();
-  const [sarcophagus, setSarcophagus] = useState<ISarcophagus | undefined>(undefined);
+  const [sarcophagus, setSarcophagus] = useState<Sarcophagus | undefined>(undefined);
 
   const { data, refetch, isLoading } = useContractRead({
     address: networkConfig.diamondDeployAddress,
@@ -20,8 +20,8 @@ export function useGetSarcophagusDetails({ sarcoId }: { sarcoId: string | undefi
     (async () => {
       await refetch();
       if (data) {
-        const s = { ...(data as ISarcophagus) };
-        s.sarcoId = sarcoId || '';
+        const s = { ...(data as Sarcophagus) };
+        s.id = sarcoId || '';
         setSarcophagus(s);
       } else {
         setSarcophagus(undefined);

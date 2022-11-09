@@ -1,7 +1,10 @@
 import { Center, Flex } from '@chakra-ui/react';
-import { Sarcophagi } from '../features/sarcophagi';
+import { Sarcophagi } from 'features/sarcophagi';
+import { SarcophagusDetail } from 'features/sarcophagi/components/SarcophagusDetail';
+import { useParams } from 'react-router-dom';
 
 export function DashboardPage() {
+  const { id } = useParams();
   return (
     <Center
       width="100%"
@@ -15,7 +18,7 @@ export function DashboardPage() {
         minWidth="800px"
         minHeight="400px"
       >
-        <Sarcophagi />
+        {!!id ? <SarcophagusDetail id={id} /> : <Sarcophagi />}
       </Flex>
     </Center>
   );

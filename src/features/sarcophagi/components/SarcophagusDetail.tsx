@@ -14,16 +14,17 @@ import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useMemo } from 'react';
-import moment from 'moment';
 import { BigNumber } from 'ethers';
 import { DatePicker } from 'components/DatePicker';
 import { Alert } from 'components/Alert';
+import { SarcoStateIndicator } from './SarcoStateIndicator';
+import { buildResurrectionDateString } from 'lib/utils/helpers';
 
 export function SarcophagusDetail({ id }: { id: string | undefined }) {
   const { sarcophagus } = useGetSarcophagusDetails({ sarcoId: id });
   const { rewrap, resurectionTime, setResurectionTime, isLoading, isRewrapping, isSuccess } =
     useRewrapSarcophagus({
-      sarcoId: sarcophagus?.sarcoId,
+      sarcoId: sarcophagus?.id,
     });
 
   const navigate = useNavigate();
@@ -34,21 +35,9 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
     return useMemo(() => new URLSearchParams(search), [search]);
   }
 
-  function formatDate() {
-    if (sarcophagus && sarcophagus.resurrectionTime) {
-      const resurectionDuration = (resurection: BigNumber) => {
-        const differance = resurection.mul(1000).sub(Date.now());
-        return differance.isNegative() ? 'past' : moment.duration(differance.toNumber()).humanize();
-      };
-
-      return (
-        moment(sarcophagus.resurrectionTime.mul(1000).toNumber()).format('MM.DD.YYYY h:mma') +
-        ' (' +
-        resurectionDuration(sarcophagus.resurrectionTime) +
-        ')'
-      );
-    } else return '';
-  }
+  const resurrectionString = buildResurrectionDateString(
+    sarcophagus?.resurrectionTime || BigNumber.from(0)
+  );
 
   const query = useQuery();
   const currentAction = query.get('action');
@@ -118,13 +107,7 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
       </HStack>
       <VStack align="left">
         <Heading>{sarcophagus?.name}</Heading>
-        <Text
-          color="green"
-          fontSize="xs"
-          pb={6}
-        >
-          TODO:Status
-        </Text>
+        <SarcoStateIndicator state={sarcophagus?.state} />
         {isSuccess ? (
           <Alert status="success">
             <AlertTitle>Rewrap Successful</AlertTitle>
@@ -178,7 +161,7 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
                 fixedHeight
                 customInput={<CustomResurrectionButton />}
               />
-              <Text variant="secondary">Furthest allowed rewrap time: {formatDate()}</Text>
+              <Text variant="secondary">Furthest allowed rewrap time: {resurrectionString}</Text>
             </VStack>
 
             <VStack
@@ -211,7 +194,7 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
             align="left"
           >
             <Text>Resurrection Date</Text>
-            <Text variant="secondary">{formatDate()}</Text>
+            <Text variant="secondary">{resurrectionString}</Text>
 
             <HStack pt={10}>
               <Button

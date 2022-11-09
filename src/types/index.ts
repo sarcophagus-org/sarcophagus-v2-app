@@ -58,19 +58,24 @@ export interface ArchaeologistEncryptedShard {
 
 export enum SarcophagusState {
   DoesNotExist,
-  Exists,
-  Done,
+  Active,
+  Resurrecting,
+  Resurrected,
+  Buried,
+  Cleaned,
+  Accused,
+  Failed,
 }
 
 export interface Sarcophagus {
-  id?: string;
-  archaeologists: string[];
+  id: string;
+  name: string;
+  state: SarcophagusState;
+  minShards: number;
+  resurrectionTime: BigNumber;
+  maximumRewrapInterval: BigNumber;
   arweaveTxIds: string[];
   embalmer: string;
-  maximumRewrapInterval: BigNumber;
-  minShards: number;
-  name: string;
   recipientAddress: string;
-  resurrectionTime: BigNumber;
-  state: number;
+  archaeologists: string[];
 }
