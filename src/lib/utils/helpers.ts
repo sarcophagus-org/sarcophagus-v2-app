@@ -1,7 +1,7 @@
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther, keccak256 } from 'ethers/lib/utils';
-import { ISarcophagus, SarcophagusState } from 'types/sarcophagi.interfaces';
+import { SarcophagusState } from 'types/sarcophagi.interfaces';
 import { Archaeologist } from '../../types';
 
 /**
