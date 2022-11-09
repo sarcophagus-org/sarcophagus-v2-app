@@ -107,7 +107,7 @@ export const useSarcophagusParameters = () => {
   /**
    * Returns true if all required data for the sarcophagus has been supplied
    * */
-  const isSarcophagusComplete = (): boolean => {
+  const isSarcophagusFormDataComplete = (): boolean => {
     // TODO -- enable bundlr
     const requiredSteps = [
       Step.NameSarcophagus,
@@ -125,6 +125,6 @@ export const useSarcophagusParameters = () => {
 
   return {
     sarcophagusParameters,
-    isSarcophagusComplete,
+    isSarcophagusComplete: isSarcophagusFormDataComplete,
   };
 };

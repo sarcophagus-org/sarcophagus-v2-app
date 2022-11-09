@@ -49,6 +49,10 @@ export function CreateSarcophagus() {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
   };
 
+  const isSarcophagusCompleted = (): boolean => {
+    return currentStage === CreateSarcophagusStage.COMPLETED;
+  };
+
   useEffect(() => {
     // remove approval step if user has allowance on sarco token
     // TODO: compare with pending fees instead
@@ -67,12 +71,25 @@ export function CreateSarcophagus() {
     }
   }, [allowance, signer]);
 
+  if (isSarcophagusCompleted()) {
+    return (
+      <Flex
+        mt={6}
+        direction="column"
+      >
+        <Text>Sarcophagus creation successful!</Text>
+        <Text mt={2}>Redirecting you to the embalmer dashboard....</Text>
+      </Flex>
+    );
+  }
+
   return (
     <Flex
       direction="column"
       w="100%"
     >
-      <Heading mb={6}>Create Sarcophagus</Heading>
+      <Heading mb={6}>Create Sarcophagus: {currentStage.valueOf()}</Heading>
+
       {!isCreateProcessStarted() ? (
         <>
           <ReviewSarcophagus />
@@ -103,7 +120,7 @@ export function CreateSarcophagus() {
                 <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
               ))}
           </ProgressTracker>
-          {stageError ? (
+          {stageError && (
             <Flex
               mt={3}
               alignItems="center"
@@ -116,19 +133,6 @@ export function CreateSarcophagus() {
                 = {stageError}
               </Text>
             </Flex>
-          ) : (
-            ''
-          )}
-          {currentStage === CreateSarcophagusStage.COMPLETED ? (
-            <Flex
-              mt={6}
-              direction="column"
-            >
-              <Text>Sarcophagus creation successful!</Text>
-              <Text mt={2}>Redirecting you to the embalmer dashboard....</Text>
-            </Flex>
-          ) : (
-            <></>
           )}
         </>
       )}

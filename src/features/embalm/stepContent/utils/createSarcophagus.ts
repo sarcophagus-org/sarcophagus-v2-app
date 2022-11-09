@@ -24,6 +24,7 @@ export enum CreateSarcophagusStage {
   UPLOAD_PAYLOAD,
   APPROVE,
   SUBMIT_SARCOPHAGUS,
+  CLEAR_STATE,
   COMPLETED,
 }
 

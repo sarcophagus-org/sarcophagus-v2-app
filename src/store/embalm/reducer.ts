@@ -258,7 +258,20 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return { ...state, areStepsDisabled: false };
 
     case ActionType.ResetEmbalmState:
-      return embalmInitialState;
+      let initialState = { ...embalmInitialState };
+      const {
+        archaeologists,
+        currentChainId,
+        stepStatuses,
+        ...restOfInitialState
+      } = initialState;
+      return {
+        ...restOfInitialState,
+        currentStep: action.payload.step,
+        archaeologists: state.archaeologists,
+        currentChainId: state.currentChainId,
+        stepStatuses: state.stepStatuses,
+      };
 
     default:
       return state;
