@@ -79,7 +79,7 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
         <SarcoStateIndicator state={state} />
       </Td>
       <Td>
-        <TableText>{sarco.name.toUpperCase()}</TableText>
+        <TableText>{sarco.name?.toUpperCase()}</TableText>
       </Td>
       <Td>
         <TableText>{resurrectionString}</TableText>
