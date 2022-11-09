@@ -3,7 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { WalletProvider } from 'lib/network/WalletProvider';
-import { BrowserRouter as Router } from 'react-router-dom';
+
 import { ErrorFallback } from './components/ErrorFallback';
 import { Pages } from './pages';
 import { StoreProvider } from './store/StoreProvider';
@@ -15,9 +15,7 @@ function App() {
       <ChakraProvider theme={theme}>
         <Sentry.ErrorBoundary fallback={ErrorFallback}>
           <WalletProvider>
-            <Router>
-              <Pages />
-            </Router>
+            <Pages />
           </WalletProvider>
         </Sentry.ErrorBoundary>
       </ChakraProvider>

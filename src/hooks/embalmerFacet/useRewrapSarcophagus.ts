@@ -1,24 +1,23 @@
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useSubmitTransaction } from '../useSubmitTransaction';
 import { Abi } from 'abitype';
+import { useState } from 'react';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useNetworkConfig } from 'lib/config';
 
-interface RewrapSarcophagusArgs {
-  sarcoId: string;
-  resurrectionTime: number;
-}
+export function useRewrapSarcophagus({ sarcoId }: { sarcoId: string | undefined }) {
+  const networkConfig = useNetworkConfig();
 
-export function useRewrapSarcophagus({ sarcoId, resurrectionTime }: RewrapSarcophagusArgs) {
-  const toastDescription = 'Sarcophagus rewrapped';
-  const transactionDescription = 'Rewrap sarcophagus';
+  const [resurectionTime, setResurectionTime] = useState('');
 
-  const { submit } = useSubmitTransaction({
+  const { config } = usePrepareContractWrite({
+    address: networkConfig.diamondDeployAddress,
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'rewrapSarcophagus',
-    args: [sarcoId, resurrectionTime],
-    toastDescription,
-    transactionDescription,
-    mode: 'prepared',
+    enabled: Boolean(resurectionTime),
+    args: [sarcoId, resurectionTime],
   });
 
-  return { rewrapSarcophagus: submit };
+  const { write } = useContractWrite(config);
+
+  return { resurectionTime, setResurectionTime, write };
 }
