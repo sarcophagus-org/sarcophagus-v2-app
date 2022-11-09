@@ -27,7 +27,7 @@ const useSarcophagi = () => {
     const results = await getEmbalmerSarcophagi.refetch();
     const sarcoIds = (results.data as string[]) || [];
 
-    const s = await Promise.all(
+    const sarcosWithId = await Promise.all(
       sarcoIds.map(async id => {
         const res = await viewStateContract!.getSarcophagus(id);
         const sarcophagus = { ...(res as ISarcophagus), sarcoId: id };
@@ -35,7 +35,7 @@ const useSarcophagi = () => {
       })
     );
 
-    return setSarcophagi(s.reverse());
+    return setSarcophagi(sarcosWithId.reverse());
   }
 
   return { sarcophagi, updateSarcophagi };

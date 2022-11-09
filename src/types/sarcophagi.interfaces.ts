@@ -1,8 +1,19 @@
 import { BigNumber } from 'ethers';
 
+export enum SarcophagusState {
+  DoesNotExist,
+  Active,
+  Resurrecting,
+  Resurrected,
+  Buried,
+  Cleaned,
+  Accused,
+  Failed,
+}
+
 export interface ISarcophagus {
   name: string;
-  state: number;
+  state: SarcophagusState;
   canBeTransferred: boolean;
   minShards: number;
   resurrectionTime: BigNumber;

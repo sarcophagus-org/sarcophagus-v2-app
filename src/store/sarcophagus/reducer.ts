@@ -2,17 +2,17 @@ import { Actions } from '..';
 import { Sarcophagus } from '../../types';
 import { ActionType } from './actions';
 
-export interface SarcophagusState {
+export interface SarcophagiState {
   sarcophagi: Sarcophagus[];
   value: string;
 }
 
-export const sarcophagusInitialState: SarcophagusState = {
+export const sarcophagiInitialState: SarcophagiState = {
   sarcophagi: [],
   value: '',
 };
 
-export function sarcophagusReducer(state: SarcophagusState, action: Actions): SarcophagusState {
+export function sarcophagiReducer(state: SarcophagiState, action: Actions): SarcophagiState {
   switch (action.type) {
     case ActionType.UpdateValue:
       const value = action.payload.value;

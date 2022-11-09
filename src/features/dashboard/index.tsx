@@ -19,7 +19,7 @@ import {
   Td,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
-import { formatAddress } from 'lib/utils/helpers';
+import { formatAddress, sarcoStateMap } from 'lib/utils/helpers';
 import useSarcophagi from 'hooks/useSarcophagi';
 
 interface TabData {
@@ -31,6 +31,7 @@ interface TabData {
 interface MyTabProps extends TabProps {
   data: TabData;
 }
+
 export function Dashboard() {
   const { sarcophagi, updateSarcophagi } = useSarcophagi();
 
@@ -104,7 +105,7 @@ export function Dashboard() {
                   <Tr key={index}>
                     <Td>{formatAddress(s.sarcoId)}</Td>
                     <Td>{s.name}</Td>
-                    <Td>{s.state}</Td>
+                    <Td>{sarcoStateMap[s.state]}</Td>
                   </Tr>
                 ))}
               </Tbody>

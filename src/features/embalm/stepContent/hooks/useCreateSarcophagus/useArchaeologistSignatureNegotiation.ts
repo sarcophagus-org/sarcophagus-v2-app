@@ -75,11 +75,10 @@ export function useArchaeologistSignatureNegotiation() {
           await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
             for await (const data of source) {
               const dataStr = new TextDecoder().decode(data.subarray());
-              // TODO: remove these logs after we gain some confidence in this exchange
-              console.log('got', dataStr);
-
               const response = JSON.parse(dataStr);
+
               if (response.error) {
+                console.log(`error response from arch: \n${response.error.message}`);
                 dispatch(
                   setArchaeologistException(arch.profile.peerId, {
                     code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
@@ -96,7 +95,7 @@ export function useArchaeologistSignatureNegotiation() {
           })
             .catch(e => {
               // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
-              const message = `Exception occurred in negotiaton stream for: ${arch.profile.archAddress}`;
+              const message = `Exception occurred in negotiation stream for: ${arch.profile.archAddress}`;
               console.error(`Stream exception on ${arch.profile.peerId}`, e);
               dispatch(
                 setArchaeologistException(arch.profile.peerId, {
