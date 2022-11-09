@@ -7,7 +7,8 @@ export enum SarcophagusState {
   Resurrected,
   Buried,
   Cleaned,
-  Accused
+  Accused,
+  Failed
 }
 
 export interface ISarcophagus {

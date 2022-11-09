@@ -10,4 +10,3 @@ export { useGetProtocolFeeAmount } from './useGetProtocolFeeAmount';
 export { useGetRecipientSarcophagi } from './useGetRecipientSarcophagi';
 export { useGetSarcophagus } from './useGetSarcophagus';
 export { useGetSarcophagusArchaeologist } from './useGetSarcophagusArchaeologist';
-export { useGetGracePeriod } from './useGetGracePeriod';

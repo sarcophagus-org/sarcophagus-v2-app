@@ -19,9 +19,8 @@ import {
   Td,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
-import { formatAddress, parseSarcophagusState } from 'lib/utils/helpers';
+import { formatAddress, sarcoStateMap } from 'lib/utils/helpers';
 import useSarcophagi from 'hooks/useSarcophagi';
-import { useGetGracePeriod } from 'hooks/viewStateFacet';
 
 interface TabData {
   label: string;
@@ -32,9 +31,9 @@ interface TabData {
 interface MyTabProps extends TabProps {
   data: TabData;
 }
+
 export function Dashboard() {
   const { sarcophagi, updateSarcophagi } = useSarcophagi();
-  const gracePeriod = useGetGracePeriod();
 
   function CustomTab(props: MyTabProps) {
     const tabProps = useTab(props);
@@ -106,7 +105,7 @@ export function Dashboard() {
                   <Tr key={index}>
                     <Td>{formatAddress(s.sarcoId)}</Td>
                     <Td>{s.name}</Td>
-                    <Td>{parseSarcophagusState(s, gracePeriod)}</Td>
+                    <Td>{sarcoStateMap[s.state]}</Td>
                   </Tr>
                 ))}
               </Tbody>

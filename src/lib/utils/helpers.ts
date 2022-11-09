@@ -125,7 +125,7 @@ export function sumDiggingFees(archaeologists: Archaeologist[]): BigNumber {
   );
 }
 
-const sarcoStateMap = {
+export const sarcoStateMap = {
   [SarcophagusState.DoesNotExist]: '',
   [SarcophagusState.Active]: 'Active',
   [SarcophagusState.Resurrecting]: 'Resurrecting',
@@ -133,15 +133,5 @@ const sarcoStateMap = {
   [SarcophagusState.Buried]: 'Buried',
   [SarcophagusState.Cleaned]: 'Cleaned',
   [SarcophagusState.Accused]: 'Accused',
-};
-
-export const parseSarcophagusState = (sarco: ISarcophagus, gracePeriod: BigNumber) => {
-  if (sarco.state === SarcophagusState.Resurrecting) {
-    const nowSeconds = Date.now() / 1000;
-    if (nowSeconds < sarco.resurrectionTime.add(gracePeriod).toNumber()) {
-      return 'Failed';
-    }
-  }
-
-  return sarcoStateMap[sarco.state];
+  [SarcophagusState.Failed]: 'Failed',
 };
