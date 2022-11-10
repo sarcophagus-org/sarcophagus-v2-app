@@ -134,7 +134,7 @@ export function SelectArchaeologists() {
           </VStack>
         </PaginationContainer>
       </Pagination>
-      <Flex>
+      <Flex justifyContent={'flex-start'}>
         <SummaryErrorIcon
           error={
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
