@@ -42,10 +42,10 @@ import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 
 export function ArchaeologistList({
   includeDialButton,
-  currentPageData,
+  paginatedArchaeologist,
 }: {
   includeDialButton?: boolean;
-  currentPageData: Archaeologist[];
+  paginatedArchaeologist: Archaeologist[];
 }) {
   const {
     handleCheckArchaeologist,
@@ -201,7 +201,7 @@ export function ArchaeologistList({
                 </Tr>
               </Thead>
               <Tbody>
-                {currentPageData?.map(arch => {
+                {paginatedArchaeologist?.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId
