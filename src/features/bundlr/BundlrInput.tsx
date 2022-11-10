@@ -10,10 +10,12 @@ import {
 export function BundlrInput(props: NumberInputProps) {
   return (
     <NumberInput
+      step={0.01}
       mt={3}
       w="100%"
       min={0}
       color="whiteAlpha.700"
+      allowMouseWheel
       {...props}
     >
       <NumberInputField
