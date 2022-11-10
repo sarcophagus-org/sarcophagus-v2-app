@@ -3,22 +3,15 @@ import { Button, IconButton, TableRowProps, Td, Text, Tr } from '@chakra-ui/reac
 import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
-import { Sarcophagus } from 'types';
+import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
-import { SarcoState, SarcoStateIndicator } from './SarcoStateIndicator';
+import { SarcoStateIndicator } from './SarcoStateIndicator';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export enum SarcoAction {
   Rewrap = 'rewrap',
   Clean = 'clean',
   Resurrect = 'resurrect',
-}
-
-// Temporary function that picks a random sarcophagus state
-// TODO: Remove this function
-function getSarcophagusState(): SarcoState {
-  const states = Object.values(SarcoState);
-  const randomIndex = Math.floor(Math.random() * states.length);
-  return states[randomIndex];
 }
 
 export interface SarcophagusTableRowProps extends TableRowProps {
@@ -30,8 +23,7 @@ export interface SarcophagusTableRowProps extends TableRowProps {
  */
 export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
   const { address } = useAccount();
-
-  const state = getSarcophagusState();
+  const navigate = useNavigate();
 
   const resurrectionString = buildResurrectionDateString(
     sarco.resurrectionTime || BigNumber.from(0)
@@ -45,17 +37,17 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
   const isEmbalmer = sarco.embalmer === address;
   const isRecipient = sarco.recipientAddress === address;
   const stateActionMap: { [key: string]: SarcoAction | undefined } = {
-    [SarcoState.Active]: isEmbalmer ? SarcoAction.Rewrap : undefined,
-    [SarcoState.Failed]: SarcoAction.Clean,
-    [SarcoState.Resurrecting]: !isRecipient ? SarcoAction.Resurrect : undefined,
+    [SarcophagusState.Active]: isEmbalmer ? SarcoAction.Rewrap : undefined,
+    [SarcophagusState.Failed]: SarcoAction.Clean,
+    [SarcophagusState.Resurrecting]: !isRecipient ? SarcoAction.Resurrect : undefined,
   };
 
   // TODO: Remove console logs and navigate to the appropriate page including the sarcoId
   function handleClickAction() {
-    const action = stateActionMap[state];
+    const action = stateActionMap[sarco.state];
     switch (action) {
       case SarcoAction.Rewrap:
-        console.log(`Clicked rewrap on ${sarco.id}`);
+        navigate(`${sarco.id}?action=rewrap`);
         break;
       case SarcoAction.Resurrect:
         console.log(`Clicked resurrect on ${sarco.id}`);
@@ -68,15 +60,10 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
     }
   }
 
-  // TODO: Remove console log and navigate to the appropriate page including the sarcoId
-  function handleClickDetails() {
-    console.log(`Clicked details on ${sarco.id}`);
-  }
-
   return (
     <Tr>
       <Td>
-        <SarcoStateIndicator state={state} />
+        <SarcoStateIndicator state={sarco.state} />
       </Td>
       <Td>
         <TableText>{sarco.name?.toUpperCase()}</TableText>
@@ -85,12 +72,12 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
         <TableText>{resurrectionString}</TableText>
       </Td>
       <Td textAlign="center">
-        {stateActionMap[state] ? (
+        {stateActionMap[sarco.state] ? (
           <Button
             variant="link"
             onClick={handleClickAction}
           >
-            {stateActionMap[state]?.toUpperCase() || '--'}
+            {stateActionMap[sarco.state]?.toUpperCase() || '--'}
           </Button>
         ) : (
           <Text>--</Text>
@@ -98,9 +85,10 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
       </Td>
       <Td textAlign="center">
         <IconButton
+          as={NavLink}
+          to={sarco.id || ''}
           aria-label="Details"
           variant="unstyled"
-          onClick={handleClickDetails}
           icon={<ExternalLinkIcon />}
         />
       </Td>

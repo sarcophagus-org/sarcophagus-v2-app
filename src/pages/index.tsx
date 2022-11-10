@@ -1,6 +1,6 @@
 import { Flex, Link, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
@@ -21,6 +21,12 @@ export function Pages() {
       label: 'Dashboard',
     },
     {
+      path: '/dashboard/:id',
+      element: <DashboardPage />,
+      label: 'Dashboard',
+      hidden: true,
+    },
+    {
       path: '/archaeologists',
       element: <ArchaeologistsPage />,
       label: 'Archaeologists',
@@ -39,57 +45,59 @@ export function Pages() {
   ];
 
   return (
-    <Flex
-      direction="column"
-      height="100vh"
-      overflow="hidden"
-    >
-      {/* NavBar */}
-      <DevNavbar>
-        <Flex
-          justifyContent="space-between"
-          width="100%"
-        >
-          <Flex alignItems="center">
-            {routes.map(route => (
-              <Link
-                textDecor="bold"
-                as={NavLink}
-                _activeLink={{ color: 'brand.950', fontWeight: 'bold' }}
-                _hover={{ textDecor: 'none' }}
-                key={route.path}
-                to={route.path}
-                hidden={route.hidden}
-              >
-                <Text px={4}>{route.label}</Text>
-              </Link>
-            ))}
-          </Flex>
-        </Flex>
-        <Flex my={3}>
-          <ConnectWalletButton />
-        </Flex>
-      </DevNavbar>
-
-      {/* App Content */}
+    <Router>
       <Flex
-        flex={1}
-        overflow="auto"
+        direction="column"
+        height="100vh"
+        overflow="hidden"
       >
-        <Routes>
-          <Route
-            path="/"
-            element={<Navigate to="/dashboard" />}
-          />
-          {routes.map(route => (
+        {/* NavBar */}
+        <DevNavbar>
+          <Flex
+            justifyContent="space-between"
+            width="100%"
+          >
+            <Flex alignItems="center">
+              {routes.map(route => (
+                <Link
+                  textDecor="bold"
+                  as={NavLink}
+                  _activeLink={{ color: 'brand.950', fontWeight: 'bold' }}
+                  _hover={{ textDecor: 'none' }}
+                  key={route.path}
+                  to={route.path}
+                  hidden={route.hidden}
+                >
+                  <Text px={4}>{route.label}</Text>
+                </Link>
+              ))}
+            </Flex>
+          </Flex>
+          <Flex my={3}>
+            <ConnectWalletButton />
+          </Flex>
+        </DevNavbar>
+
+        {/* App Content */}
+        <Flex
+          flex={1}
+          overflow="auto"
+        >
+          <Routes>
             <Route
-              key={route.path}
-              path={route.path}
-              element={route.element}
+              path="/"
+              element={<Navigate to="/dashboard" />}
             />
-          ))}
-        </Routes>
+            {routes.map(route => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Routes>
+        </Flex>
       </Flex>
-    </Flex>
+    </Router>
   );
 }
