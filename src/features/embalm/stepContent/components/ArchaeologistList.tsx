@@ -25,7 +25,6 @@ import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chak
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-
 import {
   SortDirection,
   setDiggingFeesFilter,
@@ -73,8 +72,6 @@ export function ArchaeologistList({
     [SortDirection.ASC]: <ArrowUpIcon />,
     [SortDirection.DESC]: <ArrowDownIcon />,
   };
-
-  // function setSelectedArches
 
   function setDiggingFees(diggingFees: string) {
     return dispatch(setDiggingFeesFilter(diggingFees));

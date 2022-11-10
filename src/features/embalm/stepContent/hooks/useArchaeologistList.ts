@@ -38,12 +38,13 @@ export function useArchaeologistList() {
   console.log('ShowSelectedArchaeologists', ShowSelectedArchaeologists);
   const NUMBER_MOCK_ARCH = 30;
 
+  // Used for generating testing archaeologists
   const onlineArchaeologists = useMemo(
     () =>
       NUMBER_MOCK_ARCH > 0
         ? mochArchaeologists(NUMBER_MOCK_ARCH)
         : archaeologists.filter(a => a.isOnline),
-    [NUMBER_MOCK_ARCH, archaeologists]
+    [NUMBER_MOCK_ARCH]
   );
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
@@ -141,27 +142,29 @@ export function useArchaeologistList() {
     return onlineArchaeologists;
   };
 
-  // if show box is selected (true) display jsut the selected, by saying th sorted arch that have an id included in the selected
-  const sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
-    arch =>
-      arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-      BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
-        diggingFeesFilter || constants.MaxInt256
-      ) &&
-      BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
-      BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
-  );
-
-  // const sortedFilteredSelectedArchaeologist = useMemo(
-  //   () =>
-  //     ShowSelectedArchaeologists
-  //       ? sortedFilteredArchaeologist.filter(
-  //           arch =>
-  //             selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
-  //         )
-  //       : sortedFilteredArchaeologist,
-  //   [ShowSelectedArchaeologists]
-  // );
+  let sortedFilteredArchaeologist: Archaeologist[] = [];
+  if (!ShowSelectedArchaeologists) {
+    sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
+      arch =>
+        arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
+        BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
+          diggingFeesFilter || constants.MaxInt256
+        ) &&
+        BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
+        BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
+    );
+  } else {
+    sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
+      arch =>
+        arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
+        BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
+          diggingFeesFilter || constants.MaxInt256
+        ) &&
+        BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
+        BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
+        selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
+    );
+  }
 
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
@@ -180,7 +183,6 @@ export function useArchaeologistList() {
     failsSortDirection,
     archsSortDirection,
     sortedFilteredArchaeologist,
-    // sortedFilteredSelectedArchaeologist,
     handleChangeAddressSearch,
     diggingFeesFilter,
     unwrapsFilter,
