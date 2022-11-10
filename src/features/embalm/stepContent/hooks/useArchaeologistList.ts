@@ -32,8 +32,10 @@ export function useArchaeologistList() {
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
+    ShowSelectedArchaeologists,
   } = useSelector(s => s.embalmState);
 
+  console.log('ShowSelectedArchaeologists', ShowSelectedArchaeologists);
   const NUMBER_MOCK_ARCH = 30;
 
   const onlineArchaeologists = useMemo(
@@ -139,6 +141,7 @@ export function useArchaeologistList() {
     return onlineArchaeologists;
   };
 
+  // if show box is selected (true) display jsut the selected, by saying th sorted arch that have an id included in the selected
   const sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
     arch =>
       arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
@@ -148,6 +151,17 @@ export function useArchaeologistList() {
       BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
       BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
   );
+
+  // const sortedFilteredSelectedArchaeologist = useMemo(
+  //   () =>
+  //     ShowSelectedArchaeologists
+  //       ? sortedFilteredArchaeologist.filter(
+  //           arch =>
+  //             selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
+  //         )
+  //       : sortedFilteredArchaeologist,
+  //   [ShowSelectedArchaeologists]
+  // );
 
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
@@ -166,6 +180,7 @@ export function useArchaeologistList() {
     failsSortDirection,
     archsSortDirection,
     sortedFilteredArchaeologist,
+    // sortedFilteredSelectedArchaeologist,
     handleChangeAddressSearch,
     diggingFeesFilter,
     unwrapsFilter,

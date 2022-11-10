@@ -32,7 +32,6 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 
 export function SelectArchaeologists() {
-  // constants
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
@@ -47,14 +46,8 @@ export function SelectArchaeologists() {
       },
     });
 
+  // TODO: Rename paginated archs? paginatedArchaeologist
   const currentPageData = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
-  console.log('currentPageData', currentPageData);
-
-  // effects
-  // useEffect(() => {
-  //   setArchsTotal(sortedFilteredArchaeologist.length);
-  //   setArchs(currentPageData);
-  // }, [currentPage, pageSize, offset, currentPageData, sortedFilteredArchaeologist.length]);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const newPageSize = Number(event.target.value);
@@ -64,8 +57,6 @@ export function SelectArchaeologists() {
   const handlePageChange = (nextPage: number): void => {
     setCurrentPage(nextPage);
   };
-
-  console.log('pagesCount', pagesCount);
 
   return (
     <Flex
@@ -156,7 +147,7 @@ export function SelectArchaeologists() {
                         fontSize="sm"
                         variant={'paginator'}
                         _hover={{
-                          bg: 'white',
+                          bg: 'brand.950',
                           textColor: 'brand.50',
                         }}
                         _current={{

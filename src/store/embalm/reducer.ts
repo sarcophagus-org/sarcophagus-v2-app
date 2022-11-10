@@ -33,6 +33,7 @@ export interface EmbalmState {
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
+  ShowSelectedArchaeologists: boolean;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
   diggingFeesSortDirection: SortDirection;
@@ -62,6 +63,7 @@ export const embalmInitialState: EmbalmState = {
   resurrectionRadioValue: '',
   customResurrectionDate: null,
   selectedArchaeologists: [],
+  ShowSelectedArchaeologists: false,
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
@@ -232,6 +234,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetArchAddressSearch:
       return { ...state, archAddressSearch: action.payload.search };
+
+    case ActionType.setShowSelectedArchaeologists:
+      return { ...state, ShowSelectedArchaeologists: action.payload.selected };
 
     case ActionType.SetArchaeologistFullPeerId:
       return updateArchProperty(state, action.payload.peerId.toString(), {

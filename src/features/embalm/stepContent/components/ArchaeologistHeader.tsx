@@ -1,11 +1,12 @@
 import { Text, Box, Flex, useColorModeValue, HStack, Checkbox, Icon } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-
 import { sumDiggingFees } from 'lib/utils/helpers';
-import { useSelector } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
+import { setShowSelectedArchaeologists } from 'store/embalm/actions';
 
 export function ArchaeologistHeader() {
-  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const dispatch = useDispatch();
+  const { selectedArchaeologists, ShowSelectedArchaeologists } = useSelector(x => x.embalmState);
 
   return (
     <Box mt={6}>
@@ -20,7 +21,10 @@ export function ArchaeologistHeader() {
       >
         <Flex px={3}>
           <HStack direction="row">
-            <Checkbox></Checkbox>
+            <Checkbox
+              colorScheme="blue"
+              onChange={() => dispatch(setShowSelectedArchaeologists(!ShowSelectedArchaeologists))}
+            ></Checkbox>
             <HStack>
               <Text>
                 Show
@@ -29,7 +33,7 @@ export function ArchaeologistHeader() {
                   fontWeight={700}
                   as="u"
                 >
-                  {selectedArchaeologists.length}
+                  {selectedArchaeologists.length === 0 ? '0' : selectedArchaeologists.length}
                 </Text>
                 selected arches.
               </Text>

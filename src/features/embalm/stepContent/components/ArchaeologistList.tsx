@@ -74,6 +74,8 @@ export function ArchaeologistList({
     [SortDirection.DESC]: <ArrowDownIcon />,
   };
 
+  // function setSelectedArches
+
   function setDiggingFees(diggingFees: string) {
     return dispatch(setDiggingFeesFilter(diggingFees));
   }
@@ -211,22 +213,25 @@ export function ArchaeologistList({
                   return (
                     <Tr
                       key={arch.profile.archAddress}
-                      background={isSelected ? 'brand.700' : ''}
+                      background={isSelected ? 'brand.50' : ''}
+                      color={'brand.950'}
                       onClick={() => (includeDialButton ? {} : handleCheckArchaeologist(arch))}
                       cursor="pointer"
                       _hover={
                         isSelected
                           ? {}
                           : {
-                              background: 'brand.100',
+                              background: 'brand.0',
                             }
                       }
                     >
                       <Td>
                         <HStack>
-                          <Checkbox></Checkbox>
+                          <Checkbox
+                            isChecked={isSelected && true}
+                            colorScheme="blue"
+                          ></Checkbox>
                           <Text
-                            color={isSelected ? 'brand.0' : ''}
                             ml={3}
                             bg={'brand.100'}
                             p={0.5}
@@ -246,7 +251,6 @@ export function ArchaeologistList({
                           />
                           <Text
                             ml={3}
-                            color={isSelected ? 'brand.0' : ''}
                             bg={'brand.100'}
                             p={0.5}
                             pl={2}
@@ -260,7 +264,6 @@ export function ArchaeologistList({
                         <Flex justify="center">
                           <Text
                             ml={3}
-                            color={isSelected ? 'brand.0' : ''}
                             bg={'brand.100'}
                             p={0.5}
                             pl={2}
@@ -274,7 +277,6 @@ export function ArchaeologistList({
                         <Flex justify="center">
                           <Text
                             ml={3}
-                            color={isSelected ? 'brand.0' : ''}
                             bg={'brand.100'}
                             p={0.5}
                             pl={2}
