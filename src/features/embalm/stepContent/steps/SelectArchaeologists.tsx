@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import React, { ChangeEvent } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
+import { ArchaeologistPagination } from '../components/ArchaeologistPagination';
 
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
@@ -46,8 +47,7 @@ export function SelectArchaeologists() {
       },
     });
 
-  // TODO: Rename paginated archs? paginatedArchaeologist
-  const currentPageData = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
+  const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const newPageSize = Number(event.target.value);
@@ -87,10 +87,13 @@ export function SelectArchaeologists() {
           w="full"
         >
           <VStack>
-            <ArchaeologistList currentPageData={currentPageData} />
+            <ArchaeologistList paginatedArchaeologist={paginatedArchaeologist} />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
-                <Flex px={3}>
+                <Flex
+                  px={3}
+                  justifyContent={'space-between'}
+                >
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
@@ -109,71 +112,7 @@ export function SelectArchaeologists() {
                     </HStack>
                   </HStack>
                 </Flex>
-
-                <Flex>
-                  <PaginationPrevious
-                    backgroundColor={'transparent'}
-                    color="brand.950"
-                    variant={'paginator'}
-                  >
-                    <Icon
-                      as={ChevronLeftIcon}
-                      color="brand.950"
-                      w={6}
-                      h={6}
-                      mr={1}
-                    ></Icon>
-                    Prev
-                  </PaginationPrevious>
-                  <PaginationPageGroup
-                    isInline
-                    align="center"
-                    separator={
-                      <PaginationSeparator
-                        bg="brand.0"
-                        textColor={'brand.950'}
-                        fontSize="sm"
-                        w={7}
-                        jumpSize={1}
-                      />
-                    }
-                  >
-                    {pages.map((page: number) => (
-                      <PaginationPage
-                        bg="brand.0"
-                        key={`pagination_page_${page}`}
-                        textColor={'brand.950'}
-                        page={page}
-                        fontSize="sm"
-                        variant={'paginator'}
-                        _hover={{
-                          bg: 'brand.950',
-                          textColor: 'brand.50',
-                        }}
-                        _current={{
-                          bg: '#D9D9D9',
-                          fontSize: 'sm',
-                          textColor: 'brand.50',
-                        }}
-                      />
-                    ))}
-                  </PaginationPageGroup>
-                  <PaginationNext
-                    backgroundColor={'transparent'}
-                    color="brand.950"
-                    variant={'paginator'}
-                  >
-                    Next
-                    <Icon
-                      as={ChevronRightIcon}
-                      color="brand.950"
-                      w={6}
-                      h={6}
-                      mr={1}
-                    ></Icon>
-                  </PaginationNext>
-                </Flex>
-
+                <ArchaeologistPagination />
                 <HStack mr={2}>
                   <Text variant="secondary">Show (10) hidden</Text>
                   <Popover trigger={'hover'}>
@@ -191,35 +130,31 @@ export function SelectArchaeologists() {
                   </Popover>
                 </HStack>
               </Flex>
-
-              <HStack
-                mr={2}
-                mt={3}
-              >
-                <SummaryErrorIcon
-                  error={
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                  }
-                />
-                <Text
-                  ml={2}
-                  color="brand.500"
-                  textAlign={'center'}
-                >
-                  = accused archaeologists
-                </Text>
-                <Text
-                  text-align={'bottom'}
-                  as="i"
-                  fontSize={'12'}
-                >
-                  (show)
-                </Text>
-              </HStack>
             </Box>
           </VStack>
         </PaginationContainer>
       </Pagination>
+      <Flex>
+        <SummaryErrorIcon
+          error={
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+          }
+        />
+        <Text
+          ml={2}
+          color="brand.500"
+          textAlign={'center'}
+        >
+          = accused archaeologists{' '}
+          <Text
+            as="i"
+            fontSize={'12'}
+            color="brand.500"
+          >
+            (show){' '}
+          </Text>
+        </Text>
+      </Flex>
     </Flex>
   );
 }
