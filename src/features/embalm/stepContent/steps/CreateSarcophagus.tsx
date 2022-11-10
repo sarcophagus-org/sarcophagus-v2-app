@@ -44,7 +44,7 @@ export function CreateSarcophagus() {
     sarcoToken!
   );
 
-  const { isSarcophagusComplete } = useSarcophagusParameters();
+  const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
@@ -98,7 +98,7 @@ export function CreateSarcophagus() {
               p={6}
               mt={9}
               onClick={handleCreate}
-              disabled={!isSarcophagusComplete()}
+              disabled={!isSarcophagusFormDataComplete()}
             >
               Create Sarcophagus
             </Button>

@@ -125,6 +125,6 @@ export const useSarcophagusParameters = () => {
 
   return {
     sarcophagusParameters,
-    isSarcophagusComplete: isSarcophagusFormDataComplete,
+    isSarcophagusFormDataComplete,
   };
 };
