@@ -33,6 +33,12 @@ export const colors = {
     900: '#0d0a12',
   },
 
+  // Menu Colors
+  blue: {
+    700: '#343A40',
+    1000: '#131416',
+  },
+
   // TODO: Merge the two error colors, check with design team
   error: '#c88484',
   errorAlt: '#290e0e',
