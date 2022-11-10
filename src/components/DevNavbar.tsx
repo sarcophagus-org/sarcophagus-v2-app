@@ -11,16 +11,17 @@ export function DevNavbar({ children }: { children: React.ReactNode }) {
 
   return (
     <Flex
-      minHeight="70px"
-      backgroundColor="brand.50"
-      alignItems="center"
+      minHeight='70px'
+      backgroundColor='brand.50'
+      alignItems='center'
       px={6}
     >
       <Image
         onClick={handleClickLogo}
-        src="sarcophagus-logo.png"
-        cursor="pointer"
+        src='sarco-logo.png'
+        cursor='pointer'
         mr={6}
+        height='44px'
       />
       {children}
     </Flex>
