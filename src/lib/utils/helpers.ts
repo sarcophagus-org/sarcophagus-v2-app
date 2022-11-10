@@ -147,8 +147,8 @@ export function buildResurrectionDateString(
 ): string {
   const resurrectionDateString = moment.unix(resurrectionTime.toNumber()).format(format);
   const msUntilResurrection = resurrectionTime.toNumber() * 1000 - Date.now();
-  const timeUntilResurrection = `${msUntilResurrection < 0 && '-'}${moment
-    .duration(msUntilResurrection)
-    .humanize()}`;
+  const humanizedDuration = moment.duration(msUntilResurrection).humanize();
+  const timeUntilResurrection =
+    msUntilResurrection < 0 ? `-${humanizedDuration}` : humanizedDuration;
   return `${resurrectionDateString} (${timeUntilResurrection})`;
 }
