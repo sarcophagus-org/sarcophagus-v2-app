@@ -29,7 +29,7 @@ export function SuccessfulCreateSarcophagus({
         fontSize="xl"
         mb={4}
       >
-        Sarcophagus Creation Successfully!
+        Sarcophagus Creation Successful!
       </Heading>
       <Heading
         fontSize="md"
