@@ -23,10 +23,9 @@ interface BundlrProfileProps {
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
   const [amount, setAmount] = useState('');
   const bundlrBalanceData = useGetBalance();
-  const bundlrBalance =
-    !bundlrBalanceData?.balance || bundlrBalanceData?.balance === ''
-      ? '--'
-      : Number(bundlrBalanceData?.balance).toFixed(2);
+  const bundlrBalance = !bundlrBalanceData?.balance
+    ? '--'
+    : Number(bundlrBalanceData?.balance).toFixed(2);
 
   const ethPrice = useEthPrice();
   const bundlrUsdValue = Math.round(parseFloat(bundlrBalance) * parseFloat(ethPrice));

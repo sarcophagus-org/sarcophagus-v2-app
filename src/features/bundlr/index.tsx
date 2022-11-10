@@ -13,10 +13,16 @@ export function Bundlr() {
   const bundlr = useSelector(s => s.bundlrState.bundlr);
 
   function handleDeposit(amount: string) {
+    if (parseFloat(amount) <= 0) {
+      throw new Error('Deposit amount must be a positive number');
+    }
     fund(amount);
   }
 
   function handleWithdraw(amount: string) {
+    if (parseFloat(amount) <= 0) {
+      throw new Error('Withdraw amount must be a positive number');
+    }
     const parsedAmount = ethers.utils.parseUnits(amount);
     withdraw(BigNumber.from(parsedAmount));
   }
