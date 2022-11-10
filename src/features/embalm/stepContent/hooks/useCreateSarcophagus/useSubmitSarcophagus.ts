@@ -7,12 +7,14 @@ import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext
 export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
   const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
     useSelector(x => x.embalmState);
+
   const {
     negotiationTimestamp,
     archaeologistSignatures,
     archaeologistShards,
     sarcophagusPayloadTxId,
     encryptedShardsTxId,
+    setSarcophagusTxId,
   } = useContext(CreateSarcophagusContext);
 
   const submitSarcophagus = useCallback(async () => {
@@ -29,6 +31,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     });
 
     const tx = await embalmerFacet.createSarcophagus(...submitSarcophagusArgs);
+    setSarcophagusTxId(tx.hash);
 
     await tx.wait();
   }, [
@@ -43,6 +46,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     archaeologistShards,
     sarcophagusPayloadTxId,
     encryptedShardsTxId,
+    setSarcophagusTxId,
   ]);
 
   return {

@@ -36,7 +36,7 @@ export function useCreateSarcophagus(
   const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile();
   const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
   const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
-  const { clearSarcophagusState } = useClearSarcophagusState();
+  const { clearSarcophagusState, successData } = useClearSarcophagusState();
 
   const stagesMap = useMemo(() => {
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
@@ -134,5 +134,6 @@ export function useCreateSarcophagus(
     handleCreate,
     stageError,
     retryStage,
+    successData,
   };
 }

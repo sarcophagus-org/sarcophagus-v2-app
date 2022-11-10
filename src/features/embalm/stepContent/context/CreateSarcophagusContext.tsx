@@ -20,6 +20,8 @@ interface CreateSarcophagusContextProps {
   setPublicKeysReady: React.Dispatch<React.SetStateAction<boolean>>;
   setOuterPrivateKey: React.Dispatch<React.SetStateAction<string>>;
   setOuterPublicKey: React.Dispatch<React.SetStateAction<string>>;
+  sarcophagusTxId: string;
+  setSarcophagusTxId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const initialCreateSarcophagusState = {
@@ -31,6 +33,7 @@ const initialCreateSarcophagusState = {
   negotiationTimestamp: 0,
   archaeologistSignatures: new Map<string, string>([]),
   sarcophagusPayloadTxId: '',
+  sarcophagusTxId: '',
 };
 
 const CreateSarcophagusContext = createContext({} as CreateSarcophagusContextProps);
@@ -83,6 +86,9 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
   const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState(
     initialCreateSarcophagusState.sarcophagusPayloadTxId
   );
+  const [sarcophagusTxId, setSarcophagusTxId] = useState(
+    initialCreateSarcophagusState.sarcophagusTxId
+  );
 
   return (
     <CreateSarcophagusContext.Provider
@@ -103,6 +109,8 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
         setPublicKeysReady,
         setOuterPrivateKey,
         setOuterPublicKey,
+        sarcophagusTxId,
+        setSarcophagusTxId,
       }}
     >
       {children}

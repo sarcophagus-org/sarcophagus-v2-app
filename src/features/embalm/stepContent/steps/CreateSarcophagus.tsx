@@ -15,6 +15,7 @@ import {
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from '../../../../lib/config';
+import { SuccessfulCreateSarcophagus } from '../components/SuccessfulCreateSarcophagus';
 
 export function CreateSarcophagus() {
   const { allowance } = useAllowance();
@@ -37,7 +38,7 @@ export function CreateSarcophagus() {
     signerOrProvider: signer,
   });
 
-  const { currentStage, handleCreate, stageError, retryStage } = useCreateSarcophagus(
+  const { currentStage, handleCreate, stageError, retryStage, successData } = useCreateSarcophagus(
     createSarcophagusStages,
     embalmerFacet!,
     sarcoToken!
@@ -49,7 +50,7 @@ export function CreateSarcophagus() {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
   };
 
-  const isSarcophagusCompleted = (): boolean => {
+  const isCreateCompleted = (): boolean => {
     return currentStage === CreateSarcophagusStage.COMPLETED;
   };
 
@@ -71,15 +72,13 @@ export function CreateSarcophagus() {
     }
   }, [allowance, signer]);
 
-  if (isSarcophagusCompleted()) {
+  if (isCreateCompleted()) {
     return (
-      <Flex
-        mt={6}
-        direction="column"
-      >
-        <Text>Sarcophagus creation successful!</Text>
-        <Text mt={2}>Redirecting you to the embalmer dashboard....</Text>
-      </Flex>
+      <SuccessfulCreateSarcophagus
+        successSarcophagusPayloadTxId={successData.successSarcophagusPayloadTxId}
+        successEncryptedShardsTxId={successData.successEncryptedShardsTxId}
+        successSarcophagusTxId={successData.successSarcophagusTxId}
+      />
     );
   }
 
@@ -88,7 +87,7 @@ export function CreateSarcophagus() {
       direction="column"
       w="100%"
     >
-      <Heading mb={6}>Create Sarcophagus: {currentStage.valueOf()}</Heading>
+      {!isCreateCompleted() && <Heading mb={6}>Create Sarcophagus</Heading>}
 
       {!isCreateProcessStarted() ? (
         <>
