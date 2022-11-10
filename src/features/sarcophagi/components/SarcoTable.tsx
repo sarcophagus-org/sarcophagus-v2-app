@@ -72,7 +72,7 @@ export function SarcoTable({ ids }: SarcoTableProps) {
 
   return (
     <TableContainer
-      overflowY="scroll"
+      overflowY="auto"
       h="100%"
       minHeight="300px"
     >
