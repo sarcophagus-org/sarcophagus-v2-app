@@ -34,7 +34,7 @@ export function StepContent() {
           <CreateSarcophagus />
         </CreateSarcophagusContextProvider>
       ),
-      title: ''
+      title: '',
     },
   };
 
