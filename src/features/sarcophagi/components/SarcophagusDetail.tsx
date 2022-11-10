@@ -106,8 +106,13 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
         )}
       </HStack>
       <VStack align="left">
-        <Heading>{sarcophagus?.name}</Heading>
-        <SarcoStateIndicator state={sarcophagus?.state} />
+        <VStack
+          pb={8}
+          align="left"
+        >
+          <Heading>{sarcophagus?.name}</Heading>
+          <SarcoStateIndicator state={sarcophagus?.state} />
+        </VStack>
         {isSuccess ? (
           <Alert status="success">
             <AlertTitle>Rewrap Successful</AlertTitle>
@@ -170,7 +175,7 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
             >
               <Text>Fees</Text>
               <Text variant="secondary">Digging fee: {diggingFee}</Text>
-              <Text variant="secondary">Protocal fee: {protocalFee}</Text>
+              <Text variant="secondary">Protocol fee: {protocalFee}</Text>
             </VStack>
             <HStack>
               <Button

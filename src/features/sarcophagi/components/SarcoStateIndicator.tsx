@@ -1,4 +1,4 @@
-import { Text, Badge } from '@chakra-ui/react';
+import { Text, Badge, Flex } from '@chakra-ui/react';
 import { SarcophagusState } from 'types';
 import { sarcoStateMap } from 'lib/utils/helpers';
 
@@ -19,17 +19,19 @@ export function SarcoStateIndicator({
   };
 
   return (
-    <Badge
-      bg={stateColorMap[state].bg}
-      py="4px"
-      px="12px"
-      borderRadius={100}
-      textTransform="capitalize"
-    >
-      <Text
-        fontSize="xs"
-        color={stateColorMap[state].text}
-      >{`● ${sarcoStateMap[state]}`}</Text>
-    </Badge>
+    <Flex>
+      <Badge
+        bg={stateColorMap[state].bg}
+        py="4px"
+        px="12px"
+        borderRadius={100}
+        textTransform="capitalize"
+      >
+        <Text
+          fontSize="xs"
+          color={stateColorMap[state].text}
+        >{`● ${sarcoStateMap[state]}`}</Text>
+      </Badge>
+    </Flex>
   );
 }
