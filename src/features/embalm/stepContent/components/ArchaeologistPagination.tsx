@@ -6,37 +6,23 @@ import {
   PaginationPrevious,
   PaginationPageGroup,
 } from '@ajna/pagination';
-import {
-  Flex,
-  Text,
-  Select,
-  HStack,
-  Icon,
-  Box,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-} from '@chakra-ui/react';
-import { ChangeEvent } from 'react';
+import { Flex, HStack, Icon } from '@chakra-ui/react';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
-import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
 export function ArchaeologistPagination() {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
 
-  const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
-    usePagination({
-      total: sortedFilteredArchaeologist.length,
-      initialState: { currentPage: 1, pageSize: 5 },
-      limits: {
-        outer: outerLimit,
-        inner: innerLimit,
-      },
-    });
+  const { pages } = usePagination({
+    total: sortedFilteredArchaeologist.length,
+    initialState: { currentPage: 1, pageSize: 5 },
+    limits: {
+      outer: outerLimit,
+      inner: innerLimit,
+    },
+  });
 
   return (
     <Flex>
