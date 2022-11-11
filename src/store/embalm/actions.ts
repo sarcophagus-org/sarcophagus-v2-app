@@ -58,6 +58,7 @@ export enum SortDirection {
   DESC,
   NONE,
 }
+
 export interface RecipientState {
   address: string;
   publicKey: string;
@@ -71,7 +72,7 @@ type EmbalmPayload = {
   [ActionType.DisableSteps]: {};
   [ActionType.EnableSteps]: {};
   [ActionType.GoToStep]: { step: Step };
-  [ActionType.ResetEmbalmState]: {};
+  [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
@@ -102,7 +103,7 @@ type EmbalmPayload = {
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
-  [ActionType.ResetEmbalmState]: {};
+  [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SetCurrentChainId]: { chainId: number | undefined };
 };
 
@@ -340,10 +341,12 @@ export function setArchaeologistSignature(peerId: string, signature: string): Em
   };
 }
 
-export function resetEmbalmState(): EmbalmActions {
+export function resetEmbalmState(step: Step = Step.NameSarcophagus): EmbalmActions {
   return {
     type: ActionType.ResetEmbalmState,
-    payload: {},
+    payload: {
+      step,
+    },
   };
 }
 

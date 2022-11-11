@@ -17,14 +17,33 @@ interface CreateSarcophagusContextProps {
   setArchaeologistSignatures: React.Dispatch<React.SetStateAction<Map<string, string>>>;
   sarcophagusPayloadTxId: string;
   setSarcophagusPayloadTxId: React.Dispatch<React.SetStateAction<string>>;
+  setPublicKeysReady: React.Dispatch<React.SetStateAction<boolean>>;
+  setOuterPrivateKey: React.Dispatch<React.SetStateAction<string>>;
+  setOuterPublicKey: React.Dispatch<React.SetStateAction<string>>;
+  sarcophagusTxId: string;
+  setSarcophagusTxId: React.Dispatch<React.SetStateAction<string>>;
 }
+
+const initialCreateSarcophagusState = {
+  publicKeysReady: false,
+  outerPrivateKey: '',
+  outerPublicKey: '',
+  archaeologistShards: [] as ArchaeologistEncryptedShard[],
+  encryptedShardsTxId: '',
+  negotiationTimestamp: 0,
+  archaeologistSignatures: new Map<string, string>([]),
+  sarcophagusPayloadTxId: '',
+  sarcophagusTxId: '',
+};
 
 const CreateSarcophagusContext = createContext({} as CreateSarcophagusContextProps);
 
 function CreateSarcophagusContextProvider({ children }: { children: ReactNode }) {
   // Global state from embalm steps, used to create sarcophagus
   const { selectedArchaeologists } = useSelector(x => x.embalmState);
-  const [publicKeysReady, setPublicKeysReady] = useState(false);
+  const [publicKeysReady, setPublicKeysReady] = useState(
+    initialCreateSarcophagusState.publicKeysReady
+  );
 
   // Sets publicKeysReady to true once all archaeologists have sent their keys
   useEffect(() => {
@@ -34,8 +53,12 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
   }, [selectedArchaeologists]);
 
   // Generate the outer layer keypair for the sarcophagus.
-  const [outerPrivateKey, setOuterPrivateKey] = useState('');
-  const [outerPublicKey, setOuterPublicKey] = useState('');
+  const [outerPrivateKey, setOuterPrivateKey] = useState(
+    initialCreateSarcophagusState.outerPrivateKey
+  );
+  const [outerPublicKey, setOuterPublicKey] = useState(
+    initialCreateSarcophagusState.outerPublicKey
+  );
 
   useEffect(() => {
     (async () => {
@@ -49,14 +72,23 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
   });
 
   const [archaeologistShards, setArchaeologistShards] = useState(
-    [] as ArchaeologistEncryptedShard[]
+    initialCreateSarcophagusState.archaeologistShards
   );
-  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState('');
-  const [negotiationTimestamp, setNegotiationTimestamp] = useState(0);
+  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState(
+    initialCreateSarcophagusState.encryptedShardsTxId
+  );
+  const [negotiationTimestamp, setNegotiationTimestamp] = useState(
+    initialCreateSarcophagusState.negotiationTimestamp
+  );
   const [archaeologistSignatures, setArchaeologistSignatures] = useState(
-    new Map<string, string>([])
+    initialCreateSarcophagusState.archaeologistSignatures
   );
-  const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState('');
+  const [sarcophagusPayloadTxId, setSarcophagusPayloadTxId] = useState(
+    initialCreateSarcophagusState.sarcophagusPayloadTxId
+  );
+  const [sarcophagusTxId, setSarcophagusTxId] = useState(
+    initialCreateSarcophagusState.sarcophagusTxId
+  );
 
   return (
     <CreateSarcophagusContext.Provider
@@ -74,6 +106,11 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
         setArchaeologistSignatures,
         sarcophagusPayloadTxId,
         setSarcophagusPayloadTxId,
+        setPublicKeysReady,
+        setOuterPrivateKey,
+        setOuterPublicKey,
+        sarcophagusTxId,
+        setSarcophagusTxId,
       }}
     >
       {children}
@@ -81,4 +118,8 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
   );
 }
 
-export { CreateSarcophagusContext, CreateSarcophagusContextProvider };
+export {
+  CreateSarcophagusContext,
+  CreateSarcophagusContextProvider,
+  initialCreateSarcophagusState,
+};
