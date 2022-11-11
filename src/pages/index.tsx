@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { DevNavbar } from '../components/DevNavbar';
+import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
 import { EmbalmPage } from './EmbalmPage';
@@ -55,8 +55,7 @@ export function Pages() {
       height="100vh"
       overflow="hidden"
     >
-      {/* NavBar */}
-      <DevNavbar>
+      <Navbar>
         <Flex
           justifyContent="space-between"
           width="100%"
@@ -74,7 +73,10 @@ export function Pages() {
                 to={route.path}
                 hidden={route.hidden}
               >
-                <Box px={5} py={2.5}>
+                <Box
+                  px={route.noBg ? 0 : 5}
+                  py={route.noBg ? 0 : 2.5}
+                >
                   {route.label}
                 </Box>
               </Link>
@@ -84,7 +86,7 @@ export function Pages() {
         <Flex my={3}>
           <ConnectWalletButton />
         </Flex>
-      </DevNavbar>
+      </Navbar>
 
       {/* App Content */}
       <Flex
