@@ -30,7 +30,6 @@ import { FilterInput } from './FilterInput';
 import { ethers } from 'ethers';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
-
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 
 interface ArchaeologistListItemProps {
