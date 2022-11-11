@@ -4,7 +4,7 @@ import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
 import { PeerId } from '@libp2p/interface-peer-id';
 
-export function useTestDialArchaeologists(setIsDialing: React.Dispatch<React.SetStateAction<boolean>>) {
+export function useAttemptDialArchaeologists(setIsDialing: React.Dispatch<React.SetStateAction<boolean>>) {
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
   const toast = useToast();
 
