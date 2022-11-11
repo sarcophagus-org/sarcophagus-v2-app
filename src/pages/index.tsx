@@ -14,17 +14,22 @@ export function Pages() {
       path: '/embalm',
       element: <EmbalmPage />,
       noBg: true,
-      label: <Flex
-        height='40px'
-        width='44px'
-        alignItems='center'
-        borderColor='white'
-        borderWidth='1px'
-      >
-        <Button variant="unstyled" flex={1}>
-          <Text fontSize={20}> + </Text>
-        </Button>
-      </Flex>,
+      label: (
+        <Flex
+          height="40px"
+          width="44px"
+          alignItems="center"
+          borderColor="white"
+          borderWidth="1px"
+        >
+          <Button
+            variant="unstyled"
+            flex={1}
+          >
+            <Text fontSize={20}> + </Text>
+          </Button>
+        </Flex>
+      ),
     },
     {
       path: '/dashboard',
@@ -74,7 +79,10 @@ export function Pages() {
                   as={NavLink}
                   mx={1.5}
                   bgColor={route.noBg ? 'transparent' : 'blue.1000'}
-                  _activeLink={{ color: 'brand.950', bgColor: route.noBg ? 'transparent' : 'blue.700' }}
+                  _activeLink={{
+                    color: 'brand.950',
+                    bgColor: route.noBg ? 'transparent' : 'blue.700',
+                  }}
                   _hover={{ textDecor: 'none' }}
                   key={route.path}
                   to={route.path}
