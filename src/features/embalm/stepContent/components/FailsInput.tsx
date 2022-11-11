@@ -1,25 +1,19 @@
 import {
   Flex,
-  Image,
   NumberInput,
   NumberInputField,
-  InputLeftElement,
   InputGroup,
   NumberInputProps,
 } from '@chakra-ui/react';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 
-interface DiggingFeesInputProps extends NumberInputProps {
-  setDiggingFees: (value: string) => void;
+interface FailsInputProps extends NumberInputProps {
+  setFails: (value: string) => void;
   placeholder?: string;
 }
 
-export function DiggingFeesInput({
-  setDiggingFees,
-  placeholder = '',
-  ...rest
-}: DiggingFeesInputProps) {
-  function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
+export function FailsInput({ setFails, placeholder = '', ...rest }: FailsInputProps) {
+  function handleChangeFails(valueAsString: string, valueAsNumber: number) {
     valueAsString = removeNonIntChars(valueAsString);
     valueAsString = removeLeadingZeroes(valueAsString);
 
@@ -28,7 +22,7 @@ export function DiggingFeesInput({
       valueAsNumber = 0;
     }
 
-    setDiggingFees(valueAsString);
+    setFails(valueAsString);
   }
 
   return (
@@ -36,7 +30,7 @@ export function DiggingFeesInput({
       <InputGroup>
         <NumberInput
           w="150px"
-          onChange={handleChangeDiggingFees}
+          onChange={handleChangeFails}
           {...rest}
         >
           <NumberInputField
@@ -45,9 +39,6 @@ export function DiggingFeesInput({
             placeholder={placeholder}
             borderColor="violet.700"
           />
-          <InputLeftElement>
-            <Image src="sarco-token-icon.png" />
-          </InputLeftElement>
         </NumberInput>
       </InputGroup>
     </Flex>

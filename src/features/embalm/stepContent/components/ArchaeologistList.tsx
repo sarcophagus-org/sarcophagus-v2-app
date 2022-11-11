@@ -12,21 +12,34 @@ import {
   Button,
   VStack,
   Input,
-  Spinner,
+  Checkbox,
+  HStack,
+  Icon,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
 } from '@chakra-ui/react';
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons';
+import { Archaeologist } from '../../../../types/index';
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import { TablePageNavigator } from './TablePageNavigator';
-import { SortDirection, setDiggingFeesFilter } from 'store/embalm/actions';
+import {
+  SortDirection,
+  setDiggingFeesFilter,
+  setUnwrapsFilter,
+  setFailsFilter,
+} from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from './DiggingFeesInput';
+
+import { FailsInput } from './FailsInput';
 import { ethers } from 'ethers';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState, Dispatch, SetStateAction } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
+
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
-import { Archaeologist } from 'types';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -44,78 +57,125 @@ function ArchaeologistListItem({
   isDialing,
   setIsDialing,
   onClick,
-
 }: ArchaeologistListItemProps) {
   const [isPinging, setIsPinging] = useState(false);
-  const { testDialArchaeologist, pingArchaeologist } = useDialArchaeologists(setIsDialing);
+  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
 
-  const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.0') : '';
+  const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
-  return (<Tr
-    background={isSelected ? (archaeologist.exception ? 'errorHighlight' : 'brand.700') : ''}
-    onClick={() => {
-      onClick();
+  return (
+    <Tr
+      background={isSelected ? 'brand.50' : ''}
+      onClick={() => {
+        onClick();
 
-      if (!isSelected) {
-        setIsPinging(true);
-        pingArchaeologist(archaeologist.fullPeerId!, () => setIsPinging(false));
-      }
-    }}
-    cursor="pointer"
-    _hover={isSelected ? {} : { background: 'brand.100' }}
-  >
-    <Td>
-      <Flex>
-        {isPinging ? <Spinner size="sm" /> : <></>}
-        <Text
-          color={rowTextColor}
-          ml={3}
-        >
-          {formatAddress(archaeologist.profile.archAddress)}
-        </Text>
-      </Flex>
-    </Td>
-    <Td isNumeric>
-      <Flex justify="center">
-        <Image
-          src="sarco-token-icon.png"
-          w="18px"
-          h="18px"
-        />
-        <Text
-          ml={3}
-          color={rowTextColor}
-        >
-          {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
-        </Text>
-      </Flex>
-    </Td>
-    {includeDialButton ? (
+        if (!isSelected) {
+          setIsPinging(true);
+        }
+      }}
+      cursor="pointer"
+      _hover={isSelected ? {} : { background: 'brand.0' }}
+    >
       <Td>
-        <Button
-          disabled={isDialing || !!archaeologist.connection}
-          onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
-        >
-          {archaeologist.connection ? 'Connected' : 'Dial'}
-        </Button>
+        <HStack>
+          <Checkbox
+            isChecked={isSelected && true}
+            colorScheme="blue"
+          ></Checkbox>
+          <Text
+            ml={3}
+            bg={'brand.100'}
+            p={0.5}
+            pl={2}
+            pr={2}
+          >
+            {formatAddress(archaeologist.profile.archAddress)}
+          </Text>
+        </HStack>
       </Td>
-    ) : (
-      <></>
-    )}
-  </Tr>);
+      <Td isNumeric>
+        <Flex justify="center">
+          <Image
+            src="sarco-token-icon.png"
+            w="18px"
+            h="18px"
+          />
+          <Text
+            ml={3}
+            bg={'brand.100'}
+            p={0.5}
+            pl={2}
+            pr={2}
+          >
+            {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
+          </Text>
+        </Flex>
+      </Td>
+      <Td isNumeric>
+        <Flex justify="center">
+          <Text
+            ml={3}
+            bg={'brand.100'}
+            p={0.5}
+            pl={2}
+            pr={2}
+          >
+            {archaeologist.profile.successes.toString()}
+          </Text>
+        </Flex>
+      </Td>
+      <Td isNumeric>
+        <Flex justify="center">
+          <Text
+            ml={3}
+            bg={'brand.100'}
+            p={0.5}
+            pl={2}
+            pr={2}
+          >
+            {archaeologist.profile.cleanups.toString()}
+          </Text>
+        </Flex>
+      </Td>
+      {includeDialButton ? (
+        <Td>
+          <Button
+            disabled={isDialing || !!archaeologist.connection}
+            onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
+          >
+            {archaeologist.connection ? 'Connected' : 'Dial'}
+          </Button>
+        </Td>
+      ) : (
+        <></>
+      )}
+    </Tr>
+  );
 }
 
-export function ArchaeologistList({ includeDialButton }: { includeDialButton?: boolean }) {
+export function ArchaeologistList({
+  includeDialButton,
+  paginatedArchaeologist,
+}: {
+  includeDialButton?: boolean;
+  paginatedArchaeologist: Archaeologist[];
+}) {
   const {
-    onClickNextPage,
-    onClickPrevPage,
     handleCheckArchaeologist,
     selectedArchaeologists,
     sortedFilteredArchaeologist,
     onClickSortDiggingFees,
+    onClickSortUnwraps,
+    onClickSortFails,
+    onClickSortArchs,
     diggingFeesSortDirection,
+    unwrapsSortDirection,
+    failsSortDirection,
+    archsSortDirection,
     handleChangeAddressSearch,
     diggingFeesFilter,
+    unwrapsFilter,
+    failsFilter,
     archAddressSearch,
   } = useArchaeologistList();
   const dispatch = useDispatch();
@@ -130,16 +190,24 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
     return dispatch(setDiggingFeesFilter(diggingFees));
   }
 
+  function setUnwraps(unwraps: string) {
+    return dispatch(setUnwrapsFilter(unwraps));
+  }
+
+  function setFails(fails: string) {
+    return dispatch(setFailsFilter(fails));
+  }
+
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
+  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
   return (
     <Flex
       direction="column"
       height="100%"
-      mt={6}
     >
       <Flex
         flex={4}
@@ -150,20 +218,21 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
           <TableContainer
             width="100%"
             overflowY="auto"
-            maxHeight="650px"
+            maxHeight="auto"
           >
             <Table variant="simple">
               <Thead>
                 <Tr>
                   <Th>
                     <VStack align="left">
-                      <Text
-                        variant="secondary"
-                        textTransform="capitalize"
-                        py={3}
+                      <Button
+                        variant="ghost"
+                        rightIcon={sortIconsMap[archsSortDirection]}
+                        onClick={onClickSortArchs}
+                        color="brand.950"
                       >
-                        Archaeologists ({sortedFilteredArchaeologist.length})
-                      </Text>
+                        Archaeologists ({sortedFilteredArchaeologist?.length})
+                      </Button>
                       <Input
                         w="200px"
                         onChange={handleChangeAddressSearch}
@@ -176,18 +245,67 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                   </Th>
                   <Th isNumeric>
                     <VStack>
-                      <Button
-                        variant="ghost"
-                        textTransform="capitalize"
-                        rightIcon={sortIconsMap[diggingFeesSortDirection]}
-                        onClick={onClickSortDiggingFees}
-                      >
-                        Digging Fee
-                      </Button>
+                      <div>
+                        <Button
+                          variant="ghost"
+                          rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                          onClick={onClickSortDiggingFees}
+                        >
+                          <Text> Fees </Text>
+                        </Button>
+                        <Popover trigger={'hover'}>
+                          <PopoverTrigger>
+                            <Icon
+                              as={QuestionIcon}
+                              color="brand.950"
+                            ></Icon>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            background="black"
+                            color="brand.950"
+                          >
+                            <PopoverBody textAlign={'left'}>Lorem ipsum dolor sit amet</PopoverBody>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
                       <DiggingFeesInput
                         setDiggingFees={setDiggingFees}
                         value={diggingFeesFilter}
-                        placeholder="Max"
+                        placeholder="max"
+                        color="brand.950"
+                      />
+                    </VStack>
+                  </Th>
+                  <Th isNumeric>
+                    <VStack>
+                      <Button
+                        variant="ghost"
+                        rightIcon={sortIconsMap[unwrapsSortDirection]}
+                        onClick={onClickSortUnwraps}
+                      >
+                        <Text> Unwraps </Text>
+                      </Button>
+                      {/* <UnwrapsInput
+                        setUnwraps={setUnwraps}
+                        value={unwrapsFilter}
+                        placeholder="min"
+                        color="brand.950"
+                      /> */}
+                    </VStack>
+                  </Th>
+                  <Th isNumeric>
+                    <VStack>
+                      <Button
+                        variant="ghost"
+                        rightIcon={sortIconsMap[failsSortDirection]}
+                        onClick={onClickSortFails}
+                      >
+                        <Text> Fails </Text>
+                      </Button>
+                      <FailsInput
+                        setFails={setFails}
+                        value={failsFilter}
+                        placeholder="min"
                         color="brand.950"
                       />
                     </VStack>
@@ -196,34 +314,30 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                 </Tr>
               </Thead>
               <Tbody>
-                {sortedFilteredArchaeologist.map(arch => {
+                {paginatedArchaeologist?.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId
                     ) !== -1;
 
-                  return <ArchaeologistListItem
-                    key={arch.profile.archAddress}
-                    archaeologist={arch}
-                    onClick={() => {
-                      if (includeDialButton) return;
-                      handleCheckArchaeologist(arch);
-                    }}
-                    includeDialButton={!!includeDialButton}
-                    isDialing={isDialing}
-                    setIsDialing={setIsDialing}
-                    isSelected={isSelected}
-                  />;
+                  return (
+                    <ArchaeologistListItem
+                      key={arch.profile.archAddress}
+                      archaeologist={arch}
+                      onClick={() => {
+                        if (includeDialButton) return;
+                        handleCheckArchaeologist(arch);
+                      }}
+                      includeDialButton={!!includeDialButton}
+                      isDialing={isDialing}
+                      setIsDialing={setIsDialing}
+                      isSelected={isSelected}
+                    />
+                  );
                 })}
               </Tbody>
             </Table>
           </TableContainer>
-          <TablePageNavigator
-            onClickNext={onClickNextPage}
-            onClickPrevious={onClickPrevPage}
-            currentPage={1}
-            totalPages={10}
-          />
         </Loading>
       </Flex>
     </Flex>

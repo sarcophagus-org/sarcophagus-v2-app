@@ -11,7 +11,7 @@ export function ArchaeologistsPage() {
       direction="column"
     >
       <Heading size="lg">Archaeologists</Heading>
-      <ArchaeologistList includeDialButton={true} />
+      {/* <ArchaeologistList includeDialButton={true} /> */}
     </Flex>
   );
 }

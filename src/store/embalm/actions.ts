@@ -19,8 +19,15 @@ export enum ActionType {
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  setShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
+  SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
+  SetFailsFilter = 'EMBALM_SET_FAILS_FILTER',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
+  SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
+  SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
+  SetArchsSortDirection = 'EMBALM_ARCHS_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
@@ -73,7 +80,6 @@ type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: {};
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistOnlineStatus]: {
@@ -84,6 +90,7 @@ type EmbalmPayload = {
   [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
   [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
+
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
@@ -96,11 +103,17 @@ type EmbalmPayload = {
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: Archaeologist[] };
+  [ActionType.setShowSelectedArchaeologists]: { selected: boolean };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
+  [ActionType.SetUnwrapsSortDirection]: { direction: SortDirection };
+  [ActionType.SetFailsSortDirection]: { direction: SortDirection };
+  [ActionType.SetArchsSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
+  [ActionType.SetUnwrapsFilter]: { filter: string };
+  [ActionType.SetFailsFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: {};
   [ActionType.SetCurrentChainId]: { chainId: number | undefined };
@@ -259,9 +272,54 @@ export function setDiggingFeesSortDirection(direction: SortDirection): EmbalmAct
   };
 }
 
+export function setShowSelectedArchaeologists(selected: boolean): EmbalmActions {
+  return {
+    type: ActionType.setShowSelectedArchaeologists,
+    payload: {
+      selected,
+    },
+  };
+}
+
+export function setFailsSortDirection(direction: SortDirection): EmbalmActions {
+  return {
+    type: ActionType.SetFailsSortDirection,
+    payload: {
+      direction,
+    },
+  };
+}
+
+export function setArchsSortDirection(direction: SortDirection): EmbalmActions {
+  return {
+    type: ActionType.SetArchsSortDirection,
+    payload: {
+      direction,
+    },
+  };
+}
+
 export function setDiggingFeesFilter(filter: string): EmbalmActions {
   return {
     type: ActionType.SetDiggingFeesFilter,
+    payload: {
+      filter,
+    },
+  };
+}
+
+export function setUnwrapsFilter(filter: string): EmbalmActions {
+  return {
+    type: ActionType.SetUnwrapsFilter,
+    payload: {
+      filter,
+    },
+  };
+}
+
+export function setFailsFilter(filter: string): EmbalmActions {
+  return {
+    type: ActionType.SetFailsFilter,
     payload: {
       filter,
     },
@@ -273,6 +331,15 @@ export function setArchAddressSearch(search: string): EmbalmActions {
     type: ActionType.SetArchAddressSearch,
     payload: {
       search,
+    },
+  };
+}
+
+export function setUnwrapsSortDirection(direction: SortDirection): EmbalmActions {
+  return {
+    type: ActionType.SetUnwrapsSortDirection,
+    payload: {
+      direction,
     },
   };
 }
