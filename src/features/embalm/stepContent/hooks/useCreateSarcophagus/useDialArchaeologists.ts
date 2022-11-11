@@ -60,6 +60,7 @@ export function useDialArchaeologists() {
 
       const latency = await libp2pNode?.ping(peerId);
       console.log('latency: ', latency);
+      libp2pNode?.hangUp(peerId);
 
       if (!!latency) {
         clearTimeout(couldNotConnect);
