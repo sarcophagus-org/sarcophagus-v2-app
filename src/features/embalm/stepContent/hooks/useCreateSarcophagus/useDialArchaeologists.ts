@@ -5,6 +5,7 @@ import { ArchaeologistExceptionCode } from 'types';
 import { useLibp2p } from '../../../../../hooks/libp2p/useLibp2p';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { createSarcophagusErrors } from '../../utils/errors';
+import { PeerId } from '@libp2p/interface-peer-id';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -38,7 +39,38 @@ export function useDialArchaeologists() {
     }
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
+
+  const pingArchaeologist = useCallback(
+    async (peerId: PeerId, onComplete: Function) => {
+      const pingTimeout = 5000;
+
+      const couldNotConnect = setTimeout(() => {
+        console.log('ping timeout!');
+
+        dispatch(
+          setArchaeologistException(peerId.toString(), {
+            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+            message: 'Ping timeout',
+          })
+        );
+        onComplete();
+      }, pingTimeout);
+
+      console.log(`pinging ${peerId.toString()}`);
+
+      const latency = await libp2pNode?.ping(peerId);
+      console.log('latency: ', latency);
+
+      if (!!latency) {
+        clearTimeout(couldNotConnect);
+        onComplete();
+      }
+    },
+    [libp2pNode, dispatch]
+  );
+
   return {
     dialSelectedArchaeologists,
+    pingArchaeologist
   };
 }

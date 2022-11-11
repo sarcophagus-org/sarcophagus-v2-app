@@ -24,9 +24,10 @@ import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from './DiggingFeesInput';
 import { ethers } from 'ethers';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
+import { useTestDialArchaeologists } from '../../../../hooks/utils/useTestDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { Archaeologist } from 'types';
+import { useDialArchaeologists } from '../hooks/useCreateSarcophagus/useDialArchaeologists';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -47,7 +48,8 @@ function ArchaeologistListItem({
 
 }: ArchaeologistListItemProps) {
   const [isPinging, setIsPinging] = useState(false);
-  const { testDialArchaeologist, pingArchaeologist } = useDialArchaeologists(setIsDialing);
+  const { testDialArchaeologist } = useTestDialArchaeologists(setIsDialing);
+  const { pingArchaeologist } = useDialArchaeologists();
 
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.0') : '';
 
