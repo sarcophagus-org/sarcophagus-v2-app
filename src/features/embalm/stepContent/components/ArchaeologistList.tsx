@@ -25,17 +25,8 @@ import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chak
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import {
-  SortDirection,
-  setDiggingFeesFilter,
-  setUnwrapsFilter,
-  setFailsFilter,
-} from 'store/embalm/actions';
-import { useDispatch } from 'store/index';
-import { DiggingFeesInput } from './DiggingFeesInput';
-import { UnwrapsInput } from './UnwrapsInput';
-
-import { FailsInput } from './FailsInput';
+import { SortDirection } from 'store/embalm/actions';
+import { FilterInput } from './FilterInput';
 import { ethers } from 'ethers';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
@@ -61,8 +52,6 @@ function ArchaeologistListItem({
 }: ArchaeologistListItemProps) {
   const [isPinging, setIsPinging] = useState(false);
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
-
-  const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
   return (
     <Tr
@@ -179,25 +168,12 @@ export function ArchaeologistList({
     failsFilter,
     archAddressSearch,
   } = useArchaeologistList();
-  const dispatch = useDispatch();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
     [SortDirection.NONE]: <ArrowUpDownIcon> </ArrowUpDownIcon>,
     [SortDirection.ASC]: <ArrowUpIcon />,
     [SortDirection.DESC]: <ArrowDownIcon />,
   };
-
-  function setDiggingFees(diggingFees: string) {
-    return dispatch(setDiggingFeesFilter(diggingFees));
-  }
-
-  function setUnwraps(unwraps: string) {
-    return dispatch(setUnwrapsFilter(unwraps));
-  }
-
-  function setFails(fails: string) {
-    return dispatch(setFailsFilter(fails));
-  }
 
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
@@ -269,8 +245,8 @@ export function ArchaeologistList({
                           </PopoverContent>
                         </Popover>
                       </div>
-                      <DiggingFeesInput
-                        setDiggingFees={setDiggingFees}
+                      <FilterInput
+                        filterName={'DiggingFees'}
                         value={diggingFeesFilter}
                         placeholder="max"
                         color="brand.950"
@@ -286,8 +262,8 @@ export function ArchaeologistList({
                       >
                         <Text> Unwraps </Text>
                       </Button>
-                      <UnwrapsInput
-                        setUnwraps={setUnwraps}
+                      <FilterInput
+                        filterName={'Unwraps'}
                         value={unwrapsFilter}
                         placeholder="min"
                         color="brand.950"
@@ -303,8 +279,8 @@ export function ArchaeologistList({
                       >
                         <Text> Fails </Text>
                       </Button>
-                      <FailsInput
-                        setFails={setFails}
+                      <FilterInput
+                        filterName={'Fails'}
                         value={failsFilter}
                         placeholder="min"
                         color="brand.950"
