@@ -4,6 +4,14 @@ export interface BundlrConfig {
   providerUrl: string;
 }
 
+interface ArweaveConfig {
+  host: string;
+  port: number;
+  protocol: 'http' | 'https';
+  timeout: number;
+  logging: boolean;
+}
+
 export interface NetworkConfig {
   chainId: number;
   networkName: string;
@@ -13,4 +21,5 @@ export interface NetworkConfig {
   explorerUrl: string;
   explorerApiKey: string;
   bundlr: BundlrConfig;
+  arweaveConfig: ArweaveConfig;
 }
