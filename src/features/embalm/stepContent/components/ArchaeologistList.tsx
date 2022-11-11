@@ -33,6 +33,7 @@ import {
 } from 'store/embalm/actions';
 import { useDispatch } from 'store/index';
 import { DiggingFeesInput } from './DiggingFeesInput';
+import { UnwrapsInput } from './UnwrapsInput';
 
 import { FailsInput } from './FailsInput';
 import { ethers } from 'ethers';
@@ -285,12 +286,12 @@ export function ArchaeologistList({
                       >
                         <Text> Unwraps </Text>
                       </Button>
-                      {/* <UnwrapsInput
+                      <UnwrapsInput
                         setUnwraps={setUnwraps}
                         value={unwrapsFilter}
                         placeholder="min"
                         color="brand.950"
-                      /> */}
+                      />
                     </VStack>
                   </Th>
                   <Th isNumeric>
