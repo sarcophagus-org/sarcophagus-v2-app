@@ -14,27 +14,35 @@ import {
 } from '@chakra-ui/react';
 import React, { ChangeEvent } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
-import { ArchaeologistPagination } from '../components/ArchaeologistPagination';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
-import { Pagination, PaginationContainer, usePagination } from '@ajna/pagination';
+import {
+  Pagination,
+  usePagination,
+  PaginationNext,
+  PaginationPage,
+  PaginationSeparator,
+  PaginationPrevious,
+  PaginationContainer,
+  PaginationPageGroup,
+} from '@ajna/pagination';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-
-import { QuestionIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 
 export function SelectArchaeologists() {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
 
-  const { currentPage, setCurrentPage, pagesCount, pageSize, setPageSize, offset } = usePagination({
-    total: sortedFilteredArchaeologist.length,
-    initialState: { currentPage: 1, pageSize: 5 },
-    limits: {
-      outer: outerLimit,
-      inner: innerLimit,
-    },
-  });
+  const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
+    usePagination({
+      total: sortedFilteredArchaeologist.length,
+      initialState: { currentPage: 1, pageSize: 5 },
+      limits: {
+        outer: outerLimit,
+        inner: innerLimit,
+      },
+    });
 
   const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
 
@@ -79,10 +87,7 @@ export function SelectArchaeologists() {
             <ArchaeologistList paginatedArchaeologist={paginatedArchaeologist} />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
-                <Flex
-                  px={3}
-                  justifyContent={'space-between'}
-                >
+                <Flex px={3}>
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
@@ -102,7 +107,69 @@ export function SelectArchaeologists() {
                   </HStack>
                 </Flex>
 
-                <ArchaeologistPagination />
+                <Flex>
+                  <PaginationPrevious
+                    backgroundColor={'transparent'}
+                    color="brand.950"
+                    variant={'paginator'}
+                  >
+                    <Icon
+                      as={ChevronLeftIcon}
+                      color="brand.950"
+                      w={6}
+                      h={6}
+                      mr={1}
+                    ></Icon>
+                    Prev
+                  </PaginationPrevious>
+                  <PaginationPageGroup
+                    isInline
+                    align="center"
+                    separator={
+                      <PaginationSeparator
+                        bg="brand.0"
+                        textColor={'brand.950'}
+                        fontSize="sm"
+                        w={7}
+                        jumpSize={1}
+                      />
+                    }
+                  >
+                    {pages.map((page: number) => (
+                      <PaginationPage
+                        bg="brand.0"
+                        key={`pagination_page_${page}`}
+                        textColor={'brand.950'}
+                        page={page}
+                        fontSize="sm"
+                        variant={'paginator'}
+                        _hover={{
+                          bg: 'white',
+                          textColor: 'brand.50',
+                        }}
+                        _current={{
+                          bg: '#D9D9D9',
+                          fontSize: 'sm',
+                          textColor: 'brand.50',
+                        }}
+                      />
+                    ))}
+                  </PaginationPageGroup>
+                  <PaginationNext
+                    backgroundColor={'transparent'}
+                    color="brand.950"
+                    variant={'paginator'}
+                  >
+                    Next
+                    <Icon
+                      as={ChevronRightIcon}
+                      color="brand.950"
+                      w={6}
+                      h={6}
+                      mr={1}
+                    ></Icon>
+                  </PaginationNext>
+                </Flex>
 
                 <HStack mr={2}>
                   <Text variant="secondary">Show (10) hidden</Text>
@@ -121,34 +188,35 @@ export function SelectArchaeologists() {
                   </Popover>
                 </HStack>
               </Flex>
+
+              <HStack
+                mr={2}
+                mt={3}
+              >
+                <SummaryErrorIcon
+                  error={
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                  }
+                />
+                <Text
+                  ml={2}
+                  color="brand.500"
+                  textAlign={'center'}
+                >
+                  = accused archaeologists
+                </Text>
+                <Text
+                  text-align={'bottom'}
+                  as="i"
+                  fontSize={'12'}
+                >
+                  (show)
+                </Text>
+              </HStack>
             </Box>
           </VStack>
         </PaginationContainer>
       </Pagination>
-      <HStack
-        mr={2}
-        mt={3}
-      >
-        <SummaryErrorIcon
-          error={
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-          }
-        />
-        <Text
-          ml={2}
-          color="brand.500"
-          textAlign={'center'}
-        >
-          = accused archaeologists
-        </Text>
-        <Text
-          text-align={'bottom'}
-          as="i"
-          fontSize={'12'}
-        >
-          (show)
-        </Text>
-      </HStack>
     </Flex>
   );
 }
