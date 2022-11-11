@@ -44,65 +44,66 @@ function ArchaeologistListItem({
   isDialing,
   setIsDialing,
   onClick,
-
 }: ArchaeologistListItemProps) {
   const [isPinging, setIsPinging] = useState(false);
   const { testDialArchaeologist, pingArchaeologist } = useDialArchaeologists(setIsDialing);
 
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.0') : '';
 
-  return (<Tr
-    background={isSelected ? (archaeologist.exception ? 'errorHighlight' : 'brand.700') : ''}
-    onClick={() => {
-      onClick();
+  return (
+    <Tr
+      background={isSelected ? (archaeologist.exception ? 'errorHighlight' : 'brand.700') : ''}
+      onClick={() => {
+        onClick();
 
-      if (!isSelected) {
-        setIsPinging(true);
-        pingArchaeologist(archaeologist.fullPeerId!, () => setIsPinging(false));
-      }
-    }}
-    cursor="pointer"
-    _hover={isSelected ? {} : { background: 'brand.100' }}
-  >
-    <Td>
-      <Flex>
-        {isPinging ? <Spinner size="sm" /> : <></>}
-        <Text
-          color={rowTextColor}
-          ml={3}
-        >
-          {formatAddress(archaeologist.profile.archAddress)}
-        </Text>
-      </Flex>
-    </Td>
-    <Td isNumeric>
-      <Flex justify="center">
-        <Image
-          src="sarco-token-icon.png"
-          w="18px"
-          h="18px"
-        />
-        <Text
-          ml={3}
-          color={rowTextColor}
-        >
-          {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
-        </Text>
-      </Flex>
-    </Td>
-    {includeDialButton ? (
+        if (!isSelected) {
+          setIsPinging(true);
+          pingArchaeologist(archaeologist.fullPeerId!, () => setIsPinging(false));
+        }
+      }}
+      cursor="pointer"
+      _hover={isSelected ? {} : { background: 'brand.100' }}
+    >
       <Td>
-        <Button
-          disabled={isDialing || !!archaeologist.connection}
-          onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
-        >
-          {archaeologist.connection ? 'Connected' : 'Dial'}
-        </Button>
+        <Flex>
+          {isPinging ? <Spinner size="sm" /> : <></>}
+          <Text
+            color={rowTextColor}
+            ml={3}
+          >
+            {formatAddress(archaeologist.profile.archAddress)}
+          </Text>
+        </Flex>
       </Td>
-    ) : (
-      <></>
-    )}
-  </Tr>);
+      <Td isNumeric>
+        <Flex justify="center">
+          <Image
+            src="sarco-token-icon.png"
+            w="18px"
+            h="18px"
+          />
+          <Text
+            ml={3}
+            color={rowTextColor}
+          >
+            {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
+          </Text>
+        </Flex>
+      </Td>
+      {includeDialButton ? (
+        <Td>
+          <Button
+            disabled={isDialing || !!archaeologist.connection}
+            onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
+          >
+            {archaeologist.connection ? 'Connected' : 'Dial'}
+          </Button>
+        </Td>
+      ) : (
+        <></>
+      )}
+    </Tr>
+  );
 }
 
 export function ArchaeologistList({ includeDialButton }: { includeDialButton?: boolean }) {
@@ -202,18 +203,20 @@ export function ArchaeologistList({ includeDialButton }: { includeDialButton?: b
                       a => a.profile.peerId === arch.profile.peerId
                     ) !== -1;
 
-                  return <ArchaeologistListItem
-                    key={arch.profile.archAddress}
-                    archaeologist={arch}
-                    onClick={() => {
-                      if (includeDialButton) return;
-                      handleCheckArchaeologist(arch);
-                    }}
-                    includeDialButton={!!includeDialButton}
-                    isDialing={isDialing}
-                    setIsDialing={setIsDialing}
-                    isSelected={isSelected}
-                  />;
+                  return (
+                    <ArchaeologistListItem
+                      key={arch.profile.archAddress}
+                      archaeologist={arch}
+                      onClick={() => {
+                        if (includeDialButton) return;
+                        handleCheckArchaeologist(arch);
+                      }}
+                      includeDialButton={!!includeDialButton}
+                      isDialing={isDialing}
+                      setIsDialing={setIsDialing}
+                      isSelected={isSelected}
+                    />
+                  );
                 })}
               </Tbody>
             </Table>
