@@ -41,6 +41,7 @@ export const colors = {
 
   // TODO: Merge the two error colors, check with design team
   error: '#c88484',
+  errorBg: '#2f1414',
   errorAlt: '#290e0e',
   errorHighlight: '#F7414126',
   warning: '#c8c884',
@@ -50,4 +51,16 @@ export const colors = {
 
   // WARNING: This color is an abomination and should not be used! But we're using it anyway.
   controversialBlue: '#168FFF',
+
+  // Used specifically for the sarcophagus table
+  // Note that there are duplicate colors through the app because the colors in the designs have
+  // changed over time. These colors need to be standardized.
+  // TODO: Get with design to standardize some of these colors.
+  blueBg: '#102233',
+  red: '#F74141',
+  redBg: '#2f1414',
+  green: '#17CB49',
+  greenBg: '#0b2613',
+  yellow: '#FF9F2D',
+  yellowBg: '#342615',
 };

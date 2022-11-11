@@ -56,11 +56,21 @@ export interface ArchaeologistEncryptedShard {
   unencryptedShardDoubleHash: string;
 }
 
-// Temporary
+export enum SarcophagusState {
+  DoesNotExist,
+  Active,
+  Resurrecting,
+  Resurrected,
+  Buried,
+  Cleaned,
+  Accused,
+  Failed,
+}
+
 export interface Sarcophagus {
   id: string;
   name: string;
-  state: string;
+  state: SarcophagusState;
   minShards: number;
   resurrectionTime: BigNumber;
   maximumRewrapInterval: BigNumber;

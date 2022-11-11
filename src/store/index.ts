@@ -7,9 +7,9 @@ import { EmbalmActions } from './embalm/actions';
 import { embalmInitialState, embalmReducer, EmbalmState } from './embalm/reducer';
 import { SarcophagusActions } from './sarcophagus/actions';
 import {
-  sarcophagusInitialState,
-  sarcophagusReducer,
-  SarcophagusState,
+  sarcophagiInitialState,
+  sarcophagiReducer,
+  SarcophagiState,
 } from './sarcophagus/reducer';
 
 export type Actions = AppActions | SarcophagusActions | BundlrActions | EmbalmActions;
@@ -33,14 +33,14 @@ export function useDispatch(): React.Dispatch<Actions> {
 
 export interface RootState {
   appState: AppState;
-  sarcophagusState: SarcophagusState;
+  sarcophagiState: SarcophagiState;
   bundlrState: BundlrState;
   embalmState: EmbalmState;
 }
 
 export const initialState: RootState = {
   appState: appInitialState,
-  sarcophagusState: sarcophagusInitialState,
+  sarcophagiState: sarcophagiInitialState,
   bundlrState: bundlrInitialState,
   embalmState: embalmInitialState,
 };
@@ -48,7 +48,7 @@ export const initialState: RootState = {
 export function storeReducer(state: RootState, action: Actions): RootState {
   return {
     appState: appReducer(state.appState, action),
-    sarcophagusState: sarcophagusReducer(state.sarcophagusState, action),
+    sarcophagiState: sarcophagiReducer(state.sarcophagiState, action),
     bundlrState: bundlrReducer(state.bundlrState, action),
     embalmState: embalmReducer(state.embalmState, action),
   };

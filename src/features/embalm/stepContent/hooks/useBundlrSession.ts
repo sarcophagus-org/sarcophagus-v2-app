@@ -140,7 +140,7 @@ export function useBundlrSession() {
    * connect to the bundlr the standard way using the `connectToBundlr()` function.
    */
   useEffect(() => {
-    if (isConnected) return;
+    if (isHardhatNetwork || isConnected) return;
 
     const publicKeyJson = localStorage.getItem('publicKey');
     if (!publicKeyJson) return;
@@ -152,7 +152,7 @@ export function useBundlrSession() {
 
     dispatch(connect());
     dispatch(setBundlr(newBundlr));
-  }, [createInjectedBundlr, dispatch, isConnected]);
+  }, [createInjectedBundlr, dispatch, isConnected, isHardhatNetwork]);
 
   /**
    * Disconnects from the bundlr node if the chain or account changes.

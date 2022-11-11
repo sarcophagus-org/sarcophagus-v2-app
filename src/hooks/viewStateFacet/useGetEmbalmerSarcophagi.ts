@@ -5,12 +5,12 @@ import { useNetworkConfig } from 'lib/config';
 export function useGetEmbalmerSarcophagi(embalmer: string) {
   const networkConfig = useNetworkConfig();
 
-  const { data } = useContractRead({
+  const result = useContractRead({
     address: networkConfig.diamondDeployAddress,
     abi: ViewStateFacet__factory.abi,
     functionName: 'getEmbalmerSarcophagi',
     args: [embalmer],
   });
 
-  return data;
+  return result;
 }
