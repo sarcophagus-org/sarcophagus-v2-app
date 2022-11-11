@@ -19,6 +19,7 @@ import { DatePicker } from 'components/DatePicker';
 import { Alert } from 'components/Alert';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
+import { RoutesPathMap, RouteKey } from 'pages';
 
 export function SarcophagusDetail({ id }: { id: string | undefined }) {
   const { sarcophagus } = useGetSarcophagusDetails({ sarcoId: id });
@@ -80,7 +81,7 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
       <HStack>
         <Link
           as={NavLink}
-          to="/dashboard"
+          to={RoutesPathMap[RouteKey.DASHBOARD_PAGE]}
           color="brand.400"
           _hover={{ color: 'brand.950', textDecor: 'underline' }}
         >
@@ -120,7 +121,7 @@ export function SarcophagusDetail({ id }: { id: string | undefined }) {
               <Text as="span">Return to the </Text>
               <Link
                 as={NavLink}
-                to="/dashboard"
+                to={RoutesPathMap[RouteKey.DASHBOARD_PAGE]}
                 color="brand.400"
                 _hover={{ color: 'brand.950', textDecor: 'underline' }}
               >
