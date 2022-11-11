@@ -35,7 +35,6 @@ export function useArchaeologistList() {
     ShowSelectedArchaeologists,
   } = useSelector(s => s.embalmState);
 
-  console.log('ShowSelectedArchaeologists', ShowSelectedArchaeologists);
   const NUMBER_MOCK_ARCH = 30;
 
   // Used for generating testing archaeologists

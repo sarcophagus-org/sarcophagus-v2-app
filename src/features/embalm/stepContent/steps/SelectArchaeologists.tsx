@@ -28,6 +28,7 @@ import {
 } from '@ajna/pagination';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
+import { ResurrectionRadioValue } from '../components/Resurrection';
 
 export function SelectArchaeologists() {
   const outerLimit = 1;
@@ -55,6 +56,10 @@ export function SelectArchaeologists() {
     setCurrentPage(nextPage);
   };
 
+  const options = Object.values(ResurrectionRadioValue);
+
+  console.log(options);
+
   return (
     <Flex
       direction="column"
@@ -73,6 +78,17 @@ export function SelectArchaeologists() {
       >
         Currently set: 09.22.22 7:30pm (edit)
       </Text>
+      <Select
+        size="sm"
+        w={10}
+        // textAlign={'right'}
+        // variant="unstyled"
+        // color="brand.600"
+      >
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </Select>
       <ArchaeologistHeader />
       <Pagination
         pagesCount={pagesCount}
