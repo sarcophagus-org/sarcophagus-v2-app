@@ -58,8 +58,6 @@ export function SelectArchaeologists() {
 
   const options = Object.values(ResurrectionRadioValue);
 
-  console.log(options);
-
   return (
     <Flex
       direction="column"
@@ -72,23 +70,28 @@ export function SelectArchaeologists() {
       >
         Resurrection Time
       </Text>
-      <Text
-        variant="primary"
-        mt="2"
-      >
-        Currently set: 09.22.22 7:30pm (edit)
-      </Text>
-      <Select
-        size="sm"
-        w={10}
-        // textAlign={'right'}
-        // variant="unstyled"
-        // color="brand.600"
-      >
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-      </Select>
+      <HStack>
+        <Text
+          variant="primary"
+          mt="2"
+        >
+          Currently set: 09.22.22 7:30pm
+        </Text>
+        <Text onClick={() => console.log('click')}>(edit)</Text>
+        <Select
+          w={10}
+          size="sm"
+        >
+          {options.map(option => (
+            <option
+              value={option}
+              key={option}
+            >
+              {option}
+            </option>
+          ))}
+        </Select>
+      </HStack>
       <ArchaeologistHeader />
       <Pagination
         pagesCount={pagesCount}
