@@ -26,8 +26,6 @@ export function Embalm() {
 
   return (
     <Flex
-      ml="84px"
-      w="65%"
       minWidth="500px"
       direction="column"
       height="100%"
@@ -54,10 +52,7 @@ export function Embalm() {
         </Flex>
 
         {/* Space between */}
-        <Flex
-          minWidth={100}
-          w="10%"
-        />
+        <Flex minWidth={{ xl: '100px', lg: 0 }} />
 
         {/* Right side container */}
         <Flex flex={1}>
