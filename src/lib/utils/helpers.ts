@@ -2,7 +2,7 @@ import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther, keccak256 } from 'ethers/lib/utils';
 import moment from 'moment';
-import { Archaeologist, SarcophagusState } from 'types';
+import { Archaeologist } from 'types';
 
 /**
  * Returns the smallest maximumRewrapInterval value
