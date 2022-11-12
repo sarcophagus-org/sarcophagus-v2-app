@@ -26,6 +26,9 @@ export const Button = {
       textDecoration: 'underline',
       fontSize: 'sm',
     },
+    outline: {
+      color: 'brand.900',
+    },
     disabledLook: {
       opacity: 0.4,
     },

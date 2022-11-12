@@ -11,6 +11,12 @@ const alertStatusStyles: { [key: string]: any } = {
       border: '1px',
       borderColor: 'success',
     },
+    title: {
+      color: 'brand.900',
+    },
+    description: {
+      color: 'brand.900',
+    },
     icon: {
       color: 'success',
     },

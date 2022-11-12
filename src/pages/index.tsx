@@ -1,9 +1,10 @@
 import { Flex, Link, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { DevNavbar } from '../components/DevNavbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
+import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { FundBundlrPage } from './FundBundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
@@ -22,7 +23,7 @@ export function Pages() {
     },
     {
       path: '/dashboard/:id',
-      element: <DashboardPage />,
+      element: <DetailsPage />,
       label: 'Dashboard',
       hidden: true,
     },

@@ -9,7 +9,7 @@ import {
   forwardRef,
 } from '@chakra-ui/react';
 import { Radio } from 'components/Radio';
-import { useResurrection } from '../hooks/useResurrection';
+import { useSetResurrection } from '../hooks/useSetResurrection';
 import { DatePicker } from 'components/DatePicker';
 
 export enum ResurrectionRadioValue {
@@ -18,7 +18,7 @@ export enum ResurrectionRadioValue {
   ThreeMonths = '3 months',
 }
 
-export function Resurrection({ ...rest }: FlexProps) {
+export function SetResurrection({ ...rest }: FlexProps) {
   const options = Object.values(ResurrectionRadioValue);
 
   const {
@@ -28,7 +28,7 @@ export function Resurrection({ ...rest }: FlexProps) {
     customResurrectionDate,
     handleCustomDateChange,
     handleCustomDateClick,
-  } = useResurrection();
+  } = useSetResurrection();
 
   const CustomResurrectionButton = forwardRef(({ value, onClick }, ref) => (
     <Flex>
