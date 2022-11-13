@@ -8,7 +8,6 @@ export function FundBundlrPage() {
       maxWidth={640}
       w="90%"
       ml="5%"
-      py="48px"
     >
       <Heading>Fund Arweave Bundlr</Heading>
       <Text

@@ -23,9 +23,8 @@ export function Embalm() {
     >
       {process.env.NODE_ENV === 'development' && !hideMagicFormFiller && <MagicFormFiller />}
       {/* Upper section with title */}
-      <Flex py="48px">
-        <Heading>New Sarcophagus</Heading>
-      </Flex>
+
+      <Heading pb="48px">New Sarcophagus</Heading>
 
       {/* Lower section with content */}
       <Flex

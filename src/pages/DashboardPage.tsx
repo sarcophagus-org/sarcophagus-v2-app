@@ -6,10 +6,7 @@ import { useParams } from 'react-router-dom';
 export function DashboardPage() {
   const { id } = useParams();
   return (
-    <Center
-      width="100%"
-      height="100%"
-    >
+    <Center width="100%">
       {/* Container that controls the size of the sarcophagi list*/}
       <Flex
         w="75%"

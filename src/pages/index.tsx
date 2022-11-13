@@ -1,5 +1,7 @@
-import { Box, Button, Flex, Link, Text, VStack, Heading } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text, VStack, Heading, Image, Container } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
+import { useAccount } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
@@ -7,9 +9,8 @@ import { DashboardPage } from './DashboardPage';
 import { EmbalmPage } from './EmbalmPage';
 import { FundBundlrPage } from './FundBundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
-import { useNetworkConfig } from 'lib/config';
-import { networkConfigs } from 'lib/config/networkConfig';
-import { useAccount } from 'wagmi';
+import pharaoh from 'assets/images/pharaoh.gif';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export enum RouteKey {
   EMBALM_PAGE,
@@ -83,16 +84,9 @@ export function Pages() {
 
   const { isConnected } = useAccount();
 
-  const supportedChainIds =
-    process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
-  const networkConfig = useNetworkConfig();
+  const { isSupportedChain, supportedNetworkNames } = useSupportedNetwork();
 
-  const supportedNetworkNames = Object.values(networkConfigs)
-    .filter(config => supportedChainIds.includes(config.chainId))
-    .map(config => config.networkShortName);
-
-  const isSupportedChain =
-    networkConfig === undefined || !supportedChainIds.includes(networkConfig.chainId);
+  const { openConnectModal } = useConnectModal();
 
   return (
     <Router>
@@ -136,27 +130,19 @@ export function Pages() {
             <ConnectWalletButton />
           </Flex>
         </Navbar>
-
         {/* App Content */}
         <Flex
-          flex={1}
           overflow="auto"
+          direction="column"
+          width="100%"
+          height="100%"
+          mt={50}
         >
-          {!isConnected ? (
-            <Text>Not connected man</Text>
-          ) : isSupportedChain ? (
-            <VStack>
-              <Heading>You are connected on an unsupported Network</Heading>
-              <Text>Supported Networks</Text>
-              {supportedNetworkNames.map(network => (
-                <Text key={network}>{network}</Text>
-              ))}
-            </VStack>
-          ) : (
+          {isConnected && isSupportedChain ? (
             <Routes>
               <Route
                 path="/"
-                element={<Navigate to="/dashboard" />}
+                element={<Navigate to={RoutesPathMap[RouteKey.DASHBOARD_PAGE]} />}
               />
               {routes.map(route => (
                 <Route
@@ -166,6 +152,43 @@ export function Pages() {
                 />
               ))}
             </Routes>
+          ) : (
+            <Container
+              maxW="sm"
+              centerContent
+            >
+              <Heading pb={2}>
+                {!isConnected ? 'No Wallet Detected' : 'Unsupported Network'}
+              </Heading>
+              <Text align="center">
+                {!isConnected
+                  ? 'Please connect to your web3 wallet to access this dapp.'
+                  : 'Please connect to a supported network.'}
+              </Text>
+              <Image
+                src={pharaoh}
+                w="125px"
+                py={8}
+              />
+              {!isConnected ? (
+                <Button onClick={openConnectModal}>Connect Wallet</Button>
+              ) : (
+                <Text
+                  align="center"
+                  fontWeight="bold"
+                >
+                  Supported Networks
+                  {supportedNetworkNames.map(network => (
+                    <Text
+                      fontWeight="normal"
+                      key={network}
+                    >
+                      {network}
+                    </Text>
+                  ))}
+                </Text>
+              )}
+            </Container>
           )}
         </Flex>
       </Flex>

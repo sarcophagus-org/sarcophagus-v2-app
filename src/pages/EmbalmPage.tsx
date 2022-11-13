@@ -6,7 +6,7 @@ export function EmbalmPage() {
     <Flex
       direction="column"
       width="100%"
-      height="%100"
+      h="100%"
     >
       <Embalm />
     </Flex>
