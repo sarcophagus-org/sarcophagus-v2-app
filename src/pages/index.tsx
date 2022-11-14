@@ -13,7 +13,7 @@ export function Pages() {
     {
       path: '/embalm',
       element: <EmbalmPage />,
-      noBg: true,
+      noBackground: true,
       label: (
         <Flex
           height="40px"
@@ -78,10 +78,10 @@ export function Pages() {
                   textDecor="bold"
                   as={NavLink}
                   mx={1.5}
-                  bgColor={route.noBg ? 'transparent' : 'blue.1000'}
+                  bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
                   _activeLink={{
                     color: 'brand.950',
-                    bgColor: route.noBg ? 'transparent' : 'blue.700',
+                    bgColor: route.noBackground ? 'transparent' : 'blue.700',
                   }}
                   _hover={{ textDecor: 'none' }}
                   key={route.path}
@@ -89,8 +89,8 @@ export function Pages() {
                   hidden={route.hidden}
                 >
                   <Box
-                    px={route.noBg ? 0 : 5}
-                    py={route.noBg ? 0 : 2.5}
+                    px={route.noBackground ? 0 : 5}
+                    py={route.noBackground ? 0 : 2.5}
                   >
                     {route.label}
                   </Box>
