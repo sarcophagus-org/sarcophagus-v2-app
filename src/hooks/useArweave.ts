@@ -2,11 +2,22 @@ import Arweave from 'arweave';
 import { decrypt } from 'ecies-geth';
 import { utils } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export function useArweave() {
   const { arweaveConfig } = useNetworkConfig();
-  const arweave = arweaveConfig.host ? Arweave.init(arweaveConfig) : undefined;
+  const [arweave, setArweave] = useState<Arweave>();
+
+  useEffect(
+    () => {
+      if (arweaveConfig.host) {
+        setArweave(Arweave.init(arweaveConfig));
+      } else {
+        setArweave(undefined);
+      }
+    },
+    [arweaveConfig]
+  );
 
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 
