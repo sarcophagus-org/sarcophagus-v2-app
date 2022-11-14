@@ -65,9 +65,15 @@ export function SetResurrection({ ...rest }: FlexProps) {
         mt={6}
       >
         <HStack spacing={6}>
-          <Radio {...getRadioProps({ value: options[0] })}>{options[0]}</Radio>
-          <Radio {...getRadioProps({ value: options[1] })}>{options[1]}</Radio>
-          <Radio {...getRadioProps({ value: options[2] })}>{options[2]}</Radio>
+          <Radio {...getRadioProps({ value: options[0] })}>
+            <Text textAlign="center">{options[0]}</Text>
+          </Radio>
+          <Radio {...getRadioProps({ value: options[1] })}>
+            <Text textAlign="center">{options[1]}</Text>
+          </Radio>
+          <Radio {...getRadioProps({ value: options[2] })}>
+            <Text textAlign="center">{options[2]}</Text>
+          </Radio>
         </HStack>
         <HStack spacing={6}>
           <Radio {...getRadioProps({ value: 'Other' })}>

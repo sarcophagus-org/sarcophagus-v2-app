@@ -55,7 +55,7 @@ export function StepContent() {
   return (
     <VStack
       align="left"
-      minWidth={600}
+      minWidth={{ xl: '600px', lg: '450px' }}
       w="100%"
       mb="200px"
     >

@@ -1,5 +1,6 @@
 import { sleep } from '@bundlr-network/client/build/common/utils';
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import { Button, Collapse, Flex, IconButton, Text, useDisclosure } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
 import {
   goToStep,
@@ -34,6 +35,7 @@ export function MagicFormFiller() {
   const { archaeologists } = useSelector(x => x.embalmState);
   const onlineArchaeologists = archaeologists.filter(x => x.isOnline);
   const [isWorking, setIsWorking] = useState(false);
+  const { isOpen, onToggle } = useDisclosure();
 
   const handleClickMagicButton = useCallback(async () => {
     setIsWorking(true);
@@ -98,43 +100,58 @@ export function MagicFormFiller() {
       py={3}
       px={6}
     >
-      <Text
-        variant="secondary"
-        fontSize="xs"
-      >
-        FOR DEV USE ONLY
-      </Text>
-      <Text
-        variant="secondary"
-        fontSize="xs"
-      >
-        Fill out the form automatically
-      </Text>
-      <Button
-        size="xs"
+      <Flex
+        align="center"
         w="100%"
-        mt={3}
-        isLoading={isWorking || onlineArchaeologists.length === 0}
-        bg="linear-gradient(172deg, rgba(150,5,245,1) 0%, rgba(173,63,158,1) 67%, rgba(255,0,125,1) 93%)"
-        _hover={{
-          bg: 'linear-gradient(172deg, rgba(150,5,245,1) 0%, rgba(173,63,158,1) 67%, rgba(255,0,125,1) 93%)',
-          opacity: 0.8,
-        }}
-        color="brand.950"
-        onClick={handleClickMagicButton}
+        justify="space-between"
       >
-        Do Magic
-      </Button>
-      {onlineArchaeologists.length === 0 && (
         <Text
-          mt={3}
           variant="secondary"
-          textAlign="center"
           fontSize="xs"
         >
-          Waiting for archaeologists to load...
+          FOR DEV USE ONLY
         </Text>
-      )}
+        <IconButton
+          float="right"
+          aria-label="Close dev panel"
+          variant="unstyled"
+          icon={isOpen ? <ChevronDownIcon fontSize="xs" /> : <ChevronUpIcon fontSize="xs" />}
+          onClick={onToggle}
+        />
+      </Flex>
+      <Collapse in={isOpen}>
+        <Text
+          variant="secondary"
+          fontSize="xs"
+        >
+          Fill out the form automatically
+        </Text>
+        <Button
+          size="xs"
+          w="100%"
+          mt={3}
+          isLoading={isWorking || onlineArchaeologists.length === 0}
+          bg="linear-gradient(172deg, rgba(150,5,245,1) 0%, rgba(173,63,158,1) 67%, rgba(255,0,125,1) 93%)"
+          _hover={{
+            bg: 'linear-gradient(172deg, rgba(150,5,245,1) 0%, rgba(173,63,158,1) 67%, rgba(255,0,125,1) 93%)',
+            opacity: 0.8,
+          }}
+          color="brand.950"
+          onClick={handleClickMagicButton}
+        >
+          Do Magic
+        </Button>
+        {onlineArchaeologists.length === 0 && (
+          <Text
+            mt={3}
+            variant="secondary"
+            textAlign="center"
+            fontSize="xs"
+          >
+            Waiting for archaeologists to load...
+          </Text>
+        )}
+      </Collapse>
     </Flex>
   );
 }
