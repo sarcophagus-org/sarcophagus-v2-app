@@ -225,3 +225,19 @@ export const buryFailure = (): UseToastOptions => ({
   duration,
   position,
 });
+
+export const cleanSuccess = (): UseToastOptions => ({
+  title: 'Clean Successful.',
+  description: 'Your sarcophagus was cleaned successfully',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const cleanFailure = (): UseToastOptions => ({
+  title: 'Clean Failed.',
+  description: 'The sarcophagus was not cleaned',
+  status: 'error',
+  duration,
+  position,
+});

@@ -31,7 +31,7 @@ export function SarcoStateIndicator({
   return (
     <Flex>
       <Badge
-        bg={stateColorMap[state].bg}
+        bg={stateColorMap[state]?.bg}
         py="4px"
         px="12px"
         borderRadius={100}
@@ -39,7 +39,7 @@ export function SarcoStateIndicator({
       >
         <Text
           fontSize="xs"
-          color={stateColorMap[state].text}
+          color={stateColorMap[state]?.text}
         >{`● ${sarcoStateMap[state]}`}</Text>
       </Badge>
     </Flex>
