@@ -13,4 +13,11 @@ export const goerliNetworkConfig: NetworkConfig = {
     nodeUrl: 'https://devnet.bundlr.network',
     providerUrl: 'https://rpc.ankr.com/eth_goerli',
   },
+  arweaveConfig: {
+    host: 'arweave.net',
+    port: 443,
+    protocol: 'https',
+    timeout: 20000,
+    logging: false,
+  },
 };

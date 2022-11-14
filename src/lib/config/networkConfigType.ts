@@ -1,3 +1,5 @@
+import { ApiConfig as ArweaveConfig } from 'arweave/node/lib/api';
+
 export interface BundlrConfig {
   currencyName: string;
   nodeUrl: string;
@@ -13,4 +15,5 @@ export interface NetworkConfig {
   explorerUrl: string;
   explorerApiKey: string;
   bundlr: BundlrConfig;
+  arweaveConfig: ArweaveConfig;
 }

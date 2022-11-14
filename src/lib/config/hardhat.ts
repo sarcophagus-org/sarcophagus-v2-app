@@ -15,4 +15,11 @@ export const hardhatNetworkConfig: NetworkConfig = {
     nodeUrl: '',
     providerUrl: '',
   },
+  arweaveConfig: {
+    host: 'localhost',
+    port: 1984,
+    protocol: 'http',
+    timeout: 20000,
+    logging: false,
+  },
 };

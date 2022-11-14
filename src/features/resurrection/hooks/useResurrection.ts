@@ -1,7 +1,7 @@
 import { arrayify } from 'ethers/lib/utils';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
-import { fetchArweaveFileFallback } from 'lib/utils/arweave';
+import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
@@ -15,6 +15,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const sarcophagus = useGetSarcophagus(sarcoId);
   const archaeologists = useGetSarcophagusArchaeologists(sarcoId, sarcophagus?.archaeologists);
   const [canResurrect, setCanResurrect] = useState(false);
+  const { fetchArweaveFileFallback } = useArweave();
 
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
   useEffect(() => {
@@ -71,7 +72,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
     } catch (error) {
       throw new Error(`Error resurrecting sarcophagus: ${error}`);
     }
-  }, [archaeologists, canResurrect, recipientPrivateKey, sarcoId, sarcophagus]);
+  }, [archaeologists, canResurrect, recipientPrivateKey, sarcoId, sarcophagus, fetchArweaveFileFallback]);
 
   return { canResurrect, resurrect };
 }
