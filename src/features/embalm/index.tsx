@@ -5,6 +5,7 @@ import { useNetworkConfig } from 'lib/config';
 import { networkConfigs } from 'lib/config/networkConfig';
 import { useAccount } from 'wagmi';
 import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
+import { useBundlrSession } from './stepContent/hooks/useBundlrSession';
 import { useLoadArchaeologists } from './stepContent/hooks/useLoadArchaeologists';
 import { StepNavigator } from './stepNavigator';
 
@@ -13,6 +14,7 @@ const hideMagicFormFiller = false;
 
 export function Embalm() {
   useLoadArchaeologists();
+  useBundlrSession();
   useBootLibp2pNode(20_000);
 
   const supportedChainIds =
