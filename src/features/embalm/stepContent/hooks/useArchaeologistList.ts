@@ -32,7 +32,7 @@ export function useArchaeologistList() {
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
-    ShowSelectedArchaeologists,
+    showSelectedArchaeologists,
   } = useSelector(s => s.embalmState);
 
   const NUMBER_MOCK_ARCH = 30;
@@ -68,7 +68,6 @@ export function useArchaeologistList() {
     [dispatch, selectedArchaeologists]
   );
 
-  // create a function that takes an argument?
   function onClickSortDiggingFees() {
     const length = keys(SortDirection).length / 2;
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
@@ -143,7 +142,7 @@ export function useArchaeologistList() {
   };
 
   let sortedFilteredArchaeologist: Archaeologist[] = [];
-  if (!ShowSelectedArchaeologists) {
+  if (!showSelectedArchaeologists) {
     sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&

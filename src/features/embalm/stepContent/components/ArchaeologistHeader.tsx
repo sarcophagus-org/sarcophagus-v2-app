@@ -10,10 +10,10 @@ interface ResetPage {
 
 export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const dispatch = useDispatch();
-  const { selectedArchaeologists, ShowSelectedArchaeologists } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists, showSelectedArchaeologists } = useSelector(x => x.embalmState);
 
   function selectAndReset() {
-    dispatch(setShowSelectedArchaeologists(!ShowSelectedArchaeologists));
+    dispatch(setShowSelectedArchaeologists(!showSelectedArchaeologists));
     resetPage(1);
   }
 

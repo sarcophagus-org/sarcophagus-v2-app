@@ -21,7 +21,7 @@ import {
   PopoverBody,
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
+import { QuestionIcon } from '@chakra-ui/icons';
 import { DownIcon } from 'components/icons/DownIcon';
 import { UpDownIcon } from 'components/icons/UpDownIcon';
 import { UpIcon } from 'components/icons/UpIcon';
@@ -31,7 +31,7 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection, selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
 import { FilterInput } from './FilterInput';
 import { ethers } from 'ethers';
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState, Dispatch, SetStateAction, ReactChild } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { useDispatch } from 'store/index';
@@ -43,6 +43,12 @@ interface ArchaeologistListItemProps {
   isDialing: boolean;
   setIsDialing: Dispatch<SetStateAction<boolean>>;
   onClick: () => void;
+}
+
+interface TableContentProps {
+  children: React.ReactNode;
+  icon: boolean;
+  checkbox: boolean;
 }
 
 function ArchaeologistListItem({
@@ -57,6 +63,43 @@ function ArchaeologistListItem({
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   const dispatch = useDispatch();
 
+  function TableContent({ children, icon, checkbox }: TableContentProps) {
+    return (
+      <Td isNumeric>
+        <Flex justify={icon || checkbox ? 'left' : 'center'}>
+          {icon && (
+            <Image
+              src="sarco-token-icon.png"
+              w="18px"
+              h="18px"
+            />
+          )}
+          {checkbox && (
+            <Checkbox
+              isChecked={isSelected && true}
+              onChange={() => {
+                if (isSelected === true) {
+                  dispatch(selectArchaeologist(archaeologist));
+                } else {
+                  dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
+                }
+              }}
+              colorScheme="blue"
+            ></Checkbox>
+          )}
+          <Text
+            ml={3}
+            bg={'brand.100'}
+            py={0.5}
+            px={2}
+          >
+            {children}
+          </Text>
+        </Flex>
+      </Td>
+    );
+  }
+
   return (
     <Tr
       background={isSelected ? 'brand.50' : ''}
@@ -69,77 +112,35 @@ function ArchaeologistListItem({
       cursor="pointer"
       _hover={isSelected ? {} : { background: 'brand.0' }}
     >
-      <Td>
-        <HStack>
-          <Checkbox
-            isChecked={isSelected && true}
-            onChange={() => {
-              if (isSelected === true) {
-                dispatch(selectArchaeologist(archaeologist));
-              } else {
-                dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
-              }
-            }}
-            colorScheme="blue"
-          ></Checkbox>
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {formatAddress(archaeologist.profile.archAddress)}
-          </Text>
-        </HStack>
-      </Td>
-      <Td isNumeric>
-        <Flex justify="left">
-          <Image
-            src="sarco-token-icon.png"
-            w="18px"
-            h="18px"
-          />
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {Number(ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee))
-              .toFixed(0)
-              .toString()
-              .concat(' SARCO')}
-          </Text>
-        </Flex>
-      </Td>
-      <Td isNumeric>
-        <Flex justify="center">
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {archaeologist.profile.successes.toString()}
-          </Text>
-        </Flex>
-      </Td>
-      <Td isNumeric>
-        <Flex justify="center">
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {archaeologist.profile.cleanups.toString()}
-          </Text>
-        </Flex>
-      </Td>
+      <TableContent
+        icon={false}
+        checkbox={true}
+      >
+        {formatAddress(archaeologist.profile.archAddress)}
+      </TableContent>
+      <TableContent
+        icon={true}
+        checkbox={false}
+      >
+        {Number(ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee))
+          .toFixed(0)
+          .toString()
+          .concat(' SARCO')}
+      </TableContent>
+      <TableContent
+        icon={false}
+        checkbox={false}
+      >
+        {archaeologist.profile.successes.toString()}
+      </TableContent>
+      <TableContent
+        icon={false}
+        checkbox={false}
+      >
+        {' '}
+        {archaeologist.profile.cleanups.toString()}
+      </TableContent>
+
       {includeDialButton ? (
         <Td>
           <Button

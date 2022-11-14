@@ -19,8 +19,7 @@ export enum ActionType {
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  setShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
+  SetShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
   SetFailsFilter = 'EMBALM_SET_FAILS_FILTER',
@@ -103,7 +102,7 @@ type EmbalmPayload = {
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: Archaeologist[] };
-  [ActionType.setShowSelectedArchaeologists]: { selected: boolean };
+  [ActionType.SetShowSelectedArchaeologists]: { selected: boolean };
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -274,7 +273,7 @@ export function setDiggingFeesSortDirection(direction: SortDirection): EmbalmAct
 
 export function setShowSelectedArchaeologists(selected: boolean): EmbalmActions {
   return {
-    type: ActionType.setShowSelectedArchaeologists,
+    type: ActionType.SetShowSelectedArchaeologists,
     payload: {
       selected,
     },
