@@ -51,7 +51,7 @@ export function Rewrap() {
 
   // Sum up the digging fees from the archaeologists objects
   const totalDiggingFeeBn = useMemo(() => {
-    return archaeologists.reduce((acc, archaeologist) => {
+    return archaeologists?.reduce((acc, archaeologist) => {
       return acc.add(archaeologist.diggingFee);
     }, BigNumber.from(0));
   }, [archaeologists]);
