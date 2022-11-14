@@ -5,13 +5,14 @@ import { BigNumber, ethers } from 'ethers';
 import { useMemo } from 'react';
 
 export function useSarcoBalance() {
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const networkConfig = useNetworkConfig();
   const { data, isError, isLoading } = useContractRead({
     address: networkConfig.sarcoTokenAddress,
     abi: SarcoTokenMock__factory.abi,
     functionName: 'balanceOf',
     args: [address],
+    enabled: !!address,
   });
 
   const balance = data as BigNumber | undefined;
@@ -19,8 +20,8 @@ export function useSarcoBalance() {
   const balanceTokens = ethers.utils.formatEther(balance || ethers.constants.Zero);
 
   const formattedBalance = useMemo(
-    () => (isConnected && balance ? `${parseFloat(balanceTokens).toFixed(2)} SARCO` : ''),
-    [balance, isConnected, balanceTokens]
+    () => (balance ? `${parseFloat(balanceTokens).toFixed(2)} SARCO` : ''),
+    [balance, balanceTokens]
   );
 
   return {
