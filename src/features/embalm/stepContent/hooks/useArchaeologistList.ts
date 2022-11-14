@@ -35,7 +35,6 @@ export function useArchaeologistList() {
     ShowSelectedArchaeologists,
   } = useSelector(s => s.embalmState);
 
-  console.log('ShowSelectedArchaeologists', ShowSelectedArchaeologists);
   const NUMBER_MOCK_ARCH = 30;
 
   // Used for generating testing archaeologists
@@ -47,6 +46,7 @@ export function useArchaeologistList() {
     [NUMBER_MOCK_ARCH]
   );
 
+  console.log('onlineArchaeologists', onlineArchaeologists);
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
     [SortDirection.ASC]: 'asc',
@@ -147,19 +147,19 @@ export function useArchaeologistList() {
     sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
-          diggingFeesFilter || constants.MaxInt256
-        ) &&
-        BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
+        BigNumber.from(
+          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+        ).lte(diggingFeesFilter || constants.MaxInt256) &&
+        BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
     );
   } else {
     sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
-          diggingFeesFilter || constants.MaxInt256
-        ) &&
+        BigNumber.from(
+          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+        ).lte(diggingFeesFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
         selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1

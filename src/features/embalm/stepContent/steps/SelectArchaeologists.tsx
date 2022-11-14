@@ -55,6 +55,10 @@ export function SelectArchaeologists() {
     setCurrentPage(nextPage);
   };
 
+  const returnToFirstPage = () => {
+    setCurrentPage(1);
+  };
+
   return (
     <Flex
       direction="column"
@@ -73,7 +77,7 @@ export function SelectArchaeologists() {
       >
         Currently set: 09.22.22 7:30pm (edit)
       </Text>
-      <ArchaeologistHeader />
+      <ArchaeologistHeader resetPage={returnToFirstPage} />
       <Pagination
         pagesCount={pagesCount}
         currentPage={currentPage}

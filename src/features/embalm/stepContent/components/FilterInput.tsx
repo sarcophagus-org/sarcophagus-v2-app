@@ -76,12 +76,12 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
       <Flex align="center">
         <InputGroup>
           <NumberInput
-            w="150px"
+            w="100px"
             onChange={handleChangeUnwraps}
             {...rest}
           >
             <NumberInputField
-              pl={12}
+              pl={3}
               pr={1}
               placeholder={placeholder}
               borderColor="violet.700"
@@ -104,12 +104,12 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
       <Flex align="center">
         <InputGroup>
           <NumberInput
-            w="150px"
+            w="82px"
             onChange={handleChangeFails}
             {...rest}
           >
             <NumberInputField
-              pl={12}
+              pl={3}
               pr={1}
               placeholder={placeholder}
               borderColor="violet.700"

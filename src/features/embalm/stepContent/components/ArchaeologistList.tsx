@@ -22,15 +22,19 @@ import {
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
+import { DownIcon } from 'components/icons/DownIcon';
+import { UpDownIcon } from 'components/icons/UpDownIcon';
+import { UpIcon } from 'components/icons/UpIcon';
 import { Loading } from 'components/Loading';
 import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import { SortDirection } from 'store/embalm/actions';
+import { SortDirection, selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
 import { FilterInput } from './FilterInput';
 import { ethers } from 'ethers';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
+import { useDispatch } from 'store/index';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -51,13 +55,13 @@ function ArchaeologistListItem({
 }: ArchaeologistListItemProps) {
   const [isPinging, setIsPinging] = useState(false);
   const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
+  const dispatch = useDispatch();
 
   return (
     <Tr
       background={isSelected ? 'brand.50' : ''}
       onClick={() => {
         onClick();
-
         if (!isSelected) {
           setIsPinging(true);
         }
@@ -69,6 +73,13 @@ function ArchaeologistListItem({
         <HStack>
           <Checkbox
             isChecked={isSelected && true}
+            onChange={() => {
+              if (isSelected === true) {
+                dispatch(selectArchaeologist(archaeologist));
+              } else {
+                dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
+              }
+            }}
             colorScheme="blue"
           ></Checkbox>
           <Text
@@ -83,7 +94,7 @@ function ArchaeologistListItem({
         </HStack>
       </Td>
       <Td isNumeric>
-        <Flex justify="center">
+        <Flex justify="left">
           <Image
             src="sarco-token-icon.png"
             w="18px"
@@ -96,7 +107,10 @@ function ArchaeologistListItem({
             pl={2}
             pr={2}
           >
-            {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
+            {Number(ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee))
+              .toFixed(0)
+              .toString()
+              .concat(' SARCO')}
           </Text>
         </Flex>
       </Td>
@@ -169,9 +183,9 @@ export function ArchaeologistList({
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
-    [SortDirection.NONE]: <ArrowUpDownIcon> </ArrowUpDownIcon>,
-    [SortDirection.ASC]: <ArrowUpIcon />,
-    [SortDirection.DESC]: <ArrowDownIcon />,
+    [SortDirection.NONE]: <UpDownIcon />,
+    [SortDirection.ASC]: <UpIcon />,
+    [SortDirection.DESC]: <DownIcon />,
   };
 
   // Used for testing archaeologist connection
@@ -206,6 +220,7 @@ export function ArchaeologistList({
                         rightIcon={sortIconsMap[archsSortDirection]}
                         onClick={onClickSortArchs}
                         color="brand.950"
+                        p={'0'}
                       >
                         Archaeologists ({sortedFilteredArchaeologist?.length})
                       </Button>
@@ -220,12 +235,13 @@ export function ArchaeologistList({
                     </VStack>
                   </Th>
                   <Th isNumeric>
-                    <VStack>
-                      <div>
+                    <VStack align="left">
+                      <HStack>
                         <Button
                           variant="ghost"
                           rightIcon={sortIconsMap[diggingFeesSortDirection]}
                           onClick={onClickSortDiggingFees}
+                          p={'0'}
                         >
                           <Text> Fees </Text>
                         </Button>
@@ -243,7 +259,7 @@ export function ArchaeologistList({
                             <PopoverBody textAlign={'left'}>Lorem ipsum dolor sit amet</PopoverBody>
                           </PopoverContent>
                         </Popover>
-                      </div>
+                      </HStack>
                       <FilterInput
                         filterName={'DiggingFees'}
                         value={diggingFeesFilter}
@@ -253,13 +269,14 @@ export function ArchaeologistList({
                     </VStack>
                   </Th>
                   <Th isNumeric>
-                    <VStack>
+                    <VStack align="left">
                       <Button
                         variant="ghost"
                         rightIcon={sortIconsMap[unwrapsSortDirection]}
                         onClick={onClickSortUnwraps}
+                        p={'0'}
                       >
-                        <Text> Unwraps </Text>
+                        <Text align="left"> Unwraps </Text>
                       </Button>
                       <FilterInput
                         filterName={'Unwraps'}
@@ -270,18 +287,19 @@ export function ArchaeologistList({
                     </VStack>
                   </Th>
                   <Th isNumeric>
-                    <VStack>
+                    <VStack align="left">
                       <Button
                         variant="ghost"
                         rightIcon={sortIconsMap[failsSortDirection]}
                         onClick={onClickSortFails}
+                        p={'0'}
                       >
                         <Text> Fails </Text>
                       </Button>
                       <FilterInput
                         filterName={'Fails'}
                         value={failsFilter}
-                        placeholder="min"
+                        placeholder="max"
                         color="brand.950"
                       />
                     </VStack>
