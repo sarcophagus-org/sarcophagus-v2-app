@@ -1,15 +1,9 @@
+import { ApiConfig as ArweaveConfig } from 'arweave/node/lib/api';
+
 export interface BundlrConfig {
   currencyName: string;
   nodeUrl: string;
   providerUrl: string;
-}
-
-interface ArweaveConfig {
-  host: string;
-  port: number;
-  protocol: 'http' | 'https';
-  timeout: number;
-  logging: boolean;
 }
 
 export interface NetworkConfig {
