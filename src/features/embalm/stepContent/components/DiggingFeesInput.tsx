@@ -48,7 +48,10 @@ export function DiggingFeesInput({
             borderColor="violet.700"
           />
           <InputLeftElement>
-            <Image src="sarco-token-icon.png" />
+            <Image
+              height="16px"
+              src="sarco-token-icon.png"
+            />
           </InputLeftElement>
         </NumberInput>
       </InputGroup>

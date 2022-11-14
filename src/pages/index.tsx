@@ -1,12 +1,12 @@
-import { Flex, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { BrowserRouter as Router, Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { DevNavbar } from '../components/DevNavbar';
+import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
 import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
-import { FundBundlrPage } from './FundBundlrPage';
+import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 
 export function Pages() {
@@ -14,12 +14,28 @@ export function Pages() {
     {
       path: '/embalm',
       element: <EmbalmPage />,
-      label: 'Embalm',
+      noBackground: true,
+      label: (
+        <Flex
+          height="40px"
+          width="44px"
+          alignItems="center"
+          borderColor="white"
+          borderWidth="1px"
+        >
+          <Button
+            variant="unstyled"
+            flex={1}
+          >
+            <Text fontSize={20}> + </Text>
+          </Button>
+        </Flex>
+      ),
     },
     {
       path: '/dashboard',
       element: <DashboardPage />,
-      label: 'Dashboard',
+      label: 'Tomb',
     },
     {
       path: '/dashboard/:id',
@@ -33,9 +49,9 @@ export function Pages() {
       label: 'Archaeologists',
     },
     {
-      path: '/fundbundlr',
-      element: <FundBundlrPage />,
-      label: 'Fund Bundlr',
+      path: '/bundlr',
+      element: <BundlrPage />,
+      label: 'Bundlr',
     },
     {
       path: '/temp-resurrection',
@@ -52,8 +68,7 @@ export function Pages() {
         height="100vh"
         overflow="hidden"
       >
-        {/* NavBar */}
-        <DevNavbar>
+        <Navbar>
           <Flex
             justifyContent="space-between"
             width="100%"
@@ -63,13 +78,23 @@ export function Pages() {
                 <Link
                   textDecor="bold"
                   as={NavLink}
-                  _activeLink={{ color: 'brand.950', fontWeight: 'bold' }}
+                  mx={1.5}
+                  bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
+                  _activeLink={{
+                    color: 'brand.950',
+                    bgColor: route.noBackground ? 'transparent' : 'blue.700',
+                  }}
                   _hover={{ textDecor: 'none' }}
                   key={route.path}
                   to={route.path}
                   hidden={route.hidden}
                 >
-                  <Text px={4}>{route.label}</Text>
+                  <Box
+                    px={route.noBackground ? 0 : 5}
+                    py={route.noBackground ? 0 : 2.5}
+                  >
+                    {route.label}
+                  </Box>
                 </Link>
               ))}
             </Flex>
@@ -77,7 +102,7 @@ export function Pages() {
           <Flex my={3}>
             <ConnectWalletButton />
           </Flex>
-        </DevNavbar>
+        </Navbar>
 
         {/* App Content */}
         <Flex

@@ -21,6 +21,13 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
           nodeUrl: '',
           providerUrl: '',
         },
+        arweaveConfig: {
+          host: '',
+          port: 0,
+          protocol: 'https',
+          timeout: 0,
+          logging: false,
+        },
       };
 
   return (
