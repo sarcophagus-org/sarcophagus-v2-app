@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Link, Text, VStack, Heading, Image, Container } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text, Heading, Image, Container } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';

@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { Flex, Heading } from '@chakra-ui/react';
 import { MagicFormFiller } from 'components/MagicFormFiller';
 import { StepContent } from 'features/embalm/stepContent';
 
