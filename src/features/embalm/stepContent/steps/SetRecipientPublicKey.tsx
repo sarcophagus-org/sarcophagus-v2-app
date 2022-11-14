@@ -33,6 +33,8 @@ export function SetRecipientPublicKey() {
     { value: RecipientSetByOption.GENERATE, label: 'Create new' },
   ];
 
+  console.log('recipientState.setByOption', recipientState.setByOption);
+
   return (
     <VStack
       align="left"

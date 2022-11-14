@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverBody,
 } from '@chakra-ui/react';
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
@@ -29,11 +29,14 @@ import {
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import { ResurrectionRadioValue } from '../components/Resurrection';
+import { useSelector } from 'store/index';
 
 export function SelectArchaeologists() {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
+  const { resurrection } = useSelector(x => x.embalmState);
+  const [editDate, setEditDate] = useState(true);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
@@ -58,6 +61,31 @@ export function SelectArchaeologists() {
 
   const options = Object.values(ResurrectionRadioValue);
 
+  const resurrectionDate = new Date(resurrection);
+
+  const editDateInput = () => (
+    <Flex>
+      <Select
+        w={10}
+        size="sm"
+        borderColor={'transparent'}
+      >
+        {options.map(option => (
+          <option
+            value={option}
+            key={option}
+          >
+            {option}
+          </option>
+        ))}
+      </Select>
+    </Flex>
+  );
+
+  function toggleEditDate() {
+    setEditDate(prev => !prev);
+  }
+
   return (
     <Flex
       direction="column"
@@ -71,26 +99,21 @@ export function SelectArchaeologists() {
         Resurrection Time
       </Text>
       <HStack>
-        <Text
-          variant="primary"
-          mt="2"
-        >
-          Currently set: 09.22.22 7:30pm
-        </Text>
-        <Text onClick={() => console.log('click')}>(edit)</Text>
-        <Select
-          w={10}
-          size="sm"
-        >
-          {options.map(option => (
-            <option
-              value={option}
-              key={option}
-            >
-              {option}
-            </option>
-          ))}
-        </Select>
+        <>
+          <Text variant="primary">Currently set: {resurrectionDate.toDateString()}</Text>
+          <Text
+            _hover={{
+              textDecoration: 'underline',
+            }}
+            onClick={() => {
+              toggleEditDate();
+            }}
+            cursor="pointer"
+          >
+            ({editDate ? 'hide' : 'edit'})
+          </Text>
+          {editDate && editDateInput()}
+        </>
       </HStack>
       <ArchaeologistHeader />
       <Pagination
