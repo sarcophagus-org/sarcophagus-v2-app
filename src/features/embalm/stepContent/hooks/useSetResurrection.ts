@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'store/index';
 /**
  * Hook for managing resurrection selection
  */
-export function useResurrection() {
+export function useSetResurrection() {
   const dispatch = useDispatch();
   const {
     resurrection,

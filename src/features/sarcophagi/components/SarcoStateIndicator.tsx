@@ -1,6 +1,16 @@
 import { Text, Badge, Flex } from '@chakra-ui/react';
 import { SarcophagusState } from 'types';
-import { sarcoStateMap } from 'lib/utils/helpers';
+
+export const sarcoStateMap = {
+  [SarcophagusState.DoesNotExist]: '',
+  [SarcophagusState.Active]: 'Active',
+  [SarcophagusState.Resurrecting]: 'Resurrecting',
+  [SarcophagusState.Resurrected]: 'Resurrected',
+  [SarcophagusState.Buried]: 'Buried',
+  [SarcophagusState.Cleaned]: 'Cleaned',
+  [SarcophagusState.Accused]: 'Accused',
+  [SarcophagusState.Failed]: 'Failed',
+};
 
 interface SarcophagusStateIndicatorProps {
   state?: SarcophagusState;

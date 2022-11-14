@@ -193,3 +193,35 @@ export const dialArchaeologistFailure = (): UseToastOptions => ({
   duration,
   position,
 });
+
+export const rewrapSuccess = (): UseToastOptions => ({
+  title: 'Rewrap Successful!',
+  description: 'Your sarcophagus was successfully rewrapped',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const rewrapFailure = (): UseToastOptions => ({
+  title: 'Rewrap Failed.',
+  description: 'Your sarcophagus was not rewrapped',
+  status: 'error',
+  duration,
+  position,
+});
+
+export const burySuccess = (): UseToastOptions => ({
+  title: 'Bury Successful.',
+  description: 'Your sarcophagus was buried successfully',
+  status: 'success',
+  duration,
+  position,
+});
+
+export const buryFailure = (): UseToastOptions => ({
+  title: 'Bury Failed.',
+  description: 'Your sarcophagus was not buried',
+  status: 'error',
+  duration,
+  position,
+});

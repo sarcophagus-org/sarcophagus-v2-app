@@ -1,25 +1,38 @@
+import { useToast } from '@chakra-ui/react';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { Abi } from 'abitype';
-import { useState } from 'react';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
+import { rewrapFailure, rewrapSuccess } from 'lib/utils/toast';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-export function useRewrapSarcophagus({ sarcoId }: { sarcoId: string | undefined }) {
+export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | null) {
   const networkConfig = useNetworkConfig();
+  const toast = useToast();
 
-  const [resurectionTime, setResurectionTime] = useState<Date | null>(null);
-
-  const timeInSeconds = resurectionTime ? Math.trunc(resurectionTime.getTime()) / 1000 : 0;
+  const timeInSeconds = resurrectionTime ? Math.trunc(resurrectionTime.getTime() / 1000) : 0;
 
   const { config, isLoading } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'rewrapSarcophagus',
-    enabled: Boolean(resurectionTime),
+    enabled: Boolean(resurrectionTime),
     args: [sarcoId, timeInSeconds],
   });
 
-  const { write, isLoading: isRewrapping, isSuccess } = useContractWrite(config);
+  const {
+    write,
+    isLoading: isRewrapping,
+    isSuccess,
+  } = useContractWrite({
+    onSuccess() {
+      toast(rewrapSuccess());
+    },
+    onError(e) {
+      console.error(e);
+      toast(rewrapFailure());
+    },
+    ...config,
+  });
 
-  return { resurectionTime, setResurectionTime, rewrap: write, isLoading, isRewrapping, isSuccess };
+  return { rewrap: write, isLoading, isRewrapping, isSuccess };
 }

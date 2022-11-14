@@ -4,6 +4,7 @@ import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
+import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
@@ -38,7 +39,7 @@ export function Pages() {
     },
     {
       path: '/dashboard/:id',
-      element: <DashboardPage />,
+      element: <DetailsPage />,
       label: 'Dashboard',
       hidden: true,
     },
