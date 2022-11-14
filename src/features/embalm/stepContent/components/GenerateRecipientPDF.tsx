@@ -69,7 +69,7 @@ export function GenerateRecipientPDF() {
         <Alert status="success">
           <AlertTitle> Recipient Key Created!</AlertTitle>
           <AlertDescription>
-            <Text as="span"> You can continue to the next step. </Text>
+            You can continue to the next step.{' '}
             <Button
               variant="link"
               onClick={downloadRecipientPDF}
