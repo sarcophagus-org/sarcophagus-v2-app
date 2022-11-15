@@ -57,6 +57,7 @@ export function ProgressTrackerStage({
               variant="outline"
               py="11px"
               px="13px"
+              mr="15px"
               onClick={retryStage}
             >
               Retry
