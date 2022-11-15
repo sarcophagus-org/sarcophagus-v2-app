@@ -69,10 +69,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         mt={1}
         align="center"
       >
-        <EthereumIcon
-          h="30px"
-          w="30px"
-        />
+        <EthereumIcon boxSize="30px" />
         <Text fontSize="3xl">{bundlrBalance}</Text>
       </Flex>
       <Text
