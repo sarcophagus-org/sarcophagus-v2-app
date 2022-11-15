@@ -59,8 +59,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // Convert the shards from their hex strings to Uint8Array
       const unencryptedShards = archaeologists
         .map(a => {
-          if (arrayify(a.unencryptedShard).length > 0) {
-            return Buffer.from(arrayify(a.unencryptedShard));
+          const arrayifiedShard = arrayify(a.unencryptedShard);
+          if (arrayifiedShard.length > 0) {
+            return Buffer.from(arrayifiedShard);
           }
         })
         .filter(a => a);
