@@ -1,7 +1,4 @@
 import {
-  Divider,
-  Flex,
-  FormControl,
   Heading,
   NumberDecrementStepper,
   NumberIncrementStepper,
@@ -9,93 +6,65 @@ import {
   NumberInputField,
   NumberInputStepper,
   Text,
+  HStack,
+  VStack,
+  chakra,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
 import { setRequiredArchaeologists } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
+import { Alert } from 'components/Alert';
 
 export function TotalRequiredArchaegologists() {
-  const inputColor = 'violet.400';
-
   const dispatch = useDispatch();
   const { requiredArchaeologists, selectedArchaeologists } = useSelector(x => x.embalmState);
-  const [error, setError] = useState<string | null>(null);
   const totalArchaeologists = selectedArchaeologists.length;
 
   function handleRequiredArchaeologistsChange(_: string, valueAsNumber: number) {
+    if (isNaN(valueAsNumber)) valueAsNumber = 0;
+
     dispatch(setRequiredArchaeologists(valueAsNumber));
   }
 
-  useEffect(() => {
-    if (requiredArchaeologists > totalArchaeologists) {
-      setError('You cannot have more required archaeologist than total archaeologists');
-    } else {
-      setError(null);
-    }
-  }, [requiredArchaeologists, totalArchaeologists]);
-
   return (
-    <Flex
-      w="100%"
-      direction="column"
+    <VStack
+      align="left"
+      spacing={5}
     >
       <Heading>Archaeologists</Heading>
-      <Heading
-        mt={6}
-        size="sm"
-      >
-        Assign Number of Required Archaeologists
-      </Heading>
-      <Text
-        mt={6}
-        size="xs"
-      >
-        Total Archaeologists Selected: {totalArchaeologists}
+      <Text fontStyle="italic">
+        {/* if at some point 'brand.600' becomes a named color on src/theme/components/Text.ts, this color prop can be changed. */}
+        <chakra.span
+          fontStyle="normal"
+          color="brand.600"
+        >
+          How many of your archeologists are required to rewrap or resurrect your sarco.{' '}
+        </chakra.span>
+        Hint - the greater the minimum, the greater the security.
       </Text>
-      {!totalArchaeologists && (
-        <Text
-          mt={3}
-          color="error"
+      <HStack justify="flex-start">
+        <NumberInput
+          mr={2}
+          defaultValue={0}
+          min={0}
+          max={totalArchaeologists}
+          allowMouseWheel
+          w="100px"
+          value={requiredArchaeologists}
+          onChange={handleRequiredArchaeologistsChange}
         >
-          Please select at least one archaeologist from the Select Archaeologists page
-        </Text>
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <Text>of {totalArchaeologists} total arches required.</Text>
+      </HStack>
+      {totalArchaeologists >= requiredArchaeologists || (
+        <Alert status="error">
+          You cannot have more required archaeologist than total archaeologists
+        </Alert>
       )}
-      <Divider my={6} />
-      <Text>How many archaeologists are required to unwrap the sarcophagus?</Text>
-      <FormControl>
-        <Flex mt={6}>
-          <Flex direction="column">
-            <NumberInput
-              defaultValue={1}
-              min={1}
-              max={totalArchaeologists || 1}
-              allowMouseWheel
-              w="100px"
-              color={inputColor}
-              value={requiredArchaeologists}
-              onChange={handleRequiredArchaeologistsChange}
-            >
-              <NumberInputField
-                borderColor={inputColor}
-                color="brand.950"
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper borderColor={inputColor} />
-                <NumberDecrementStepper borderColor={inputColor} />
-              </NumberInputStepper>
-            </NumberInput>
-          </Flex>
-        </Flex>
-      </FormControl>
-      {error && (
-        <Text
-          mt={3}
-          color="error"
-        >
-          {error}
-        </Text>
-      )}
-      <Divider mt={6} />
-    </Flex>
+    </VStack>
   );
 }
