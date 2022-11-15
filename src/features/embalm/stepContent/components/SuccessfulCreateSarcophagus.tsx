@@ -1,5 +1,6 @@
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import { Button, Flex, Heading, Text, useClipboard } from '@chakra-ui/react';
+import { SuccessIcon } from 'components/icons/SuccessIcon';
 import { useNetworkConfig } from 'lib/config';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from '../../../../store';
@@ -23,24 +24,66 @@ export function SuccessfulCreateSarcophagus({
 
   const boxBorder = '0.5px solid';
 
-  const formatId = (id: string) => `${id.slice(0, 5)}...${id.slice(-4)}`;
+  const { onCopy: copyShardsId, hasCopied: hasCopiedShardsId } = useClipboard(
+    successEncryptedShardsTxId,
+    { timeout: 5000 }
+  );
+  const { onCopy: copyFileId, hasCopied: hasCopiedFileId } = useClipboard(
+    successSarcophagusPayloadTxId,
+    { timeout: 5000 }
+  );
 
-  const { onCopy: copyShardsId, hasCopied: hasCopiedShardsId } = useClipboard(successEncryptedShardsTxId, { timeout: 5000 });
-  const { onCopy: copyFileId, hasCopied: hasCopiedFileId } = useClipboard(successSarcophagusPayloadTxId, { timeout: 5000 });
+  const copyIcon = (hasCopiedFlag: boolean, onClick: () => void) =>
+    hasCopiedFlag ? (
+      <CheckIcon mt={4} />
+    ) : (
+      <CopyIcon
+        mt={4}
+        cursor="pointer"
+        bgColor={'transparent'}
+        color="white"
+        aria-label="copy"
+        onClick={onClick}
+      />
+    );
+
+  const arweaveTxId = (txId: string) => (
+    <Text
+      width="50%"
+      fontSize="10px"
+      color="brand.700"
+      textAlign="right"
+      mt={4}
+    >
+      {`${txId.slice(0, 5)}...${txId.slice(-4)}`}
+    </Text>
+  );
 
   return (
     <Flex
-      mt={6}
       direction="column"
       justifyContent="center"
       alignItems="center"
     >
+      {/*
+       * SUCCESS MESSAGE
+       */}
       <Heading
         fontSize="xl"
-        mb={4}
+        mx={5}
+        mb={6}
       >
-        Sarcophagus Creation Successful!
+        Sarcophagus Created Successfully
       </Heading>
+      <SuccessIcon
+        width={50}
+        height={50}
+        mb={6}
+      />
+
+      {/*
+       * DETAILS BOX AND CONTENT
+       */}
       <Flex
         width={700}
         direction="column"
@@ -57,6 +100,10 @@ export function SuccessfulCreateSarcophagus({
         >
           Transaction Details
         </Heading>
+
+        {/*
+         * CONTENT
+         */}
         <Flex
           direction="column"
           border={boxBorder}
@@ -68,28 +115,23 @@ export function SuccessfulCreateSarcophagus({
             wrap="wrap"
             px="18px"
           >
-            {/* TODO: This label is weird, almost meaningless */}
+            {/*
+             * ARWEAVE SHARDS TRANSACTION ID
+             */}
             <Text
               width="40%"
               fontSize="sm"
               mt={4}
             >
+              {/* TODO: This label is weird, almost meaningless */}
               Archaeologist Arweave ID
             </Text>
-            <Text
-              width="50%"
-              fontSize="10px"
-              color="brand.700"
-              textAlign="right"
-              mt={4}
-            >
-              {formatId(successEncryptedShardsTxId)}
-            </Text>
-            {hasCopiedShardsId ? <CheckIcon mt={4} /> :
-              <CopyIcon mt={4}
-                cursor="pointer"
-                bgColor={'transparent'} color='white' aria-label='copy' onClick={copyShardsId} />}
+            {arweaveTxId(successEncryptedShardsTxId)}
+            {copyIcon(hasCopiedShardsId, copyShardsId)}
 
+            {/*
+             * ARWEAVE PAYLOAD TRANSACTION ID
+             */}
             <Text
               width="40%"
               fontSize="sm"
@@ -97,20 +139,12 @@ export function SuccessfulCreateSarcophagus({
             >
               Arweave File ID
             </Text>
-            <Text
-              width="50%"
-              textAlign="right"
-              fontSize="10px"
-              color="brand.700"
-              mt={4}
-            >
-              {formatId(successSarcophagusPayloadTxId)}
-            </Text>
-            {hasCopiedFileId ? <CheckIcon mt={4} /> :
-              <CopyIcon mt={4}
-                cursor="pointer"
-                bgColor={'transparent'} color='white' aria-label='copy' onClick={copyFileId} />}
+            {arweaveTxId(successSarcophagusPayloadTxId)}
+            {copyIcon(hasCopiedFileId, copyFileId)}
 
+            {/*
+             * SARCO CREATION TX ETHERSCAN LINK
+             */}
             <Text
               width="40%"
               fontSize="sm"
@@ -119,12 +153,12 @@ export function SuccessfulCreateSarcophagus({
               Sarcophagus Creation
             </Text>
             <Text
-              width="60%"
               fontSize="10px"
               color="brand.700"
               textAlign="right"
               decoration="underline"
               mt={4}
+              cursor="pointer"
               onClick={() =>
                 window.open(`${networkConfig.explorerUrl}/tx/${successSarcophagusTxId}`)
               }
@@ -132,6 +166,7 @@ export function SuccessfulCreateSarcophagus({
               VIEW TX ON ETHERSCAN
             </Text>
           </Flex>
+
           <Button
             onClick={goToDashboard}
             my={6}
