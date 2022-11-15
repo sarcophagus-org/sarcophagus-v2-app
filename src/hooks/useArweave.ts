@@ -8,16 +8,13 @@ export function useArweave() {
   const { arweaveConfig } = useNetworkConfig();
   const [arweave, setArweave] = useState<Arweave>();
 
-  useEffect(
-    () => {
-      if (arweaveConfig.host) {
-        setArweave(Arweave.init(arweaveConfig));
-      } else {
-        setArweave(undefined);
-      }
-    },
-    [arweaveConfig]
-  );
+  useEffect(() => {
+    if (arweaveConfig.host) {
+      setArweave(Arweave.init(arweaveConfig));
+    } else {
+      setArweave(undefined);
+    }
+  }, [arweaveConfig]);
 
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 

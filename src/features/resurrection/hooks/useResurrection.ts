@@ -72,7 +72,14 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
     } catch (error) {
       throw new Error(`Error resurrecting sarcophagus: ${error}`);
     }
-  }, [archaeologists, canResurrect, recipientPrivateKey, sarcoId, sarcophagus, fetchArweaveFileFallback]);
+  }, [
+    archaeologists,
+    canResurrect,
+    recipientPrivateKey,
+    sarcoId,
+    sarcophagus,
+    fetchArweaveFileFallback,
+  ]);
 
   return { canResurrect, resurrect };
 }
