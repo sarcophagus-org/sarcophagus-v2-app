@@ -95,12 +95,12 @@ export function ArchaeologistList({
                         rightIcon={sortIconsMap[archsSortDirection]}
                         onClick={onClickSortArchs}
                         color="brand.950"
-                        p={'0'}
+                        p={'0.5'}
                       >
                         Archaeologists ({sortedFilteredArchaeologist?.length})
                       </Button>
                       <Input
-                        w="200px"
+                        w="190px"
                         onChange={handleChangeAddressSearch}
                         value={archAddressSearch}
                         placeholder="Search"
@@ -116,7 +116,7 @@ export function ArchaeologistList({
                           variant="ghost"
                           rightIcon={sortIconsMap[diggingFeesSortDirection]}
                           onClick={onClickSortDiggingFees}
-                          p={'0'}
+                          p={'0.5'}
                         >
                           <Text> Fees </Text>
                         </Button>
