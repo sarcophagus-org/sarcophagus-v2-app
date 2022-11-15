@@ -1,9 +1,7 @@
-import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { Flex, Heading } from '@chakra-ui/react';
 import { MagicFormFiller } from 'components/MagicFormFiller';
 import { StepContent } from 'features/embalm/stepContent';
-import { useNetworkConfig } from 'lib/config';
-import { networkConfigs } from 'lib/config/networkConfig';
-import { useAccount } from 'wagmi';
+
 import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 import { useBundlrSession } from './stepContent/hooks/useBundlrSession';
 import { useLoadArchaeologists } from './stepContent/hooks/useLoadArchaeologists';
@@ -17,15 +15,6 @@ export function Embalm() {
   useBundlrSession();
   useBootLibp2pNode(20_000);
 
-  const supportedChainIds =
-    process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
-  const { isConnected } = useAccount();
-  const networkConfig = useNetworkConfig();
-
-  const supportedNetworkNames = Object.values(networkConfigs)
-    .filter(config => supportedChainIds.includes(config.chainId))
-    .map(config => config.networkShortName);
-
   return (
     <Flex
       minWidth="500px"
@@ -34,9 +23,8 @@ export function Embalm() {
     >
       {process.env.NODE_ENV === 'development' && !hideMagicFormFiller && <MagicFormFiller />}
       {/* Upper section with title */}
-      <Flex py="48px">
-        <Heading>New Sarcophagus</Heading>
-      </Flex>
+
+      <Heading pb="48px">New Sarcophagus</Heading>
 
       {/* Lower section with content */}
       <Flex
@@ -58,21 +46,7 @@ export function Embalm() {
 
         {/* Right side container */}
         <Flex flex={1}>
-          {!isConnected ? (
-            <VStack>
-              <Heading>Please connect wallet to create a sarcophagus</Heading>
-            </VStack>
-          ) : networkConfig === undefined || !supportedChainIds.includes(networkConfig.chainId) ? (
-            <VStack>
-              <Heading>You are connected on an unsupported Network</Heading>
-              <Text>Supported Networks</Text>
-              {supportedNetworkNames.map(network => (
-                <Text key={network}>{network}</Text>
-              ))}
-            </VStack>
-          ) : (
-            <StepContent />
-          )}
+          <StepContent />
         </Flex>
       </Flex>
     </Flex>

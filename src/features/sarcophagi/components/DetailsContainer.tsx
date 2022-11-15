@@ -3,6 +3,7 @@ import { useQuery } from 'hooks/useQuery';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
+import { RoutesPathMap, RouteKey } from 'pages';
 
 interface SarcophagusDetailsProps {
   children?: React.ReactNode;
@@ -25,7 +26,7 @@ export function DetailsContainer({ children }: SarcophagusDetailsProps) {
       <HStack>
         <Link
           as={NavLink}
-          to="/dashboard"
+          to={RoutesPathMap[RouteKey.DASHBOARD_PAGE]}
           color="brand.400"
           _hover={{ color: 'brand.950', textDecor: 'underline' }}
         >
