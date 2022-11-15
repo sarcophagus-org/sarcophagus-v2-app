@@ -1,10 +1,12 @@
-import { Flex, Image, Td, Text, Tr, Button, Checkbox } from '@chakra-ui/react';
+import { Flex, Image, Td, Text, Tr, Button, Checkbox, Spinner } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { formatAddress } from 'lib/utils/helpers';
 import { selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
 import { ethers } from 'ethers';
-import { Dispatch, SetStateAction } from 'react';
-import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
+import { useDialArchaeologists } from '../hooks/useCreateSarcophagus/useDialArchaeologists';
+
 import { useDispatch } from 'store/index';
 
 interface ArchaeologistListItemProps {
@@ -30,9 +32,12 @@ export function ArchaeologistListItem({
   setIsDialing,
   onClick,
 }: ArchaeologistListItemProps) {
-  //   const [isPinging, setIsPinging] = useState(false);
-  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
+  const [isPinging, setIsPinging] = useState(false);
+  const { testDialArchaeologist } = useAttemptDialArchaeologists(setIsDialing);
+  const { pingArchaeologist } = useDialArchaeologists();
   const dispatch = useDispatch();
+
+  const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
   function TableContent({ children, icon, checkbox }: TableContentProps) {
     return (
@@ -44,6 +49,14 @@ export function ArchaeologistListItem({
               w="18px"
               h="18px"
             />
+          )}
+          {isPinging && checkbox ? (
+            <Spinner
+              size="sm"
+              mr={'10px'}
+            />
+          ) : (
+            <></>
           )}
           {checkbox && (
             <Checkbox
@@ -61,6 +74,7 @@ export function ArchaeologistListItem({
           <Text
             ml={3}
             bg={'brand.100'}
+            color={rowTextColor}
             py={0.5}
             px={2}
           >
@@ -73,15 +87,17 @@ export function ArchaeologistListItem({
 
   const handleClickRow = () => {
     onClick();
+
     if (!isSelected) {
-      //   setIsPinging(true);
+      setIsPinging(true);
+      pingArchaeologist(archaeologist.fullPeerId!, () => setIsPinging(false));
     }
   };
 
   return (
     <Tr
-      background={isSelected ? 'brand.50' : ''}
-      onClick={handleClickRow}
+      background={isSelected ? (archaeologist.exception ? 'errorHighlight' : 'brand.50') : ''}
+      onClick={() => handleClickRow()}
       cursor="pointer"
       _hover={isSelected ? {} : { background: 'brand.0' }}
     >
@@ -91,6 +107,7 @@ export function ArchaeologistListItem({
       >
         {formatAddress(archaeologist.profile.archAddress)}
       </TableContent>
+
       <TableContent
         icon={true}
         checkbox={false}

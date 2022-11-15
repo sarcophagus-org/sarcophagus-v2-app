@@ -27,10 +27,8 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
-// import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
-import { useDialArchaeologists } from '../hooks/useCreateSarcophagus/useDialArchaeologists';
 
 export function ArchaeologistList({
   includeDialButton,
