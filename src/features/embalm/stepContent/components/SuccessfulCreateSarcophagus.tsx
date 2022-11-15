@@ -1,4 +1,5 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { useNetworkConfig } from 'lib/config';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from '../../../../store';
 import { goToStep } from '../../../../store/embalm/actions';
@@ -12,6 +13,7 @@ export function SuccessfulCreateSarcophagus({
 }: SuccessData) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const networkConfig = useNetworkConfig();
 
   const goToDashboard = () => {
     dispatch(goToStep(Step.NameSarcophagus));
@@ -53,6 +55,7 @@ export function SuccessfulCreateSarcophagus({
           fontSize="sm"
           textAlign="right"
           mt={4}
+          onClick={() => window.open(`${networkConfig.explorerUrl}/tx/${successSarcophagusTxId}`)}
         >
           {successSarcophagusTxId}
         </Text>
