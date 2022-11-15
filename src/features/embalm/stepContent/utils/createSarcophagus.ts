@@ -24,6 +24,7 @@ export enum CreateSarcophagusStage {
   UPLOAD_PAYLOAD,
   APPROVE,
   SUBMIT_SARCOPHAGUS,
+  CLEAR_STATE,
   COMPLETED,
 }
 
@@ -35,5 +36,6 @@ export const defaultCreateSarcophagusStages: Record<number, string> = {
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
   [CreateSarcophagusStage.APPROVE]: 'Approve',
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
+  [CreateSarcophagusStage.CLEAR_STATE]: '',
   [CreateSarcophagusStage.COMPLETED]: '',
 };

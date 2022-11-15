@@ -6,11 +6,7 @@ import { bundlrInitialState, bundlrReducer, BundlrState } from './bundlr/reducer
 import { EmbalmActions } from './embalm/actions';
 import { embalmInitialState, embalmReducer, EmbalmState } from './embalm/reducer';
 import { SarcophagusActions } from './sarcophagus/actions';
-import {
-  sarcophagiInitialState,
-  sarcophagiReducer,
-  SarcophagiState,
-} from './sarcophagus/reducer';
+import { sarcophagiInitialState, sarcophagiReducer, SarcophagiState } from './sarcophagus/reducer';
 
 export type Actions = AppActions | SarcophagusActions | BundlrActions | EmbalmActions;
 

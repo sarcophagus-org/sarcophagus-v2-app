@@ -6,7 +6,10 @@ export function EmbalmPage() {
     <Flex
       direction="column"
       width="100%"
-      h="100%"
+      maxWidth="1200px"
+      height="%100"
+      ml={{ xl: '84px', lg: '24px', md: '24px' }}
+      mr={{ xl: '84px', lg: '24px', md: '24px' }}
     >
       <Embalm />
     </Flex>

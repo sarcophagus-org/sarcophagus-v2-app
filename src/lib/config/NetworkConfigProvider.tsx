@@ -2,14 +2,15 @@ import { NetworkConfigContext } from '.';
 import { SupportedNetworkContext } from './useSupportedNetwork';
 import { useNetwork } from 'wagmi';
 import { networkConfigs } from './networkConfigs';
+import { NetworkConfig } from './networkConfigType';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
 
-  const networkConfig =
-    !!chain && networkConfigs[chain.id]
+  const networkConfig: NetworkConfig = !!chain
+    ? networkConfigs[chain.id]
       ? networkConfigs[chain.id]
-      : {
+      : ({
           chainId: 0,
           networkName: '',
           networkShortName: '',
@@ -22,7 +23,8 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
             nodeUrl: '',
             providerUrl: '',
           },
-        };
+        } as NetworkConfig)
+    : ({} as NetworkConfig);
 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];

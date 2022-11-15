@@ -1,5 +1,5 @@
 import { VStack } from '@chakra-ui/react';
-import { Resurrection } from '../components/Resurrection';
+import { SetResurrection } from '../components/SetResurrection';
 import { SarcophagusName } from '../components/SarcophagusName';
 
 export function NameSarcophagus() {
@@ -10,7 +10,7 @@ export function NameSarcophagus() {
       w="100%"
     >
       <SarcophagusName />
-      <Resurrection pt={6} />
+      <SetResurrection pt={6} />
     </VStack>
   );
 }

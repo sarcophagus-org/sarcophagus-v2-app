@@ -6,8 +6,9 @@ import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
+import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
-import { FundBundlrPage } from './FundBundlrPage';
+import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
@@ -35,7 +36,7 @@ export function Pages() {
     {
       path: RoutesPathMap[RouteKey.EMBALM_PAGE],
       element: <EmbalmPage />,
-      noBg: true,
+      noBackground: true,
       label: (
         <Flex
           height="40px"
@@ -60,7 +61,7 @@ export function Pages() {
     },
     {
       path: RoutesPathMap[RouteKey.DASHBOARD_DETAIL],
-      element: <DashboardPage />,
+      element: <DetailsPage />,
       label: 'Dashboard',
       hidden: true,
     },
@@ -71,8 +72,8 @@ export function Pages() {
     },
     {
       path: RoutesPathMap[RouteKey.BUNDLER_PAGE],
-      element: <FundBundlrPage />,
-      label: 'Fund Bundlr',
+      element: <BundlrPage />,
+      label: 'Bundlr',
     },
     {
       path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
@@ -106,10 +107,10 @@ export function Pages() {
                   textDecor="bold"
                   as={NavLink}
                   mx={1.5}
-                  bg={route.noBg ? 'transparent' : 'blue.1000'}
+                  bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
                   _activeLink={{
                     color: 'brand.950',
-                    bgColor: route.noBg ? 'transparent' : 'blue.700',
+                    bgColor: route.noBackground ? 'transparent' : 'blue.700',
                   }}
                   _hover={{ textDecor: 'none', color: 'brand.700' }}
                   key={route.path}
@@ -117,8 +118,8 @@ export function Pages() {
                   hidden={route.hidden}
                 >
                   <Box
-                    px={route.noBg ? 0 : 5}
-                    py={route.noBg ? 0 : 2.5}
+                    px={route.noBackground ? 0 : 5}
+                    py={route.noBackground ? 0 : 2.5}
                   >
                     {route.label}
                   </Box>

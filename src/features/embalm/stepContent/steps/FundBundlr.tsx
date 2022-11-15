@@ -1,5 +1,5 @@
 import { Text, VStack, Box } from '@chakra-ui/react';
-import { Bundlr } from '../../../../components/Bundlr';
+import { Bundlr } from '../components/Bundlr';
 import { BundlrAlertMessage } from '../components/BundlrAlertMessage';
 
 export function FundBundlr() {
