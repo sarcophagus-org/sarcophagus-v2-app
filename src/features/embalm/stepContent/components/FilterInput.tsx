@@ -58,7 +58,11 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
               borderColor="violet.700"
             />
             <InputLeftElement>
-              <Image src="sarco-token-icon.png" />
+              <Image
+                src="sarco-token-icon.png"
+                w="18px"
+                h="18px"
+              />
             </InputLeftElement>
           </NumberInput>
         </InputGroup>

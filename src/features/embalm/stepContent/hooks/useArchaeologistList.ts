@@ -127,7 +127,6 @@ export function useArchaeologistList() {
         [sortOrderByMap[failsSortDirection]!]
       );
     }
-
     if (archsSortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
