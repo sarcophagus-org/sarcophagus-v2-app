@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import {
   SortDirection,
@@ -13,7 +13,7 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers, BigNumber } from 'ethers';
-import { mochArchaeologists } from '../mocks/mockArchaeologists';
+// import { mochArchaeologists } from '../mocks/mockArchaeologists';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
@@ -34,15 +34,17 @@ export function useArchaeologistList() {
     showSelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  // NUMBER_MOCK_ARCH > 0 used for generating testing archaeologists
-  const NUMBER_MOCK_ARCH = 0;
-  const onlineArchaeologists = useMemo(
-    () =>
-      NUMBER_MOCK_ARCH > 0
-        ? mochArchaeologists(NUMBER_MOCK_ARCH)
-        : archaeologists.filter(a => a.isOnline),
-    [NUMBER_MOCK_ARCH, archaeologists]
-  );
+  // USED FOR GENERATING TEST ARCHS:
+  // const NUMBER_MOCK_ARCH = 30;
+  // const onlineArchaeologists = useMemo(
+  //   () =>
+  //     NUMBER_MOCK_ARCH > 0
+  //       ? mochArchaeologists(NUMBER_MOCK_ARCH)
+  //       : archaeologists.filter(a => a.isOnline),
+  //   [NUMBER_MOCK_ARCH, archaeologists]
+  // );
+
+  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
