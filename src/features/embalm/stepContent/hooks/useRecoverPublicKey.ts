@@ -106,7 +106,7 @@ export function useRecoverPublicKey() {
         }
         log(`retrieving public key for address ${address}`);
         const response = await axios.get(
-          `${networkConfig.explorerUrl}?${getParameters}&address=${address}&apikey=${networkConfig.explorerApiKey}`
+          `${networkConfig.etherscanApiUrl}?${getParameters}&address=${address}&apikey=${networkConfig.etherscanApiKey}`
         );
 
         if (response.status !== 200) {
@@ -148,7 +148,7 @@ export function useRecoverPublicKey() {
         setIsLoading(false);
       }
     },
-    [dispatch, provider, networkConfig.explorerApiKey, networkConfig.explorerUrl, chain?.id]
+    [dispatch, provider, networkConfig.etherscanApiKey, networkConfig.etherscanApiUrl, chain?.id]
   );
 
   return { recoverPublicKey, isLoading, errorStatus };
