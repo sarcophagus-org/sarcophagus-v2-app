@@ -14,8 +14,9 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
         networkShortName: '',
         sarcoTokenAddress: '',
         diamondDeployAddress: '',
+        etherscanApiUrl: '',
+        etherscanApiKey: '',
         explorerUrl: '',
-        explorerApiKey: '',
         bundlr: {
           currencyName: '',
           nodeUrl: '',

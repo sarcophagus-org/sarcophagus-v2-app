@@ -6,8 +6,9 @@ export const maticNetworkConfig: NetworkConfig = {
   networkShortName: 'Matic',
   sarcoTokenAddress: '',
   diamondDeployAddress: '',
+  etherscanApiUrl: '',
+  etherscanApiKey: '',
   explorerUrl: '',
-  explorerApiKey: '',
   bundlr: {
     currencyName: 'matic',
     nodeUrl: 'https://node1.bundlr.network',
