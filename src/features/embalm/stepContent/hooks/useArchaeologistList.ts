@@ -1,14 +1,13 @@
 import { useCallback, useMemo } from 'react';
+import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import {
-  deselectArchaeologist,
-  selectArchaeologist,
   SortDirection,
   setDiggingFeesSortDirection,
   setUnwrapsSortDirection,
   setFailsSortDirection,
   setArchsSortDirection,
   setArchAddressSearch,
-} from 'store/embalm/actions';
+} from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
@@ -21,9 +20,9 @@ export function useArchaeologistList() {
 
   const dispatch = useDispatch();
 
+  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
+
   const {
-    archaeologists,
-    selectedArchaeologists,
     diggingFeesSortDirection,
     unwrapsSortDirection,
     failsSortDirection,
@@ -33,7 +32,7 @@ export function useArchaeologistList() {
     failsFilter,
     archAddressSearch,
     showSelectedArchaeologists,
-  } = useSelector(s => s.embalmState);
+  } = useSelector(s => s.archaeologistListState);
 
   const NUMBER_MOCK_ARCH = 30;
 

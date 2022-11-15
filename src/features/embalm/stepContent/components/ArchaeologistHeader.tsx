@@ -2,7 +2,7 @@ import { Text, Box, Flex, useColorModeValue, HStack, Checkbox, Icon } from '@cha
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { sumDiggingFees } from 'lib/utils/helpers';
 import { useDispatch, useSelector } from 'store/index';
-import { setShowSelectedArchaeologists } from 'store/embalm/actions';
+import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 
 interface ResetPage {
   resetPage: (value: React.SetStateAction<number>) => void;
@@ -10,7 +10,8 @@ interface ResetPage {
 
 export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const dispatch = useDispatch();
-  const { selectedArchaeologists, showSelectedArchaeologists } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const { showSelectedArchaeologists } = useSelector(x => x.archaeologistListState);
 
   function selectAndReset() {
     dispatch(setShowSelectedArchaeologists(!showSelectedArchaeologists));

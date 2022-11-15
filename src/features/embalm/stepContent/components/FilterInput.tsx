@@ -8,8 +8,11 @@ import {
   NumberInputProps,
 } from '@chakra-ui/react';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
-
-import { setDiggingFeesFilter, setUnwrapsFilter, setFailsFilter } from 'store/embalm/actions';
+import {
+  setDiggingFeesFilter,
+  setUnwrapsFilter,
+  setFailsFilter,
+} from 'store/archaeologistList/actions';
 
 import { useDispatch } from 'store/index';
 

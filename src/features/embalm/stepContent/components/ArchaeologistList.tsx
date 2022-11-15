@@ -137,7 +137,6 @@ function ArchaeologistListItem({
         icon={false}
         checkbox={false}
       >
-        {' '}
         {archaeologist.profile.cleanups.toString()}
       </TableContent>
 
@@ -323,7 +322,7 @@ export function ArchaeologistList({
                         if (includeDialButton) return;
                         handleCheckArchaeologist(arch);
                       }}
-                      includeDialButton={!!includeDialButton}
+                      includeDialButton={includeDialButton!}
                       isDialing={isDialing}
                       setIsDialing={setIsDialing}
                       isSelected={isSelected}
