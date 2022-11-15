@@ -3,7 +3,6 @@ import {
   Heading,
   Text,
   VStack,
-  Select,
   HStack,
   Icon,
   Box,
@@ -30,12 +29,23 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import { ResurrectionRadioValue } from '../components/Resurrection';
 import { useSelector } from 'store/index';
+import { Select, OptionBase, GroupBase } from 'chakra-react-select';
+
+interface IResurrectionTimeSetByOption extends OptionBase {
+  value: ResurrectionRadioValue;
+  label: string;
+}
+
+interface IPageSizeSetByOption extends OptionBase {
+  value: number;
+  label: string;
+}
 
 export function SelectArchaeologists() {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
-  const { resurrection } = useSelector(x => x.embalmState);
+  const { resurrection, resurrectionRadioValue: radioValue } = useSelector(x => x.embalmState);
   const [editDate, setEditDate] = useState(true);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
@@ -50,36 +60,92 @@ export function SelectArchaeologists() {
 
   const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
 
-  const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    const newPageSize = Number(event.target.value);
-    setPageSize(newPageSize);
-  };
+  function handleOnChange(newValue: IResurrectionTimeSetByOption | null) {
+    // dispatch();
+    // set new resurrection date
+  }
+
+  const options = Object.values(ResurrectionRadioValue);
+
+  const ResurrectionTimeOptionsMap: IResurrectionTimeSetByOption[] = [
+    { value: ResurrectionRadioValue.OneMonth, label: options[0] },
+    { value: ResurrectionRadioValue.TwoMonth, label: options[1] },
+    { value: ResurrectionRadioValue.ThreeMonths, label: options[2] },
+  ];
+
+  const PageSizeOptionsMap: IPageSizeSetByOption[] = [
+    { value: 5, label: '5' },
+    { value: 10, label: '10' },
+    { value: 20, label: '20' },
+  ];
+
+  function handlePageSizeChange(newValue: IPageSizeSetByOption | null) {
+    const newPageSize = newValue!.value;
+    setPageSize(newPageSize!);
+  }
 
   const handlePageChange = (nextPage: number): void => {
     setCurrentPage(nextPage);
   };
 
-  const options = Object.values(ResurrectionRadioValue);
-
   const resurrectionDate = new Date(resurrection);
 
   const editDateInput = () => (
-    <Flex>
-      <Select
-        w={10}
-        size="sm"
-        borderColor={'transparent'}
-      >
-        {options.map(option => (
-          <option
-            value={option}
-            key={option}
-          >
-            {option}
-          </option>
-        ))}
-      </Select>
-    </Flex>
+    // <Flex>
+    //   <Select
+    //     w={10}
+    //     size="sm"
+    //     borderColor={'transparent'}
+    //   >
+    //     {options.map(option => (
+    //       <option
+    //         value={option}
+    //         key={option}
+    //       >
+    //         {option}
+    //       </option>
+    //     ))}
+    //   </Select>
+    // </Flex>
+    <Box cursor="pointer">
+      <Select<IResurrectionTimeSetByOption, false, GroupBase<IResurrectionTimeSetByOption>>
+        // value={radioValue ? radioValue : undefined}
+        onChange={handleOnChange}
+        placeholder=""
+        options={ResurrectionTimeOptionsMap}
+        isSearchable={false}
+        focusBorderColor="brand.950"
+        selectedOptionColor="brand"
+        useBasicStyles
+        chakraStyles={{
+          menuList: provided => ({
+            ...provided,
+            bg: 'brand.0',
+            fontSize: 'sm',
+            borderColor: 'transparent',
+          }),
+
+          option: (provided, state) => ({
+            ...provided,
+            background: state.isFocused ? 'brand.100' : provided.background,
+            fontSize: 'sm',
+          }),
+
+          control: provided => ({
+            ...provided,
+            bg: 'brand.0',
+            border: '1px',
+            borderRadius: 0,
+            borderColor: 'transparent',
+            fontSize: 'sm',
+            _disabled: {
+              borderColor: 'brand.300',
+              color: 'brand.300',
+            },
+          }),
+        }}
+      />
+    </Box>
   );
 
   function toggleEditDate() {
@@ -133,7 +199,7 @@ export function SelectArchaeologists() {
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
-                      <Select
+                      {/* <Select
                         size="sm"
                         onChange={handlePageSizeChange}
                         w={14}
@@ -144,7 +210,46 @@ export function SelectArchaeologists() {
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
-                      </Select>
+                      </Select> */}
+                      <Box cursor="pointer">
+                        <Select<IPageSizeSetByOption, false, GroupBase<IPageSizeSetByOption>>
+                          value={{ value: pageSize, label: pageSize.toString() }}
+                          onChange={handlePageSizeChange}
+                          placeholder=""
+                          options={PageSizeOptionsMap}
+                          isSearchable={false}
+                          focusBorderColor="brand.950"
+                          selectedOptionColor="brand"
+                          useBasicStyles
+                          chakraStyles={{
+                            menuList: provided => ({
+                              ...provided,
+                              bg: 'brand.0',
+                              fontSize: 'sm',
+                              borderColor: 'transparent',
+                            }),
+
+                            option: (provided, state) => ({
+                              ...provided,
+                              background: state.isFocused ? 'brand.100' : provided.background,
+                              fontSize: 'sm',
+                            }),
+
+                            control: provided => ({
+                              ...provided,
+                              bg: 'brand.0',
+                              border: '1px',
+                              borderRadius: 0,
+                              borderColor: 'transparent',
+                              fontSize: 'sm',
+                              _disabled: {
+                                borderColor: 'brand.300',
+                                color: 'brand.300',
+                              },
+                            }),
+                          }}
+                        />
+                      </Box>
                     </HStack>
                   </HStack>
                 </Flex>
