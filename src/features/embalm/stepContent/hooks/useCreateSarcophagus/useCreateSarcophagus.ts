@@ -11,6 +11,7 @@ import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
 import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
+import { useClearSarcophagusState } from './useClearSarcophagusState';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -35,6 +36,7 @@ export function useCreateSarcophagus(
   const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile();
   const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
   const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
+  const { clearSarcophagusState, successData } = useClearSarcophagusState();
 
   const stagesMap = useMemo(() => {
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
@@ -44,6 +46,8 @@ export function useCreateSarcophagus(
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetDoubleEncryptedFile],
       [CreateSarcophagusStage.APPROVE, approveSarcoToken],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, submitSarcophagus],
+      [CreateSarcophagusStage.CLEAR_STATE, clearSarcophagusState],
+      [CreateSarcophagusStage.COMPLETED, async () => {}],
     ]);
   }, [
     dialSelectedArchaeologists,
@@ -52,12 +56,16 @@ export function useCreateSarcophagus(
     uploadAndSetDoubleEncryptedFile,
     approveSarcoToken,
     submitSarcophagus,
+    clearSarcophagusState,
   ]);
 
   // Process each stage as they become active
   useEffect(() => {
     (async () => {
       const incrementStage = (): void => {
+        if (currentStage === CreateSarcophagusStage.COMPLETED) {
+          return;
+        }
         const stages = Object.keys(createSarcophagusStages).map(i => Number.parseInt(i));
         const currentIndex = stages.indexOf(currentStage);
         setCurrentStage(stages[currentIndex + 1]);
@@ -79,7 +87,7 @@ export function useCreateSarcophagus(
             });
         });
 
-      if (!stageExecuting && !stageError) {
+      if (!stageExecuting && !stageError && currentStage !== CreateSarcophagusStage.COMPLETED) {
         try {
           if (currentStage === CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS && !publicKeysReady) {
             return;
@@ -126,5 +134,6 @@ export function useCreateSarcophagus(
     handleCreate,
     stageError,
     retryStage,
+    successData,
   };
 }

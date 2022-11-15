@@ -33,6 +33,10 @@ export const Button = {
       textDecoration: 'underline',
       fontSize: 'sm',
     },
+    outline: {
+      py: '1px', //because outline has a border this will made the button the same height as main
+      color: 'brand.900',
+    },
     disabledLook: {
       opacity: 0.4,
     },

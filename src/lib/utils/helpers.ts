@@ -2,7 +2,7 @@ import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther, keccak256 } from 'ethers/lib/utils';
 import moment from 'moment';
-import { Archaeologist, SarcophagusState } from 'types';
+import { Archaeologist } from 'types';
 
 /**
  * Returns the smallest maximumRewrapInterval value
@@ -125,16 +125,6 @@ export function sumDiggingFees(archaeologists: Archaeologist[]): BigNumber {
   );
 }
 
-export const sarcoStateMap = {
-  [SarcophagusState.DoesNotExist]: '',
-  [SarcophagusState.Active]: 'Active',
-  [SarcophagusState.Resurrecting]: 'Resurrecting',
-  [SarcophagusState.Resurrected]: 'Resurrected',
-  [SarcophagusState.Buried]: 'Buried',
-  [SarcophagusState.Cleaned]: 'Cleaned',
-  [SarcophagusState.Accused]: 'Accused',
-  [SarcophagusState.Failed]: 'Failed',
-};
 /**
  * Builds a resurrection date string from a BigNumber
  * Ex: 09.22.2022 7:30pm (12 Days)
@@ -145,6 +135,12 @@ export function buildResurrectionDateString(
   resurrectionTime: BigNumber,
   format = 'MM.DD.YYYY h:mmA'
 ): string {
+  // In the case where the sarcophagus is buried, the resurrection time will be set to the max
+  // uint256 value. It's not possible to display this number as a date.
+  if (resurrectionTime.toString() === ethers.constants.MaxUint256.toString()) {
+    return '--';
+  }
+
   const resurrectionDateString = moment.unix(resurrectionTime.toNumber()).format(format);
   const msUntilResurrection = resurrectionTime.toNumber() * 1000 - Date.now();
   const humanizedDuration = moment.duration(msUntilResurrection).humanize();

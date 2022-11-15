@@ -15,6 +15,7 @@ import {
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from '../../../../lib/config';
+import { SuccessfulCreateSarcophagus } from '../components/SuccessfulCreateSarcophagus';
 
 export function CreateSarcophagus() {
   const { allowance } = useAllowance();
@@ -37,16 +38,20 @@ export function CreateSarcophagus() {
     signerOrProvider: signer,
   });
 
-  const { currentStage, handleCreate, stageError, retryStage } = useCreateSarcophagus(
+  const { currentStage, handleCreate, stageError, retryStage, successData } = useCreateSarcophagus(
     createSarcophagusStages,
     embalmerFacet!,
     sarcoToken!
   );
 
-  const { isSarcophagusComplete } = useSarcophagusParameters();
+  const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
+  };
+
+  const isCreateCompleted = (): boolean => {
+    return currentStage === CreateSarcophagusStage.COMPLETED;
   };
 
   useEffect(() => {
@@ -67,12 +72,23 @@ export function CreateSarcophagus() {
     }
   }, [allowance, signer]);
 
+  if (isCreateCompleted()) {
+    return (
+      <SuccessfulCreateSarcophagus
+        successSarcophagusPayloadTxId={successData.successSarcophagusPayloadTxId}
+        successEncryptedShardsTxId={successData.successEncryptedShardsTxId}
+        successSarcophagusTxId={successData.successSarcophagusTxId}
+      />
+    );
+  }
+
   return (
     <Flex
       direction="column"
       w="100%"
     >
-      <Heading mb={6}>Create Sarcophagus</Heading>
+      {!isCreateCompleted() && <Heading mb={6}>Create Sarcophagus</Heading>}
+
       {!isCreateProcessStarted() ? (
         <>
           <ReviewSarcophagus />
@@ -82,7 +98,7 @@ export function CreateSarcophagus() {
               p={6}
               mt={9}
               onClick={handleCreate}
-              disabled={!isSarcophagusComplete()}
+              disabled={!isSarcophagusFormDataComplete()}
             >
               Create Sarcophagus
             </Button>
@@ -103,7 +119,7 @@ export function CreateSarcophagus() {
                 <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
               ))}
           </ProgressTracker>
-          {stageError ? (
+          {stageError && (
             <Flex
               mt={3}
               alignItems="center"
@@ -116,19 +132,6 @@ export function CreateSarcophagus() {
                 = {stageError}
               </Text>
             </Flex>
-          ) : (
-            ''
-          )}
-          {currentStage === CreateSarcophagusStage.COMPLETED ? (
-            <Flex
-              mt={6}
-              direction="column"
-            >
-              <Text>Sarcophagus creation successful!</Text>
-              <Text mt={2}>Redirecting you to the embalmer dashboard....</Text>
-            </Flex>
-          ) : (
-            <></>
           )}
         </>
       )}
