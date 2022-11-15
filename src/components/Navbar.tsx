@@ -1,6 +1,7 @@
 import { Flex, Image, useTheme } from '@chakra-ui/react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import SarcoLogo from 'assets/images/sarco-logo.png';
 
 export function Navbar({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
     >
       <Image
         onClick={handleClickLogo}
-        src="sarco-logo.png"
+        src={SarcoLogo}
         cursor="pointer"
         mr={6}
         height="44px"

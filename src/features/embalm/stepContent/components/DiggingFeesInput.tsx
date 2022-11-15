@@ -1,6 +1,5 @@
 import {
   Flex,
-  Image,
   NumberInput,
   NumberInputField,
   InputLeftElement,
@@ -8,6 +7,7 @@ import {
   NumberInputProps,
 } from '@chakra-ui/react';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
+import { SarcoTokenIcon } from 'components/icons';
 
 interface DiggingFeesInputProps extends NumberInputProps {
   setDiggingFees: (value: string) => void;
@@ -48,10 +48,7 @@ export function DiggingFeesInput({
             borderColor="violet.700"
           />
           <InputLeftElement>
-            <Image
-              height="16px"
-              src="sarco-token-icon.png"
-            />
+            <SarcoTokenIcon boxSize="16px" />
           </InputLeftElement>
         </NumberInput>
       </InputGroup>

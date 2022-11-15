@@ -1,6 +1,5 @@
 import {
   Flex,
-  Image,
   Table,
   TableContainer,
   Tbody,
@@ -28,6 +27,7 @@ import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttempt
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { Archaeologist } from 'types';
 import { useDialArchaeologists } from '../hooks/useCreateSarcophagus/useDialArchaeologists';
+import { SarcoTokenIcon } from 'components/icons';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -79,11 +79,7 @@ function ArchaeologistListItem({
       </Td>
       <Td isNumeric>
         <Flex justify="center">
-          <Image
-            src="sarco-token-icon.png"
-            w="18px"
-            h="18px"
-          />
+          <SarcoTokenIcon boxSize="18px" />
           <Text
             ml={3}
             color={rowTextColor}

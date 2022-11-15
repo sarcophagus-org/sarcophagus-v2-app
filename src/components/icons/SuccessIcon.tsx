@@ -5,8 +5,8 @@ export function SuccessIcon(props: any) {
   return (
     <Icon
       viewBox="0 0 150 150"
-      width={props.width ?? '150'}
-      height={props.height ?? '150'}
+      width="150"
+      height="150"
       {...props}
     >
       <path
