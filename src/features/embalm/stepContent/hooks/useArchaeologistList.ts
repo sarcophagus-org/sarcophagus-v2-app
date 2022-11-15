@@ -34,18 +34,16 @@ export function useArchaeologistList() {
     showSelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  const NUMBER_MOCK_ARCH = 30;
-
-  // Used for generating testing archaeologists
+  // NUMBER_MOCK_ARCH > 0 used for generating testing archaeologists
+  const NUMBER_MOCK_ARCH = 0;
   const onlineArchaeologists = useMemo(
     () =>
       NUMBER_MOCK_ARCH > 0
         ? mochArchaeologists(NUMBER_MOCK_ARCH)
         : archaeologists.filter(a => a.isOnline),
-    [NUMBER_MOCK_ARCH]
+    [NUMBER_MOCK_ARCH, archaeologists]
   );
 
-  console.log('onlineArchaeologists', onlineArchaeologists);
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
     [SortDirection.ASC]: 'asc',
