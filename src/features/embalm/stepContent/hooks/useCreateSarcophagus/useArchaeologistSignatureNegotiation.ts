@@ -6,6 +6,7 @@ import { NEGOTIATION_SIGNATURE_STREAM } from '../../../../../lib/config/node_con
 import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import { getLowestRewrapInterval } from '../../../../../lib/utils/helpers';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
+import { useDialArchaeologists } from './useDialArchaeologists';
 
 interface ArchaeologistSignatureNegotiationParams {
   arweaveTxId: string;
@@ -18,12 +19,15 @@ interface ArchaeologistSignatureNegotiationParams {
 export function useArchaeologistSignatureNegotiation() {
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
+
   const {
     archaeologistShards,
     encryptedShardsTxId,
     setArchaeologistSignatures,
     setNegotiationTimestamp,
   } = useContext(CreateSarcophagusContext);
+
+  const { dialSelectedArchaeologists } = useDialArchaeologists();
 
   function processDeclinedSignatureCode(
     code: SarcophagusValidationError,
@@ -44,6 +48,8 @@ export function useArchaeologistSignatureNegotiation() {
     }
   }
 
+  const archaeologistConnections = selectedArchaeologists.map(a => a.connection);
+
   const initiateSarcophagusNegotiation = useCallback(async (): Promise<void> => {
     console.log('starting the negotiation');
     const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
@@ -55,8 +61,20 @@ export function useArchaeologistSignatureNegotiation() {
 
     await Promise.all(
       selectedArchaeologists.map(async arch => {
-        if (!arch.connection)
-          throw new Error(`No connection to archaeologist ${JSON.stringify(arch)}`);
+        if (!arch.connection) {
+          console.log(archaeologistConnections);
+          console.log(`${arch.profile.peerId} connection is undefined`);
+          setArchaeologistException(arch.profile.peerId, {
+            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+            message: 'No connection to archaeologist',
+          });
+
+          if (arch.fullPeerId) {
+            await dialSelectedArchaeologists();
+          }
+
+          return;
+        }
 
         const negotiationParams: ArchaeologistSignatureNegotiationParams = {
           arweaveTxId: encryptedShardsTxId,
@@ -122,8 +140,10 @@ export function useArchaeologistSignatureNegotiation() {
   }, [
     dispatch,
     selectedArchaeologists,
+    archaeologistConnections,
     archaeologistShards,
     encryptedShardsTxId,
+    dialSelectedArchaeologists,
     setArchaeologistSignatures,
     setNegotiationTimestamp,
   ]);

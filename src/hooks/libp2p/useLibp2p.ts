@@ -55,7 +55,7 @@ export function useLibp2p() {
   const onPeerConnect = useCallback(
     (evt: CustomEvent<Connection>) => {
       const peerId = evt.detail.remotePeer.toString();
-      dispatch(setArchaeologistConnection(peerId, evt.detail));
+      setTimeout(() => dispatch(setArchaeologistConnection(peerId, evt.detail)), 500);
     },
     [dispatch]
   );
