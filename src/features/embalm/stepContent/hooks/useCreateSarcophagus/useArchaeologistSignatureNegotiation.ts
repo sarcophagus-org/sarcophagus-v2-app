@@ -48,8 +48,6 @@ export function useArchaeologistSignatureNegotiation() {
     }
   }
 
-  const archaeologistConnections = selectedArchaeologists.map(a => a.connection);
-
   const initiateSarcophagusNegotiation = useCallback(async (): Promise<void> => {
     console.log('starting the negotiation');
     const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
@@ -62,7 +60,6 @@ export function useArchaeologistSignatureNegotiation() {
     await Promise.all(
       selectedArchaeologists.map(async arch => {
         if (!arch.connection) {
-          console.log(archaeologistConnections);
           console.log(`${arch.profile.peerId} connection is undefined`);
           setArchaeologistException(arch.profile.peerId, {
             code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
@@ -140,7 +137,6 @@ export function useArchaeologistSignatureNegotiation() {
   }, [
     dispatch,
     selectedArchaeologists,
-    archaeologistConnections,
     archaeologistShards,
     encryptedShardsTxId,
     dialSelectedArchaeologists,
