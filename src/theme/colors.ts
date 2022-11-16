@@ -19,49 +19,32 @@ export const colors = {
     950: '#ffffff',
   },
 
-  // Violet colors for some borders and some secondary text. Only a couple of these are used.
-  violet: {
-    50: '#f3f0f9',
-    100: '#d7d5dd',
-    200: '#bdb9c4',
-    300: '#a29dac',
-    400: '#878194',
-    500: '#6e687b',
-    600: '#565160',
-    700: '#3e3945',
-    800: '#25222a',
-    900: '#0d0a12',
-  },
-
-  // Menu Colors
-  blue: {
+  // Border and accent colors
+  grayBlue: {
+    100: '#B6C4D1',
+    200: '#8D9AA8',
+    300: '#6F7B87',
+    400: '#616C78',
+    500: '#525C65',
+    600: '#434A52',
     700: '#343A40',
-    1000: '#131416',
+    800: '#2A3036',
+    900: '#20262D',
   },
 
-  // TODO: Merge the two error colors, check with design team
-  error: '#c88484',
-  errorBg: '#2f1414',
-  errorAlt: '#290e0e',
-  errorHighlight: '#F7414126',
-  warning: '#c8c884',
-  success: '#84c884',
-  info: '#84bcc8',
-  disabled: '#737373', // Same as brand.400
-  navBarShadow: '#29262F',
-
-  // WARNING: This color is an abomination and should not be used! But we're using it anyway.
-  controversialBlue: '#168FFF',
-
-  // Used specifically for the sarcophagus table
-  // Note that there are duplicate colors through the app because the colors in the designs have
-  // changed over time. These colors need to be standardized.
-  // TODO: Get with design to standardize some of these colors.
-  blueBg: '#102233',
-  red: '#F74141',
-  redBg: '#2f1414',
+  // Bright colors typically used for toasts and alerts
+  blue: '#168FFF',
   green: '#17CB49',
-  greenBg: '#0b2613',
-  yellow: '#FF9F2D',
-  yellowBg: '#342615',
+  orange: '#FF9F2D',
+  red: '#F74141',
+  yellow: '#FFF72D',
+
+  // Transparent versions of the bright colors typically used for backgrounds
+  transparent: {
+    blue: '#168FFF26',
+    green: '#17CB4926',
+    orange: '#FF9F2D26',
+    red: '#F7414126',
+    yellow: '#FFF72D26',
+  },
 };
