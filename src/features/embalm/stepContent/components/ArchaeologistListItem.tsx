@@ -1,11 +1,10 @@
-import { Flex, Image, Td, Text, Tr, Button, Checkbox, Spinner } from '@chakra-ui/react';
+import { Flex, Image, Td, Text, Tr, Button, Checkbox } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { formatAddress } from 'lib/utils/helpers';
 import { selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
 import { ethers } from 'ethers';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
-import { useDialArchaeologists } from '../hooks/useCreateSarcophagus/useDialArchaeologists';
 
 import { useDispatch } from 'store/index';
 
@@ -32,9 +31,7 @@ export function ArchaeologistListItem({
   setIsDialing,
   onClick,
 }: ArchaeologistListItemProps) {
-  const [isPinging, setIsPinging] = useState(false);
   const { testDialArchaeologist } = useAttemptDialArchaeologists(setIsDialing);
-  const { pingArchaeologist } = useDialArchaeologists();
   const dispatch = useDispatch();
 
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
@@ -49,14 +46,6 @@ export function ArchaeologistListItem({
               w="18px"
               h="18px"
             />
-          )}
-          {isPinging && checkbox ? (
-            <Spinner
-              size="sm"
-              mr={'10px'}
-            />
-          ) : (
-            <></>
           )}
           {checkbox && (
             <Checkbox
@@ -87,11 +76,6 @@ export function ArchaeologistListItem({
 
   const handleClickRow = () => {
     onClick();
-
-    if (!isSelected) {
-      setIsPinging(true);
-      pingArchaeologist(archaeologist.fullPeerId!, () => setIsPinging(false));
-    }
   };
 
   return (
