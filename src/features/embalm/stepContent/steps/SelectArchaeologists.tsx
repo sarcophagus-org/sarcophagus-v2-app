@@ -47,6 +47,7 @@ export function SelectArchaeologists() {
   const { sortedFilteredArchaeologist } = useArchaeologistList();
   const { resurrection, resurrectionRadioValue: radioValue } = useSelector(x => x.embalmState);
   const [editDate, setEditDate] = useState(true);
+  const [selectedOption, setSelectedOption] = useState(5);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
@@ -82,6 +83,7 @@ export function SelectArchaeologists() {
   function handlePageSizeChange(newValue: IPageSizeSetByOption | null) {
     const newPageSize = newValue!.value;
     setPageSize(newPageSize!);
+    setSelectedOption(newPageSize);
   }
 
   const handlePageChange = (nextPage: number): void => {
@@ -213,35 +215,44 @@ export function SelectArchaeologists() {
                       </Select> */}
                       <Box cursor="pointer">
                         <Select<IPageSizeSetByOption, false, GroupBase<IPageSizeSetByOption>>
-                          value={{ value: pageSize, label: pageSize.toString() }}
+                          value={PageSizeOptionsMap.filter(function (option) {
+                            return option.value === selectedOption;
+                          })}
+                          // setValue: (ValueType, ActionTypes) => void
+
                           onChange={handlePageSizeChange}
                           placeholder=""
                           options={PageSizeOptionsMap}
                           isSearchable={false}
-                          focusBorderColor="brand.950"
-                          selectedOptionColor="brand"
+                          focusBorderColor="transparent"
+                          selectedOptionColor="brand.950"
                           useBasicStyles
                           chakraStyles={{
                             menuList: provided => ({
                               ...provided,
                               bg: 'brand.0',
-                              fontSize: 'sm',
+                              fontSize: '14px',
                               borderColor: 'transparent',
                             }),
 
                             option: (provided, state) => ({
                               ...provided,
                               background: state.isFocused ? 'brand.100' : provided.background,
-                              fontSize: 'sm',
+                              fontSize: '14px',
+                              color: 'brand.600',
                             }),
 
                             control: provided => ({
                               ...provided,
+                              // display: 'flex',
+                              w: '75px',
                               bg: 'brand.0',
-                              border: '1px',
-                              borderRadius: 0,
+                              color: 'brand.600',
                               borderColor: 'transparent',
-                              fontSize: 'sm',
+                              _hover: {
+                                borderColor: 'transparent',
+                              },
+                              fontSize: '14px',
                               _disabled: {
                                 borderColor: 'brand.300',
                                 color: 'brand.300',
