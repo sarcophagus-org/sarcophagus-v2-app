@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverBody,
 } from '@chakra-ui/react';
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
@@ -27,14 +27,10 @@ import {
 } from '@ajna/pagination';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
-import { ResurrectionRadioValue } from '../components/Resurrection';
+import { Resurrection } from '../components/Resurrection';
 import { useSelector } from 'store/index';
-import { Select, OptionBase, GroupBase } from 'chakra-react-select';
-
-interface IResurrectionTimeSetByOption extends OptionBase {
-  value: ResurrectionRadioValue;
-  label: string;
-}
+import { Select, OptionBase, GroupBase, SelectInstance } from 'chakra-react-select';
+import moment from 'moment';
 
 interface IPageSizeSetByOption extends OptionBase {
   value: number;
@@ -45,9 +41,20 @@ export function SelectArchaeologists() {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
-  const { resurrection, resurrectionRadioValue: radioValue } = useSelector(x => x.embalmState);
-  const [editDate, setEditDate] = useState(true);
-  const [selectedOption, setSelectedOption] = useState(5);
+  const { resurrection } = useSelector(x => x.embalmState);
+
+  const ref = useRef<SelectInstance>(null);
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
+
+  const toggleMenuIsOpen = () => {
+    setMenuIsOpen(value => !value);
+    const selectEl = ref.current;
+    if (!selectEl) return;
+    if (menuIsOpen) selectEl.blur();
+    else selectEl.focus();
+  };
+
+  const [selectedOption, setSelectedOption] = useState<number>(5);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
@@ -60,19 +67,6 @@ export function SelectArchaeologists() {
     });
 
   const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
-
-  function handleOnChange(newValue: IResurrectionTimeSetByOption | null) {
-    // dispatch();
-    // set new resurrection date
-  }
-
-  const options = Object.values(ResurrectionRadioValue);
-
-  const ResurrectionTimeOptionsMap: IResurrectionTimeSetByOption[] = [
-    { value: ResurrectionRadioValue.OneMonth, label: options[0] },
-    { value: ResurrectionRadioValue.TwoMonth, label: options[1] },
-    { value: ResurrectionRadioValue.ThreeMonths, label: options[2] },
-  ];
 
   const PageSizeOptionsMap: IPageSizeSetByOption[] = [
     { value: 5, label: '5' },
@@ -92,97 +86,55 @@ export function SelectArchaeologists() {
 
   const resurrectionDate = new Date(resurrection);
 
-  const editDateInput = () => (
-    // <Flex>
-    //   <Select
-    //     w={10}
-    //     size="sm"
-    //     borderColor={'transparent'}
-    //   >
-    //     {options.map(option => (
-    //       <option
-    //         value={option}
-    //         key={option}
-    //       >
-    //         {option}
-    //       </option>
-    //     ))}
-    //   </Select>
-    // </Flex>
-    <Box cursor="pointer">
-      <Select<IResurrectionTimeSetByOption, false, GroupBase<IResurrectionTimeSetByOption>>
-        // value={radioValue ? radioValue : undefined}
-        onChange={handleOnChange}
-        placeholder=""
-        options={ResurrectionTimeOptionsMap}
-        isSearchable={false}
-        focusBorderColor="brand.950"
-        selectedOptionColor="brand"
-        useBasicStyles
-        chakraStyles={{
-          menuList: provided => ({
-            ...provided,
-            bg: 'brand.0',
-            fontSize: 'sm',
-            borderColor: 'transparent',
-          }),
-
-          option: (provided, state) => ({
-            ...provided,
-            background: state.isFocused ? 'brand.100' : provided.background,
-            fontSize: 'sm',
-          }),
-
-          control: provided => ({
-            ...provided,
-            bg: 'brand.0',
-            border: '1px',
-            borderRadius: 0,
-            borderColor: 'transparent',
-            fontSize: 'sm',
-            _disabled: {
-              borderColor: 'brand.300',
-              color: 'brand.300',
-            },
-          }),
-        }}
-      />
-    </Box>
-  );
-
-  function toggleEditDate() {
-    setEditDate(prev => !prev);
-  }
-
   return (
     <Flex
       direction="column"
       width="100%"
     >
-      <Heading>Select Archaeologists</Heading>
+      <Heading>Archaeologists</Heading>
       <Text
         variant="primary"
-        mt="6"
+        mt="4"
+        fontSize="16px"
       >
         Resurrection Time
       </Text>
       <HStack>
         <>
-          <Text variant="primary">Currently set: {resurrectionDate.toDateString()}</Text>
           <Text
+            variant="primary"
+            color="brand.600"
+          >
+            Currently set:{' '}
+            <Text
+              as="u"
+              color="brand.600"
+            >
+              {moment(resurrectionDate).format('DD.MM.YY h:mma')}
+            </Text>
+          </Text>
+
+          <Text
+            as="i"
+            color="brand.900"
+            onClick={() => {
+              toggleMenuIsOpen();
+            }}
+            cursor="pointer"
             _hover={{
               textDecoration: 'underline',
             }}
-            onClick={() => {
-              toggleEditDate();
-            }}
-            cursor="pointer"
           >
-            ({editDate ? 'hide' : 'edit'})
+            ({menuIsOpen ? 'hide' : 'edit'})
           </Text>
-          {editDate && editDateInput()}
         </>
       </HStack>
+      {menuIsOpen && (
+        <Resurrection
+          mt={5}
+          w={'50%'}
+        />
+      )}
       <ArchaeologistHeader />
       <Pagination
         pagesCount={pagesCount}
@@ -201,25 +153,11 @@ export function SelectArchaeologists() {
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
-                      {/* <Select
-                        size="sm"
-                        onChange={handlePageSizeChange}
-                        w={14}
-                        textAlign={'right'}
-                        variant="unstyled"
-                        color="brand.600"
-                      >
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                      </Select> */}
                       <Box cursor="pointer">
                         <Select<IPageSizeSetByOption, false, GroupBase<IPageSizeSetByOption>>
                           value={PageSizeOptionsMap.filter(function (option) {
                             return option.value === selectedOption;
                           })}
-                          // setValue: (ValueType, ActionTypes) => void
-
                           onChange={handlePageSizeChange}
                           placeholder=""
                           options={PageSizeOptionsMap}
@@ -232,7 +170,8 @@ export function SelectArchaeologists() {
                               ...provided,
                               bg: 'brand.0',
                               fontSize: '14px',
-                              borderColor: 'transparent',
+                              borderColor: 'violet.700',
+                              marginTop: '-0rem',
                             }),
 
                             option: (provided, state) => ({
@@ -244,19 +183,16 @@ export function SelectArchaeologists() {
 
                             control: provided => ({
                               ...provided,
-                              // display: 'flex',
+                              marginLeft: '-0.6rem',
                               w: '75px',
                               bg: 'brand.0',
+                              border: '1px',
                               color: 'brand.600',
                               borderColor: 'transparent',
                               _hover: {
                                 borderColor: 'transparent',
                               },
                               fontSize: '14px',
-                              _disabled: {
-                                borderColor: 'brand.300',
-                                color: 'brand.300',
-                              },
                             }),
                           }}
                         />

@@ -1,13 +1,4 @@
-import {
-  Flex,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Button,
-  FlexProps,
-  forwardRef,
-} from '@chakra-ui/react';
+import { Flex, Text, VStack, HStack, Button, FlexProps, forwardRef } from '@chakra-ui/react';
 import { Radio } from 'components/Radio';
 import { useResurrection } from '../hooks/useResurrection';
 import { DatePicker } from 'components/DatePicker';
@@ -48,13 +39,6 @@ export function Resurrection({ ...rest }: FlexProps) {
       direction="column"
       {...rest}
     >
-      <Heading size="sm">Resurrection</Heading>
-      <Text
-        variant="secondary"
-        mt={4}
-      >
-        When do you want your Sarcophagus resurrected? You can change this later.
-      </Text>
       <VStack
         align="left"
         spacing="5"
@@ -62,7 +46,6 @@ export function Resurrection({ ...rest }: FlexProps) {
         borderColor="violet.700"
         px={9}
         py={6}
-        mt={6}
       >
         <HStack spacing={6}>
           <Radio {...getRadioProps({ value: options[0] })}>{options[0]}</Radio>
