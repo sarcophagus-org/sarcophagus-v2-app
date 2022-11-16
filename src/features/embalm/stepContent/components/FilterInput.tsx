@@ -1,6 +1,5 @@
 import {
   Flex,
-  Image,
   NumberInput,
   NumberInputField,
   InputLeftElement,
@@ -13,7 +12,7 @@ import {
   setUnwrapsFilter,
   setFailsFilter,
 } from 'store/archaeologistList/actions';
-
+import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
 
 interface FilterProps extends NumberInputProps {
@@ -58,11 +57,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
               borderColor="violet.700"
             />
             <InputLeftElement>
-              <Image
-                src="sarco-token-icon.png"
-                w="18px"
-                h="18px"
-              />
+              <SarcoTokenIcon boxSize="16px" />
             </InputLeftElement>
           </NumberInput>
         </InputGroup>

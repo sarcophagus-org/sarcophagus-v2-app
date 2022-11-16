@@ -1,11 +1,11 @@
-import { Flex, Image, Td, Text, Tr, Button, Checkbox } from '@chakra-ui/react';
+import { Flex, Td, Text, Tr, Button, Checkbox } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { formatAddress } from 'lib/utils/helpers';
 import { selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
 import { ethers } from 'ethers';
 import { Dispatch, SetStateAction } from 'react';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
-
+import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
 
 interface ArchaeologistListItemProps {
@@ -40,13 +40,7 @@ export function ArchaeologistListItem({
     return (
       <Td isNumeric>
         <Flex justify={icon || checkbox ? 'left' : 'center'}>
-          {icon && (
-            <Image
-              src="sarco-token-icon.png"
-              w="18px"
-              h="18px"
-            />
-          )}
+          {icon && <SarcoTokenIcon boxSize="18px" />}
           {checkbox && (
             <Checkbox
               isChecked={isSelected && true}
