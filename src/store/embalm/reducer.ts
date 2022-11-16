@@ -49,7 +49,7 @@ export const embalmInitialState: EmbalmState = {
   outerPrivateKey: null,
   outerPublicKey: null,
   recipientState: { publicKey: '', address: '', setByOption: null },
-  requiredArchaeologists: 1,
+  requiredArchaeologists: 0,
   resurrection: 0,
   resurrectionRadioValue: '',
   customResurrectionDate: null,

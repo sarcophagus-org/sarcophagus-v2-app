@@ -7,24 +7,31 @@ import { NetworkConfig } from './networkConfigType';
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
 
-  const networkConfig: NetworkConfig = !!chain
-    ? networkConfigs[chain.id]
+  const networkConfig: NetworkConfig =
+    !!chain && !!networkConfigs[chain.id]
       ? networkConfigs[chain.id]
-      : ({
+      : {
           chainId: 0,
           networkName: '',
           networkShortName: '',
           sarcoTokenAddress: '',
           diamondDeployAddress: '',
           explorerUrl: '',
-          explorerApiKey: '',
+          etherscanApiUrl: '',
+          etherscanApiKey: '',
           bundlr: {
             currencyName: '',
             nodeUrl: '',
             providerUrl: '',
           },
-        } as NetworkConfig)
-    : ({} as NetworkConfig);
+          arweaveConfig: {
+            host: '',
+            port: 0,
+            protocol: 'https',
+            timeout: 0,
+            logging: false,
+          },
+        };
 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];

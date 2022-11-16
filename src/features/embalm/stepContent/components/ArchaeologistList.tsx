@@ -29,6 +29,7 @@ import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
+import { SarcoTokenIcon } from 'components/icons';
 
 export function ArchaeologistList({
   includeDialButton,

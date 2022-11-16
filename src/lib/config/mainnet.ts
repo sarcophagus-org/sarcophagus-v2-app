@@ -6,8 +6,9 @@ export const mainnetNetworkConfig: NetworkConfig = {
   networkShortName: 'Mainnet',
   sarcoTokenAddress: '',
   diamondDeployAddress: '',
-  explorerUrl: 'https://api.etherscan.io/api',
-  explorerApiKey: '',
+  etherscanApiUrl: 'https://api.etherscan.io/api',
+  etherscanApiKey: '',
+  explorerUrl: 'https://etherscan.io/',
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',
