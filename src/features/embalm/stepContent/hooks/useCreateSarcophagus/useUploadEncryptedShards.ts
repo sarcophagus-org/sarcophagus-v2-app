@@ -4,6 +4,7 @@ import { encryptShards } from '../../utils/createSarcophagus';
 import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
+import { useRequestPublicKeys } from './useRequestPublicKeys';
 
 export function useUploadEncryptedShards() {
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
@@ -11,6 +12,7 @@ export function useUploadEncryptedShards() {
     useContext(CreateSarcophagusContext);
 
   const { uploadToArweave } = useArweaveService();
+  const { requestPublicKeys } = useRequestPublicKeys();
 
   const uploadAndSetEncryptedShards = useCallback(async () => {
     try {
@@ -22,7 +24,7 @@ export function useUploadEncryptedShards() {
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key
-      const archPublicKeys = selectedArchaeologists.map(x => x.publicKey!);
+      const archPublicKeys = await requestPublicKeys(selectedArchaeologists);
       const encShards = await encryptShards(archPublicKeys, shards);
 
       // Step 3: Create a mapping of arch public keys -> encrypted shards; upload to arweave
@@ -45,6 +47,7 @@ export function useUploadEncryptedShards() {
     requiredArchaeologists,
     outerPrivateKey,
     selectedArchaeologists,
+    requestPublicKeys,
     uploadToArweave,
     setArchaeologistShards,
     setEncryptedShardsTxId,
