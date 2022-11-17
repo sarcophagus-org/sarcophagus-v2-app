@@ -166,12 +166,16 @@ export function SelectArchaeologists() {
                           selectedOptionColor="brand.950"
                           useBasicStyles
                           chakraStyles={{
+                            menu: provided => ({
+                              ...provided,
+                              my: '-0.3rem',
+                            }),
+
                             menuList: provided => ({
                               ...provided,
                               bg: 'brand.0',
                               fontSize: '14px',
                               borderColor: 'violet.700',
-                              marginTop: '-0rem',
                             }),
 
                             option: (provided, state) => ({
@@ -179,14 +183,15 @@ export function SelectArchaeologists() {
                               background: state.isFocused ? 'brand.100' : provided.background,
                               fontSize: '14px',
                               color: 'brand.600',
+                              my: '-0.4rem',
                             }),
 
                             control: provided => ({
                               ...provided,
+                              my: '-1rem',
                               marginLeft: '-0.6rem',
                               w: '75px',
                               bg: 'brand.0',
-                              border: '1px',
                               color: 'brand.600',
                               borderColor: 'transparent',
                               _hover: {
