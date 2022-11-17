@@ -14,6 +14,7 @@ import {
 import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
+import { PaginationSize, IPageSizeSetByOption } from '../components/PaginationSize';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
 import {
   Pagination,
@@ -29,13 +30,7 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
-import { Select, OptionBase, GroupBase } from 'chakra-react-select';
 import moment from 'moment';
-
-interface IPageSizeSetByOption extends OptionBase {
-  value: number;
-  label: string;
-}
 
 export function SelectArchaeologists() {
   const outerLimit = 1;
@@ -54,12 +49,6 @@ export function SelectArchaeologists() {
         inner: innerLimit,
       },
     });
-
-  const PageSizeOptionsMap: IPageSizeSetByOption[] = [
-    { value: 5, label: '5' },
-    { value: 10, label: '10' },
-    { value: 20, label: '20' },
-  ];
 
   const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
   const resurrectionDate = new Date(resurrection);
@@ -145,55 +134,10 @@ export function SelectArchaeologists() {
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
-                      <Box cursor="pointer">
-                        <Select<IPageSizeSetByOption, false, GroupBase<IPageSizeSetByOption>>
-                          value={PageSizeOptionsMap.filter(function (option) {
-                            return option.value === paginationSize;
-                          })}
-                          onChange={handlePageSizeChange}
-                          placeholder=""
-                          options={PageSizeOptionsMap}
-                          isSearchable={false}
-                          focusBorderColor="transparent"
-                          selectedOptionColor="brand.950"
-                          useBasicStyles
-                          chakraStyles={{
-                            menu: provided => ({
-                              ...provided,
-                              my: '-0.3rem',
-                            }),
-
-                            menuList: provided => ({
-                              ...provided,
-                              bg: 'brand.0',
-                              fontSize: '14px',
-                              borderColor: 'violet.700',
-                            }),
-
-                            option: (provided, state) => ({
-                              ...provided,
-                              background: state.isFocused ? 'brand.100' : provided.background,
-                              fontSize: '14px',
-                              color: 'brand.600',
-                              my: '-0.2rem',
-                            }),
-
-                            control: provided => ({
-                              ...provided,
-                              my: '-1rem',
-                              marginLeft: '-0.6rem',
-                              w: '75px',
-                              bg: 'brand.0',
-                              color: 'brand.600',
-                              borderColor: 'transparent',
-                              _hover: {
-                                borderColor: 'transparent',
-                              },
-                              fontSize: '14px',
-                            }),
-                          }}
-                        />
-                      </Box>
+                      <PaginationSize
+                        handlePageSizeChange={handlePageSizeChange}
+                        paginationSize={paginationSize}
+                      ></PaginationSize>
                     </HStack>
                   </HStack>
                 </Flex>
