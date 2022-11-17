@@ -137,7 +137,7 @@ export function Pages() {
           direction="column"
           width="100%"
           height="100%"
-          mt={50}
+          pt={50}
         >
           {isConnected && isSupportedChain ? (
             <Routes>
