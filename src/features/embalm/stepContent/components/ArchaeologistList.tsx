@@ -25,7 +25,7 @@ import { UpIcon } from 'components/icons/UpIcon';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
-import { FilterInput } from './FilterInput';
+import { FilterInput, FilterName } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
@@ -135,7 +135,7 @@ export function ArchaeologistList({
                         </Popover>
                       </HStack>
                       <FilterInput
-                        filterName={'DiggingFees'}
+                        filterName={FilterName.DiggingFees}
                         value={diggingFeesFilter}
                         placeholder="max"
                         color="brand.950"
@@ -153,7 +153,7 @@ export function ArchaeologistList({
                         <Text align="left"> Unwraps </Text>
                       </Button>
                       <FilterInput
-                        filterName={'Unwraps'}
+                        filterName={FilterName.Unwraps}
                         value={unwrapsFilter}
                         placeholder="min"
                         color="brand.950"
@@ -171,7 +171,7 @@ export function ArchaeologistList({
                         <Text> Fails </Text>
                       </Button>
                       <FilterInput
-                        filterName={'Fails'}
+                        filterName={FilterName.Fails}
                         value={failsFilter}
                         placeholder="max"
                         color="brand.950"
