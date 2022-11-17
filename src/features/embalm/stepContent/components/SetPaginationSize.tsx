@@ -6,7 +6,7 @@ export interface IPageSizeSetByOption extends OptionBase {
   label: string;
 }
 
-export function PaginationSize({ handlePageSizeChange, paginationSize }: any) {
+export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any) {
   const PageSizeOptionsMap: IPageSizeSetByOption[] = [
     { value: 5, label: '5' },
     { value: 10, label: '10' },

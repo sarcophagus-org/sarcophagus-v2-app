@@ -14,7 +14,7 @@ import {
 import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
-import { PaginationSize, IPageSizeSetByOption } from '../components/PaginationSize';
+import { SetPaginationSize, IPageSizeSetByOption } from '../components/SetPaginationSize';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
 import {
   Pagination,
@@ -134,10 +134,10 @@ export function SelectArchaeologists() {
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
-                      <PaginationSize
+                      <SetPaginationSize
                         handlePageSizeChange={handlePageSizeChange}
                         paginationSize={paginationSize}
-                      ></PaginationSize>
+                      ></SetPaginationSize>
                     </HStack>
                   </HStack>
                 </Flex>
