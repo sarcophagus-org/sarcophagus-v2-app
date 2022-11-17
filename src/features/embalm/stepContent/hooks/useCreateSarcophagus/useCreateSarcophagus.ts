@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from '../../../../../store';
 import { disableSteps } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
@@ -10,7 +10,6 @@ import { useUploadEncryptedShards } from './useUploadEncryptedShards';
 import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
 import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
-import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useClearSarcophagusState } from './useClearSarcophagusState';
 
 export function useCreateSarcophagus(
@@ -27,7 +26,6 @@ export function useCreateSarcophagus(
   const [stageError, setStageError] = useState<string>();
 
   // Returns true when all public keys have been received from archaoelogists
-  const { publicKeysReady } = useContext(CreateSarcophagusContext);
 
   // Each hook represents a stage in the create sarcophagus process
   const { dialSelectedArchaeologists } = useDialArchaeologists();
@@ -89,10 +87,6 @@ export function useCreateSarcophagus(
 
       if (!stageExecuting && !stageError && currentStage !== CreateSarcophagusStage.COMPLETED) {
         try {
-          if (currentStage === CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS && !publicKeysReady) {
-            return;
-          }
-
           const currentStageFunction = stagesMap.get(currentStage);
           if (currentStageFunction) {
             await executeStage(currentStageFunction);
@@ -114,7 +108,6 @@ export function useCreateSarcophagus(
     stagesMap,
     stageError,
     dispatch,
-    publicKeysReady,
     createSarcophagusStages,
     selectedArchaeologists,
   ]);
