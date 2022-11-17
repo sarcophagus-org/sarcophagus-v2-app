@@ -27,7 +27,7 @@ export function useArchaeologistSignatureNegotiation() {
     setNegotiationTimestamp,
   } = useContext(CreateSarcophagusContext);
 
-  const { dialSelectedArchaeologists } = useDialArchaeologists();
+  const { dialArchaeologist } = useDialArchaeologists();
 
   function processDeclinedSignatureCode(
     code: SarcophagusValidationError,
@@ -48,7 +48,7 @@ export function useArchaeologistSignatureNegotiation() {
     }
   }
 
-  const initiateSarcophagusNegotiation = useCallback(async (): Promise<void> => {
+  const initiateSarcophagusNegotiation = useCallback(async (isRetry: boolean): Promise<void> => {
     console.log('starting the negotiation');
     const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
 
@@ -66,11 +66,12 @@ export function useArchaeologistSignatureNegotiation() {
             message: 'No connection to archaeologist',
           });
 
-          if (arch.fullPeerId) {
-            await dialSelectedArchaeologists();
+          if (isRetry && arch.fullPeerId) {
+            arch.connection = await dialArchaeologist(arch.fullPeerId);
+            if (!arch.connection) return;
+          } else {
+            return;
           }
-
-          return;
         }
 
         const negotiationParams: ArchaeologistSignatureNegotiationParams = {
@@ -139,7 +140,7 @@ export function useArchaeologistSignatureNegotiation() {
     selectedArchaeologists,
     archaeologistShards,
     encryptedShardsTxId,
-    dialSelectedArchaeologists,
+    dialArchaeologist,
     setArchaeologistSignatures,
     setNegotiationTimestamp,
   ]);

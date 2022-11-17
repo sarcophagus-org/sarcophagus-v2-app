@@ -12,6 +12,22 @@ export function useDialArchaeologists() {
 
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
 
+  const dialArchaeologist = useCallback(async (peerId: PeerId) => {
+    try {
+      const connection = await libp2pNode?.dial(peerId);
+      if (!connection) throw Error('No connection obtained from dial');
+      dispatch(setArchaeologistConnection(peerId.toString(), connection));
+      return connection;
+    } catch (e) {
+      dispatch(
+        setArchaeologistException(peerId.toString(), {
+          code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+          message: 'Could not establish a connection',
+        })
+      );
+    }
+  }, [libp2pNode, dispatch]);
+
   const dialSelectedArchaeologists = useCallback(async () => {
     const dialFailedArchaeologists = [];
     for await (const arch of selectedArchaeologists) {
@@ -68,5 +84,6 @@ export function useDialArchaeologists() {
   return {
     dialSelectedArchaeologists,
     pingArchaeologist,
+    dialArchaeologist,
   };
 }
