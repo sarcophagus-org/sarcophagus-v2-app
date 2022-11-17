@@ -183,7 +183,7 @@ export function SelectArchaeologists() {
                               background: state.isFocused ? 'brand.100' : provided.background,
                               fontSize: '14px',
                               color: 'brand.600',
-                              my: '-0.4rem',
+                              my: '-0.2rem',
                             }),
 
                             control: provided => ({
