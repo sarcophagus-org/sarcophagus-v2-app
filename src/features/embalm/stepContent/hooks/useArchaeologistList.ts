@@ -69,6 +69,9 @@ export function useArchaeologistList() {
   );
 
   const length = keys(SortDirection).length / 2;
+  const direction = (value: SortDirection) => {
+    return (value + 1) % length;
+  };
 
   function setDirection(value: ArchaeologistListActions) {
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
@@ -79,19 +82,19 @@ export function useArchaeologistList() {
   }
 
   function onClickSortDiggingFees() {
-    setDirection(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
+    setDirection(setDiggingFeesSortDirection(direction(diggingFeesSortDirection)));
   }
 
   function onClickSortUnwraps() {
-    setDirection(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
+    setDirection(setUnwrapsSortDirection(direction(unwrapsSortDirection)));
   }
 
   function onClickSortFails() {
-    setDirection(setFailsSortDirection((failsSortDirection + 1) % length));
+    setDirection(setFailsSortDirection(direction(failsSortDirection)));
   }
 
   function onClickSortArchs() {
-    setDirection(setArchsSortDirection((archsSortDirection + 1) % length));
+    setDirection(setArchsSortDirection(direction(archsSortDirection)));
   }
 
   const sortedArchaeologist = () => {
