@@ -24,6 +24,7 @@ export function useCreateSarcophagus(
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
   const [stageError, setStageError] = useState<string>();
+  const [isStageRetry, setIsStageRetry] = useState(false);
 
   // Returns true when all public keys have been received from archaoelogists
 
@@ -69,19 +70,24 @@ export function useCreateSarcophagus(
         setCurrentStage(stages[currentIndex + 1]);
       };
 
-      const executeStage = async (stageToExecute: (...args: any[]) => Promise<any>): Promise<any> =>
+      const executeStage = async (
+        stageToExecute: (_: boolean) => Promise<any>,
+        isRetry: boolean
+      ): Promise<any> =>
         new Promise((resolve, reject) => {
           setStageExecuting(true);
 
-          stageToExecute()
+          stageToExecute(isRetry)
             .then((result: any) => {
               setStageExecuting(false);
+              setIsStageRetry(false);
               incrementStage();
               resolve(result);
             })
             .catch((error: any) => {
               reject(error);
               setStageExecuting(false);
+              setIsStageRetry(false);
             });
         });
 
@@ -89,7 +95,7 @@ export function useCreateSarcophagus(
         try {
           const currentStageFunction = stagesMap.get(currentStage);
           if (currentStageFunction) {
-            await executeStage(currentStageFunction);
+            await executeStage(currentStageFunction, isStageRetry);
           }
         } catch (error: any) {
           console.error(error);
@@ -107,6 +113,7 @@ export function useCreateSarcophagus(
     stageExecuting,
     stagesMap,
     stageError,
+    isStageRetry,
     dispatch,
     createSarcophagusStages,
     selectedArchaeologists,
@@ -114,11 +121,13 @@ export function useCreateSarcophagus(
 
   const retryStage = useCallback(async () => {
     setStageError(undefined);
+    setIsStageRetry(true);
   }, []);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
     setStageError(undefined);
+    setIsStageRetry(false);
     dispatch(disableSteps());
   }, [dispatch]);
 
