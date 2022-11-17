@@ -67,8 +67,9 @@ export function useArchaeologistList() {
     [dispatch, selectedArchaeologists]
   );
 
+  const length = keys(SortDirection).length / 2;
+
   function onClickSortDiggingFees() {
-    const length = keys(SortDirection).length / 2;
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
     dispatch(setFailsSortDirection(SortDirection.NONE));
@@ -76,7 +77,6 @@ export function useArchaeologistList() {
   }
 
   function onClickSortUnwraps() {
-    const length = keys(SortDirection).length / 2;
     dispatch(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
     dispatch(setFailsSortDirection(SortDirection.NONE));
@@ -84,7 +84,6 @@ export function useArchaeologistList() {
   }
 
   function onClickSortFails() {
-    const length = keys(SortDirection).length / 2;
     dispatch(setFailsSortDirection((failsSortDirection + 1) % length));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
@@ -92,7 +91,6 @@ export function useArchaeologistList() {
   }
 
   function onClickSortArchs() {
-    const length = keys(SortDirection).length / 2;
     dispatch(setArchsSortDirection((archsSortDirection + 1) % length));
     dispatch(setFailsSortDirection(SortDirection.NONE));
     dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
