@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { setArchaeologistConnection, setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
 import { ArchaeologistExceptionCode } from 'types';
-import { useLibp2p } from '../../../../../hooks/libp2p/useLibp2p';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { createSarcophagusErrors } from '../../utils/errors';
 import { PeerId } from '@libp2p/interface-peer-id';
@@ -11,12 +10,9 @@ export function useDialArchaeologists() {
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
 
-  const { resetPublicKeyStream } = useLibp2p();
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
 
   const dialSelectedArchaeologists = useCallback(async () => {
-    await resetPublicKeyStream();
-
     const dialFailedArchaeologists = [];
     for await (const arch of selectedArchaeologists) {
       try {
@@ -37,7 +33,7 @@ export function useDialArchaeologists() {
     if (dialFailedArchaeologists.length) {
       throw Error(createSarcophagusErrors[CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]);
     }
-  }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
+  }, [selectedArchaeologists, libp2pNode, dispatch]);
 
   const pingArchaeologist = useCallback(
     async (peerId: PeerId, onComplete: Function) => {
