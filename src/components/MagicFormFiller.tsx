@@ -10,6 +10,7 @@ import {
   setFile,
   setName,
   setRecipientState,
+  setRequiredArchaeologists,
   setResurrection,
   setResurrectionRadioValue,
 } from 'store/embalm/actions';
@@ -79,6 +80,11 @@ export function MagicFormFiller() {
     dispatch(goToStep(Step.SelectArchaeologists));
     await sleep(delay);
     dispatch(selectArchaeologist(onlineArchaeologists[0]));
+    dispatch(goToStep(Step.SelectArchaeologists));
+
+    // Set required archaeologists
+    await sleep(delay);
+    dispatch(setRequiredArchaeologists(1));
 
     // Create sarcophagus
     await sleep(delay);
