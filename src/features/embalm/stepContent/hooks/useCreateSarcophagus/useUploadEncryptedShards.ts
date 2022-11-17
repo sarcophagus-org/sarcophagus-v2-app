@@ -25,6 +25,11 @@ export function useUploadEncryptedShards() {
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key
       const archPublicKeys = await requestPublicKeys(selectedArchaeologists);
+
+      if (archPublicKeys.length < selectedArchaeologists.length) {
+        throw new Error('Not enough public keys');
+      }
+
       const encShards = await encryptShards(archPublicKeys, shards);
 
       // Step 3: Create a mapping of arch public keys -> encrypted shards; upload to arweave
