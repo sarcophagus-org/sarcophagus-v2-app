@@ -44,7 +44,7 @@ export function SelectArchaeologists() {
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
+  const paginatedArchaeologist = sortedFilteredArchaeologist().slice(offset, offset + pageSize);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const newPageSize = Number(event.target.value);

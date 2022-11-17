@@ -27,18 +27,24 @@ interface FilterProps extends NumberInputProps {
 }
 
 interface FilterComponentProps {
-  width: any;
+  filterWidth: string;
   onChange: (valueAsString: string, valueAsNumber: number) => void;
   placeholder?: string;
   icon: boolean;
 }
 
-function FilterComponent({ width, placeholder, onChange, icon, ...rest }: FilterComponentProps) {
+function FilterComponent({
+  filterWidth,
+  placeholder,
+  onChange,
+  icon,
+  ...rest
+}: FilterComponentProps) {
   return (
     <Flex align="center">
       <InputGroup>
         <NumberInput
-          w={width}
+          w={filterWidth}
           onChange={onChange}
           {...rest}
         >
@@ -80,7 +86,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
       return (
         <FilterComponent
-          width={'150px'}
+          filterWidth={'150px'}
           placeholder={placeholder}
           onChange={handleChangeDiggingFees}
           icon={true}
@@ -96,7 +102,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
       return (
         <FilterComponent
-          width={'100px'}
+          filterWidth={'100px'}
           placeholder={placeholder}
           onChange={handleChangeUnwraps}
           icon={false}
@@ -112,7 +118,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
       return (
         <FilterComponent
-          width={'82px'}
+          filterWidth={'82px'}
           placeholder={placeholder}
           onChange={handleChangeFails}
           icon={false}

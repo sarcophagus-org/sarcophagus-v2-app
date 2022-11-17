@@ -137,9 +137,8 @@ export function useArchaeologistList() {
     return onlineArchaeologists;
   };
 
-  let sortedFilteredArchaeologist: Archaeologist[] = [];
-  if (!showSelectedArchaeologists) {
-    sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
+  const sortedFilteredArchaeologist: () => Archaeologist[] = () => {
+    return sortedArchaeologist()?.filter(
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
         BigNumber.from(
@@ -147,19 +146,35 @@ export function useArchaeologistList() {
         ).lte(diggingFeesFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
+
+      //   (showSelectedArchaeologists &&
+      //     selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1;
+      // )
     );
-  } else {
-    sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
-      arch =>
-        arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(
-          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
-        ).lte(diggingFeesFilter || constants.MaxInt256) &&
-        BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
-        BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
-        selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
-    );
-  }
+  };
+
+  // if (!showSelectedArchaeologists) {
+  //   sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
+  //     arch =>
+  //       arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
+  //       BigNumber.from(
+  //         Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+  //       ).lte(diggingFeesFilter || constants.MaxInt256) &&
+  //       BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
+  //       BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
+  //   );
+  // } else {
+  //   sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
+  //     arch =>
+  //       arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
+  //       BigNumber.from(
+  //         Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+  //       ).lte(diggingFeesFilter || constants.MaxInt256) &&
+  //       BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
+  //       BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
+  //       selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
+  //   );
+  // }
 
   function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
