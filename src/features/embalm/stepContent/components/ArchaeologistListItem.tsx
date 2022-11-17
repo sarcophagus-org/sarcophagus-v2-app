@@ -43,7 +43,7 @@ export function ArchaeologistListItem({
           {icon && <SarcoTokenIcon boxSize="18px" />}
           {checkbox && (
             <Checkbox
-              isChecked={isSelected && true}
+              isChecked={isSelected}
               onChange={() => {
                 if (isSelected === true) {
                   dispatch(selectArchaeologist(archaeologist));
