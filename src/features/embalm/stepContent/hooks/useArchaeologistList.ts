@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import {
   SortDirection,
@@ -7,13 +7,14 @@ import {
   setFailsSortDirection,
   setArchsSortDirection,
   setArchAddressSearch,
+  ArchaeologistListActions,
 } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers, BigNumber } from 'ethers';
-// import { mochArchaeologists } from '../mocks/mockArchaeologists';
+import { mochArchaeologists } from '../mocks/mockArchaeologists';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
@@ -35,16 +36,16 @@ export function useArchaeologistList() {
   } = useSelector(s => s.archaeologistListState);
 
   // USED FOR GENERATING TEST ARCHS:
-  // const NUMBER_MOCK_ARCH = 30;
-  // const onlineArchaeologists = useMemo(
-  //   () =>
-  //     NUMBER_MOCK_ARCH > 0
-  //       ? mochArchaeologists(NUMBER_MOCK_ARCH)
-  //       : archaeologists.filter(a => a.isOnline),
-  //   [NUMBER_MOCK_ARCH, archaeologists]
-  // );
+  const NUMBER_MOCK_ARCH = 30;
+  const onlineArchaeologists = useMemo(
+    () =>
+      NUMBER_MOCK_ARCH > 0
+        ? mochArchaeologists(NUMBER_MOCK_ARCH)
+        : archaeologists.filter(a => a.isOnline),
+    [NUMBER_MOCK_ARCH]
+  );
 
-  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
@@ -69,32 +70,28 @@ export function useArchaeologistList() {
 
   const length = keys(SortDirection).length / 2;
 
-  function onClickSortDiggingFees() {
-    dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
+  function setDirection(value: ArchaeologistListActions) {
+    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
     dispatch(setUnwrapsSortDirection(SortDirection.NONE));
     dispatch(setFailsSortDirection(SortDirection.NONE));
     dispatch(setArchsSortDirection(SortDirection.NONE));
+    dispatch(value);
+  }
+
+  function onClickSortDiggingFees() {
+    setDirection(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
   }
 
   function onClickSortUnwraps() {
-    dispatch(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
-    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
-    dispatch(setFailsSortDirection(SortDirection.NONE));
-    dispatch(setArchsSortDirection(SortDirection.NONE));
+    setDirection(setUnwrapsSortDirection((unwrapsSortDirection + 1) % length));
   }
 
   function onClickSortFails() {
-    dispatch(setFailsSortDirection((failsSortDirection + 1) % length));
-    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
-    dispatch(setUnwrapsSortDirection(SortDirection.NONE));
-    dispatch(setArchsSortDirection(SortDirection.NONE));
+    setDirection(setFailsSortDirection((failsSortDirection + 1) % length));
   }
 
   function onClickSortArchs() {
-    dispatch(setArchsSortDirection((archsSortDirection + 1) % length));
-    dispatch(setFailsSortDirection(SortDirection.NONE));
-    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
-    dispatch(setUnwrapsSortDirection(SortDirection.NONE));
+    setDirection(setArchsSortDirection((archsSortDirection + 1) % length));
   }
 
   const sortedArchaeologist = () => {
