@@ -20,6 +20,13 @@ export const Button = {
         bg: 'brand.200',
       },
     },
+    paginator: {
+      fontWeight: 400,
+      fontSize: 14,
+      _hover: {
+        bg: 'brand.200',
+      },
+    },
     link: {
       color: 'brand.950',
       bg: 'brand.0',
@@ -27,6 +34,7 @@ export const Button = {
       fontSize: 'sm',
     },
     outline: {
+      py: '1px', //because outline has a border this will made the button the same height as main
       color: 'brand.900',
     },
     disabledLook: {

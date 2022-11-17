@@ -1,36 +1,54 @@
 import { NetworkConfigContext } from '.';
+import { SupportedNetworkContext } from './useSupportedNetwork';
 import { useNetwork } from 'wagmi';
-import { networkConfigs } from './networkConfig';
+import { networkConfigs } from './networkConfigs';
 import { NetworkConfig } from './networkConfigType';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
-  const networkConfig: NetworkConfig = !!chain
-    ? networkConfigs[chain.id]
-    : // fallback to empty config if there is no connected wallet
-      {
-        chainId: 0,
-        networkName: '',
-        networkShortName: '',
-        sarcoTokenAddress: '',
-        diamondDeployAddress: '',
-        explorerUrl: '',
-        explorerApiKey: '',
-        bundlr: {
-          currencyName: '',
-          nodeUrl: '',
-          providerUrl: '',
-        },
-        arweaveConfig: {
-          host: '',
-          port: 0,
-          protocol: 'https',
-          timeout: 0,
-          logging: false,
-        },
-      };
+
+  const networkConfig: NetworkConfig =
+    !!chain && !!networkConfigs[chain.id]
+      ? networkConfigs[chain.id]
+      : {
+          chainId: 0,
+          networkName: '',
+          networkShortName: '',
+          sarcoTokenAddress: '',
+          diamondDeployAddress: '',
+          explorerUrl: '',
+          etherscanApiUrl: '',
+          etherscanApiKey: '',
+          bundlr: {
+            currencyName: '',
+            nodeUrl: '',
+            providerUrl: '',
+          },
+          arweaveConfig: {
+            host: '',
+            port: 0,
+            protocol: 'https',
+            timeout: 0,
+            logging: false,
+          },
+        };
+
+  const supportedChainIds =
+    process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
+
+  const isSupportedChain = supportedChainIds.includes(networkConfig.chainId);
+
+  const supportedNetworkNames = Object.values(networkConfigs)
+    .filter(config => supportedChainIds.includes(config.chainId))
+    .map(config => config.networkShortName);
 
   return (
-    <NetworkConfigContext.Provider value={networkConfig}>{children}</NetworkConfigContext.Provider>
+    <NetworkConfigContext.Provider value={networkConfig}>
+      <SupportedNetworkContext.Provider
+        value={{ isSupportedChain: isSupportedChain, supportedNetworkNames: supportedNetworkNames }}
+      >
+        {children}
+      </SupportedNetworkContext.Provider>
+    </NetworkConfigContext.Provider>
   );
 }

@@ -39,7 +39,6 @@ export function useDialArchaeologists() {
     }
   }, [selectedArchaeologists, libp2pNode, dispatch, resetPublicKeyStream]);
 
-
   const pingArchaeologist = useCallback(
     async (peerId: PeerId, onComplete: Function) => {
       const pingTimeout = 5000;
@@ -72,6 +71,6 @@ export function useDialArchaeologists() {
 
   return {
     dialSelectedArchaeologists,
-    pingArchaeologist
+    pingArchaeologist,
   };
 }

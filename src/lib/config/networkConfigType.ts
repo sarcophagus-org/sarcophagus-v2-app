@@ -12,8 +12,9 @@ export interface NetworkConfig {
   networkShortName: string;
   sarcoTokenAddress: string;
   diamondDeployAddress: string;
+  etherscanApiUrl: string;
   explorerUrl: string;
-  explorerApiKey: string;
+  etherscanApiKey: string;
   bundlr: BundlrConfig;
   arweaveConfig: ArweaveConfig;
 }

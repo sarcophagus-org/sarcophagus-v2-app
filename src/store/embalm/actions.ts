@@ -12,15 +12,12 @@ export enum ActionType {
   EnableSteps = 'EMBALM_ENABLE_STEPS',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
-  SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
   SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
-  SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
-  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
   SetName = 'EMBALM_SET_NAME',
@@ -74,7 +71,6 @@ type EmbalmPayload = {
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
-  [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistOnlineStatus]: {
@@ -100,9 +96,6 @@ type EmbalmPayload = {
   [ActionType.SetUploadPrice]: { price: string };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
-  [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
-  [ActionType.SetDiggingFeesFilter]: { filter: string };
-  [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SetCurrentChainId]: { chainId: number | undefined };
 };
@@ -247,33 +240,6 @@ export function deselectArchaeologist(address: string): EmbalmActions {
     type: ActionType.DeselectArchaeologist,
     payload: {
       address,
-    },
-  };
-}
-
-export function setDiggingFeesSortDirection(direction: SortDirection): EmbalmActions {
-  return {
-    type: ActionType.SetDiggingFeesSortDirection,
-    payload: {
-      direction,
-    },
-  };
-}
-
-export function setDiggingFeesFilter(filter: string): EmbalmActions {
-  return {
-    type: ActionType.SetDiggingFeesFilter,
-    payload: {
-      filter,
-    },
-  };
-}
-
-export function setArchAddressSearch(search: string): EmbalmActions {
-  return {
-    type: ActionType.SetArchAddressSearch,
-    payload: {
-      search,
     },
   };
 }

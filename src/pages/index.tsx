@@ -1,5 +1,7 @@
-import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text, Heading, Image, Container } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
+import { useAccount } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
@@ -8,11 +10,31 @@ import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
+import pharaoh from 'assets/images/pharaoh.gif';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+
+export enum RouteKey {
+  EMBALM_PAGE,
+  DASHBOARD_PAGE,
+  DASHBOARD_DETAIL,
+  ARCHEOLOGIST_PAGE,
+  BUNDLER_PAGE,
+  TEMP_RESURRECTION_PAGE,
+}
+
+export const RoutesPathMap: { [key: number]: string } = {
+  [RouteKey.EMBALM_PAGE]: '/embalm',
+  [RouteKey.DASHBOARD_PAGE]: '/dashboard',
+  [RouteKey.DASHBOARD_DETAIL]: '/dashboard/:id',
+  [RouteKey.ARCHEOLOGIST_PAGE]: '/archaeologists',
+  [RouteKey.BUNDLER_PAGE]: '/fundbundlr',
+  [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
+};
 
 export function Pages() {
   const routes = [
     {
-      path: '/embalm',
+      path: RoutesPathMap[RouteKey.EMBALM_PAGE],
       element: <EmbalmPage />,
       noBackground: true,
       label: (
@@ -33,33 +55,39 @@ export function Pages() {
       ),
     },
     {
-      path: '/dashboard',
+      path: RoutesPathMap[RouteKey.DASHBOARD_PAGE],
       element: <DashboardPage />,
       label: 'Tomb',
     },
     {
-      path: '/dashboard/:id',
+      path: RoutesPathMap[RouteKey.DASHBOARD_DETAIL],
       element: <DetailsPage />,
       label: 'Dashboard',
       hidden: true,
     },
     {
-      path: '/archaeologists',
+      path: RoutesPathMap[RouteKey.ARCHEOLOGIST_PAGE],
       element: <ArchaeologistsPage />,
       label: 'Archaeologists',
     },
     {
-      path: '/bundlr',
+      path: RoutesPathMap[RouteKey.BUNDLER_PAGE],
       element: <BundlrPage />,
       label: 'Bundlr',
     },
     {
-      path: '/temp-resurrection',
+      path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
       element: <TempResurrectionPage />,
       label: 'TempResurrectionPage',
       hidden: true,
     },
   ];
+
+  const { isConnected } = useAccount();
+
+  const { isSupportedChain, supportedNetworkNames } = useSupportedNetwork();
+
+  const { openConnectModal } = useConnectModal();
 
   return (
     <Router>
@@ -84,7 +112,7 @@ export function Pages() {
                     color: 'brand.950',
                     bgColor: route.noBackground ? 'transparent' : 'blue.700',
                   }}
-                  _hover={{ textDecor: 'none' }}
+                  _hover={{ textDecor: 'none', color: 'brand.700' }}
                   key={route.path}
                   to={route.path}
                   hidden={route.hidden}
@@ -103,25 +131,66 @@ export function Pages() {
             <ConnectWalletButton />
           </Flex>
         </Navbar>
-
         {/* App Content */}
         <Flex
-          flex={1}
           overflow="auto"
+          direction="column"
+          width="100%"
+          height="100%"
+          pt={50}
         >
-          <Routes>
-            <Route
-              path="/"
-              element={<Navigate to="/dashboard" />}
-            />
-            {routes.map(route => (
+          {isConnected && isSupportedChain ? (
+            <Routes>
               <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
+                path="/"
+                element={<Navigate to={RoutesPathMap[RouteKey.DASHBOARD_PAGE]} />}
               />
-            ))}
-          </Routes>
+              {routes.map(route => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
+              ))}
+            </Routes>
+          ) : (
+            <Container
+              maxW="sm"
+              centerContent
+            >
+              <Heading pb={2}>
+                {!isConnected ? 'No Wallet Detected' : 'Unsupported Network'}
+              </Heading>
+              <Text align="center">
+                {!isConnected
+                  ? 'Please connect to your web3 wallet to access this dapp.'
+                  : 'Please connect to a supported network.'}
+              </Text>
+              <Image
+                src={pharaoh}
+                w="125px"
+                py={8}
+              />
+              {!isConnected ? (
+                <Button onClick={openConnectModal}>Connect Wallet</Button>
+              ) : (
+                <Text
+                  align="center"
+                  fontWeight="bold"
+                >
+                  Supported Networks
+                  {supportedNetworkNames.map(network => (
+                    <Text
+                      fontWeight="normal"
+                      key={network}
+                    >
+                      {network}
+                    </Text>
+                  ))}
+                </Text>
+              )}
+            </Container>
+          )}
         </Flex>
       </Flex>
     </Router>

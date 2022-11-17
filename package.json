@@ -12,9 +12,10 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@ajna/pagination": "^1.4.19",
     "@bundlr-network/client": "^0.9.0-b8",
     "@chainsafe/libp2p-noise": "^10.0.0",
-    "@chakra-ui/icons": "^2.0.9",
+    "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/react": "^2.2.3",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
@@ -26,7 +27,7 @@
     "@libp2p/webrtc-star": "^5.0.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
     "@react-pdf/renderer": "^3.0.0",
-    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.3.0",
+    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.4.0",
     "@sentry/react": "^7.8.1",
     "@sentry/tracing": "^7.8.1",
     "arbundles": "^0.6.21",
@@ -68,7 +69,7 @@
     "stream-http": "^3.2.0",
     "typescript": "^4.7.3",
     "url": "^0.11.0",
-    "wagmi": "^0.7.10",
+    "wagmi": "^0.7.9",
     "web-vitals": "^2.1.4"
   },
   "resolutions": {
