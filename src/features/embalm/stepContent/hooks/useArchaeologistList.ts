@@ -1,29 +1,28 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
+import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import {
-  deselectArchaeologist,
-  selectArchaeologist,
   SortDirection,
   setDiggingFeesSortDirection,
   setUnwrapsSortDirection,
   setFailsSortDirection,
   setArchsSortDirection,
   setArchAddressSearch,
-} from 'store/embalm/actions';
+} from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers, BigNumber } from 'ethers';
-import { mochArchaeologists } from '../mocks/mockArchaeologists';
+// import { mochArchaeologists } from '../mocks/mockArchaeologists';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
 
   const dispatch = useDispatch();
 
+  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
+
   const {
-    archaeologists,
-    selectedArchaeologists,
     diggingFeesSortDirection,
     unwrapsSortDirection,
     failsSortDirection,
@@ -32,19 +31,20 @@ export function useArchaeologistList() {
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
-    ShowSelectedArchaeologists,
-  } = useSelector(s => s.embalmState);
+    showSelectedArchaeologists,
+  } = useSelector(s => s.archaeologistListState);
 
-  const NUMBER_MOCK_ARCH = 30;
+  // USED FOR GENERATING TEST ARCHS:
+  // const NUMBER_MOCK_ARCH = 30;
+  // const onlineArchaeologists = useMemo(
+  //   () =>
+  //     NUMBER_MOCK_ARCH > 0
+  //       ? mochArchaeologists(NUMBER_MOCK_ARCH)
+  //       : archaeologists.filter(a => a.isOnline),
+  //   [NUMBER_MOCK_ARCH, archaeologists]
+  // );
 
-  // Used for generating testing archaeologists
-  const onlineArchaeologists = useMemo(
-    () =>
-      NUMBER_MOCK_ARCH > 0
-        ? mochArchaeologists(NUMBER_MOCK_ARCH)
-        : archaeologists.filter(a => a.isOnline),
-    [NUMBER_MOCK_ARCH]
-  );
+  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
@@ -67,7 +67,6 @@ export function useArchaeologistList() {
     [dispatch, selectedArchaeologists]
   );
 
-  // create a function that takes an argument?
   function onClickSortDiggingFees() {
     const length = keys(SortDirection).length / 2;
     dispatch(setDiggingFeesSortDirection((diggingFeesSortDirection + 1) % length));
@@ -128,7 +127,6 @@ export function useArchaeologistList() {
         [sortOrderByMap[failsSortDirection]!]
       );
     }
-
     if (archsSortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
@@ -142,23 +140,23 @@ export function useArchaeologistList() {
   };
 
   let sortedFilteredArchaeologist: Archaeologist[] = [];
-  if (!ShowSelectedArchaeologists) {
+  if (!showSelectedArchaeologists) {
     sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
-          diggingFeesFilter || constants.MaxInt256
-        ) &&
-        BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
+        BigNumber.from(
+          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+        ).lte(diggingFeesFilter || constants.MaxInt256) &&
+        BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256)
     );
   } else {
     sortedFilteredArchaeologist = sortedArchaeologist()?.filter(
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee))).lte(
-          diggingFeesFilter || constants.MaxInt256
-        ) &&
+        BigNumber.from(
+          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+        ).lte(diggingFeesFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.successes)).lte(unwrapsFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
         selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1

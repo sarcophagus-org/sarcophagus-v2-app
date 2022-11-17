@@ -1,13 +1,15 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Button, Divider, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex, Text, IconButton } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
+import { DotsMenuIcon, SarcoTokenIcon } from 'components/icons';
 
 export function ConnectWalletButton() {
+  const { formattedBalance } = useSarcoBalance();
+
   return (
     <ConnectButton.Custom>
-      {({ account, chain, mounted, openConnectModal, openChainModal, openAccountModal }) => {
-        const ready = mounted;
-        const connected = ready && account && chain;
+      {({ account, chain, mounted, openConnectModal, openAccountModal }) => {
+        const connected = mounted && account && chain;
 
         return (
           <Flex>
@@ -22,30 +24,32 @@ export function ConnectWalletButton() {
               <Flex>
                 <Button
                   variant="ghost"
-                  onClick={openChainModal}
+                  _hover={{ bgColor: 'blue.1000' }}
+                  _focus={{ bgColor: 'blue.1000' }}
+                  cursor="auto"
+                  mx={2}
+                  bg="blue.1000"
+                  leftIcon={<SarcoTokenIcon />}
                 >
-                  <Text color="brand.500">{chain.name}</Text>
-                  <ChevronDownIcon ml={1} />
+                  <Text>{formattedBalance}</Text>
                 </Button>
-                <Divider
-                  mx={3}
-                  orientation="vertical"
-                />
+
                 <Button
                   variant="ghost"
                   onClick={openAccountModal}
+                  px={5}
+                  bgGradient="linear-gradient(180deg, rgba(255, 255, 255, 0.044) 0%, rgba(255, 255, 255, 0.158) 100%)"
                 >
-                  <Text color="brand.500">
-                    {account.displayBalance ? ` (${account.displayBalance})` : ''}
-                  </Text>
-                  <Text
-                    ml={3}
-                    color="brand.500"
-                  >
-                    {account.displayName}
-                    <ChevronDownIcon ml={1} />
-                  </Text>
+                  <Text color="white">{account.displayName}</Text>
                 </Button>
+
+                <IconButton
+                  ml={2}
+                  variant="ghost"
+                  icon={<DotsMenuIcon />}
+                  bg="blue.1000"
+                  aria-label="more"
+                />
               </Flex>
             )}
           </Flex>

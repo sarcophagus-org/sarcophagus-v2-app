@@ -1,3 +1,5 @@
+import { ApiConfig as ArweaveConfig } from 'arweave/node/lib/api';
+
 export interface BundlrConfig {
   currencyName: string;
   nodeUrl: string;
@@ -10,7 +12,9 @@ export interface NetworkConfig {
   networkShortName: string;
   sarcoTokenAddress: string;
   diamondDeployAddress: string;
+  etherscanApiUrl: string;
   explorerUrl: string;
-  explorerApiKey: string;
+  etherscanApiKey: string;
   bundlr: BundlrConfig;
+  arweaveConfig: ArweaveConfig;
 }

@@ -6,13 +6,20 @@ import { bundlrInitialState, bundlrReducer, BundlrState } from './bundlr/reducer
 import { EmbalmActions } from './embalm/actions';
 import { embalmInitialState, embalmReducer, EmbalmState } from './embalm/reducer';
 import { SarcophagusActions } from './sarcophagus/actions';
+import { sarcophagiInitialState, sarcophagiReducer, SarcophagiState } from './sarcophagus/reducer';
+import { ArchaeologistListActions } from './archaeologistList/actions';
 import {
-  sarcophagiInitialState,
-  sarcophagiReducer,
-  SarcophagiState,
-} from './sarcophagus/reducer';
+  archaeologistListInitialState,
+  archaeologistListReducer,
+  ArchaeologistListState,
+} from './archaeologistList/reducer';
 
-export type Actions = AppActions | SarcophagusActions | BundlrActions | EmbalmActions;
+export type Actions =
+  | AppActions
+  | SarcophagusActions
+  | BundlrActions
+  | EmbalmActions
+  | ArchaeologistListActions;
 
 interface Context {
   state: RootState;
@@ -36,6 +43,7 @@ export interface RootState {
   sarcophagiState: SarcophagiState;
   bundlrState: BundlrState;
   embalmState: EmbalmState;
+  archaeologistListState: ArchaeologistListState;
 }
 
 export const initialState: RootState = {
@@ -43,6 +51,7 @@ export const initialState: RootState = {
   sarcophagiState: sarcophagiInitialState,
   bundlrState: bundlrInitialState,
   embalmState: embalmInitialState,
+  archaeologistListState: archaeologistListInitialState,
 };
 
 export function storeReducer(state: RootState, action: Actions): RootState {
@@ -51,5 +60,6 @@ export function storeReducer(state: RootState, action: Actions): RootState {
     sarcophagiState: sarcophagiReducer(state.sarcophagiState, action),
     bundlrState: bundlrReducer(state.bundlrState, action),
     embalmState: embalmReducer(state.embalmState, action),
+    archaeologistListState: archaeologistListReducer(state.archaeologistListState, action),
   };
 }

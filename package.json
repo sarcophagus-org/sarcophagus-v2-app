@@ -27,7 +27,7 @@
     "@libp2p/webrtc-star": "^5.0.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
     "@react-pdf/renderer": "^3.0.0",
-    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.2.0",
+    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.4.0",
     "@sentry/react": "^7.8.1",
     "@sentry/tracing": "^7.8.1",
     "arbundles": "^0.6.21",

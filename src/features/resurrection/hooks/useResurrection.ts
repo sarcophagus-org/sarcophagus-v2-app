@@ -1,7 +1,7 @@
 import { arrayify } from 'ethers/lib/utils';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
-import { fetchArweaveFileFallback } from 'lib/utils/arweave';
+import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
@@ -15,18 +15,24 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const sarcophagus = useGetSarcophagus(sarcoId);
   const archaeologists = useGetSarcophagusArchaeologists(sarcoId, sarcophagus?.archaeologists);
   const [canResurrect, setCanResurrect] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResurrecting, setIsResurrecting] = useState(false);
+  const { fetchArweaveFileFallback } = useArweave();
 
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
   useEffect(() => {
+    setIsLoading(true);
     if (!sarcophagus || !sarcophagus.minShards) return;
-    const shards = archaeologists.filter(a => a.unencryptedShard);
-    setCanResurrect(shards.length >= sarcophagus.minShards);
+    const archsWithShards = archaeologists.filter(a => a.unencryptedShard);
+    setCanResurrect(archsWithShards.length >= sarcophagus.minShards);
+    setIsLoading(false);
   }, [archaeologists, sarcophagus]);
 
   /**
    * Resurrects the sarcohpagus using the values passed in to the hook
    */
   const resurrect = useCallback(async (): Promise<{ fileName: string; data: string }> => {
+    setIsResurrecting(true);
     try {
       if (!canResurrect) {
         throw new Error('Cannot resurrect');
@@ -51,7 +57,14 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       const outerLayerBuffer = Buffer.from(outerLayer);
 
       // Convert the shards from their hex strings to Uint8Array
-      const unencryptedShards = archaeologists.map(a => Buffer.from(arrayify(a.unencryptedShard)));
+      const unencryptedShards = archaeologists
+        .map(a => {
+          const arrayifiedShard = arrayify(a.unencryptedShard);
+          if (arrayifiedShard.length > 0) {
+            return Buffer.from(arrayifiedShard);
+          }
+        })
+        .filter(a => a);
 
       // Apply SSS with the unencryped shards to derive the outer layer private key
       const outerLayerPrivateKey = combine(unencryptedShards).toString();
@@ -70,8 +83,17 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       return { fileName, data };
     } catch (error) {
       throw new Error(`Error resurrecting sarcophagus: ${error}`);
+    } finally {
+      setIsResurrecting(false);
     }
-  }, [archaeologists, canResurrect, recipientPrivateKey, sarcoId, sarcophagus]);
+  }, [
+    archaeologists,
+    canResurrect,
+    recipientPrivateKey,
+    sarcoId,
+    sarcophagus,
+    fetchArweaveFileFallback,
+  ]);
 
-  return { canResurrect, resurrect };
+  return { canResurrect, resurrect, isResurrecting, isLoading };
 }

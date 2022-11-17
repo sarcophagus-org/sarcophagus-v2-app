@@ -1,5 +1,5 @@
 import { VStack, Heading, Text, Flex } from '@chakra-ui/react';
-import { Resurrection } from '../components/Resurrection';
+import { SetResurrection } from '../components/SetResurrection';
 import { SarcophagusName } from '../components/SarcophagusName';
 
 export function NameSarcophagus() {

@@ -14,10 +14,10 @@ import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPri
 import { useCallback, useState } from 'react';
 import { setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useBundlrSession } from '../features/embalm/stepContent/hooks/useBundlrSession';
-import { useGetBalance } from '../features/embalm/stepContent/hooks/useGetBalance';
 import { uploadPriceDecimals } from 'lib/constants';
 import { ethers } from 'ethers';
+import { useBundlrSession } from '../hooks/useBundlrSession';
+import { useGetBalance } from '../hooks/useGetBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const dispatch = useDispatch();

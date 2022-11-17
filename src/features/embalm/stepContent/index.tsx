@@ -34,7 +34,7 @@ export function StepContent() {
           <CreateSarcophagus />
         </CreateSarcophagusContextProvider>
       ),
-      title: ''
+      title: '',
     },
   };
 
@@ -48,10 +48,14 @@ export function StepContent() {
     goToNext();
   }
 
+  function showPrev(): boolean {
+    return currentStep.valueOf() > 0 && currentStep.valueOf() < Object.keys(contentMap).length - 1;
+  }
+
   return (
     <VStack
       align="left"
-      minWidth={600}
+      minWidth={{ xl: '600px', lg: '450px' }}
       w="100%"
       mb="200px"
     >
@@ -62,7 +66,7 @@ export function StepContent() {
         justify="space-between"
         spacing={0}
       >
-        {currentStep.valueOf() > 0 ? (
+        {showPrev() ? (
           <Button
             variant="link"
             width="fit-content"

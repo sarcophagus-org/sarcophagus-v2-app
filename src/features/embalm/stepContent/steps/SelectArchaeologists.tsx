@@ -84,6 +84,10 @@ export function SelectArchaeologists() {
     setCurrentPage(nextPage);
   };
 
+  const returnToFirstPage = () => {
+    setCurrentPage(1);
+  };
+
   const resurrectionDate = new Date(resurrection);
 
   return (
@@ -135,7 +139,7 @@ export function SelectArchaeologists() {
           w={'50%'}
         />
       )}
-      <ArchaeologistHeader />
+      <ArchaeologistHeader resetPage={returnToFirstPage} />
       <Pagination
         pagesCount={pagesCount}
         currentPage={currentPage}

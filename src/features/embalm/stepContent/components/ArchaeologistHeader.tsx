@@ -2,11 +2,21 @@ import { Text, Box, Flex, useColorModeValue, HStack, Checkbox, Icon } from '@cha
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { sumDiggingFees } from 'lib/utils/helpers';
 import { useDispatch, useSelector } from 'store/index';
-import { setShowSelectedArchaeologists } from 'store/embalm/actions';
+import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 
-export function ArchaeologistHeader() {
+interface ResetPage {
+  resetPage: (value: React.SetStateAction<number>) => void;
+}
+
+export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const dispatch = useDispatch();
-  const { selectedArchaeologists, ShowSelectedArchaeologists } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const { showSelectedArchaeologists } = useSelector(x => x.archaeologistListState);
+
+  function selectAndReset() {
+    dispatch(setShowSelectedArchaeologists(!showSelectedArchaeologists));
+    resetPage(1);
+  }
 
   return (
     <Box mt={6}>
@@ -23,7 +33,7 @@ export function ArchaeologistHeader() {
           <HStack direction="row">
             <Checkbox
               colorScheme="blue"
-              onChange={() => dispatch(setShowSelectedArchaeologists(!ShowSelectedArchaeologists))}
+              onChange={() => selectAndReset()}
             ></Checkbox>
             <HStack>
               <Text>

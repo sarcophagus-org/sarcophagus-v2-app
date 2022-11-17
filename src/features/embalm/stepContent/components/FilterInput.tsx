@@ -1,6 +1,5 @@
 import {
   Flex,
-  Image,
   NumberInput,
   NumberInputField,
   InputLeftElement,
@@ -8,9 +7,12 @@ import {
   NumberInputProps,
 } from '@chakra-ui/react';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
-
-import { setDiggingFeesFilter, setUnwrapsFilter, setFailsFilter } from 'store/embalm/actions';
-
+import {
+  setDiggingFeesFilter,
+  setUnwrapsFilter,
+  setFailsFilter,
+} from 'store/archaeologistList/actions';
+import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
 
 interface FilterProps extends NumberInputProps {
@@ -55,7 +57,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
               borderColor="violet.700"
             />
             <InputLeftElement>
-              <Image src="sarco-token-icon.png" />
+              <SarcoTokenIcon boxSize="16px" />
             </InputLeftElement>
           </NumberInput>
         </InputGroup>
@@ -76,12 +78,12 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
       <Flex align="center">
         <InputGroup>
           <NumberInput
-            w="150px"
+            w="100px"
             onChange={handleChangeUnwraps}
             {...rest}
           >
             <NumberInputField
-              pl={12}
+              pl={3}
               pr={1}
               placeholder={placeholder}
               borderColor="violet.700"
@@ -104,12 +106,12 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
       <Flex align="center">
         <InputGroup>
           <NumberInput
-            w="150px"
+            w="82px"
             onChange={handleChangeFails}
             {...rest}
           >
             <NumberInputField
-              pl={12}
+              pl={3}
               pr={1}
               placeholder={placeholder}
               borderColor="violet.700"

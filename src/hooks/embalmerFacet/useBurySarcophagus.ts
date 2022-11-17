@@ -1,23 +1,36 @@
+import { useToast } from '@chakra-ui/react';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useSubmitTransaction } from '../useSubmitTransaction';
 import { Abi } from 'abitype';
+import { useNetworkConfig } from 'lib/config';
+import { buryFailure, burySuccess } from 'lib/utils/toast';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-interface BurySarcophagusArgs {
-  sarcoId: string;
-}
+export function useBurySarcophagus(sarcoId: string) {
+  const networkConfig = useNetworkConfig();
+  const toast = useToast();
 
-export function useBurySarcophagus({ sarcoId }: BurySarcophagusArgs) {
-  const toastDescription = 'Sarcophagus buried';
-  const transactionDescription = 'Bury sarcophagus';
-
-  const { submit } = useSubmitTransaction({
+  const { config, isLoading } = usePrepareContractWrite({
+    address: networkConfig.diamondDeployAddress,
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'burySarcophagus',
+    enabled: !!sarcoId,
     args: [sarcoId],
-    toastDescription,
-    transactionDescription,
-    mode: 'prepared',
   });
 
-  return { burySarcophagus: submit };
+  const {
+    write,
+    isLoading: isBurying,
+    isSuccess,
+  } = useContractWrite({
+    onSuccess() {
+      toast(burySuccess());
+    },
+    onError(e) {
+      console.error(e);
+      toast(buryFailure());
+    },
+    ...config,
+  });
+
+  return { bury: write, isLoading, isBurying, isSuccess };
 }

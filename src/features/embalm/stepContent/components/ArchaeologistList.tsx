@@ -1,10 +1,8 @@
 import {
   Flex,
-  Image,
   Table,
   TableContainer,
   Tbody,
-  Td,
   Text,
   Th,
   Thead,
@@ -12,7 +10,6 @@ import {
   Button,
   VStack,
   Input,
-  Checkbox,
   HStack,
   Icon,
   Popover,
@@ -21,126 +18,17 @@ import {
   PopoverBody,
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, QuestionIcon } from '@chakra-ui/icons';
+import { QuestionIcon } from '@chakra-ui/icons';
+import { DownIcon } from 'components/icons/DownIcon';
+import { UpDownIcon } from 'components/icons/UpDownIcon';
+import { UpIcon } from 'components/icons/UpIcon';
 import { Loading } from 'components/Loading';
-import { formatAddress } from 'lib/utils/helpers';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
 import { FilterInput } from './FilterInput';
-import { ethers } from 'ethers';
-import { useState, Dispatch, SetStateAction } from 'react';
-import { useDialArchaeologists } from '../../../../hooks/utils/useDialArchaeologists';
+import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
-
-interface ArchaeologistListItemProps {
-  archaeologist: Archaeologist;
-  isSelected: boolean;
-  includeDialButton: boolean;
-  isDialing: boolean;
-  setIsDialing: Dispatch<SetStateAction<boolean>>;
-  onClick: () => void;
-}
-
-function ArchaeologistListItem({
-  isSelected,
-  archaeologist,
-  includeDialButton,
-  isDialing,
-  setIsDialing,
-  onClick,
-}: ArchaeologistListItemProps) {
-  const [isPinging, setIsPinging] = useState(false);
-  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
-
-  return (
-    <Tr
-      background={isSelected ? 'brand.50' : ''}
-      onClick={() => {
-        onClick();
-
-        if (!isSelected) {
-          setIsPinging(true);
-        }
-      }}
-      cursor="pointer"
-      _hover={isSelected ? {} : { background: 'brand.0' }}
-    >
-      <Td>
-        <HStack>
-          <Checkbox
-            isChecked={isSelected && true}
-            colorScheme="blue"
-          ></Checkbox>
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {formatAddress(archaeologist.profile.archAddress)}
-          </Text>
-        </HStack>
-      </Td>
-      <Td isNumeric>
-        <Flex justify="center">
-          <Image
-            src="sarco-token-icon.png"
-            w="18px"
-            h="18px"
-          />
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee)}
-          </Text>
-        </Flex>
-      </Td>
-      <Td isNumeric>
-        <Flex justify="center">
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {archaeologist.profile.successes.toString()}
-          </Text>
-        </Flex>
-      </Td>
-      <Td isNumeric>
-        <Flex justify="center">
-          <Text
-            ml={3}
-            bg={'brand.100'}
-            p={0.5}
-            pl={2}
-            pr={2}
-          >
-            {archaeologist.profile.cleanups.toString()}
-          </Text>
-        </Flex>
-      </Td>
-      {includeDialButton ? (
-        <Td>
-          <Button
-            disabled={isDialing || !!archaeologist.connection}
-            onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
-          >
-            {archaeologist.connection ? 'Connected' : 'Dial'}
-          </Button>
-        </Td>
-      ) : (
-        <></>
-      )}
-    </Tr>
-  );
-}
+import { ArchaeologistListItem } from './ArchaeologistListItem';
 
 export function ArchaeologistList({
   includeDialButton,
@@ -169,15 +57,15 @@ export function ArchaeologistList({
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
-    [SortDirection.NONE]: <ArrowUpDownIcon> </ArrowUpDownIcon>,
-    [SortDirection.ASC]: <ArrowUpIcon />,
-    [SortDirection.DESC]: <ArrowDownIcon />,
+    [SortDirection.NONE]: <UpDownIcon />,
+    [SortDirection.ASC]: <UpIcon />,
+    [SortDirection.DESC]: <DownIcon />,
   };
 
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
-  const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
+  // const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
   return (
@@ -206,11 +94,12 @@ export function ArchaeologistList({
                         rightIcon={sortIconsMap[archsSortDirection]}
                         onClick={onClickSortArchs}
                         color="brand.950"
+                        p={'0.5'}
                       >
                         Archaeologists ({sortedFilteredArchaeologist?.length})
                       </Button>
                       <Input
-                        w="200px"
+                        w="190px"
                         onChange={handleChangeAddressSearch}
                         value={archAddressSearch}
                         placeholder="Search"
@@ -220,12 +109,13 @@ export function ArchaeologistList({
                     </VStack>
                   </Th>
                   <Th isNumeric>
-                    <VStack>
-                      <div>
+                    <VStack align="left">
+                      <HStack>
                         <Button
                           variant="ghost"
                           rightIcon={sortIconsMap[diggingFeesSortDirection]}
                           onClick={onClickSortDiggingFees}
+                          p={'0.5'}
                         >
                           <Text> Fees </Text>
                         </Button>
@@ -243,7 +133,7 @@ export function ArchaeologistList({
                             <PopoverBody textAlign={'left'}>Lorem ipsum dolor sit amet</PopoverBody>
                           </PopoverContent>
                         </Popover>
-                      </div>
+                      </HStack>
                       <FilterInput
                         filterName={'DiggingFees'}
                         value={diggingFeesFilter}
@@ -253,13 +143,14 @@ export function ArchaeologistList({
                     </VStack>
                   </Th>
                   <Th isNumeric>
-                    <VStack>
+                    <VStack align="left">
                       <Button
                         variant="ghost"
                         rightIcon={sortIconsMap[unwrapsSortDirection]}
                         onClick={onClickSortUnwraps}
+                        p={'0'}
                       >
-                        <Text> Unwraps </Text>
+                        <Text align="left"> Unwraps </Text>
                       </Button>
                       <FilterInput
                         filterName={'Unwraps'}
@@ -270,18 +161,19 @@ export function ArchaeologistList({
                     </VStack>
                   </Th>
                   <Th isNumeric>
-                    <VStack>
+                    <VStack align="left">
                       <Button
                         variant="ghost"
                         rightIcon={sortIconsMap[failsSortDirection]}
                         onClick={onClickSortFails}
+                        p={'0'}
                       >
                         <Text> Fails </Text>
                       </Button>
                       <FilterInput
                         filterName={'Fails'}
                         value={failsFilter}
-                        placeholder="min"
+                        placeholder="max"
                         color="brand.950"
                       />
                     </VStack>
@@ -304,7 +196,7 @@ export function ArchaeologistList({
                         if (includeDialButton) return;
                         handleCheckArchaeologist(arch);
                       }}
-                      includeDialButton={!!includeDialButton}
+                      includeDialButton={includeDialButton!}
                       isDialing={isDialing}
                       setIsDialing={setIsDialing}
                       isSelected={isSelected}

@@ -1,7 +1,7 @@
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
-import { ActionType, RecipientState, SortDirection } from './actions';
+import { ActionType, RecipientState } from './actions';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -33,17 +33,8 @@ export interface EmbalmState {
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
-  ShowSelectedArchaeologists: boolean;
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
-  diggingFeesSortDirection: SortDirection;
-  unwrapsSortDirection: SortDirection;
-  failsSortDirection: SortDirection;
-  archsSortDirection: SortDirection;
-  diggingFeesFilter: string;
-  unwrapsFilter: string;
-  failsFilter: string;
-  archAddressSearch: string;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
   currentChainId: number | undefined;
@@ -58,25 +49,16 @@ export const embalmInitialState: EmbalmState = {
   outerPrivateKey: null,
   outerPublicKey: null,
   recipientState: { publicKey: '', address: '', setByOption: null },
-  requiredArchaeologists: 1,
+  requiredArchaeologists: 0,
   resurrection: 0,
   resurrectionRadioValue: '',
   customResurrectionDate: null,
   selectedArchaeologists: [],
-  ShowSelectedArchaeologists: false,
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
   uploadPrice: '0',
-  diggingFeesSortDirection: SortDirection.NONE,
-  unwrapsSortDirection: SortDirection.NONE,
-  failsSortDirection: SortDirection.NONE,
-  archsSortDirection: SortDirection.NONE,
-  diggingFeesFilter: '',
-  unwrapsFilter: '',
-  failsFilter: '',
-  archAddressSearch: '',
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
   currentChainId: undefined,
@@ -211,33 +193,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
     case ActionType.SetSelectedArchaeologists:
       return { ...state, selectedArchaeologists: action.payload.selectedArchaeologists };
 
-    case ActionType.SetDiggingFeesSortDirection:
-      return { ...state, diggingFeesSortDirection: action.payload.direction };
-
-    case ActionType.SetUnwrapsSortDirection:
-      return { ...state, unwrapsSortDirection: action.payload.direction };
-
-    case ActionType.SetFailsSortDirection:
-      return { ...state, failsSortDirection: action.payload.direction };
-
-    case ActionType.SetArchsSortDirection:
-      return { ...state, archsSortDirection: action.payload.direction };
-
-    case ActionType.SetDiggingFeesFilter:
-      return { ...state, diggingFeesFilter: action.payload.filter };
-
-    case ActionType.SetUnwrapsFilter:
-      return { ...state, unwrapsFilter: action.payload.filter };
-
-    case ActionType.SetFailsFilter:
-      return { ...state, failsFilter: action.payload.filter };
-
-    case ActionType.SetArchAddressSearch:
-      return { ...state, archAddressSearch: action.payload.search };
-
-    case ActionType.setShowSelectedArchaeologists:
-      return { ...state, ShowSelectedArchaeologists: action.payload.selected };
-
     case ActionType.SetArchaeologistFullPeerId:
       return updateArchProperty(state, action.payload.peerId.toString(), {
         key: 'fullPeerId',
@@ -288,7 +243,14 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return { ...state, areStepsDisabled: false };
 
     case ActionType.ResetEmbalmState:
-      return embalmInitialState;
+      let initialState = { ...embalmInitialState };
+      const { archaeologists, currentChainId, ...restOfInitialState } = initialState;
+      return {
+        ...restOfInitialState,
+        currentStep: action.payload.step,
+        archaeologists: state.archaeologists,
+        currentChainId: state.currentChainId,
+      };
 
     default:
       return state;

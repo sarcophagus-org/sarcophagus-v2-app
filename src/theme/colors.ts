@@ -33,6 +33,12 @@ export const colors = {
     900: '#0d0a12',
   },
 
+  // Menu Colors
+  blue: {
+    700: '#343A40',
+    1000: '#131416',
+  },
+
   // TODO: Merge the two error colors, check with design team
   error: '#c88484',
   errorBg: '#2f1414',
@@ -42,6 +48,7 @@ export const colors = {
   success: '#84c884',
   info: '#84bcc8',
   disabled: '#737373', // Same as brand.400
+  navBarShadow: '#29262F',
 
   // WARNING: This color is an abomination and should not be used! But we're using it anyway.
   controversialBlue: '#168FFF',
