@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverBody,
 } from '@chakra-ui/react';
-import React, { useState, useRef } from 'react';
+import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
@@ -29,7 +29,7 @@ import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
-import { Select, OptionBase, GroupBase, SelectInstance } from 'chakra-react-select';
+import { Select, OptionBase, GroupBase } from 'chakra-react-select';
 import moment from 'moment';
 
 interface IPageSizeSetByOption extends OptionBase {
@@ -42,19 +42,8 @@ export function SelectArchaeologists() {
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
-
-  const ref = useRef<SelectInstance>(null);
-  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
-
-  const toggleMenuIsOpen = () => {
-    setMenuIsOpen(value => !value);
-    const selectEl = ref.current;
-    if (!selectEl) return;
-    if (menuIsOpen) selectEl.blur();
-    else selectEl.focus();
-  };
-
-  const [selectedOption, setSelectedOption] = useState<number>(5);
+  const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
+  const [paginationSize, setPaginationSize] = useState<number>(5);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
@@ -66,19 +55,14 @@ export function SelectArchaeologists() {
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
-
   const PageSizeOptionsMap: IPageSizeSetByOption[] = [
     { value: 5, label: '5' },
     { value: 10, label: '10' },
     { value: 20, label: '20' },
   ];
 
-  function handlePageSizeChange(newValue: IPageSizeSetByOption | null) {
-    const newPageSize = newValue!.value;
-    setPageSize(newPageSize!);
-    setSelectedOption(newPageSize);
-  }
+  const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
+  const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
     setCurrentPage(nextPage);
@@ -88,7 +72,11 @@ export function SelectArchaeologists() {
     setCurrentPage(1);
   };
 
-  const resurrectionDate = new Date(resurrection);
+  function handlePageSizeChange(newValue: IPageSizeSetByOption | null) {
+    const newPageSize = newValue!.value;
+    setPageSize(newPageSize!);
+    setPaginationSize(newPageSize);
+  }
 
   return (
     <Flex
@@ -122,18 +110,18 @@ export function SelectArchaeologists() {
             as="i"
             color="brand.900"
             onClick={() => {
-              toggleMenuIsOpen();
+              setResurrectionTimeEdit(prevValue => !prevValue);
             }}
             cursor="pointer"
             _hover={{
               textDecoration: 'underline',
             }}
           >
-            ({menuIsOpen ? 'hide' : 'edit'})
+            ({resurrectionTimeEdit ? 'hide' : 'edit'})
           </Text>
         </>
       </HStack>
-      {menuIsOpen && (
+      {resurrectionTimeEdit && (
         <SetResurrection
           mt={5}
           w={'50%'}
@@ -160,7 +148,7 @@ export function SelectArchaeologists() {
                       <Box cursor="pointer">
                         <Select<IPageSizeSetByOption, false, GroupBase<IPageSizeSetByOption>>
                           value={PageSizeOptionsMap.filter(function (option) {
-                            return option.value === selectedOption;
+                            return option.value === paginationSize;
                           })}
                           onChange={handlePageSizeChange}
                           placeholder=""
