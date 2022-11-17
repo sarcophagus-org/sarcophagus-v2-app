@@ -19,7 +19,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   }
 
   return (
-    <Box mt={6}>
+    <Box mt={10}>
       <Flex
         py={'13.5'}
         border={1}
