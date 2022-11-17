@@ -1,7 +1,7 @@
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
-import { ActionType, RecipientState, SortDirection } from './actions';
+import { ActionType, RecipientState } from './actions';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -35,9 +35,6 @@ export interface EmbalmState {
   selectedArchaeologists: Archaeologist[];
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: string;
-  diggingFeesSortDirection: SortDirection;
-  diggingFeesFilter: string;
-  archAddressSearch: string;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
   currentChainId: number | undefined;
@@ -62,9 +59,6 @@ export const embalmInitialState: EmbalmState = {
     {}
   ),
   uploadPrice: '0',
-  diggingFeesSortDirection: SortDirection.NONE,
-  diggingFeesFilter: '',
-  archAddressSearch: '',
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
   currentChainId: undefined,
@@ -198,15 +192,6 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.SetSelectedArchaeologists:
       return { ...state, selectedArchaeologists: action.payload.selectedArchaeologists };
-
-    case ActionType.SetDiggingFeesSortDirection:
-      return { ...state, diggingFeesSortDirection: action.payload.direction };
-
-    case ActionType.SetDiggingFeesFilter:
-      return { ...state, diggingFeesFilter: action.payload.filter };
-
-    case ActionType.SetArchAddressSearch:
-      return { ...state, archAddressSearch: action.payload.search };
 
     case ActionType.SetArchaeologistFullPeerId:
       return updateArchProperty(state, action.payload.peerId.toString(), {
