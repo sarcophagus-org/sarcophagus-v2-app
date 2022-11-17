@@ -27,7 +27,7 @@ import {
 } from '@ajna/pagination';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
-import { Resurrection } from '../components/Resurrection';
+import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import { Select, OptionBase, GroupBase, SelectInstance } from 'chakra-react-select';
 import moment from 'moment';
@@ -134,7 +134,7 @@ export function SelectArchaeologists() {
         </>
       </HStack>
       {menuIsOpen && (
-        <Resurrection
+        <SetResurrection
           mt={5}
           w={'50%'}
         />

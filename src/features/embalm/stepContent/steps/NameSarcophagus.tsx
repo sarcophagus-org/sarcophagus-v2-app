@@ -22,7 +22,7 @@ export function NameSarcophagus() {
           When do you want your Sarcophagus resurrected? You can change this later.
         </Text>
       </Flex>
-      <Resurrection />
+      <SetResurrection />
     </VStack>
   );
 }
