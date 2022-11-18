@@ -1,27 +1,30 @@
 import { WebBundlr } from '@bundlr-network/client';
 import { ActionMap } from '../ActionMap';
-import { BundlrPendingBalance } from './reducer';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
   Connect = 'BUNDLR_CONNECT',
   Disconnect = 'BUNDLR_DISCONNECT',
+  Fund = 'BUNDLR_FUND',
+  SetBalance = 'BUNDLR_SET_BALANCE',
   SetBundlr = 'BUNDLR_SET',
-  SetBalance = 'EMBALM_SET_BALANCE',
-  SetIsFunding = 'EMBALM_SET_IS_FUNDING',
-  SetPendingBalance = 'EMBALM_SET_PENDING_BALANCE',
+  SetIsFunding = 'BUNDLR_SET_IS_FUNDING',
   SetTxId = 'BUNDLR_SET_TX_ID',
+  Withdraw = 'BUNDLR_WITHDRAW',
+  ResetBalanceOffset = 'BUNDLR_RESET_BALANCE_OFFSET',
 }
 
 type BundlrPayload = {
   [ActionType.Connect]: {};
   [ActionType.Disconnect]: {};
-  [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
+  [ActionType.Fund]: { amount: string };
   [ActionType.SetBalance]: { balance: string };
+  [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
   [ActionType.SetIsFunding]: { isFunding: boolean };
-  [ActionType.SetPendingBalance]: { pendingBalance: BundlrPendingBalance };
   [ActionType.SetTxId]: { txId: string };
+  [ActionType.Withdraw]: { amount: string };
+  [ActionType.ResetBalanceOffset]: {};
 };
 
 export function connect(): BundlrActions {
@@ -65,12 +68,28 @@ export function setIsFunding(isFunding: boolean): BundlrActions {
   };
 }
 
-export function setPendingBalance(pendingBalance: BundlrPendingBalance): BundlrActions {
+export function fund(amount: string): BundlrActions {
   return {
-    type: ActionType.SetPendingBalance,
+    type: ActionType.Fund,
     payload: {
-      pendingBalance,
+      amount,
     },
+  };
+}
+
+export function withdraw(amount: string): BundlrActions {
+  return {
+    type: ActionType.Withdraw,
+    payload: {
+      amount,
+    },
+  };
+}
+
+export function resetBalanceOffset(): BundlrActions {
+  return {
+    type: ActionType.ResetBalanceOffset,
+    payload: {},
   };
 }
 
