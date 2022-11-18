@@ -32,11 +32,11 @@ import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icon
 export function SelectArchaeologists() {
   const outerLimit = 1;
   const innerLimit = 1;
-  const { sortedFilteredArchaeologist } = useArchaeologistList();
+  const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: sortedFilteredArchaeologist.length,
+      total: sortedFilteredArchaeologist(showSelectedArchaeologists).length,
       initialState: { currentPage: 1, pageSize: 5 },
       limits: {
         outer: outerLimit,
@@ -44,7 +44,10 @@ export function SelectArchaeologists() {
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist().slice(offset, offset + pageSize);
+  const paginatedArchaeologist = sortedFilteredArchaeologist(showSelectedArchaeologists).slice(
+    offset,
+    offset + pageSize
+  );
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const newPageSize = Number(event.target.value);

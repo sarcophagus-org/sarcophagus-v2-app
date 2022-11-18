@@ -54,6 +54,7 @@ export function ArchaeologistList({
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
+    showSelectedArchaeologists,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -96,7 +97,8 @@ export function ArchaeologistList({
                         color="brand.950"
                         p={'0.5'}
                       >
-                        Archaeologists ({sortedFilteredArchaeologist?.length})
+                        Archaeologists (
+                        {sortedFilteredArchaeologist(showSelectedArchaeologists)?.length})
                       </Button>
                       <Input
                         w="190px"

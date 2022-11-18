@@ -16,7 +16,7 @@ import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
 
 export enum FilterName {
-  DiggingFees = 'diggingFees',
+  DiggingFees = 'digging_fees',
   Unwraps = 'unwraps',
   Fails = 'fails',
 }
