@@ -14,7 +14,7 @@ export function useUploadEncryptedShards() {
   const { uploadToArweave } = useArweaveService();
   const { requestPublicKeys } = useRequestPublicKeys();
 
-  const uploadAndSetEncryptedShards = useCallback(async () => {
+  const uploadAndSetEncryptedShards = useCallback(async (isRetry: boolean) => {
     try {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
@@ -24,7 +24,7 @@ export function useUploadEncryptedShards() {
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key
-      const archPublicKeys = await requestPublicKeys(selectedArchaeologists);
+      const archPublicKeys = await requestPublicKeys(selectedArchaeologists, isRetry);
 
       if (archPublicKeys.length < selectedArchaeologists.length) {
         throw new Error('Not enough public keys');

@@ -5,6 +5,7 @@ import { setArchaeologistException, setArchaeologistPublicKey } from 'store/emba
 import { Archaeologist, ArchaeologistExceptionCode } from 'types';
 import { useCallback } from 'react';
 import { ethers } from 'ethers';
+import { useDialArchaeologists } from './useDialArchaeologists';
 
 interface PublicKeyResponseFromArchaeologist {
   signature: string;
@@ -13,9 +14,10 @@ interface PublicKeyResponseFromArchaeologist {
 
 export function useRequestPublicKeys() {
   const dispatch = useDispatch();
+  const { dialArchaeologist } = useDialArchaeologists();
 
   const requestPublicKeys = useCallback(
-    async (selectedArchaeologists: Archaeologist[]) => {
+    async (selectedArchaeologists: Archaeologist[], isRetry: boolean) => {
       const archPublicKeys: string[] = [];
       for await (const arch of selectedArchaeologists) {
         if (!arch.connection) {
@@ -25,7 +27,13 @@ export function useRequestPublicKeys() {
               message: 'No connection to archaeologist',
             })
           );
-          continue;
+
+          if (isRetry && arch.fullPeerId) {
+            arch.connection = await dialArchaeologist(arch.fullPeerId);
+            if (!arch.connection) continue;
+          } else {
+            continue;
+          }
         }
 
         const handleException = (e: any) => {
@@ -93,7 +101,7 @@ export function useRequestPublicKeys() {
 
       return archPublicKeys;
     },
-    [dispatch]
+    [dispatch, dialArchaeologist]
   );
 
   return {
