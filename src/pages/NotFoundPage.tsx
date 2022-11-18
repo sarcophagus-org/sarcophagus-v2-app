@@ -1,9 +1,12 @@
-import { Image, Center, Text, Flex, Link } from '@chakra-ui/react';
+import { Image, Center, Text, Flex, Link, Button } from '@chakra-ui/react';
 import anubis from 'assets/images/anubis.png';
 import { discordBuildersLink } from 'lib/constants';
+import { RouteKey, RoutesPathMap } from 'pages';
+import { useNavigate } from 'react-router-dom';
 
 // TODO: Get with design for a proper 404 page
 export function NotFoundPage() {
+  const navigate = useNavigate();
   return (
     <Center
       h="50%"
@@ -39,6 +42,14 @@ export function NotFoundPage() {
           </Link>
           .
         </Text>
+        <Button
+          onClick={() => {
+            navigate(RoutesPathMap[RouteKey.DASHBOARD_PAGE]);
+          }}
+          mt={6}
+        >
+          Return Home
+        </Button>
       </Flex>
     </Center>
   );
