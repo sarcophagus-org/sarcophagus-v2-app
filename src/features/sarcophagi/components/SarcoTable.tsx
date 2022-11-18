@@ -34,6 +34,8 @@ export function SarcoTable({ ids }: SarcoTableProps) {
     if (sortColumnId === SortableColumn.State) {
       if (sortDirection === SortDirection.Ascending) {
         return a.state > b.state ? 1 : -1;
+      } else if (sortDirection === SortDirection.Descending) {
+        return a.state < b.state ? 1 : -1;
       }
     } else if (sortColumnId === SortableColumn.Name) {
       if (sortDirection === SortDirection.Ascending) {
