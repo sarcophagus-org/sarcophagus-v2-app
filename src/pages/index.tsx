@@ -12,6 +12,8 @@ import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
+import { NotFoundPage } from './NotFoundPage';
 
 export enum RouteKey {
   EMBALM_PAGE,
@@ -20,6 +22,7 @@ export enum RouteKey {
   ARCHEOLOGIST_PAGE,
   BUNDLER_PAGE,
   TEMP_RESURRECTION_PAGE,
+  SARCOPHAGUS_CREATED,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
@@ -29,6 +32,7 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.ARCHEOLOGIST_PAGE]: '/archaeologists',
   [RouteKey.BUNDLER_PAGE]: '/fundbundlr',
   [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
+  [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
 };
 
 export function Pages() {
@@ -79,6 +83,12 @@ export function Pages() {
       path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
       element: <TempResurrectionPage />,
       label: 'TempResurrectionPage',
+      hidden: true,
+    },
+    {
+      path: RoutesPathMap[RouteKey.SARCOPHAGUS_CREATED],
+      element: <SarcophagusCreatedPage />,
+      label: '',
       hidden: true,
     },
   ];
@@ -152,6 +162,10 @@ export function Pages() {
                   element={route.element}
                 />
               ))}
+              <Route
+                path="*"
+                element={<NotFoundPage />}
+              />
             </Routes>
           ) : (
             <Container
