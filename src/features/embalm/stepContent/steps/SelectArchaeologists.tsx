@@ -113,7 +113,7 @@ export function SelectArchaeologists() {
       {resurrectionTimeEdit && (
         <SetResurrection
           mt={5}
-          w={'50%'}
+          w={'450px'}
         />
       )}
       <ArchaeologistHeader resetPage={returnToFirstPage} />

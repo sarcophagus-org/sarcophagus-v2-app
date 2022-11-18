@@ -7,7 +7,7 @@ export interface IPageSizeSetByOption extends OptionBase {
 }
 
 export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any) {
-  const PageSizeOptionsMap: IPageSizeSetByOption[] = [
+  const pageSizeOptionsMap: IPageSizeSetByOption[] = [
     { value: 5, label: '5' },
     { value: 10, label: '10' },
     { value: 20, label: '20' },
@@ -16,12 +16,12 @@ export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any)
   return (
     <Box cursor="pointer">
       <Select<IPageSizeSetByOption, false, GroupBase<IPageSizeSetByOption>>
-        value={PageSizeOptionsMap.filter(function (option) {
+        value={pageSizeOptionsMap.filter(function (option) {
           return option.value === paginationSize;
         })}
         onChange={handlePageSizeChange}
         placeholder=""
-        options={PageSizeOptionsMap}
+        options={pageSizeOptionsMap}
         isSearchable={false}
         focusBorderColor="transparent"
         selectedOptionColor="brand.950"
@@ -45,6 +45,9 @@ export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any)
             fontSize: '14px',
             color: 'brand.600',
             my: '-0.2rem',
+            _active: {
+              bg: 'brand.200',
+            },
           }),
 
           control: provided => ({
