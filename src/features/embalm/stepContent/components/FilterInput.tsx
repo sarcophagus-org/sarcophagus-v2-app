@@ -13,6 +13,7 @@ import {
   setFailsFilter,
   setArchAddressSearch,
   SortFilterType,
+  ArchaeologistListActions,
 } from 'store/archaeologistList/actions';
 import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
@@ -28,6 +29,21 @@ interface FilterComponentProps {
   placeholder?: string;
   icon: boolean;
 }
+
+function validateAndSetInput(valueAsString: string, valueAsNumber: number, action: any) {
+  valueAsString = removeNonIntChars(valueAsString);
+  valueAsString = removeLeadingZeroes(valueAsString);
+
+  if (valueAsNumber < 0) {
+    valueAsString = '0';
+    valueAsNumber = 0;
+  }
+  return action(valueAsString);
+}
+
+// function filterComponentOnchange(param: any) {
+//   dispatch(param);
+// }
 
 function FilterComponent({
   filterWidth,
@@ -63,21 +79,11 @@ function FilterComponent({
 
 export function FilterInput({ filterName, placeholder = '', ...rest }: FilterProps) {
   const dispatch = useDispatch();
-  function checkParams(valueAsString: string, valueAsNumber: number) {
-    valueAsString = removeNonIntChars(valueAsString);
-    valueAsString = removeLeadingZeroes(valueAsString);
-
-    if (valueAsNumber < 0) {
-      valueAsString = '0';
-      valueAsNumber = 0;
-    }
-  }
 
   switch (filterName) {
     case SortFilterType.ADDRESS_SEARCH:
       function handleChangeAddressSearch(valueAsString: string, valueAsNumber: number) {
-        checkParams(valueAsString, valueAsNumber);
-        dispatch(setArchAddressSearch(valueAsString));
+        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setArchAddressSearch));
       }
 
       return (
@@ -92,8 +98,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
     case SortFilterType.DIGGING_FEES:
       function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
-        checkParams(valueAsString, valueAsNumber);
-        dispatch(setDiggingFeesFilter(valueAsString));
+        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setDiggingFeesFilter));
       }
 
       return (
@@ -108,8 +113,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
     case SortFilterType.UNWRAPS:
       function handleChangeUnwraps(valueAsString: string, valueAsNumber: number) {
-        checkParams(valueAsString, valueAsNumber);
-        dispatch(setUnwrapsFilter(valueAsString));
+        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setUnwrapsFilter));
       }
 
       return (
@@ -124,8 +128,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
     case SortFilterType.FAILS:
       function handleChangeFails(valueAsString: string, valueAsNumber: number) {
-        checkParams(valueAsString, valueAsNumber);
-        dispatch(setFailsFilter(valueAsString));
+        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setFailsFilter));
       }
 
       return (
