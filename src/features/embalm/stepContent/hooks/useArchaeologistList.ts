@@ -2,11 +2,12 @@ import { useCallback, useMemo } from 'react';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import {
   SortDirection,
+  SortFilterType,
+  setSortDirection,
   setDiggingFeesSortDirection,
   setUnwrapsSortDirection,
   setFailsSortDirection,
   setArchsSortDirection,
-  setArchAddressSearch,
   ArchaeologistListActions,
 } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -69,32 +70,36 @@ export function useArchaeologistList() {
   );
 
   const length = keys(SortDirection).length / 2;
-  const direction = (value: SortDirection) => {
+  const sortDirection = (value: SortDirection) => {
     return (value + 1) % length;
   };
 
-  function setDirection(value: ArchaeologistListActions) {
-    dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
-    dispatch(setUnwrapsSortDirection(SortDirection.NONE));
-    dispatch(setFailsSortDirection(SortDirection.NONE));
-    dispatch(setArchsSortDirection(SortDirection.NONE));
-    dispatch(value);
+  function setDirection(sortType: ArchaeologistListActions) {
+    dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, SortDirection.NONE));
+    dispatch(setSortDirection(SortFilterType.DIGGING_FEES, SortDirection.NONE));
+    dispatch(setSortDirection(SortFilterType.UNWRAPS, SortDirection.NONE));
+    dispatch(setSortDirection(SortFilterType.FAILS, SortDirection.NONE));
+    // dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
+    // dispatch(setUnwrapsSortDirection(SortDirection.NONE));
+    // dispatch(setFailsSortDirection(SortDirection.NONE));
+    // dispatch(setArchsSortDirection(SortDirection.NONE));
+    dispatch(sortType);
   }
 
   function onClickSortDiggingFees() {
-    setDirection(setDiggingFeesSortDirection(direction(diggingFeesSortDirection)));
+    setDirection(setDiggingFeesSortDirection(sortDirection(diggingFeesSortDirection)));
   }
 
   function onClickSortUnwraps() {
-    setDirection(setUnwrapsSortDirection(direction(unwrapsSortDirection)));
+    setDirection(setUnwrapsSortDirection(sortDirection(unwrapsSortDirection)));
   }
 
   function onClickSortFails() {
-    setDirection(setFailsSortDirection(direction(failsSortDirection)));
+    setDirection(setFailsSortDirection(sortDirection(failsSortDirection)));
   }
 
   function onClickSortArchs() {
-    setDirection(setArchsSortDirection(direction(archsSortDirection)));
+    setDirection(setArchsSortDirection(sortDirection(archsSortDirection)));
   }
 
   const sortedArchaeologist = () => {
@@ -157,11 +162,6 @@ export function useArchaeologistList() {
     );
   };
 
-  function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
-    dispatch(setArchAddressSearch(value));
-  }
-
   return {
     handleCheckArchaeologist,
     selectedArchaeologists,
@@ -174,7 +174,6 @@ export function useArchaeologistList() {
     failsSortDirection,
     archsSortDirection,
     sortedFilteredArchaeologist,
-    handleChangeAddressSearch,
     diggingFeesFilter,
     unwrapsFilter,
     failsFilter,

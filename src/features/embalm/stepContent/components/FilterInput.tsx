@@ -11,18 +11,14 @@ import {
   setDiggingFeesFilter,
   setUnwrapsFilter,
   setFailsFilter,
+  setArchAddressSearch,
+  SortFilterType,
 } from 'store/archaeologistList/actions';
 import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
 
-export enum FilterName {
-  DiggingFees = 'digging_fees',
-  Unwraps = 'unwraps',
-  Fails = 'fails',
-}
-
 interface FilterProps extends NumberInputProps {
-  filterName: FilterName;
+  filterName: SortFilterType;
   placeholder?: string;
 }
 
@@ -78,7 +74,23 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
   }
 
   switch (filterName) {
-    case FilterName.DiggingFees:
+    case SortFilterType.ADDRESS_SEARCH:
+      function handleChangeAddressSearch(valueAsString: string, valueAsNumber: number) {
+        checkParams(valueAsString, valueAsNumber);
+        dispatch(setArchAddressSearch(valueAsString));
+      }
+
+      return (
+        <FilterComponent
+          filterWidth={'190px'}
+          placeholder={placeholder}
+          onChange={handleChangeAddressSearch}
+          icon={false}
+          {...rest}
+        />
+      );
+
+    case SortFilterType.DIGGING_FEES:
       function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
         checkParams(valueAsString, valueAsNumber);
         dispatch(setDiggingFeesFilter(valueAsString));
@@ -94,7 +106,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         />
       );
 
-    case FilterName.Unwraps:
+    case SortFilterType.UNWRAPS:
       function handleChangeUnwraps(valueAsString: string, valueAsNumber: number) {
         checkParams(valueAsString, valueAsNumber);
         dispatch(setUnwrapsFilter(valueAsString));
@@ -110,7 +122,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         />
       );
 
-    case FilterName.Fails:
+    case SortFilterType.FAILS:
       function handleChangeFails(valueAsString: string, valueAsNumber: number) {
         checkParams(valueAsString, valueAsNumber);
         dispatch(setFailsFilter(valueAsString));
@@ -125,6 +137,9 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
           {...rest}
         />
       );
+
+    case SortFilterType.NONE:
+      return null;
 
     default:
       return filterName;

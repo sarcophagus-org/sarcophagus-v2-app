@@ -9,7 +9,6 @@ import {
   Tr,
   Button,
   VStack,
-  Input,
   HStack,
   Icon,
   Popover,
@@ -25,7 +24,8 @@ import { UpIcon } from 'components/icons/UpIcon';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
-import { FilterInput, FilterName } from './FilterInput';
+import { SortFilterType } from 'store/archaeologistList/actions';
+import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
@@ -49,11 +49,9 @@ export function ArchaeologistList({
     unwrapsSortDirection,
     failsSortDirection,
     archsSortDirection,
-    handleChangeAddressSearch,
     diggingFeesFilter,
     unwrapsFilter,
     failsFilter,
-    archAddressSearch,
     showSelectedArchaeologists,
   } = useArchaeologistList();
 
@@ -100,10 +98,9 @@ export function ArchaeologistList({
                         Archaeologists (
                         {sortedFilteredArchaeologist(showSelectedArchaeologists)?.length})
                       </Button>
-                      <Input
+                      <FilterInput
+                        filterName={SortFilterType.ADDRESS_SEARCH}
                         w="190px"
-                        onChange={handleChangeAddressSearch}
-                        value={archAddressSearch}
                         placeholder="Search"
                         borderColor="violet.700"
                         color="brand.950"
@@ -137,7 +134,7 @@ export function ArchaeologistList({
                         </Popover>
                       </HStack>
                       <FilterInput
-                        filterName={FilterName.DiggingFees}
+                        filterName={SortFilterType.DIGGING_FEES}
                         value={diggingFeesFilter}
                         placeholder="max"
                         color="brand.950"
@@ -155,7 +152,7 @@ export function ArchaeologistList({
                         <Text align="left"> Unwraps </Text>
                       </Button>
                       <FilterInput
-                        filterName={FilterName.Unwraps}
+                        filterName={SortFilterType.UNWRAPS}
                         value={unwrapsFilter}
                         placeholder="min"
                         color="brand.950"
@@ -173,7 +170,7 @@ export function ArchaeologistList({
                         <Text> Fails </Text>
                       </Button>
                       <FilterInput
-                        filterName={FilterName.Fails}
+                        filterName={SortFilterType.FAILS}
                         value={failsFilter}
                         placeholder="max"
                         color="brand.950"

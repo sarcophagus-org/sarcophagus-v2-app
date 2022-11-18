@@ -3,6 +3,7 @@ import { ActionMap } from '../ActionMap';
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
+  SetSortDirection = 'EMBALM_SET_SORT_DIRECTION',
   SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
   SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
   SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
@@ -20,7 +21,17 @@ export enum SortDirection {
   NONE,
 }
 
+export enum SortFilterType {
+  ADDRESS_SEARCH,
+  DIGGING_FEES,
+  UNWRAPS,
+  FAILS,
+  NONE,
+}
+
 type ArchaeologistListPayload = {
+  [ActionType.SetSortDirection]: { sortType: SortFilterType; direction: SortDirection };
+
   [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
   [ActionType.SetUnwrapsSortDirection]: { direction: SortDirection };
   [ActionType.SetFailsSortDirection]: { direction: SortDirection };
@@ -31,6 +42,19 @@ type ArchaeologistListPayload = {
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetShowSelectedArchaeologists]: { selected: boolean };
 };
+
+export function setSortDirection(
+  sortType: SortFilterType,
+  direction: SortDirection
+): ArchaeologistListActions {
+  return {
+    type: ActionType.SetSortDirection,
+    payload: {
+      sortType,
+      direction,
+    },
+  };
+}
 
 export function setDiggingFeesSortDirection(direction: SortDirection): ArchaeologistListActions {
   return {
