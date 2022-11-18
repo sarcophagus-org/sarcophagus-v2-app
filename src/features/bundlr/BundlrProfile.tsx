@@ -5,6 +5,7 @@ import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
 import { useState } from 'react';
+import { useSelector } from 'store/index';
 import { BundlrInput } from './BundlrInput';
 
 export enum BundlrAction {
@@ -22,6 +23,7 @@ interface BundlrProfileProps {
 
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
   const [amount, setAmount] = useState('');
+  const { balanceOffset } = useSelector(s => s.bundlrState);
   const bundlrBalanceData = useGetBalance();
   const bundlrBalance = !bundlrBalanceData?.balance
     ? '--'
@@ -78,6 +80,14 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       >
         {isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}
       </Text>
+      {balanceOffset !== 0 && (
+        <Text
+          mt={3}
+          color="yellow"
+        >
+          You have a pending balance update. Your balance should be updated in a few minutes.
+        </Text>
+      )}
       <Text
         mt={6}
         color="whiteAlpha.700"

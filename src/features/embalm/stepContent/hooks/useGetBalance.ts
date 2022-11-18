@@ -55,23 +55,9 @@ export function useGetBalance() {
     const timeoutId = setInterval(async () => {
       if (balanceOffset !== 0) {
         const newBalance = await getBalance();
-        console.log('balanceOffset: ', balanceOffset);
         // Check if the sum of the balance stored in state and the balance offset is equal to the
         // new balance. This indicates that the balance has finally been updated to the expected
         // amount.
-        //
-        // Note that this solution still has a significant fault: If the user funds for 1 ETH and
-        // then withdraws for 1 ETH, the app will think that the pending balance has been resolved
-        // because the sum of the balance stored in state and the balance offset is equal to the new
-        // balance, even though the balance hasn't technically been updated yet. The fund action may
-        // have been applied immediately while the withdraw action could take another 20 min to
-        // apply. Tracking the balance through an array of pending transactions as we were
-        // previously would produce the same fault.
-        //
-        // The only way to reliably track if the balance is pending is for the Bundlr to tell us
-        // that the balance is pending, which it doesn't do at this time. On mainnet, the balance is
-        // updated much more quickly than on testnet, so this issue is not as big of a deal on
-        // mainnet.
         if (parseFloat(balance) + balanceOffset === parseFloat(newBalance)) {
           dispatch(resetBalanceOffset());
         }
