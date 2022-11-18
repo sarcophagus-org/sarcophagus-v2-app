@@ -24,7 +24,7 @@ export function DetailsPage() {
         w="50%"
         h="75%"
         maxWidth="1200px"
-        minWidth="600px"
+        minWidth="700px"
         minHeight="400px"
       >
         <DetailsContainer>
