@@ -1,15 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
-import {
-  SortDirection,
-  SortFilterType,
-  setSortDirection,
-  setDiggingFeesSortDirection,
-  setUnwrapsSortDirection,
-  setFailsSortDirection,
-  setArchsSortDirection,
-  ArchaeologistListActions,
-} from 'store/archaeologistList/actions';
+import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
@@ -25,10 +16,8 @@ export function useArchaeologistList() {
   const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const {
-    diggingFeesSortDirection,
-    unwrapsSortDirection,
-    failsSortDirection,
-    archsSortDirection,
+    sortDirection,
+    sortType,
     diggingFeesFilter,
     unwrapsFilter,
     failsFilter,
@@ -70,73 +59,61 @@ export function useArchaeologistList() {
   );
 
   const length = keys(SortDirection).length / 2;
-  const sortDirection = (value: SortDirection) => {
+  const sortDirectionToggle = (value: SortDirection) => {
     return (value + 1) % length;
   };
 
-  function setDirection(sortType: ArchaeologistListActions) {
-    dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, SortDirection.NONE));
-    dispatch(setSortDirection(SortFilterType.DIGGING_FEES, SortDirection.NONE));
-    dispatch(setSortDirection(SortFilterType.UNWRAPS, SortDirection.NONE));
-    dispatch(setSortDirection(SortFilterType.FAILS, SortDirection.NONE));
-    // dispatch(setDiggingFeesSortDirection(SortDirection.NONE));
-    // dispatch(setUnwrapsSortDirection(SortDirection.NONE));
-    // dispatch(setFailsSortDirection(SortDirection.NONE));
-    // dispatch(setArchsSortDirection(SortDirection.NONE));
-    dispatch(sortType);
-  }
-
   function onClickSortDiggingFees() {
-    setDirection(setDiggingFeesSortDirection(sortDirection(diggingFeesSortDirection)));
+    dispatch(setSortDirection(SortFilterType.DIGGING_FEES, sortDirectionToggle(sortDirection)));
   }
 
   function onClickSortUnwraps() {
-    setDirection(setUnwrapsSortDirection(sortDirection(unwrapsSortDirection)));
+    dispatch(setSortDirection(SortFilterType.UNWRAPS, sortDirectionToggle(sortDirection)));
   }
 
   function onClickSortFails() {
-    setDirection(setFailsSortDirection(sortDirection(failsSortDirection)));
+    dispatch(setSortDirection(SortFilterType.FAILS, sortDirectionToggle(sortDirection)));
   }
 
   function onClickSortArchs() {
-    setDirection(setArchsSortDirection(sortDirection(archsSortDirection)));
+    dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, sortDirectionToggle(sortDirection)));
   }
 
   const sortedArchaeologist = () => {
-    if (diggingFeesSortDirection !== SortDirection.NONE) {
+    if (sortType === SortFilterType.DIGGING_FEES && sortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
         function (arch) {
           return Number(arch.profile.minimumDiggingFee);
         },
-        [sortOrderByMap[diggingFeesSortDirection]!]
+        [sortOrderByMap[sortDirection]!]
       );
     }
-    if (unwrapsSortDirection !== SortDirection.NONE) {
+    if (sortType === SortFilterType.UNWRAPS && sortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
         function (arch) {
           return Number(arch.profile.successes);
         },
-        [sortOrderByMap[unwrapsSortDirection]!]
+        [sortOrderByMap[sortDirection]!]
       );
     }
-    if (failsSortDirection !== SortDirection.NONE) {
+    if (sortType === SortFilterType.FAILS && sortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
         function (arch) {
           return Number(arch.profile.cleanups);
         },
-        [sortOrderByMap[failsSortDirection]!]
+        [sortOrderByMap[sortDirection]!]
       );
     }
-    if (archsSortDirection !== SortDirection.NONE) {
+    if (sortType === SortFilterType.ADDRESS_SEARCH && sortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
         function (arch) {
           return Number(arch.profile.archAddress);
         },
-        [sortOrderByMap[archsSortDirection]!]
+        [sortOrderByMap[sortDirection]!]
       );
     }
     return onlineArchaeologists;
@@ -169,10 +146,9 @@ export function useArchaeologistList() {
     onClickSortUnwraps,
     onClickSortFails,
     onClickSortArchs,
-    diggingFeesSortDirection,
-    unwrapsSortDirection,
-    failsSortDirection,
-    archsSortDirection,
+    SortDirection,
+    sortDirection,
+    sortType,
     sortedFilteredArchaeologist,
     diggingFeesFilter,
     unwrapsFilter,

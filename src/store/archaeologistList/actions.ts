@@ -4,10 +4,6 @@ import { ActionMap } from '../ActionMap';
 // unexpected behavior.
 export enum ActionType {
   SetSortDirection = 'EMBALM_SET_SORT_DIRECTION',
-  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
-  SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
-  SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
-  SetArchsSortDirection = 'EMBALM_ARCHS_SORT_DIRECTION',
   SetShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
@@ -31,11 +27,6 @@ export enum SortFilterType {
 
 type ArchaeologistListPayload = {
   [ActionType.SetSortDirection]: { sortType: SortFilterType; direction: SortDirection };
-
-  [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
-  [ActionType.SetUnwrapsSortDirection]: { direction: SortDirection };
-  [ActionType.SetFailsSortDirection]: { direction: SortDirection };
-  [ActionType.SetArchsSortDirection]: { direction: SortDirection };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetUnwrapsFilter]: { filter: string };
   [ActionType.SetFailsFilter]: { filter: string };
@@ -51,33 +42,6 @@ export function setSortDirection(
     type: ActionType.SetSortDirection,
     payload: {
       sortType,
-      direction,
-    },
-  };
-}
-
-export function setDiggingFeesSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetDiggingFeesSortDirection,
-    payload: {
-      direction,
-    },
-  };
-}
-
-export function setFailsSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetFailsSortDirection,
-    payload: {
-      direction,
-    },
-  };
-}
-
-export function setArchsSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetArchsSortDirection,
-    payload: {
       direction,
     },
   };
@@ -115,15 +79,6 @@ export function setArchAddressSearch(search: string): ArchaeologistListActions {
     type: ActionType.SetArchAddressSearch,
     payload: {
       search,
-    },
-  };
-}
-
-export function setUnwrapsSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetUnwrapsSortDirection,
-    payload: {
-      direction,
     },
   };
 }

@@ -45,10 +45,8 @@ export function ArchaeologistList({
     onClickSortUnwraps,
     onClickSortFails,
     onClickSortArchs,
-    diggingFeesSortDirection,
-    unwrapsSortDirection,
-    failsSortDirection,
-    archsSortDirection,
+    sortDirection,
+    sortType,
     diggingFeesFilter,
     unwrapsFilter,
     failsFilter,
@@ -90,7 +88,11 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={sortIconsMap[archsSortDirection]}
+                        rightIcon={
+                          sortType === SortFilterType.ADDRESS_SEARCH
+                            ? sortIconsMap[sortDirection]
+                            : sortIconsMap[SortDirection.NONE]
+                        }
                         onClick={onClickSortArchs}
                         color="brand.950"
                         p={'0.5'}
@@ -112,7 +114,11 @@ export function ArchaeologistList({
                       <HStack>
                         <Button
                           variant="ghost"
-                          rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                          rightIcon={
+                            sortType === SortFilterType.DIGGING_FEES
+                              ? sortIconsMap[sortDirection]
+                              : sortIconsMap[SortDirection.NONE]
+                          }
                           onClick={onClickSortDiggingFees}
                           p={'0.5'}
                         >
@@ -145,7 +151,11 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={sortIconsMap[unwrapsSortDirection]}
+                        rightIcon={
+                          sortType === SortFilterType.UNWRAPS
+                            ? sortIconsMap[sortDirection]
+                            : sortIconsMap[SortDirection.NONE]
+                        }
                         onClick={onClickSortUnwraps}
                         p={'0'}
                       >
@@ -163,7 +173,11 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={sortIconsMap[failsSortDirection]}
+                        rightIcon={
+                          sortType === SortFilterType.FAILS
+                            ? sortIconsMap[sortDirection]
+                            : sortIconsMap[SortDirection.NONE]
+                        }
                         onClick={onClickSortFails}
                         p={'0'}
                       >

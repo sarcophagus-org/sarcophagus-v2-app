@@ -2,11 +2,8 @@ import { Actions } from '..';
 import { ActionType, SortDirection, SortFilterType } from './actions';
 
 export interface ArchaeologistListState {
-  sortDirection: { sortType: SortFilterType; direction: SortDirection };
-  diggingFeesSortDirection: SortDirection;
-  unwrapsSortDirection: SortDirection;
-  failsSortDirection: SortDirection;
-  archsSortDirection: SortDirection;
+  sortDirection: SortDirection;
+  sortType: SortFilterType;
   diggingFeesFilter: string;
   unwrapsFilter: string;
   failsFilter: string;
@@ -15,11 +12,8 @@ export interface ArchaeologistListState {
 }
 
 export const archaeologistListInitialState: ArchaeologistListState = {
-  sortDirection: { sortType: SortFilterType.NONE, direction: SortDirection.NONE },
-  diggingFeesSortDirection: SortDirection.NONE,
-  unwrapsSortDirection: SortDirection.NONE,
-  failsSortDirection: SortDirection.NONE,
-  archsSortDirection: SortDirection.NONE,
+  sortDirection: SortDirection.NONE,
+  sortType: SortFilterType.NONE,
   diggingFeesFilter: '',
   unwrapsFilter: '',
   failsFilter: '',
@@ -35,20 +29,9 @@ export function archaeologistListReducer(
     case ActionType.SetSortDirection:
       return {
         ...state,
-        sortDirection: { sortType: action.payload.sortType, direction: action.payload.direction },
+        sortDirection: action.payload.direction,
+        sortType: action.payload.sortType,
       };
-
-    case ActionType.SetDiggingFeesSortDirection:
-      return { ...state, diggingFeesSortDirection: action.payload.direction };
-
-    case ActionType.SetUnwrapsSortDirection:
-      return { ...state, unwrapsSortDirection: action.payload.direction };
-
-    case ActionType.SetFailsSortDirection:
-      return { ...state, failsSortDirection: action.payload.direction };
-
-    case ActionType.SetArchsSortDirection:
-      return { ...state, archsSortDirection: action.payload.direction };
 
     case ActionType.SetDiggingFeesFilter:
       return { ...state, diggingFeesFilter: action.payload.filter };
