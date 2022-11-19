@@ -10,6 +10,7 @@ import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
+import { ThemeTestPage } from './ThemeTestPage';
 import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
@@ -20,6 +21,7 @@ export enum RouteKey {
   ARCHEOLOGIST_PAGE,
   BUNDLER_PAGE,
   TEMP_RESURRECTION_PAGE,
+  THEME_TEST_PAGE,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
@@ -29,6 +31,7 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.ARCHEOLOGIST_PAGE]: '/archaeologists',
   [RouteKey.BUNDLER_PAGE]: '/fundbundlr',
   [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
+  [RouteKey.THEME_TEST_PAGE]: '/theme-test',
 };
 
 export function Pages() {
@@ -80,6 +83,11 @@ export function Pages() {
       element: <TempResurrectionPage />,
       label: 'TempResurrectionPage',
       hidden: true,
+    },
+    {
+      path: RoutesPathMap[RouteKey.THEME_TEST_PAGE],
+      element: <ThemeTestPage />,
+      label: '[Test Theme]',
     },
   ];
 

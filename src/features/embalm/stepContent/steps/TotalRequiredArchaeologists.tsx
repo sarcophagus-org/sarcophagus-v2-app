@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { setRequiredArchaeologists } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 
 export function TotalRequiredArchaegologists() {
   const dispatch = useDispatch();
@@ -61,9 +61,9 @@ export function TotalRequiredArchaegologists() {
         <Text>of {totalArchaeologists} total arches required.</Text>
       </HStack>
       {totalArchaeologists >= requiredArchaeologists || (
-        <Alert status="error">
+        <SarcoAlert status="error">
           You cannot have more required archaeologist than total archaeologists
-        </Alert>
+        </SarcoAlert>
       )}
     </VStack>
   );

@@ -11,9 +11,9 @@ export const styles = {
       //
       // This all started with an issue where toast messages would not take on a square edge
       // https://github.com/chakra-ui/chakra-ui/issues/2579
-      '.chakra-alert': {
-        borderRadius: 0,
-      },
+      // '.chakra-alert': {
+      //   borderRadius: 0,
+      // },
     },
   },
 };

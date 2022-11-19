@@ -6,7 +6,8 @@ import { GenerateRecipientPDF } from '../components/GenerateRecipientPDF';
 
 import { Select, OptionBase, GroupBase } from 'chakra-react-select';
 import { validateRecipient } from 'features/embalm/stepNavigator/hooks/useSetStatuses';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
+
 interface IRecipientSetByOption extends OptionBase {
   label: string;
   value: RecipientSetByOption;
@@ -121,7 +122,7 @@ export function SetRecipientPublicKey() {
               </Text>
               {recipientState.publicKey !== '' && !validateRecipient(recipientState) && (
                 <Box pt={6}>
-                  <Alert status="warning">Invalid public key</Alert>
+                  <SarcoAlert status="warning">Invalid public key</SarcoAlert>
                 </Box>
               )}
             </VStack>

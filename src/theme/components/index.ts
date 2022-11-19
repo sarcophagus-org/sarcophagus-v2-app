@@ -1,4 +1,4 @@
-import { Alert } from './Alert';
+import { alertTheme } from './Alert';
 import { Button } from './Button';
 import { Divider } from './Divider';
 import { FormLabel } from './FormLabel';
@@ -16,7 +16,7 @@ export const components = {
   NumberInput: Input,
   FormLabel,
   Divider,
-  Alert,
+  Alert: alertTheme,
   Tooltip,
   Textarea,
 };
