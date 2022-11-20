@@ -61,7 +61,7 @@ const alertStatusStyles: { [key: string]: any } = {
   },
 };
 
-export const alertTheme = helpers.defineMultiStyleConfig({
+export const Alert = helpers.defineMultiStyleConfig({
   baseStyle: (props: AlertProps) => alertStatusStyles[props.status || 'default'],
   sizes: {},
   variants: {},
