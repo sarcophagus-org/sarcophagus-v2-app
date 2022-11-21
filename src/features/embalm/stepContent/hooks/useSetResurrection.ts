@@ -27,7 +27,6 @@ export function useSetResurrection() {
   const [error, setError] = useState<string | null>(null);
 
   function handleRadioChange(nextValue: string) {
-    console.log(nextValue);
     dispatch(setResurrectionRadioValue(nextValue));
   }
 
