@@ -2,8 +2,7 @@ import { Actions } from '..';
 import { ActionType, SortDirection, SortFilterType } from './actions';
 
 export interface ArchaeologistListState {
-  sortDirection: SortDirection;
-  sortType: SortFilterType;
+  archaeologistFilterSort: { sortDirection: SortDirection; sortType: SortFilterType };
   diggingFeesFilter: string;
   unwrapsFilter: string;
   failsFilter: string;
@@ -12,8 +11,7 @@ export interface ArchaeologistListState {
 }
 
 export const archaeologistListInitialState: ArchaeologistListState = {
-  sortDirection: SortDirection.NONE,
-  sortType: SortFilterType.NONE,
+  archaeologistFilterSort: { sortDirection: SortDirection.NONE, sortType: SortFilterType.NONE },
   diggingFeesFilter: '',
   unwrapsFilter: '',
   failsFilter: '',
@@ -29,8 +27,10 @@ export function archaeologistListReducer(
     case ActionType.SetSortDirection:
       return {
         ...state,
-        sortDirection: action.payload.direction,
-        sortType: action.payload.sortType,
+        archaeologistFilterSort: {
+          sortDirection: action.payload.direction,
+          sortType: action.payload.sortType,
+        },
       };
 
     case ActionType.SetDiggingFeesFilter:

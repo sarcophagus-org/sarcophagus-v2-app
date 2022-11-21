@@ -45,8 +45,7 @@ export function ArchaeologistList({
     onClickSortUnwraps,
     onClickSortFails,
     onClickSortArchs,
-    sortDirection,
-    sortType,
+    archaeologistFilterSort,
     diggingFeesFilter,
     unwrapsFilter,
     failsFilter,
@@ -89,8 +88,8 @@ export function ArchaeologistList({
                       <Button
                         variant="ghost"
                         rightIcon={
-                          sortType === SortFilterType.ADDRESS_SEARCH
-                            ? sortIconsMap[sortDirection]
+                          archaeologistFilterSort.sortType === SortFilterType.ADDRESS_SEARCH
+                            ? sortIconsMap[archaeologistFilterSort.sortDirection]
                             : sortIconsMap[SortDirection.NONE]
                         }
                         onClick={onClickSortArchs}
@@ -115,8 +114,8 @@ export function ArchaeologistList({
                         <Button
                           variant="ghost"
                           rightIcon={
-                            sortType === SortFilterType.DIGGING_FEES
-                              ? sortIconsMap[sortDirection]
+                            archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES
+                              ? sortIconsMap[archaeologistFilterSort.sortDirection]
                               : sortIconsMap[SortDirection.NONE]
                           }
                           onClick={onClickSortDiggingFees}
@@ -152,8 +151,8 @@ export function ArchaeologistList({
                       <Button
                         variant="ghost"
                         rightIcon={
-                          sortType === SortFilterType.UNWRAPS
-                            ? sortIconsMap[sortDirection]
+                          archaeologistFilterSort.sortType === SortFilterType.UNWRAPS
+                            ? sortIconsMap[archaeologistFilterSort.sortDirection]
                             : sortIconsMap[SortDirection.NONE]
                         }
                         onClick={onClickSortUnwraps}
@@ -174,8 +173,8 @@ export function ArchaeologistList({
                       <Button
                         variant="ghost"
                         rightIcon={
-                          sortType === SortFilterType.FAILS
-                            ? sortIconsMap[sortDirection]
+                          archaeologistFilterSort.sortType === SortFilterType.FAILS
+                            ? sortIconsMap[archaeologistFilterSort.sortDirection]
                             : sortIconsMap[SortDirection.NONE]
                         }
                         onClick={onClickSortFails}

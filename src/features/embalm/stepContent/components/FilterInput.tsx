@@ -25,9 +25,9 @@ interface FilterProps extends NumberInputProps {
 
 interface FilterComponentProps {
   filterWidth: string;
-  onChange: any;
+  filterTypeAction: (search: string) => ArchaeologistListActions;
   placeholder?: string;
-  icon: boolean;
+  icon?: boolean;
 }
 
 function validateAndSetInput(
@@ -48,7 +48,7 @@ function validateAndSetInput(
 function FilterComponent({
   filterWidth,
   placeholder,
-  onChange,
+  filterTypeAction,
   icon,
   ...rest
 }: FilterComponentProps) {
@@ -60,7 +60,7 @@ function FilterComponent({
         <NumberInput
           w={filterWidth}
           onChange={(valueAsString: string, valueAsNumber: number) =>
-            dispatch(validateAndSetInput(valueAsString, valueAsNumber, onChange))
+            dispatch(validateAndSetInput(valueAsString, valueAsNumber, filterTypeAction))
           }
           {...rest}
         >
@@ -88,8 +88,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         <FilterComponent
           filterWidth={'190px'}
           placeholder={placeholder}
-          onChange={setArchAddressSearch}
-          icon={false}
+          filterTypeAction={setArchAddressSearch}
           {...rest}
         />
       );
@@ -99,7 +98,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         <FilterComponent
           filterWidth={'150px'}
           placeholder={placeholder}
-          onChange={setDiggingFeesFilter}
+          filterTypeAction={setDiggingFeesFilter}
           icon={true}
           {...rest}
         />
@@ -110,8 +109,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         <FilterComponent
           filterWidth={'100px'}
           placeholder={placeholder}
-          onChange={setUnwrapsFilter}
-          icon={false}
+          filterTypeAction={setUnwrapsFilter}
           {...rest}
         />
       );
@@ -121,8 +119,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         <FilterComponent
           filterWidth={'82px'}
           placeholder={placeholder}
-          onChange={setFailsFilter}
-          icon={false}
+          filterTypeAction={setFailsFilter}
           {...rest}
         />
       );
