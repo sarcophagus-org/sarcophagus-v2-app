@@ -11,6 +11,7 @@ import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
 import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 import { useClearSarcophagusState } from './useClearSarcophagusState';
+import { useRequestPublicKeys } from './useRequestPublicKeys';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -30,6 +31,7 @@ export function useCreateSarcophagus(
 
   // Each hook represents a stage in the create sarcophagus process
   const { dialSelectedArchaeologists } = useDialArchaeologists();
+  const { requestPublicKeys } = useRequestPublicKeys();
   const { uploadAndSetEncryptedShards } = useUploadEncryptedShards();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile();
@@ -40,6 +42,7 @@ export function useCreateSarcophagus(
   const stagesMap = useMemo(() => {
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
+      [CreateSarcophagusStage.GET_PUBLIC_KEYS, requestPublicKeys],
       [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS, uploadAndSetEncryptedShards],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetDoubleEncryptedFile],
@@ -50,6 +53,7 @@ export function useCreateSarcophagus(
     ]);
   }, [
     dialSelectedArchaeologists,
+    requestPublicKeys,
     uploadAndSetEncryptedShards,
     initiateSarcophagusNegotiation,
     uploadAndSetDoubleEncryptedFile,
