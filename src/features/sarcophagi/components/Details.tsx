@@ -1,4 +1,4 @@
-import { Button, HStack, Text, VStack } from '@chakra-ui/react';
+import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useBurySarcophagus } from 'hooks/embalmerFacet';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
@@ -6,6 +6,7 @@ import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
+import { DetailsCollapse } from './DetailsCollapse';
 
 export function Details() {
   const { id } = useParams();
@@ -30,11 +31,12 @@ export function Details() {
   }
 
   return (
-    <VStack
-      spacing={0}
-      align="left"
-    >
-      <Text>Resurrection Date</Text>
+    <Flex direction="column">
+      <DetailsCollapse
+        id={id}
+        sarcophagus={sarcophagus}
+      />
+      <Text mt={6}>Resurrection Date</Text>
       <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
 
       <HStack pt={10}>
@@ -64,6 +66,6 @@ export function Details() {
           </Button>
         )}
       </HStack>
-    </VStack>
+    </Flex>
   );
 }

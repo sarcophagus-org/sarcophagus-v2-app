@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from '../../../../../store';
 import { disableSteps } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
@@ -10,8 +10,8 @@ import { useUploadEncryptedShards } from './useUploadEncryptedShards';
 import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
 import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
-import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useClearSarcophagusState } from './useClearSarcophagusState';
+import { useRequestPublicKeys } from './useRequestPublicKeys';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -25,12 +25,13 @@ export function useCreateSarcophagus(
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
   const [stageError, setStageError] = useState<string>();
+  const [isStageRetry, setIsStageRetry] = useState(false);
 
   // Returns true when all public keys have been received from archaoelogists
-  const { publicKeysReady } = useContext(CreateSarcophagusContext);
 
   // Each hook represents a stage in the create sarcophagus process
   const { dialSelectedArchaeologists } = useDialArchaeologists();
+  const { requestPublicKeys } = useRequestPublicKeys();
   const { uploadAndSetEncryptedShards } = useUploadEncryptedShards();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile();
@@ -41,6 +42,7 @@ export function useCreateSarcophagus(
   const stagesMap = useMemo(() => {
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
+      [CreateSarcophagusStage.GET_PUBLIC_KEYS, requestPublicKeys],
       [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS, uploadAndSetEncryptedShards],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetDoubleEncryptedFile],
@@ -51,6 +53,7 @@ export function useCreateSarcophagus(
     ]);
   }, [
     dialSelectedArchaeologists,
+    requestPublicKeys,
     uploadAndSetEncryptedShards,
     initiateSarcophagusNegotiation,
     uploadAndSetDoubleEncryptedFile,
@@ -71,31 +74,32 @@ export function useCreateSarcophagus(
         setCurrentStage(stages[currentIndex + 1]);
       };
 
-      const executeStage = async (stageToExecute: (...args: any[]) => Promise<any>): Promise<any> =>
+      const executeStage = async (
+        stageToExecute: (_: boolean) => Promise<any>,
+        isRetry: boolean
+      ): Promise<any> =>
         new Promise((resolve, reject) => {
           setStageExecuting(true);
 
-          stageToExecute()
+          stageToExecute(isRetry)
             .then((result: any) => {
               setStageExecuting(false);
+              setIsStageRetry(false);
               incrementStage();
               resolve(result);
             })
             .catch((error: any) => {
               reject(error);
               setStageExecuting(false);
+              setIsStageRetry(false);
             });
         });
 
       if (!stageExecuting && !stageError && currentStage !== CreateSarcophagusStage.COMPLETED) {
         try {
-          if (currentStage === CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS && !publicKeysReady) {
-            return;
-          }
-
           const currentStageFunction = stagesMap.get(currentStage);
           if (currentStageFunction) {
-            await executeStage(currentStageFunction);
+            await executeStage(currentStageFunction, isStageRetry);
           }
         } catch (error: any) {
           console.error(error);
@@ -113,19 +117,21 @@ export function useCreateSarcophagus(
     stageExecuting,
     stagesMap,
     stageError,
+    isStageRetry,
     dispatch,
-    publicKeysReady,
     createSarcophagusStages,
     selectedArchaeologists,
   ]);
 
   const retryStage = useCallback(async () => {
     setStageError(undefined);
+    setIsStageRetry(true);
   }, []);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
     setStageError(undefined);
+    setIsStageRetry(false);
     dispatch(disableSteps());
   }, [dispatch]);
 

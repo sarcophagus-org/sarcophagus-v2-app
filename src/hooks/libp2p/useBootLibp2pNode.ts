@@ -20,7 +20,7 @@ import { useLibp2p } from './useLibp2p';
 export function useBootLibp2pNode(discoveryPeriod?: number) {
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { onPeerConnect, onPeerDisconnect, onPeerDiscovery } = useLibp2p();
+  const { onPeerDisconnect, onPeerDiscovery } = useLibp2p();
 
   const createAndStartNode = useCallback(async (): Promise<Libp2p> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
@@ -32,7 +32,6 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
   const addNodeEventListeners = useCallback(
     (libp2pNode: Libp2p): void => {
       libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
-      libp2pNode.connectionManager.addEventListener('peer:connect', onPeerConnect);
       libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
 
       // TODO: Remove this once we refactor how libp2p works
@@ -45,7 +44,7 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
         }, discoveryPeriod);
       }
     },
-    [onPeerDiscovery, onPeerConnect, onPeerDisconnect, discoveryPeriod]
+    [onPeerDiscovery, onPeerDisconnect, discoveryPeriod]
   );
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { darkTheme, Theme } from '@rainbow-me/rainbowkit';
 import { merge } from 'lodash';
-import { colors } from './colors';
+import { colors } from './oldColors';
 import { fonts } from './fonts';
 
 export const walletConnectionTheme = merge(darkTheme({ overlayBlur: 'small' }), {

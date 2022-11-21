@@ -10,25 +10,32 @@ import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
+import { RecipientsPage } from './RecipientsPage';
 import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
+import { NotFoundPage } from './NotFoundPage';
 
 export enum RouteKey {
-  EMBALM_PAGE,
-  DASHBOARD_PAGE,
-  DASHBOARD_DETAIL,
   ARCHEOLOGIST_PAGE,
   BUNDLER_PAGE,
+  DASHBOARD_DETAIL,
+  DASHBOARD_PAGE,
+  EMBALM_PAGE,
+  RECIPIENTS,
   TEMP_RESURRECTION_PAGE,
+  SARCOPHAGUS_CREATED,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
-  [RouteKey.EMBALM_PAGE]: '/embalm',
-  [RouteKey.DASHBOARD_PAGE]: '/dashboard',
-  [RouteKey.DASHBOARD_DETAIL]: '/dashboard/:id',
   [RouteKey.ARCHEOLOGIST_PAGE]: '/archaeologists',
   [RouteKey.BUNDLER_PAGE]: '/fundbundlr',
+  [RouteKey.DASHBOARD_DETAIL]: '/dashboard/:id',
+  [RouteKey.DASHBOARD_PAGE]: '/dashboard',
+  [RouteKey.EMBALM_PAGE]: '/embalm',
+  [RouteKey.RECIPIENTS]: '/recipients',
   [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
+  [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
 };
 
 export function Pages() {
@@ -79,6 +86,17 @@ export function Pages() {
       path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
       element: <TempResurrectionPage />,
       label: 'TempResurrectionPage',
+      hidden: true,
+    },
+    {
+      path: RoutesPathMap[RouteKey.RECIPIENTS],
+      element: <RecipientsPage />,
+      label: 'Recipients',
+    },
+    {
+      path: RoutesPathMap[RouteKey.SARCOPHAGUS_CREATED],
+      element: <SarcophagusCreatedPage />,
+      label: '',
       hidden: true,
     },
   ];
@@ -137,7 +155,7 @@ export function Pages() {
           direction="column"
           width="100%"
           height="100%"
-          mt={50}
+          pt={50}
         >
           {isConnected && isSupportedChain ? (
             <Routes>
@@ -152,6 +170,10 @@ export function Pages() {
                   element={route.element}
                 />
               ))}
+              <Route
+                path="*"
+                element={<NotFoundPage />}
+              />
             </Routes>
           ) : (
             <Container

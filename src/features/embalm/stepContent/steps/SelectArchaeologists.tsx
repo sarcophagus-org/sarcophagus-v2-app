@@ -3,7 +3,6 @@ import {
   Heading,
   Text,
   VStack,
-  Select,
   HStack,
   Icon,
   Box,
@@ -12,9 +11,10 @@ import {
   PopoverContent,
   PopoverBody,
 } from '@chakra-ui/react';
-import React, { ChangeEvent } from 'react';
+import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
+import { SetPaginationSize, IPageSizeSetByOption } from '../components/SetPaginationSize';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
 import {
   Pagination,
@@ -28,11 +28,17 @@ import {
 } from '@ajna/pagination';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
+import { SetResurrection } from '../components/SetResurrection';
+import { useSelector } from 'store/index';
+import moment from 'moment';
 
 export function SelectArchaeologists() {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
+  const { resurrection } = useSelector(x => x.embalmState);
+  const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
+  const [paginationSize, setPaginationSize] = useState<number>(5);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
@@ -48,11 +54,7 @@ export function SelectArchaeologists() {
     offset,
     offset + pageSize
   );
-
-  const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    const newPageSize = Number(event.target.value);
-    setPageSize(newPageSize);
-  };
+  const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
     setCurrentPage(nextPage);
@@ -62,24 +64,61 @@ export function SelectArchaeologists() {
     setCurrentPage(1);
   };
 
+  function handlePageSizeChange(newValue: IPageSizeSetByOption | null) {
+    const newPageSize = newValue!.value;
+    setPageSize(newPageSize!);
+    setPaginationSize(newPageSize);
+  }
+
   return (
     <Flex
       direction="column"
       width="100%"
     >
-      <Heading>Select Archaeologists</Heading>
+      <Heading>Archaeologists</Heading>
       <Text
         variant="primary"
-        mt="6"
+        mt="4"
+        fontSize="16px"
       >
         Resurrection Time
       </Text>
-      <Text
-        variant="primary"
-        mt="2"
-      >
-        Currently set: 09.22.22 7:30pm (edit)
-      </Text>
+      <HStack>
+        <>
+          <Text
+            variant="primary"
+            color="brand.600"
+          >
+            Currently set:{' '}
+            <Text
+              as="u"
+              color="brand.600"
+            >
+              {moment(resurrectionDate).format('DD.MM.YY h:mma')}
+            </Text>
+          </Text>
+
+          <Text
+            as="i"
+            color="brand.900"
+            onClick={() => {
+              setResurrectionTimeEdit(prevValue => !prevValue);
+            }}
+            cursor="pointer"
+            _hover={{
+              textDecoration: 'underline',
+            }}
+          >
+            ({resurrectionTimeEdit ? 'hide' : 'edit'})
+          </Text>
+        </>
+      </HStack>
+      {resurrectionTimeEdit && (
+        <SetResurrection
+          mt={5}
+          w={'450px'}
+        />
+      )}
       <ArchaeologistHeader resetPage={returnToFirstPage} />
       <Pagination
         pagesCount={pagesCount}
@@ -98,18 +137,10 @@ export function SelectArchaeologists() {
                   <HStack direction="row">
                     <HStack>
                       <Text color="brand.600">Items per page:</Text>
-                      <Select
-                        size="sm"
-                        onChange={handlePageSizeChange}
-                        w={14}
-                        textAlign={'right'}
-                        variant="unstyled"
-                        color="brand.600"
-                      >
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                      </Select>
+                      <SetPaginationSize
+                        handlePageSizeChange={handlePageSizeChange}
+                        paginationSize={paginationSize}
+                      ></SetPaginationSize>
                     </HStack>
                   </HStack>
                 </Flex>

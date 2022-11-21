@@ -1,23 +1,25 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
-import { ProgressTracker } from '../components/ProgressTracker';
-import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
-import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
-import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
-import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
-import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
-import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
-import { BigNumber, ethers } from 'ethers';
-import { useEffect, useState } from 'react';
-import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
-import { useContract, useSigner } from 'wagmi';
 import {
   EmbalmerFacet__factory,
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { BigNumber, ethers } from 'ethers';
+import { RouteKey, RoutesPathMap } from 'pages';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContract, useSigner } from 'wagmi';
+import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
-import { SuccessfulCreateSarcophagus } from '../components/SuccessfulCreateSarcophagus';
+import { ProgressTracker } from '../components/ProgressTracker';
+import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
+import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
+import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
+import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
+import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
+import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
 
 export function CreateSarcophagus() {
+  const navigate = useNavigate();
   const { allowance } = useAllowance();
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
@@ -73,13 +75,14 @@ export function CreateSarcophagus() {
   }, [allowance, signer]);
 
   if (isCreateCompleted()) {
-    return (
-      <SuccessfulCreateSarcophagus
-        successSarcophagusPayloadTxId={successData.successSarcophagusPayloadTxId}
-        successEncryptedShardsTxId={successData.successEncryptedShardsTxId}
-        successSarcophagusTxId={successData.successSarcophagusTxId}
-      />
-    );
+    // setTimeout with delay set to 0 is an easy fix for the following error:
+    // react_devtools_backend.js:4026 Warning: Cannot update a component (`BrowserRouter`) while
+    // rendering a different component
+    setTimeout(() => {
+      navigate(RoutesPathMap[RouteKey.SARCOPHAGUS_CREATED], {
+        state: successData,
+      });
+    }, 0);
   }
 
   return (

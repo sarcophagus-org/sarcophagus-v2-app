@@ -241,3 +241,10 @@ export const cleanFailure = (): UseToastOptions => ({
   duration,
   position,
 });
+
+export const publicKeyRetrieved = (): UseToastOptions => ({
+  title: 'Public key successfully retrieved!',
+  status: 'success',
+  duration,
+  position,
+});
