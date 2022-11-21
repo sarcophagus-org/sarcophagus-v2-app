@@ -4,7 +4,6 @@ import { encryptShards } from '../../utils/createSarcophagus';
 import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
-import { useRequestPublicKeys } from './useRequestPublicKeys';
 
 export function useUploadEncryptedShards() {
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
@@ -12,9 +11,8 @@ export function useUploadEncryptedShards() {
     useContext(CreateSarcophagusContext);
 
   const { uploadToArweave } = useArweaveService();
-  const { requestPublicKeys } = useRequestPublicKeys();
 
-  const uploadAndSetEncryptedShards = useCallback(async (isRetry: boolean) => {
+  const uploadAndSetEncryptedShards = useCallback(async () => {
     try {
       // Step 1: Split the outer layer private key using shamirs secret sharing
       const shards: Uint8Array[] = split(outerPrivateKey, {
@@ -24,11 +22,7 @@ export function useUploadEncryptedShards() {
 
       // Step 2: Encrypt each shard of the outer layer private key using each archaeologist's public
       // key
-      const archPublicKeys = await requestPublicKeys(selectedArchaeologists, isRetry);
-
-      if (archPublicKeys.length < selectedArchaeologists.length) {
-        throw new Error('Not enough public keys');
-      }
+      const archPublicKeys = selectedArchaeologists.map(arch => arch.publicKey!);
 
       const encShards = await encryptShards(archPublicKeys, shards);
 
@@ -52,7 +46,6 @@ export function useUploadEncryptedShards() {
     requiredArchaeologists,
     outerPrivateKey,
     selectedArchaeologists,
-    requestPublicKeys,
     uploadToArweave,
     setArchaeologistShards,
     setEncryptedShardsTxId,

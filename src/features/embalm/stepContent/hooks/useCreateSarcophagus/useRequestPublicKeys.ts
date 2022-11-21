@@ -1,8 +1,8 @@
 import { pipe } from 'it-pipe';
 import { PUBLIC_KEY_STREAM } from 'lib/config/node_config';
-import { useDispatch } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
 import { setArchaeologistException, setArchaeologistPublicKey } from 'store/embalm/actions';
-import { Archaeologist, ArchaeologistExceptionCode } from 'types';
+import { ArchaeologistExceptionCode } from 'types';
 import { useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useDialArchaeologists } from './useDialArchaeologists';
@@ -15,9 +15,10 @@ interface PublicKeyResponseFromArchaeologist {
 export function useRequestPublicKeys() {
   const dispatch = useDispatch();
   const { dialArchaeologist } = useDialArchaeologists();
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
 
   const requestPublicKeys = useCallback(
-    async (selectedArchaeologists: Archaeologist[], isRetry: boolean) => {
+    async (isRetry: boolean) => {
       const archPublicKeys: string[] = [];
       for await (const arch of selectedArchaeologists) {
         if (!arch.connection) {
@@ -99,9 +100,11 @@ export function useRequestPublicKeys() {
         }
       }
 
-      return archPublicKeys;
+      if (archPublicKeys.length < selectedArchaeologists.length) {
+        throw new Error('Not enough public keys');
+      }
     },
-    [dispatch, dialArchaeologist]
+    [dispatch, dialArchaeologist, selectedArchaeologists]
   );
 
   return {
