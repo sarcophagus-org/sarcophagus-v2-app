@@ -23,7 +23,6 @@ export enum ActionType {
   SetName = 'EMBALM_SET_NAME',
   SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
-  SetPublicKeysReady = 'EMBALM_SET_PUBLIC_KEYS_READY',
   SetRecipientState = 'EMBALM_SET_RECIPIENT_STATE',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
@@ -87,7 +86,6 @@ type EmbalmPayload = {
   [ActionType.SetName]: { name: string };
   [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
-  [ActionType.SetPublicKeysReady]: { publicKeysReady: boolean };
   [ActionType.SetRecipientState]: RecipientState;
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };

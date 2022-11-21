@@ -19,6 +19,7 @@ export async function encryptShards(
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
+  GET_PUBLIC_KEYS,
   UPLOAD_ENCRYPTED_SHARDS,
   ARCHAEOLOGIST_NEGOTIATION,
   UPLOAD_PAYLOAD,
@@ -31,6 +32,7 @@ export enum CreateSarcophagusStage {
 export const defaultCreateSarcophagusStages: Record<number, string> = {
   [CreateSarcophagusStage.NOT_STARTED]: '',
   [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
+  [CreateSarcophagusStage.GET_PUBLIC_KEYS]: 'Request Archaeologist Public Keys',
   [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
   [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',

@@ -15,7 +15,6 @@ export interface SuccessData {
 
 export function useClearSarcophagusState() {
   const {
-    setPublicKeysReady,
     setOuterPrivateKey,
     setOuterPublicKey,
     setArchaeologistShards,
@@ -41,7 +40,6 @@ export function useClearSarcophagusState() {
     setSuccessSarcophagusTxId(sarcophagusTxId);
 
     // reset state local to create sarcophagus
-    setPublicKeysReady(initialCreateSarcophagusState.publicKeysReady);
     setOuterPrivateKey(initialCreateSarcophagusState.outerPrivateKey);
     setOuterPublicKey(initialCreateSarcophagusState.outerPublicKey);
     setArchaeologistShards(initialCreateSarcophagusState.archaeologistShards);
@@ -57,7 +55,6 @@ export function useClearSarcophagusState() {
     encryptedShardsTxId,
     sarcophagusPayloadTxId,
     sarcophagusTxId,
-    setPublicKeysReady,
     setOuterPrivateKey,
     setOuterPublicKey,
     setArchaeologistShards,
