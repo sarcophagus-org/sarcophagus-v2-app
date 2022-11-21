@@ -35,13 +35,16 @@ function validateAndSetInput(
   valueAsNumber: number,
   action: (action: string) => ArchaeologistListActions
 ): ArchaeologistListActions {
-  valueAsString = removeNonIntChars(valueAsString);
-  valueAsString = removeLeadingZeroes(valueAsString);
+  if (action === setArchAddressSearch) {
+    valueAsString = removeNonIntChars(valueAsString);
+    valueAsString = removeLeadingZeroes(valueAsString);
 
-  if (valueAsNumber < 0) {
-    valueAsString = '0';
-    valueAsNumber = 0;
+    if (valueAsNumber < 0) {
+      valueAsString = '0';
+      valueAsNumber = 0;
+    }
   }
+
   return action(valueAsString);
 }
 
