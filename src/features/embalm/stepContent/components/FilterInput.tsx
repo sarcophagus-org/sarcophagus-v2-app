@@ -11,7 +11,6 @@ import {
   setDiggingFeesFilter,
   setUnwrapsFilter,
   setFailsFilter,
-  setArchAddressSearch,
   SortFilterType,
   ArchaeologistListActions,
 } from 'store/archaeologistList/actions';
@@ -35,14 +34,12 @@ function validateAndSetInput(
   valueAsNumber: number,
   action: (action: string) => ArchaeologistListActions
 ): ArchaeologistListActions {
-  if (action === setArchAddressSearch) {
-    valueAsString = removeNonIntChars(valueAsString);
-    valueAsString = removeLeadingZeroes(valueAsString);
+  valueAsString = removeNonIntChars(valueAsString);
+  valueAsString = removeLeadingZeroes(valueAsString);
 
-    if (valueAsNumber < 0) {
-      valueAsString = '0';
-      valueAsNumber = 0;
-    }
+  if (valueAsNumber < 0) {
+    valueAsString = '0';
+    valueAsNumber = 0;
   }
 
   return action(valueAsString);

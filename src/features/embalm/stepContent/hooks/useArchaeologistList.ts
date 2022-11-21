@@ -51,9 +51,8 @@ export function useArchaeologistList() {
     [dispatch, selectedArchaeologists]
   );
 
-  function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
-    dispatch(setArchAddressSearch(value));
+  function handleChangeAddressSearch(event: React.ChangeEvent<HTMLInputElement>) {
+    dispatch(setArchAddressSearch(event.target.value));
   }
 
   const length = keys(SortDirection).length / 2;
