@@ -1,4 +1,4 @@
-import { Flex, Heading } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { SelectArchaeologists } from '../features/embalm/stepContent/steps/SelectArchaeologists';
 
 export function ArchaeologistsPage() {
