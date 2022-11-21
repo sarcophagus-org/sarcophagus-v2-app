@@ -25,12 +25,16 @@ interface FilterProps extends NumberInputProps {
 
 interface FilterComponentProps {
   filterWidth: string;
-  onChange: (valueAsString: string, valueAsNumber: number) => void;
+  onChange: any;
   placeholder?: string;
   icon: boolean;
 }
 
-function validateAndSetInput(valueAsString: string, valueAsNumber: number, action: any) {
+function validateAndSetInput(
+  valueAsString: string,
+  valueAsNumber: number,
+  action: (action: string) => ArchaeologistListActions
+): ArchaeologistListActions {
   valueAsString = removeNonIntChars(valueAsString);
   valueAsString = removeLeadingZeroes(valueAsString);
 
@@ -41,10 +45,6 @@ function validateAndSetInput(valueAsString: string, valueAsNumber: number, actio
   return action(valueAsString);
 }
 
-// function filterComponentOnchange(param: any) {
-//   dispatch(param);
-// }
-
 function FilterComponent({
   filterWidth,
   placeholder,
@@ -52,12 +52,16 @@ function FilterComponent({
   icon,
   ...rest
 }: FilterComponentProps) {
+  const dispatch = useDispatch();
+
   return (
     <Flex align="center">
       <InputGroup>
         <NumberInput
           w={filterWidth}
-          onChange={onChange}
+          onChange={(valueAsString: string, valueAsNumber: number) =>
+            dispatch(validateAndSetInput(valueAsString, valueAsNumber, onChange))
+          }
           {...rest}
         >
           <NumberInputField
@@ -78,64 +82,46 @@ function FilterComponent({
 }
 
 export function FilterInput({ filterName, placeholder = '', ...rest }: FilterProps) {
-  const dispatch = useDispatch();
-
   switch (filterName) {
     case SortFilterType.ADDRESS_SEARCH:
-      function handleChangeAddressSearch(valueAsString: string, valueAsNumber: number) {
-        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setArchAddressSearch));
-      }
-
       return (
         <FilterComponent
           filterWidth={'190px'}
           placeholder={placeholder}
-          onChange={handleChangeAddressSearch}
+          onChange={setArchAddressSearch}
           icon={false}
           {...rest}
         />
       );
 
     case SortFilterType.DIGGING_FEES:
-      function handleChangeDiggingFees(valueAsString: string, valueAsNumber: number) {
-        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setDiggingFeesFilter));
-      }
-
       return (
         <FilterComponent
           filterWidth={'150px'}
           placeholder={placeholder}
-          onChange={handleChangeDiggingFees}
+          onChange={setDiggingFeesFilter}
           icon={true}
           {...rest}
         />
       );
 
     case SortFilterType.UNWRAPS:
-      function handleChangeUnwraps(valueAsString: string, valueAsNumber: number) {
-        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setUnwrapsFilter));
-      }
-
       return (
         <FilterComponent
           filterWidth={'100px'}
           placeholder={placeholder}
-          onChange={handleChangeUnwraps}
+          onChange={setUnwrapsFilter}
           icon={false}
           {...rest}
         />
       );
 
     case SortFilterType.FAILS:
-      function handleChangeFails(valueAsString: string, valueAsNumber: number) {
-        dispatch(validateAndSetInput(valueAsString, valueAsNumber, setFailsFilter));
-      }
-
       return (
         <FilterComponent
           filterWidth={'82px'}
           placeholder={placeholder}
-          onChange={handleChangeFails}
+          onChange={setFailsFilter}
           icon={false}
           {...rest}
         />
