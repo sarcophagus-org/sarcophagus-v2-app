@@ -4,7 +4,6 @@ import { discordBuildersLink } from 'lib/constants';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useNavigate } from 'react-router-dom';
 
-// TODO: Get with design for a proper 404 page
 export function NotFoundPage() {
   const navigate = useNavigate();
   return (
