@@ -8,16 +8,46 @@ import {
   Input,
   Text,
   VStack,
+  HStack,
+  useToast
 } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
+import { errorSample, infoSample, successSample, warningSample } from '../lib/utils/toast';
 
 export function ThemeTestPage() {
+  const toast = useToast();
+
+  function handleClickInfo() {
+    toast(infoSample());
+  }
+
+  function handleClickSuccess() {
+    toast(successSample());
+  }
+
+  function handleClickWarning() {
+    toast(warningSample());
+  }
+
+  function handleClickError() {
+    toast(errorSample());
+  }
   return (
     <VStack
       align="left"
       spacing={6}
       mb={200}
     >
+            <Heading>This is a Heading</Heading>
+      <Text>This is some primary text</Text>
+      <Text variant="secondary">This is some secondary text</Text>
+      <Button
+        w={200}
+        variant="link"
+      >
+        A Clicky Link
+      </Button>
+
       <Heading>Alerts</Heading>
 
       <SarcoAlert
@@ -39,7 +69,7 @@ export function ThemeTestPage() {
         status="info"
         title="info Title"
       >
-        xxx<Button>Clicky Button</Button>xxx
+        <Button>Clicky Button</Button>
       </SarcoAlert>
 
       <SarcoAlert
@@ -74,7 +104,7 @@ export function ThemeTestPage() {
 
       <Divider />
 
-      {/* <Heading>Toasts</Heading>
+      <Heading>Toasts</Heading>
       <HStack spacing={3}>
         <Button
           w={200}
@@ -100,7 +130,7 @@ export function ThemeTestPage() {
         >
           Error
         </Button>
-      </HStack> */}
+      </HStack>
 
       <Divider />
       <Heading>Form</Heading>
