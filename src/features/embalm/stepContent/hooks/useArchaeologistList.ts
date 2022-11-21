@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
-import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
+import {
+  SortDirection,
+  SortFilterType,
+  setSortDirection,
+  setArchAddressSearch,
+} from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
@@ -23,8 +28,7 @@ export function useArchaeologistList() {
     showSelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  // const onlineArchaeologists = archaeologists.filter(a => a.!isOnline);
-  const onlineArchaeologists = archaeologists;
+  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
@@ -47,16 +51,21 @@ export function useArchaeologistList() {
     [dispatch, selectedArchaeologists]
   );
 
+  function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    dispatch(setArchAddressSearch(value));
+  }
+
   const length = keys(SortDirection).length / 2;
-  const sortDirectionToggle = (value: SortDirection) => {
-    return (value + 1) % length;
+  const directionValue = (direction: SortDirection) => {
+    return (direction + 1) % length;
   };
 
   function onClickSortDiggingFees() {
     dispatch(
       setSortDirection(
         SortFilterType.DIGGING_FEES,
-        sortDirectionToggle(archaeologistFilterSort.sortDirection)
+        directionValue(archaeologistFilterSort.sortDirection)
       )
     );
   }
@@ -65,17 +74,14 @@ export function useArchaeologistList() {
     dispatch(
       setSortDirection(
         SortFilterType.UNWRAPS,
-        sortDirectionToggle(archaeologistFilterSort.sortDirection)
+        directionValue(archaeologistFilterSort.sortDirection)
       )
     );
   }
 
   function onClickSortFails() {
     dispatch(
-      setSortDirection(
-        SortFilterType.FAILS,
-        sortDirectionToggle(archaeologistFilterSort.sortDirection)
-      )
+      setSortDirection(SortFilterType.FAILS, directionValue(archaeologistFilterSort.sortDirection))
     );
   }
 
@@ -83,7 +89,7 @@ export function useArchaeologistList() {
     dispatch(
       setSortDirection(
         SortFilterType.ADDRESS_SEARCH,
-        sortDirectionToggle(archaeologistFilterSort.sortDirection)
+        directionValue(archaeologistFilterSort.sortDirection)
       )
     );
   }
@@ -176,5 +182,6 @@ export function useArchaeologistList() {
     archAddressSearch,
     sortedArchaeologist,
     showSelectedArchaeologists,
+    handleChangeAddressSearch,
   };
 }

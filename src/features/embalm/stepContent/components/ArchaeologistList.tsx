@@ -25,12 +25,11 @@ import { UpIcon } from 'components/icons/UpIcon';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
-import { SortFilterType, setArchAddressSearch } from 'store/archaeologistList/actions';
+import { SortFilterType } from 'store/archaeologistList/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
-import { useDispatch } from 'store/index';
 
 export function ArchaeologistList({
   includeDialButton,
@@ -53,6 +52,7 @@ export function ArchaeologistList({
     unwrapsFilter,
     failsFilter,
     showSelectedArchaeologists,
+    handleChangeAddressSearch,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -66,12 +66,6 @@ export function ArchaeologistList({
   const [isDialing, setIsDialing] = useState(false);
   // const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
-  const dispatch = useDispatch();
-
-  function handleChangeAddressSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
-    dispatch(setArchAddressSearch(value));
-  }
 
   return (
     <Flex
