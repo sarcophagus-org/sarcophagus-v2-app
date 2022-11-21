@@ -1,18 +1,17 @@
 import {
-  Alert,
-  AlertIcon,
   Box,
   Button,
   Divider,
   FormControl,
   FormLabel,
   Heading,
-  HStack,
   Input,
   Text,
-  useToast,
   VStack,
+  HStack,
+  useToast
 } from '@chakra-ui/react';
+import { SarcoAlert } from 'components/SarcoAlert';
 import { errorSample, infoSample, successSample, warningSample } from '../lib/utils/toast';
 
 export function ThemeTestPage() {
@@ -33,13 +32,66 @@ export function ThemeTestPage() {
   function handleClickError() {
     toast(errorSample());
   }
-
   return (
     <VStack
       align="left"
       spacing={6}
       mb={200}
     >
+            <Heading>This is a Heading</Heading>
+      <Text>This is some primary text</Text>
+      <Text variant="secondary">This is some secondary text</Text>
+      <Button
+        w={200}
+        variant="link"
+      >
+        A Clicky Link
+      </Button>
+
+      <Heading>Alerts</Heading>
+
+      <SarcoAlert
+        status="success"
+        title="Title goes here"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel velit eleifend, posuere
+        nisi sed, condimentum dolor. Nullam laoreet odio non tortor vestibulum, vitae fringilla quam
+        porta.
+      </SarcoAlert>
+
+      <SarcoAlert status="success">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel velit eleifend, posuere
+        nisi sed, condimentum dolor. Nullam laoreet odio non tortor vestibulum, vitae fringilla quam
+        porta.
+      </SarcoAlert>
+
+      <SarcoAlert
+        status="info"
+        title="info Title"
+      >
+        <Button>Clicky Button</Button>
+      </SarcoAlert>
+
+      <SarcoAlert
+        status="warning"
+        title="Warning Title"
+      >
+        <Text>text in a text tag goes here</Text>
+      </SarcoAlert>
+
+      <SarcoAlert
+        status="error"
+        title="Error Title"
+      >
+        This is the error message
+      </SarcoAlert>
+
+      <SarcoAlert status="error">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel velit eleifend, posuere
+        nisi sed, condimentum dolor. Nullam laoreet odio non tortor vestibulum, vitae fringilla quam
+        porta.
+      </SarcoAlert>
+
       <Heading>This is a Heading</Heading>
       <Text>This is some primary text</Text>
       <Text variant="secondary">This is some secondary text</Text>
@@ -79,29 +131,6 @@ export function ThemeTestPage() {
           Error
         </Button>
       </HStack>
-
-      <Divider />
-      <Heading>Alerts</Heading>
-      <Text variant="secondary">These might be used or might not. We will see</Text>
-      <Alert status="info">
-        <AlertIcon color="info" />
-        <Text>This is some info</Text>
-      </Alert>
-
-      <Alert status="success">
-        <AlertIcon color="success" />
-        <Text>This is some good info</Text>
-      </Alert>
-
-      <Alert status="warning">
-        <AlertIcon color="warning" />
-        <Text color="warning">This is a warning</Text>
-      </Alert>
-
-      <Alert status="error">
-        <AlertIcon color="error" />
-        <Text color="error">This is an error. This is bad.</Text>
-      </Alert>
 
       <Divider />
       <Heading>Form</Heading>

@@ -1,8 +1,8 @@
-import { VStack, Button, Text, Textarea, AlertTitle, AlertDescription } from '@chakra-ui/react';
+import { VStack, Button, Text, Textarea, Link } from '@chakra-ui/react';
 import { useGenerateRecipientPDF } from '../hooks/useGenerateRecipientPDF';
 import { GeneratePDFState } from 'store/embalm/actions';
 import { useSelector } from 'store/index';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 
 export function GenerateRecipientPDF() {
   const { generatePublicKey, downloadRecipientPDF, isLoading, generateError } =
@@ -27,10 +27,12 @@ export function GenerateRecipientPDF() {
           PDF to the recipient.
         </Text>
         {generateError && (
-          <Alert status="error">
-            <AlertTitle>Error while generating</AlertTitle>
-            <AlertDescription>{generateError}</AlertDescription>
-          </Alert>
+          <SarcoAlert
+            status="error"
+            title="Error while generating"
+          >
+            {generateError}
+          </SarcoAlert>
         )}
       </VStack>
     ),
@@ -60,24 +62,27 @@ export function GenerateRecipientPDF() {
       </VStack>
     ),
     [GeneratePDFState.DOWNLOADED]: (
-      <VStack spacing={6}>
+      <VStack
+        spacing={6}
+        w="100%"
+      >
         <Textarea
           disabled
           value={recipientState.publicKey}
           resize="none"
         />
-        <Alert status="success">
-          <AlertTitle> Recipient Key Created!</AlertTitle>
-          <AlertDescription>
-            <Text as="span"> You can continue to the next step. </Text>
-            <Button
-              variant="link"
-              onClick={downloadRecipientPDF}
-            >
-              Make sure you downloaded the PDF.
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <SarcoAlert
+          status="success"
+          title="Recipient Key Created!"
+        >
+          You can continue to the next step.{' '}
+          <Link
+            textDecor="underline"
+            onClick={downloadRecipientPDF}
+          >
+            Make sure you downloaded the PDF.
+          </Link>
+        </SarcoAlert>
       </VStack>
     ),
   };

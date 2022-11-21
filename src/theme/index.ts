@@ -1,5 +1,5 @@
 import { extendTheme, withDefaultColorScheme } from '@chakra-ui/react';
-import { colors } from './oldColors';
+import { colors } from './colors';
 import { components } from './components';
 import { withDefaultButtonVariant } from './components/Button';
 import { fonts } from './fonts';

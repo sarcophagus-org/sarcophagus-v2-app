@@ -16,7 +16,7 @@ export const components = {
   NumberInput: Input,
   FormLabel,
   Divider,
-  Alert,
+  Alert: Alert,
   Tooltip,
   Textarea,
 };
