@@ -9,7 +9,7 @@ import {
   Text,
   VStack,
   HStack,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { errorSample, infoSample, successSample, warningSample } from '../lib/utils/toast';
@@ -38,7 +38,7 @@ export function ThemeTestPage() {
       spacing={6}
       mb={200}
     >
-            <Heading>This is a Heading</Heading>
+      <Heading>This is a Heading</Heading>
       <Text>This is some primary text</Text>
       <Text variant="secondary">This is some secondary text</Text>
       <Button
@@ -92,9 +92,6 @@ export function ThemeTestPage() {
         porta.
       </SarcoAlert>
 
-      <Heading>This is a Heading</Heading>
-      <Text>This is some primary text</Text>
-      <Text variant="secondary">This is some secondary text</Text>
       <Button
         w={200}
         variant="link"

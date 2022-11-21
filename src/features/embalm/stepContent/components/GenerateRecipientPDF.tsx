@@ -43,15 +43,9 @@ export function GenerateRecipientPDF() {
         spacing={6}
         w="400px"
       >
-        <Text>Download PDF</Text>
+        <Text fontSize='xl'>Download PDF</Text>
         <Text align="center">
           Download and send this to your recipient. Do not store this online or let anyone see it.
-        </Text>
-        <Text
-          align="center"
-          color="error"
-        >
-          You must download this key to finish creating your sarcophagus.
         </Text>
         <Button
           w="100%"

@@ -64,7 +64,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
 
   return (
     <Flex direction="column">
-      <Text color="whiteAlpha.700">Bundlr ETH</Text>
+      <Text >Bundlr ETH</Text>
       <Flex
         mt={1}
         align="center"
@@ -73,14 +73,12 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         <Text fontSize="3xl">{bundlrBalance}</Text>
       </Flex>
       <Text
-        color="whiteAlpha.700"
         mt={1}
       >
         {isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}
       </Text>
       <Text
         mt={6}
-        color="whiteAlpha.700"
       >
         Enter Amount
       </Text>
@@ -90,7 +88,6 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       />
       <Text
         mt={3}
-        color="whiteAlpha.700"
       >
         Wallet Balance: {formattedEthBalance} ETH{' '}
         {!isNaN(ethUsdValue) && `($${ethers.utils.commify(ethUsdValue)})`}

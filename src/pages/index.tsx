@@ -184,7 +184,7 @@ export function Pages() {
               ) : (
                 <Text
                   align="center"
-                  fontWeight="bold"
+                  variant="bold"
                 >
                   Supported Networks
                   {supportedNetworkNames.map(network => (

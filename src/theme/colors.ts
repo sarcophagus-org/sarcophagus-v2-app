@@ -59,4 +59,18 @@ export const colors = {
     error: '#F74141',
     errorBackground: '#F7414126',
   },
+
+  table: {
+    textBackground: '#383a4066',
+    errorBackground: '#F7414126',
+  },
+
+  text: {
+    primary: '#FFFFFF', // brand.950
+    secondary: '#a6a6a6', // brand.600
+    disabled: '#737373', // brand.400
+  },
+
+  //TODO, items from oldColors to be resolved
+  errorHighlight: '#F7414126',
 };

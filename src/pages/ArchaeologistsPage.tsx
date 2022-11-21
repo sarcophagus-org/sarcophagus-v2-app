@@ -11,12 +11,6 @@ export function ArchaeologistsPage() {
       alignItems="center"
       direction="column"
     >
-      <Heading
-        size="lg"
-        mb={'30px'}
-      >
-        Archaeologists
-      </Heading>
       <SelectArchaeologists />
     </Flex>
   );

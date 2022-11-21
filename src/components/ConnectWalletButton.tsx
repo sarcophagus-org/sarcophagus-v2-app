@@ -40,7 +40,7 @@ export function ConnectWalletButton() {
                   px={5}
                   bgGradient="linear-gradient(180deg, rgba(255, 255, 255, 0.044) 0%, rgba(255, 255, 255, 0.158) 100%)"
                 >
-                  <Text color="white">{account.displayName}</Text>
+                  <Text>{account.displayName}</Text>
                 </Button>
 
                 <IconButton

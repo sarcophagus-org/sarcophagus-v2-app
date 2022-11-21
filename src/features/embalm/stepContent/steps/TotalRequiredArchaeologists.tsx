@@ -32,10 +32,9 @@ export function TotalRequiredArchaegologists() {
     >
       <Heading>Archaeologists</Heading>
       <Text fontStyle="italic">
-        {/* if at some point 'brand.600' becomes a named color on src/theme/components/Text.ts, this color prop can be changed. */}
         <chakra.span
           fontStyle="normal"
-          color="brand.600"
+          color="text.secondary"
         >
           How many of your archeologists are required to rewrap or resurrect your sarco.{' '}
         </chakra.span>

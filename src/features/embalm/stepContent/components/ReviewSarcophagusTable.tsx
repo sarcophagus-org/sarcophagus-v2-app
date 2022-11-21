@@ -1,4 +1,4 @@
-import { Flex, Highlight, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Flex, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useStepNavigator } from 'features/embalm/stepNavigator/hooks/useStepNavigator';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
@@ -33,35 +33,29 @@ export function ReviewSarcophagusTable() {
             <Tr key={name}>
               <Td py={3}>
                 <Flex alignItems="center">
-                  <Highlight
-                    query={name}
-                    styles={{
-                      rounded: 'sm',
-                      bg: `${error ? 'errorAlt' : 'brand.100'}`,
-                      px: '2',
-                      py: '2px',
-                      color: 'brand.950',
-                    }}
+                  <Text
+                    whiteSpace="nowrap"
+                    px={2}
+                    py={0.5}
+                    mr={2}
+                    rounded="sm"
+                    bg={error ? 'table.errorBackground' : 'table.textBackground'}
                   >
                     {name}
-                  </Highlight>
-                  <Flex ml={3}>{error && <SummaryErrorIcon error={error} />}</Flex>
+                  </Text>
+
+                  {error && <SummaryErrorIcon error={error} />}
                 </Flex>
               </Td>
               <Td py={2}>
-                <Text>
-                  <Highlight
-                    query={value || '----'}
-                    styles={{
-                      rounded: 'sm',
-                      bg: `${error ? 'errorAlt' : 'brand.100'}`,
-                      px: '2',
-                      py: '2px',
-                      color: 'brand.950',
-                    }}
-                  >
-                    {value || '----'}
-                  </Highlight>
+                <Text
+                  as="span"
+                  px={2}
+                  py={0.5}
+                  rounded="sm"
+                  bg={error ? 'table.errorBackground' : 'table.textBackground'}
+                >
+                  {value || '----'}
                 </Text>
               </Td>
               <Td

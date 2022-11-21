@@ -56,10 +56,11 @@ export function ArchaeologistListItem({
           )}
           <Text
             ml={3}
-            bg={'brand.100'}
+            bg={'table.textBackground'}
             color={rowTextColor}
             py={0.5}
             px={2}
+            borderRadius="2px"
           >
             {children}
           </Text>

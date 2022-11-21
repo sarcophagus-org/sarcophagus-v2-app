@@ -127,7 +127,7 @@ export function CreateSarcophagus() {
               <SummaryErrorIcon error={stageError} />
               <Text
                 ml={2}
-                color="brand.500"
+                variant="secondary"
               >
                 = {stageError}
               </Text>

@@ -50,7 +50,7 @@ export function StatusIndicator({ status, index }: StatusIndicatorProps) {
       >
         <Text
           fontSize="sm"
-          color="brand.500"
+          variant="secondary"
         >
           {index + 1}
         </Text>
