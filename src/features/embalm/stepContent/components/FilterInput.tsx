@@ -86,16 +86,6 @@ function FilterComponent({
 
 export function FilterInput({ filterName, placeholder = '', ...rest }: FilterProps) {
   switch (filterName) {
-    case SortFilterType.ADDRESS_SEARCH:
-      return (
-        <FilterComponent
-          filterWidth={'190px'}
-          placeholder={placeholder}
-          filterTypeAction={setArchAddressSearch}
-          {...rest}
-        />
-      );
-
     case SortFilterType.DIGGING_FEES:
       return (
         <FilterComponent
@@ -126,6 +116,9 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
           {...rest}
         />
       );
+
+    case SortFilterType.ADDRESS_SEARCH:
+      return null;
 
     case SortFilterType.NONE:
       return null;
