@@ -66,14 +66,14 @@ export function SetRecipientPublicKey() {
               options={selectOptionsMap}
               isSearchable={false}
               focusBorderColor="brand.950"
-              selectedOptionColor="brand"
+              selectedOptionColor="brand.0"
               useBasicStyles
               chakraStyles={{
                 menuList: provided => ({
                   ...provided,
                   bg: 'brand.0',
                   fontSize: 'sm',
-                  borderColor: 'violet.700',
+                  borderColor: 'grayBlue.700',
                 }),
 
                 option: (provided, state) => ({

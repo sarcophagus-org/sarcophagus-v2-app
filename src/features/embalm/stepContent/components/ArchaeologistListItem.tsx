@@ -51,7 +51,7 @@ export function ArchaeologistListItem({
                   dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
                 }
               }}
-              colorScheme="blue"
+              colorScheme="checkboxScheme"
             ></Checkbox>
           )}
           <Text

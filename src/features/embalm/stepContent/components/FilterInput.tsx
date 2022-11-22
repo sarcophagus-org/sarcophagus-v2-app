@@ -54,7 +54,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
               pl={12}
               pr={1}
               placeholder={placeholder}
-              borderColor="violet.700"
+              borderColor="grayBlue.700"
             />
             <InputLeftElement>
               <SarcoTokenIcon boxSize="16px" />
@@ -86,7 +86,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
               pl={3}
               pr={1}
               placeholder={placeholder}
-              borderColor="violet.700"
+              borderColor="grayBlue.700"
             />
           </NumberInput>
         </InputGroup>
@@ -114,7 +114,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
               pl={3}
               pr={1}
               placeholder={placeholder}
-              borderColor="violet.700"
+              borderColor="grayBlue.700"
             />
           </NumberInput>
         </InputGroup>

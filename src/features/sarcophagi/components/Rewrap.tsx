@@ -75,7 +75,7 @@ export function Rewrap() {
 
       <VStack
         border="1px solid "
-        borderColor="violet.700"
+        borderColor="grayBlue.700"
         p={6}
         align="left"
         maxW="640px"

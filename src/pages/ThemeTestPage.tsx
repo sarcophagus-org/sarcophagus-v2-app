@@ -144,7 +144,7 @@ export function ThemeTestPage() {
       </Box>
       <Box
         border="2px"
-        color="violet.800"
+        color="grayBlue.800"
         py={12}
       >
         <Text align="center">Thing with a secondary border</Text>

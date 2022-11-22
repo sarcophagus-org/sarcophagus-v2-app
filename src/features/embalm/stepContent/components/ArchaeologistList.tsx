@@ -101,7 +101,7 @@ export function ArchaeologistList({
                         onChange={handleChangeAddressSearch}
                         value={archAddressSearch}
                         placeholder="Search"
-                        borderColor="violet.700"
+                        borderColor="grayBlue.700"
                         color="text.primary"
                       />
                     </VStack>

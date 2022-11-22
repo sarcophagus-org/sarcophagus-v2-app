@@ -135,10 +135,10 @@ export function Pages() {
                   textDecor="bold"
                   as={NavLink}
                   mx={1.5}
-                  bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
+                  bgColor={route.noBackground ? 'transparent' : 'menuBlue.1000'}
                   _activeLink={{
                     color: 'brand.950',
-                    bgColor: route.noBackground ? 'transparent' : 'blue.700',
+                    bgColor: route.noBackground ? 'transparent' : 'menuBlue.700',
                   }}
                   _hover={{ textDecor: 'none', color: 'brand.700' }}
                   key={route.path}

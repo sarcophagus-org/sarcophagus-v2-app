@@ -85,7 +85,6 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </InputGroup>
               <Button
                 float="right"
-                w="150px"
                 disabled={!isAmountValid || isFunding}
                 isLoading={isFunding}
                 onClick={handleFund}
@@ -98,7 +97,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           {children}
           <VStack
             border="1px solid "
-            borderColor="violet.700"
+            borderColor="grayBlue.700"
             spacing={0}
             align="left"
             p={3}

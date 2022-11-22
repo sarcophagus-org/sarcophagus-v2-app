@@ -36,7 +36,7 @@ export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any)
             ...provided,
             bg: 'brand.0',
             fontSize: '14px',
-            borderColor: 'violet.700',
+            borderColor: 'grayBlue.700',
           }),
 
           option: (provided, state) => ({

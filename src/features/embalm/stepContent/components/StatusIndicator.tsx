@@ -16,8 +16,8 @@ export function StatusIndicator({ status, index }: StatusIndicatorProps) {
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor="controversialBlue"
-        backgroundColor="controversialBlue"
+        borderColor="blue"
+        backgroundColor="blue"
         borderRadius={100}
         align="center"
         justifyContent="center"
