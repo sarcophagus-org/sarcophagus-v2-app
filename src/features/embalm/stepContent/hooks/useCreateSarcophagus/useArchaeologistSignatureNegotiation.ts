@@ -48,102 +48,106 @@ export function useArchaeologistSignatureNegotiation() {
     }
   }
 
-  const initiateSarcophagusNegotiation = useCallback(async (isRetry: boolean): Promise<void> => {
-    console.log('starting the negotiation');
-    const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
+  const initiateSarcophagusNegotiation = useCallback(
+    async (isRetry: boolean): Promise<void> => {
+      console.log('starting the negotiation');
+      const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
 
-    const negotiationTimestamp = Date.now();
-    setNegotiationTimestamp(negotiationTimestamp);
+      const negotiationTimestamp = Date.now();
+      setNegotiationTimestamp(negotiationTimestamp);
 
-    const archaeologistSignatures = new Map<string, string>([]);
+      const archaeologistSignatures = new Map<string, string>([]);
 
-    await Promise.all(
-      selectedArchaeologists.map(async arch => {
-        if (!arch.connection) {
-          console.log(`${arch.profile.peerId} connection is undefined`);
-          setArchaeologistException(arch.profile.peerId, {
-            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-            message: 'No connection to archaeologist',
-          });
+      await Promise.all(
+        selectedArchaeologists.map(async arch => {
+          if (!arch.connection) {
+            console.log(`${arch.profile.peerId} connection is undefined`);
+            setArchaeologistException(arch.profile.peerId, {
+              code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+              message: 'No connection to archaeologist',
+            });
 
-          if (isRetry && arch.fullPeerId) {
-            arch.connection = await dialArchaeologist(arch.fullPeerId);
-            if (!arch.connection) return;
-          } else {
-            return;
+            if (isRetry && arch.fullPeerId) {
+              arch.connection = await dialArchaeologist(arch.fullPeerId);
+              if (!arch.connection) return;
+            } else {
+              return;
+            }
           }
-        }
 
-        const negotiationParams: ArchaeologistSignatureNegotiationParams = {
-          arweaveTxId: encryptedShardsTxId,
-          diggingFee: arch.profile.minimumDiggingFee.toString(),
-          maxRewrapInterval: lowestRewrapInterval,
-          timestamp: negotiationTimestamp,
-          unencryptedShardDoubleHash: archaeologistShards.find(s => s.publicKey === arch.publicKey)!
-            .unencryptedShardDoubleHash,
-        };
+          const negotiationParams: ArchaeologistSignatureNegotiationParams = {
+            arweaveTxId: encryptedShardsTxId,
+            diggingFee: arch.profile.minimumDiggingFee.toString(),
+            maxRewrapInterval: lowestRewrapInterval,
+            timestamp: negotiationTimestamp,
+            unencryptedShardDoubleHash: archaeologistShards.find(
+              s => s.publicKey === arch.publicKey
+            )!.unencryptedShardDoubleHash,
+          };
 
-        const outboundMsg = JSON.stringify(negotiationParams);
+          const outboundMsg = JSON.stringify(negotiationParams);
 
-        try {
-          const stream = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
+          try {
+            const stream = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
-          await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
-            for await (const data of source) {
-              const dataStr = new TextDecoder().decode(data.subarray());
-              const response = JSON.parse(dataStr);
+            await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
+              for await (const data of source) {
+                const dataStr = new TextDecoder().decode(data.subarray());
+                const response = JSON.parse(dataStr);
 
-              if (response.error) {
-                console.log(`error response from arch: \n${response.error.message}`);
+                if (response.error) {
+                  console.log(`error response from arch: \n${response.error.message}`);
+                  dispatch(
+                    setArchaeologistException(arch.profile.peerId, {
+                      code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
+                      message: processDeclinedSignatureCode(
+                        response.error.code as SarcophagusValidationError,
+                        arch.profile.archAddress
+                      ),
+                    })
+                  );
+                } else {
+                  archaeologistSignatures.set(arch.profile.archAddress, response.signature);
+                }
+              }
+            })
+              .catch(e => {
+                // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
+                const message = `Exception occurred in negotiation stream for: ${arch.profile.archAddress}`;
+                console.error(`Stream exception on ${arch.profile.peerId}`, e);
                 dispatch(
                   setArchaeologistException(arch.profile.peerId, {
-                    code: ArchaeologistExceptionCode.DECLINED_SIGNATURE,
-                    message: processDeclinedSignatureCode(
-                      response.error.code as SarcophagusValidationError,
-                      arch.profile.archAddress
-                    ),
+                    code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
+                    message,
                   })
                 );
-              } else {
-                archaeologistSignatures.set(arch.profile.archAddress, response.signature);
-              }
-            }
-          })
-            .catch(e => {
-              // TODO: `message` will (likely) be user-facing. Need friendlier verbiage.
-              const message = `Exception occurred in negotiation stream for: ${arch.profile.archAddress}`;
-              console.error(`Stream exception on ${arch.profile.peerId}`, e);
-              dispatch(
-                setArchaeologistException(arch.profile.peerId, {
-                  code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
-                  message,
-                })
-              );
-              throw Error('stream exception');
-            })
-            .finally(() => stream.close());
-        } catch (e) {
-          throw Error(`stream exception: ${e}`);
-        }
-      })
-    ).catch(error => {
-      throw Error(`Error retrieving arch signatures ${error}`);
-    });
+                throw Error('stream exception');
+              })
+              .finally(() => stream.close());
+          } catch (e) {
+            throw Error(`stream exception: ${e}`);
+          }
+        })
+      ).catch(error => {
+        throw Error(`Error retrieving arch signatures ${error}`);
+      });
 
-    if (archaeologistSignatures.size !== selectedArchaeologists.length) {
-      throw Error('Not enough signatures');
-    }
+      if (archaeologistSignatures.size !== selectedArchaeologists.length) {
+        throw Error('Not enough signatures');
+      }
 
-    setArchaeologistSignatures(archaeologistSignatures);
-  }, [
-    dispatch,
-    selectedArchaeologists,
-    archaeologistShards,
-    encryptedShardsTxId,
-    dialArchaeologist,
-    setArchaeologistSignatures,
-    setNegotiationTimestamp,
-  ]);
+      setArchaeologistSignatures(archaeologistSignatures);
+    },
+    [
+      dispatch,
+      selectedArchaeologists,
+      archaeologistShards,
+      encryptedShardsTxId,
+      dialArchaeologist,
+      setArchaeologistSignatures,
+      setNegotiationTimestamp,
+    ]
+  );
 
   return {
     initiateSarcophagusNegotiation,
