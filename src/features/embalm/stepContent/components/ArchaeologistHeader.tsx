@@ -1,4 +1,13 @@
-import { Text, Box, Flex, useColorModeValue, HStack, Checkbox, Icon } from '@chakra-ui/react';
+import {
+  Text,
+  Box,
+  Flex,
+  useColorModeValue,
+  HStack,
+  Checkbox,
+  Icon,
+  Tooltip,
+} from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { sumDiggingFees } from 'lib/utils/helpers';
 import { useDispatch, useSelector } from 'store/index';
@@ -52,7 +61,12 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         </Flex>
 
         <HStack mr={2}>
-          <Icon as={InfoOutlineIcon}></Icon>
+          <Tooltip
+            label="This is how much SARCO it will cost you each time you rewrap your Sarchophagus"
+            placement="top"
+          >
+            <Icon as={InfoOutlineIcon}></Icon>
+          </Tooltip>
           <Text>
             Total Fee:
             <Text

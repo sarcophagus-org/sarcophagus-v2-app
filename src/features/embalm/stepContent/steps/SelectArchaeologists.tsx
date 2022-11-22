@@ -228,11 +228,7 @@ export function SelectArchaeologists() {
                 mr={2}
                 mt={3}
               >
-                <SummaryErrorIcon
-                  error={
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                  }
-                />
+                <SummaryErrorIcon />
                 <Text
                   ml={2}
                   color="brand.500"
