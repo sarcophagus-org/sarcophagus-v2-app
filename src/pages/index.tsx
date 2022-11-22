@@ -1,4 +1,14 @@
-import { Box, Button, Flex, Link, Text, Heading, Image, Container } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Link,
+  Text,
+  Heading,
+  Image,
+  Container,
+  Tooltip,
+} from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -60,11 +70,13 @@ export function Pages() {
           </Button>
         </Flex>
       ),
+      tooltip: 'Create a new Sarcophagus',
     },
     {
       path: RoutesPathMap[RouteKey.DASHBOARD_PAGE],
       element: <DashboardPage />,
       label: 'Tomb',
+      tooltip: 'View your Sarcophagi',
     },
     {
       path: RoutesPathMap[RouteKey.DASHBOARD_DETAIL],
@@ -76,11 +88,13 @@ export function Pages() {
       path: RoutesPathMap[RouteKey.ARCHEOLOGIST_PAGE],
       element: <ArchaeologistsPage />,
       label: 'Archaeologists',
+      tooltip: 'View and select from all registered archaeologists',
     },
     {
       path: RoutesPathMap[RouteKey.BUNDLER_PAGE],
       element: <BundlrPage />,
       label: 'Bundlr',
+      tooltip: 'Fund or withdraw from your Bundlr account',
     },
     {
       path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
@@ -92,6 +106,7 @@ export function Pages() {
       path: RoutesPathMap[RouteKey.RECIPIENTS],
       element: <RecipientsPage />,
       label: 'Recipients',
+      tooltip: 'Derive a recipient public key from your connected wallet',
     },
     {
       path: RoutesPathMap[RouteKey.SARCOPHAGUS_CREATED],
@@ -121,27 +136,33 @@ export function Pages() {
           >
             <Flex alignItems="center">
               {routes.map(route => (
-                <Link
-                  textDecor="bold"
-                  as={NavLink}
-                  mx={1.5}
-                  bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
-                  _activeLink={{
-                    color: 'brand.950',
-                    bgColor: route.noBackground ? 'transparent' : 'blue.700',
-                  }}
-                  _hover={{ textDecor: 'none', color: 'brand.700' }}
+                <Tooltip
+                  isDisabled={!route.tooltip}
+                  label={route.tooltip}
+                  openDelay={300}
                   key={route.path}
-                  to={route.path}
-                  hidden={route.hidden}
                 >
-                  <Box
-                    px={route.noBackground ? 0 : 5}
-                    py={route.noBackground ? 0 : 2.5}
+                  <Link
+                    textDecor="bold"
+                    as={NavLink}
+                    mx={1.5}
+                    bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
+                    _activeLink={{
+                      color: 'brand.950',
+                      bgColor: route.noBackground ? 'transparent' : 'blue.700',
+                    }}
+                    _hover={{ textDecor: 'none', color: 'brand.700' }}
+                    to={route.path}
+                    hidden={route.hidden}
                   >
-                    {route.label}
-                  </Box>
-                </Link>
+                    <Box
+                      px={route.noBackground ? 0 : 5}
+                      py={route.noBackground ? 0 : 2.5}
+                    >
+                      {route.label}
+                    </Box>
+                  </Link>
+                </Tooltip>
               ))}
             </Flex>
           </Flex>
