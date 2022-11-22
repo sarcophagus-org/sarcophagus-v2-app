@@ -12,10 +12,6 @@ import {
   Input,
   HStack,
   Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
   Tooltip,
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
