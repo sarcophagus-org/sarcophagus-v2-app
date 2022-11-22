@@ -10,13 +10,13 @@ import { Tooltip } from './Tooltip';
 
 export const components = {
   Button,
-  Heading,
-  Text,
+  Heading: Heading,
+  Text: Text,
   Input,
   NumberInput: Input,
   FormLabel,
   Divider,
-  Alert,
+  Alert: Alert,
   Tooltip,
   Textarea,
 };

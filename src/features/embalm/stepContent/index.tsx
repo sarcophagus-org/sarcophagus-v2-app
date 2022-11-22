@@ -68,7 +68,7 @@ export function StepContent() {
       >
         {showPrev() ? (
           <Button
-            variant="link"
+            variant="unstyled"
             width="fit-content"
             disabled={currentStep.valueOf() === 0}
             onClick={handleClickPrev}
@@ -82,7 +82,7 @@ export function StepContent() {
 
         {currentStep.valueOf() < Object.keys(contentMap).length - 1 && (
           <Button
-            variant="link"
+            variant="unstyled"
             width="fit-content"
             onClick={handleClickNext}
           >

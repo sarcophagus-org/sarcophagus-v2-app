@@ -46,13 +46,15 @@ export function SarcophagusSummaryFees() {
           >
             <Text
               as="i"
-              color="brand.500"
+              variant="secondary"
+              fontSize="xs"
             >
               + {protocolFeeBasePercentage}% protocol fee
             </Text>
             <Text
               as="i"
-              color="brand.500"
+              variant="secondary"
+              fontSize="xs"
             >
               {formatFee(protocolFee)} SARCO
             </Text>

@@ -11,6 +11,7 @@ import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 import { RecipientsPage } from './RecipientsPage';
+import { ThemeTestPage } from './ThemeTestPage';
 import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
@@ -25,6 +26,7 @@ export enum RouteKey {
   RECIPIENTS,
   TEMP_RESURRECTION_PAGE,
   SARCOPHAGUS_CREATED,
+  THEME_TEST_PAGE,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
@@ -36,6 +38,7 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.RECIPIENTS]: '/recipients',
   [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
   [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
+  [RouteKey.THEME_TEST_PAGE]: '/theme-test',
 };
 
 export function Pages() {
@@ -99,6 +102,13 @@ export function Pages() {
       label: '',
       hidden: true,
     },
+    {
+      path: RoutesPathMap[RouteKey.THEME_TEST_PAGE],
+      element: <ThemeTestPage />,
+      label: '',
+      hidden: true,
+    },
+
   ];
 
   const { isConnected } = useAccount();
@@ -198,7 +208,7 @@ export function Pages() {
               ) : (
                 <Text
                   align="center"
-                  fontWeight="bold"
+                  variant="bold"
                 >
                   Supported Networks
                   {supportedNetworkNames.map(network => (

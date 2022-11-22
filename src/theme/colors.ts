@@ -47,4 +47,30 @@ export const colors = {
     red: '#F7414126',
     yellow: '#FFF72D26',
   },
+
+  // alert components
+  alert: {
+    info: '#168FFF',
+    infoBackground: '#168FFF26',
+    success: '#17CB49',
+    successBackground: '#17CB4926',
+    warning: '#FF9F2D',
+    warningBackground: '#FF9F2D26',
+    error: '#F74141',
+    errorBackground: '#F7414126',
+  },
+
+  table: {
+    textBackground: '#383a4066',
+    errorBackground: '#F7414126',
+  },
+
+  text: {
+    primary: '#FFFFFF', // brand.950
+    secondary: '#a6a6a6', // brand.600
+    disabled: '#737373', // brand.400
+  },
+
+  //TODO, items from oldColors to be resolved
+  errorHighlight: '#F7414126',
 };

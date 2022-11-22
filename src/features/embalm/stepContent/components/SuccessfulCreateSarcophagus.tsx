@@ -51,7 +51,7 @@ export function SuccessfulCreateSarcophagus({
     <Text
       width="50%"
       fontSize="10px"
-      color="brand.700"
+      variant="secondary"
       textAlign="right"
       mt={4}
     >
@@ -153,7 +153,7 @@ export function SuccessfulCreateSarcophagus({
             </Text>
             <Text
               fontSize="10px"
-              color="brand.700"
+              variant="secondary"
               textAlign="right"
               decoration="underline"
               mt={4}
