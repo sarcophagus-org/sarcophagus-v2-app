@@ -20,7 +20,7 @@ import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
 
-export function SelectArchaeologists() {
+export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: boolean }) {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist } = useArchaeologistList();
@@ -60,7 +60,7 @@ export function SelectArchaeologists() {
       direction="column"
       width="100%"
     >
-      <Heading>Archaeologists</Heading>
+      {!hideHeader ?? <Heading>Archaeologists</Heading>}
       <Text
         variant="primary"
         mt="4"
