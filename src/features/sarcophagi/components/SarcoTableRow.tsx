@@ -43,23 +43,45 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
 
   const stateToActionMap: {
     [key: string]: {
-      action: SarcoAction | undefined;
-      tooltip: string;
+      action?: SarcoAction;
+      tooltip?: string;
+      stateTooltip: string;
     };
   } = {
     [SarcophagusState.Active]: {
       action: isEmbalmer ? SarcoAction.Rewrap : undefined,
       tooltip: 'Extend the resurrection date of the Sarcophagus',
+      stateTooltip: 'The Sarcophagus is on course to be resurrected',
     },
-    [SarcophagusState.Failed]: { action: SarcoAction.Clean, tooltip: 'Clean sarco' },
+    [SarcophagusState.Failed]: {
+      action: SarcoAction.Clean,
+      tooltip: 'Clean sarco',
+      stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
+    },
     [SarcophagusState.Resurrected]: {
       action: !isRecipient ? SarcoAction.Claim : undefined,
       tooltip: !isRecipient ? 'Decrypt and download the Sarcophagus payload' : '',
+      stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
+    },
+    [SarcophagusState.Accused]: {
+      stateTooltip:
+        'Too many of the archaeologists have leaked assigned keys. This Sarcophagus is compromised.',
+    },
+    [SarcophagusState.Buried]: {
+      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+    },
+    [SarcophagusState.Cleaned]: {
+      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+    },
+    [SarcophagusState.Resurrecting]: {
+      stateTooltip:
+        'The Sarcophagus resurrection time has passed and is within a grace period of unwrapping',
     },
   };
 
   const action = stateToActionMap[sarco.state]?.action;
   const actionTooltip = stateToActionMap[sarco.state]?.tooltip;
+  const stateTooltip = stateToActionMap[sarco.state]?.stateTooltip;
 
   // TODO: Remove console logs and navigate to the appropriate page including the sarcoId
   function handleClickAction() {
@@ -82,7 +104,10 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
     <Tr>
       {/* SARCO STATE */}
       <Td>
-        <SarcoStateIndicator state={sarco.state} />
+        <SarcoStateIndicator
+          state={sarco.state}
+          tooltip={stateTooltip}
+        />
       </Td>
 
       {/* SARCO NAME */}
@@ -102,7 +127,7 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
             isDisabled={!actionTooltip}
             openDelay={500}
             label={actionTooltip}
-            placement="right"
+            placement="right-start"
           >
             <Button
               variant="link"
