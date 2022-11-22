@@ -33,7 +33,7 @@ export function SarcoStateIndicator({
   return (
     <Flex>
       <Tooltip
-        placement='right-start'
+        placement="right-start"
         openDelay={700}
         isDisabled={!tooltip}
         label={tooltip}

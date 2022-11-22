@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { EditIcon } from '@chakra-ui/icons';
 import { Button, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
@@ -149,7 +149,7 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
           to={sarco.id || ''}
           aria-label="Details"
           variant="unstyled"
-          icon={<ExternalLinkIcon />}
+          icon={<EditIcon />}
         />
       </Td>
     </Tr>
