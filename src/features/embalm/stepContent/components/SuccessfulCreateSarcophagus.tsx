@@ -76,6 +76,7 @@ export function SuccessfulCreateSarcophagus({
         Sarcophagus Created Successfully
       </Heading>
       <SuccessIcon
+        color='blue'
         boxSize={50}
         mb={6}
       />
