@@ -1,17 +1,16 @@
 import { useToast } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
 import {
-  fundFailure,
   fundStart,
   fundSuccess,
   uploadStart,
   uploadSuccess,
-  withdrawFailure,
   withdrawStart,
   withdrawSuccess,
 } from 'lib/utils/toast';
 import { useCallback, useState } from 'react';
-import { setIsFunding, setPendingBalance } from 'store/bundlr/actions';
+import { fund as fundAction, setIsFunding, withdraw as withdrawAction } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 
 export function useBundlr() {
@@ -19,7 +18,7 @@ export function useBundlr() {
   const toast = useToast();
 
   // Pull some bundlr data from store
-  const { bundlr, txId, balance, isConnected, isFunding } = useSelector(x => x.bundlrState);
+  const { bundlr, txId, isConnected, isFunding } = useSelector(x => x.bundlrState);
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -34,25 +33,23 @@ export function useBundlr() {
       toast(fundStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
-        const response = await bundlr?.fund(Number(parsedAmount));
-
-        dispatch(
-          setPendingBalance({
-            balanceBeforeFund: balance,
-            txId: response!.id,
-          })
-        );
+        await bundlr?.fund(Number(parsedAmount));
 
         toast(fundSuccess());
       } catch (_error) {
         const error = _error as Error;
         console.error(error);
-        toast(fundFailure(error.message));
       } finally {
+        // Many times the fund call throws an error even though the fund is actually happening, so
+        // we want to proceed as if the fund is working even if an error is thrown.  If the fund
+        // actually fails, then this dispatch action may incorrectly show the user that the fund is
+        // pending, which is a more tolerable isssue to have. A page refresh should fix this.
+        dispatch(fundAction(amount));
+
         dispatch(setIsFunding(false));
       }
     },
-    [bundlr, dispatch, toast, balance]
+    [bundlr, dispatch, toast]
   );
 
   /**
@@ -69,12 +66,19 @@ export function useBundlr() {
         toast(withdrawSuccess());
       } catch (_error) {
         const error = _error as Error;
-        toast(withdrawFailure(error.message));
+        console.error(error);
       } finally {
+        // Many times the withdraw call throws an error even though the withdraw is actually
+        // happening, so we want to proceed as if the withdraw is working even if an error is
+        // thrown.  If the withdraw actually fails, then this dispatch action may incorrectly show
+        // the user that the withdraw is pending, which is a more tolerable isssue to have. A page
+        // refresh should fix this.
+        dispatch(withdrawAction(formatEther(amount)));
+
         setIsWithdrawing(false);
       }
     },
-    [bundlr, toast]
+    [bundlr, dispatch, toast]
   );
 
   /**

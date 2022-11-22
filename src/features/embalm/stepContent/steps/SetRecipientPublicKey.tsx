@@ -6,7 +6,8 @@ import { GenerateRecipientPDF } from '../components/GenerateRecipientPDF';
 
 import { Select, OptionBase, GroupBase } from 'chakra-react-select';
 import { validateRecipient } from 'features/embalm/stepNavigator/hooks/useSetStatuses';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
+
 interface IRecipientSetByOption extends OptionBase {
   label: string;
   value: RecipientSetByOption;
@@ -65,14 +66,14 @@ export function SetRecipientPublicKey() {
               options={selectOptionsMap}
               isSearchable={false}
               focusBorderColor="brand.950"
-              selectedOptionColor="brand"
+              selectedOptionColor="brand.0"
               useBasicStyles
               chakraStyles={{
                 menuList: provided => ({
                   ...provided,
                   bg: 'brand.0',
                   fontSize: 'sm',
-                  borderColor: 'violet.700',
+                  borderColor: 'grayBlue.700',
                 }),
 
                 option: (provided, state) => ({
@@ -121,7 +122,7 @@ export function SetRecipientPublicKey() {
               </Text>
               {recipientState.publicKey !== '' && !validateRecipient(recipientState) && (
                 <Box pt={6}>
-                  <Alert status="warning">Invalid public key</Alert>
+                  <SarcoAlert status="warning">Invalid public key</SarcoAlert>
                 </Box>
               )}
             </VStack>

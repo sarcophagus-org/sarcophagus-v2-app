@@ -1,5 +1,5 @@
 import { Button, Center, Flex, Link, Spinner, Text, Textarea } from '@chakra-ui/react';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
@@ -74,7 +74,7 @@ export function Claim() {
             </>
           ) : (
             <Flex mt={12}>
-              <Alert status="warning">This Sarcophagus cannot be claimed yet.</Alert>
+              <SarcoAlert status="warning">This Sarcophagus cannot be claimed yet.</SarcoAlert>
             </Flex>
           )}
         </>

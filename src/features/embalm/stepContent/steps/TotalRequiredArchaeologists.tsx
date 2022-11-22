@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { setRequiredArchaeologists } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 
 export function TotalRequiredArchaegologists() {
   const dispatch = useDispatch();
@@ -32,10 +32,9 @@ export function TotalRequiredArchaegologists() {
     >
       <Heading>Archaeologists</Heading>
       <Text fontStyle="italic">
-        {/* if at some point 'brand.600' becomes a named color on src/theme/components/Text.ts, this color prop can be changed. */}
         <chakra.span
           fontStyle="normal"
-          color="brand.600"
+          color="text.secondary"
         >
           How many of your archeologists are required to rewrap or resurrect your sarco.{' '}
         </chakra.span>
@@ -61,9 +60,9 @@ export function TotalRequiredArchaegologists() {
         <Text>of {totalArchaeologists} total arches required.</Text>
       </HStack>
       {totalArchaeologists >= requiredArchaeologists || (
-        <Alert status="error">
+        <SarcoAlert status="error">
           You cannot have more required archaeologist than total archaeologists
-        </Alert>
+        </SarcoAlert>
       )}
     </VStack>
   );

@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip } from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip, chakra } from '@chakra-ui/react';
 import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
@@ -62,30 +62,21 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
     >
       {!hideHeader ?? <Heading>Archaeologists</Heading>}
       <Text
-        variant="primary"
         mt="4"
-        fontSize="16px"
+        fontSize="lg"
       >
         Resurrection Time
       </Text>
       <HStack>
         <>
-          <Text
-            variant="primary"
-            color="brand.600"
-          >
+          <Text variant="secondary">
             Currently set:{' '}
-            <Text
-              as="u"
-              color="brand.600"
-            >
+            <chakra.span textDecor="underline">
               {moment(resurrectionDate).format('DD.MM.YY h:mma')}
-            </Text>
+            </chakra.span>
           </Text>
-
           <Text
             as="i"
-            color="brand.900"
             onClick={() => {
               setResurrectionTimeEdit(prevValue => !prevValue);
             }}
@@ -121,7 +112,7 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
                 <Flex px={3}>
                   <HStack direction="row">
                     <HStack>
-                      <Text color="brand.600">Items per page:</Text>
+                      <Text variant="secondary">Items per page:</Text>
                       <SetPaginationSize
                         handlePageSizeChange={handlePageSizeChange}
                         paginationSize={paginationSize}
@@ -217,7 +208,7 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
                 <SummaryErrorIcon />
                 <Text
                   ml={2}
-                  color="brand.500"
+                  variant="secondary"
                   textAlign={'center'}
                 >
                   = accused archaeologists

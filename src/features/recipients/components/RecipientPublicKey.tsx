@@ -14,13 +14,13 @@ export function RecipientPublicKey() {
     <Flex
       w="500px"
       border="1px solid"
-      borderColor="whiteAlpha.300"
+      borderColor="brand.300"
       direction="column"
     >
       <Flex
         justify="center"
         w="100%"
-        bg="whiteAlpha.400"
+        bg="brand.400"
         py={3}
       >
         <Text fontSize="md">RECIPIENT PUBLIC KEY</Text>

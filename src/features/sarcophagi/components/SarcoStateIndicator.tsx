@@ -23,11 +23,11 @@ export function SarcoStateIndicator({
   tooltip = '',
 }: SarcophagusStateIndicatorProps) {
   const stateColorMap: { [key: string]: { text: string; bg: string } } = {
-    [SarcophagusState.Active]: { text: 'green', bg: 'greenBg' },
-    [SarcophagusState.Failed]: { text: 'red', bg: 'redBg' },
-    [SarcophagusState.Resurrecting]: { text: 'yellow', bg: 'yellowBg' },
-    [SarcophagusState.Resurrected]: { text: 'controversialBlue', bg: 'blueBg' },
-    [SarcophagusState.Buried]: { text: 'whiteAlpha.600', bg: 'whiteAlpha.300' },
+    [SarcophagusState.Active]: { text: 'green', bg: 'transparent.green' },
+    [SarcophagusState.Failed]: { text: 'red', bg: 'transparent.red' },
+    [SarcophagusState.Resurrecting]: { text: 'orange', bg: 'transparent.orange' },
+    [SarcophagusState.Resurrected]: { text: 'blue', bg: 'transparent.blue' },
+    [SarcophagusState.Buried]: { text: 'gray', bg: 'transparent.gray' },
   };
 
   return (
