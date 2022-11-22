@@ -27,7 +27,6 @@ interface FilterProps extends NumberInputProps {
 interface FilterComponentProps {
   filterWidth: string;
   filterTypeAction: (search: string) => ArchaeologistListActions;
-  onChange?: any;
   placeholder?: string;
   icon?: boolean;
 }
@@ -53,7 +52,6 @@ function FilterComponent({
   placeholder,
   filterTypeAction,
   icon,
-  onChange,
   ...rest
 }: FilterComponentProps) {
   const dispatch = useDispatch();
