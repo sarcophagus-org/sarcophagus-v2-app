@@ -9,28 +9,48 @@ import {
   Text,
   VStack,
   HStack,
-  useToast,
 } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
-import { errorSample, infoSample, successSample, warningSample } from '../lib/utils/toast';
+import { useSarcoToast } from 'components/SarcoToast';
 
 export function ThemeTestPage() {
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
 
   function handleClickInfo() {
-    toast(infoSample());
+    sarcoToast.open({ title: 'Info Title', status: 'info', description: 'Info description here' });
   }
 
   function handleClickSuccess() {
-    toast(successSample());
+    sarcoToast.open({
+      title: 'Success Title Here',
+      status: 'success',
+      description: 'This is a success',
+      duration: 1000,
+      position: 'top',
+    });
   }
 
   function handleClickWarning() {
-    toast(warningSample());
+    sarcoToast.open({
+      title: 'Warning',
+      status: 'warning',
+      duration: null,
+      isClosable: true,
+      description: (
+        <Box>
+          <Button>DANGER</Button> Will Robbinson
+        </Box>
+      ),
+    });
   }
 
   function handleClickError() {
-    toast(errorSample());
+    sarcoToast.open({
+      title: 'Error',
+      status: 'error',
+      description: 'Bad very bad error',
+      isClosable: true,
+    });
   }
   return (
     <VStack
@@ -47,6 +67,34 @@ export function ThemeTestPage() {
       >
         A Clicky Link
       </Button>
+
+      <Heading>Toasts</Heading>
+      <HStack spacing={3}>
+        <Button
+          w={200}
+          onClick={handleClickInfo}
+        >
+          Info
+        </Button>
+        <Button
+          w={200}
+          onClick={handleClickSuccess}
+        >
+          Success
+        </Button>
+        <Button
+          w={200}
+          onClick={handleClickWarning}
+        >
+          Warning
+        </Button>
+        <Button
+          w={200}
+          onClick={handleClickError}
+        >
+          Error
+        </Button>
+      </HStack>
 
       <Heading>Alerts</Heading>
 
@@ -100,34 +148,6 @@ export function ThemeTestPage() {
       </Button>
 
       <Divider />
-
-      <Heading>Toasts</Heading>
-      <HStack spacing={3}>
-        <Button
-          w={200}
-          onClick={handleClickInfo}
-        >
-          Info
-        </Button>
-        <Button
-          w={200}
-          onClick={handleClickSuccess}
-        >
-          Success
-        </Button>
-        <Button
-          w={200}
-          onClick={handleClickWarning}
-        >
-          Warning
-        </Button>
-        <Button
-          w={200}
-          onClick={handleClickError}
-        >
-          Error
-        </Button>
-      </HStack>
 
       <Divider />
       <Heading>Form</Heading>

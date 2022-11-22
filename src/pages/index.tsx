@@ -110,7 +110,7 @@ export function Pages() {
     {
       path: RoutesPathMap[RouteKey.THEME_TEST_PAGE],
       element: <ThemeTestPage />,
-      label: '',
+      label: '[Test Theme]',
       hidden: true,
     },
   ];
