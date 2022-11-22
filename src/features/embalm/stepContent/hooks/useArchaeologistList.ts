@@ -1,11 +1,6 @@
 import { useCallback } from 'react';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
-import {
-  SortDirection,
-  SortFilterType,
-  setSortDirection,
-  setArchAddressSearch,
-} from 'store/archaeologistList/actions';
+import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
@@ -50,10 +45,6 @@ export function useArchaeologistList() {
     },
     [dispatch, selectedArchaeologists]
   );
-
-  function handleChangeAddressSearch(event: React.ChangeEvent<HTMLInputElement>) {
-    dispatch(setArchAddressSearch(event.target.value));
-  }
 
   const length = keys(SortDirection).length / 2;
   const directionValue = (direction: SortDirection) => {
@@ -147,10 +138,12 @@ export function useArchaeologistList() {
 
   const sortedFilteredArchaeologist = (onlyShowSelected: boolean): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
-      if (!onlyShowSelected) {
-        return true;
+      if (onlyShowSelected) {
+        return (
+          selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
+        );
       }
-      return selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1;
+      return true;
     }
 
     return sortedArchaeologist()?.filter(
@@ -181,6 +174,5 @@ export function useArchaeologistList() {
     archAddressSearch,
     sortedArchaeologist,
     showSelectedArchaeologists,
-    handleChangeAddressSearch,
   };
 }

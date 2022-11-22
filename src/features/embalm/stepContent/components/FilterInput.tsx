@@ -5,6 +5,7 @@ import {
   InputLeftElement,
   InputGroup,
   NumberInputProps,
+  Input,
 } from '@chakra-ui/react';
 import { removeLeadingZeroes, removeNonIntChars } from 'lib/utils/helpers';
 import {
@@ -13,6 +14,7 @@ import {
   setFailsFilter,
   SortFilterType,
   ArchaeologistListActions,
+  setArchAddressSearch,
 } from 'store/archaeologistList/actions';
 import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
@@ -25,6 +27,7 @@ interface FilterProps extends NumberInputProps {
 interface FilterComponentProps {
   filterWidth: string;
   filterTypeAction: (search: string) => ArchaeologistListActions;
+  onChange?: any;
   placeholder?: string;
   icon?: boolean;
 }
@@ -50,6 +53,7 @@ function FilterComponent({
   placeholder,
   filterTypeAction,
   icon,
+  onChange,
   ...rest
 }: FilterComponentProps) {
   const dispatch = useDispatch();
@@ -82,7 +86,23 @@ function FilterComponent({
 }
 
 export function FilterInput({ filterName, placeholder = '', ...rest }: FilterProps) {
+  const dispatch = useDispatch();
+
   switch (filterName) {
+    case SortFilterType.ADDRESS_SEARCH:
+      function handleChangeAddressSearch(event: React.ChangeEvent<HTMLInputElement>) {
+        dispatch(setArchAddressSearch(event.target.value));
+      }
+      return (
+        <Input
+          onChange={handleChangeAddressSearch}
+          w="190px"
+          placeholder="Search"
+          borderColor="violet.700"
+          color="brand.950"
+        />
+      );
+
     case SortFilterType.DIGGING_FEES:
       return (
         <FilterComponent
@@ -113,9 +133,6 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
           {...rest}
         />
       );
-
-    case SortFilterType.ADDRESS_SEARCH:
-      return null;
 
     case SortFilterType.NONE:
       return null;

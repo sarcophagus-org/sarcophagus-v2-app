@@ -1,6 +1,5 @@
 import {
   Flex,
-  Input,
   Table,
   TableContainer,
   Tbody,
@@ -52,7 +51,6 @@ export function ArchaeologistList({
     unwrapsFilter,
     failsFilter,
     showSelectedArchaeologists,
-    handleChangeAddressSearch,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -102,13 +100,9 @@ export function ArchaeologistList({
                         Archaeologists (
                         {sortedFilteredArchaeologist(showSelectedArchaeologists)?.length})
                       </Button>
-                      <Input
-                        onChange={handleChangeAddressSearch}
+                      <FilterInput
+                        filterName={SortFilterType.ADDRESS_SEARCH}
                         value={archAddressSearch}
-                        w="190px"
-                        placeholder="Search"
-                        borderColor="violet.700"
-                        color="brand.950"
                       />
                     </VStack>
                   </Th>
