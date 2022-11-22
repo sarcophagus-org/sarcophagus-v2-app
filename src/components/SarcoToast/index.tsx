@@ -22,7 +22,6 @@ export function useSarcoToast() {
 
   const open = (props: ToastProps): ToastId => {
     const { status, title, description, duration, position, isClosable } = props;
-    const backgroundColor = colors.alert[status].background;
 
     return charkaToast({
       duration: duration === undefined ? defaultDuration : duration,
@@ -32,7 +31,8 @@ export function useSarcoToast() {
         <HStack
           alignItems="flex-start"
           spacing={0}
-          bg={backgroundColor}
+          //TODO; set this to the colorscheme of the alert?
+          bg="grayBlue.500"
         >
           <SarcoAlert
             title={title}

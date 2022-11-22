@@ -50,20 +50,12 @@ const alertStatusStyles: { [key: string]: any } = {
       bg: 'unset',
       backgroundColor: 'alert.warning.background',
     },
-    ...titleAndDescriptionStyle,
-  },
-  error: {
-    container: {
-      bg: 'unset',
-      backgroundColor: 'alert.error.background',
+    description: {
+      color: 'brand.950',
+      lineHeight: '1',
     },
-    ...titleAndDescriptionStyle,
   },
-};
-
-export const Alert = helpers.defineMultiStyleConfig({
-  baseStyle: (props: AlertProps) => alertStatusStyles[props.status || 'default'],
   sizes: {},
   variants: {},
   defaultProps: {},
-});
+};

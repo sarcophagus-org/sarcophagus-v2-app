@@ -14,18 +14,16 @@ interface AlertProps extends CharkraAlertProps {
   onClose?: () => void;
 }
 const StatusMap = {
-  info: { icon: InfoIcon, color: 'alert.info.accent' },
-  warning: { icon: WarningIcon, color: 'alert.warning.accent' },
-  success: { icon: SuccessIcon, color: 'alert.success.accent' },
-  error: { icon: ErrorIcon, color: 'alert.error.accent' },
-  loading: { icon: InfoIcon, color: 'black' }, // not supported
+  info: { icon: InfoIcon },
+  warning: { icon: WarningIcon },
+  success: { icon: SuccessIcon },
+  error: { icon: ErrorIcon },
+  loading: { icon: InfoIcon }, // not supported
 };
 function getStatusIcon(status: AlertStatus) {
   return StatusMap[status].icon;
 }
-function getStatusIconColor(status: AlertStatus) {
-  return StatusMap[status].color;
-}
+
 export function SarcoAlert(props: AlertProps & HTMLChakraProps<'div'>) {
   const { status = 'info', title, children } = props;
   const hasTitle = !!title;
@@ -42,14 +40,7 @@ export function SarcoAlert(props: AlertProps & HTMLChakraProps<'div'>) {
         }
       >
         <GridItem area="icon">
-          <AlertIcon>
-            {
-              <StatusIcon
-                boxSize="20px"
-                color={getStatusIconColor(status)}
-              />
-            }
-          </AlertIcon>
+          <AlertIcon>{<StatusIcon boxSize="20px" />}</AlertIcon>
         </GridItem>
         {!hasTitle || (
           <GridItem area="title">

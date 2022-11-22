@@ -9,7 +9,12 @@ import {
   Text,
   VStack,
   HStack,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  AlertIcon,
 } from '@chakra-ui/react';
+import { CheckIcon } from '@chakra-ui/icons';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useSarcoToast } from 'components/SarcoToast';
 
@@ -59,6 +64,11 @@ export function ThemeTestPage() {
       spacing={6}
       mb={200}
     >
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle>Title</AlertTitle>
+        <AlertDescription>Description</AlertDescription>
+      </Alert>
       <Heading>This is a Heading</Heading>
       <Text>This is some primary text</Text>
       <Text variant="secondary">This is some secondary text</Text>

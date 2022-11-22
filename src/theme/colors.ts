@@ -34,32 +34,13 @@ export const colors = {
     900: '#20262D',
   },
 
-  // Bright colors typically used for toasts and alerts
-  blue: '#168FFF',
-  green: '#17CB49',
-  orange: '#FF9F2D',
-  red: '#F74141',
+  //For Chakra Alerts and Toast, but default the colors are set to these names. 100 color will be the background and 500 is the icon color.
+  blue: { 100: '#122435', 500: '#168FFF' },
+  green: { 100: '#122D19', 500: '#17CB49' },
+  orange: { 100: '#352615', 500: '#FF9F2D' },
+  red: { 100: '#331818', 500: '#F74141' },
   yellow: '#FFF72D',
   gray: '#8c8c8c',
-
-  // Transparent versions of the bright colors
-  transparent: {
-    blue: '#168FFF26',
-    green: '#17CB4926',
-    orange: '#FF9F2D26',
-    red: '#F7414126',
-    yellow: '#FFF72D26',
-    gray: '#8c8c8c26',
-  },
-
-  // alert components
-  alert: {
-    info: { accent: '#168FFF', background: '#122435' },
-    success: { accent: '#17CB49', background: '#122D19' },
-    warning: { accent: '#FF9F2D', background: '#352615' },
-    error: { accent: '#F74141', background: '#331818' },
-    loading: { accent: 'brand.0', background: 'brand.0' },
-  },
 
   table: {
     textBackground: '#383a4066',
