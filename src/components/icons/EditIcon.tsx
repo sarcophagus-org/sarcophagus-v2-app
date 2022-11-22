@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/react';
 
-// Icon in the NavBar for the options menu (top right of screen)
 export function EditIcon(props: any) {
   return (
     <Icon {...props}>
