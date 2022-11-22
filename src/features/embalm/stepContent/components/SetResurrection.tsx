@@ -26,7 +26,7 @@ export function SetResurrection({ ...rest }: FlexProps) {
       <Button
         onClick={onClick}
         ref={ref}
-        variant={radioValue !== 'Other' ? 'disabledLook' : 'main'}
+        variant={radioValue !== 'Other' ? 'disabledLook' : 'solid'}
       >
         {/* this value is an empty string, so this logic evalutate true on null | undefinded | '' */}
         {value ? value : 'Custom Date'}
@@ -43,7 +43,7 @@ export function SetResurrection({ ...rest }: FlexProps) {
         align="left"
         spacing="5"
         border="1px solid "
-        borderColor="violet.700"
+        borderColor="grayBlue.700"
         px={9}
         py={6}
       >

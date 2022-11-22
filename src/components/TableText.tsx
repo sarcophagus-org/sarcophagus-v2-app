@@ -8,7 +8,7 @@ interface TableTextProps extends TextProps {
 export function TableText({ children, ...props }: TableTextProps) {
   return (
     <Center
-      bg="whiteAlpha.200"
+      bg="table.textBackground"
       py="2px"
       borderRadius="2px"
       w="fit-content"

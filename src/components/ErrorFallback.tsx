@@ -1,4 +1,5 @@
-import { Center, Container, Flex, Text } from '@chakra-ui/react';
+import { Center } from '@chakra-ui/react';
+import { SarcoAlert } from 'components/SarcoAlert';
 
 export function ErrorFallback({ error }: { error: Error }) {
   return (
@@ -6,21 +7,7 @@ export function ErrorFallback({ error }: { error: Error }) {
       flexDirection="column"
       height="100vh"
     >
-      <Flex direction="column">
-        <Text fontSize="5xl">Oops!</Text>
-        <Text fontSize="xl">There was an error.</Text>
-        <Container
-          mt={12}
-          minWidth={400}
-          borderWidth={1}
-          borderColor="tomato"
-          borderRadius={5}
-          px={2}
-          py={4}
-        >
-          <Text color="tomato">{error.message}</Text>
-        </Container>
-      </Flex>
+      <SarcoAlert title="There was an error." status='error'>{error.message}</SarcoAlert>
     </Center>
   );
 }

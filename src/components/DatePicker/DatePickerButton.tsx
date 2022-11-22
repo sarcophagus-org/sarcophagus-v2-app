@@ -7,7 +7,7 @@ export const DatePickerButton = forwardRef<HTMLButtonElement, ButtonProps>(
       <Button
         onClick={onClick}
         ref={ref}
-        variant="main"
+        variant="solid"
       >
         {/* this value is an empty string, so this logic evalutate true on null | undefinded | '' */}
         {value ? value : 'Custom Date'}

@@ -75,7 +75,7 @@ export function Rewrap() {
 
       <VStack
         border="1px solid "
-        borderColor="violet.700"
+        borderColor="grayBlue.700"
         p={6}
         align="left"
         maxW="640px"
@@ -104,11 +104,8 @@ export function Rewrap() {
       >
         <Text>Fees</Text>
         <HStack spacing={3}>
-          <Button
-            variant="link"
-            color="brand.600"
-          >
-            <Text color="brand.600">Digging fee</Text>
+          <Button variant="link">
+            <Text variant="secondary">Digging fee</Text>
           </Button>
           <>:</>
           <Text>{formatEther(totalDiggingFeeBn)} SARCO</Text>
@@ -116,10 +113,9 @@ export function Rewrap() {
         <HStack spacing={3}>
           <Button
             variant="link"
-            color="brand.600"
             onClick={handleClickProtocolFee}
           >
-            <Text color="brand.600">Protocol fee ({protocolFeeAmountInt}%)</Text>
+            <Text variant="secondary">Protocol fee ({protocolFeeAmountInt}%)</Text>
           </Button>
           <>:</>
           <Text>{formatEther(protocolFeeBn)} SARCO</Text>
