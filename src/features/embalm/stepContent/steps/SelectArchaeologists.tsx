@@ -1,16 +1,4 @@
-import {
-  Flex,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Icon,
-  Box,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-} from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip } from '@chakra-ui/react';
 import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
@@ -208,19 +196,17 @@ export function SelectArchaeologists() {
 
                 <HStack mr={2}>
                   <Text variant="secondary">Show (10) hidden</Text>
-                  <Popover trigger={'hover'}>
-                    <PopoverTrigger>
-                      <Icon
-                        as={QuestionIcon}
-                        color="brand.500"
-                        w={2}
-                        h={2}
-                      ></Icon>
-                    </PopoverTrigger>
-                    <PopoverContent background="black">
-                      <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
-                    </PopoverContent>
-                  </Popover>
+                  <Tooltip
+                    placement="top"
+                    label="These archaeologists are hidden because your selected resurrection time would exceed their maximum resurrection interval"
+                  >
+                    <Icon
+                      as={QuestionIcon}
+                      color="brand.500"
+                      w={3}
+                      h={3}
+                    />
+                  </Tooltip>
                 </HStack>
               </Flex>
 
