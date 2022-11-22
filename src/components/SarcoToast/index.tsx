@@ -7,6 +7,7 @@ import {
   ToastId,
 } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
+import { colors } from 'theme/colors';
 
 const defaultDuration = 5000;
 const defaultPosition = 'bottom-right';
@@ -21,6 +22,7 @@ export function useSarcoToast() {
 
   const open = (props: ToastProps): ToastId => {
     const { status, title, description, duration, position, isClosable } = props;
+    const backgroundColor = colors.alert[status].background;
 
     return charkaToast({
       duration: duration === undefined ? defaultDuration : duration,
@@ -30,7 +32,7 @@ export function useSarcoToast() {
         <HStack
           alignItems="flex-start"
           spacing={0}
-          bg="#331818" /// can't get bg color from SarcoAlert?
+          bg={backgroundColor}
         >
           <SarcoAlert
             title={title}
@@ -39,7 +41,7 @@ export function useSarcoToast() {
           >
             {description}
           </SarcoAlert>
-          {!isClosable && <CloseButton onClick={onClose} />}
+          {isClosable && <CloseButton onClick={onClose} />}
         </HStack>
       ),
     });

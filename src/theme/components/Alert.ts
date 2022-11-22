@@ -34,28 +34,28 @@ const alertStatusStyles: { [key: string]: any } = {
   success: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.successBackground',
+      backgroundColor: 'alert.success.background',
     },
     ...titleAndDescriptionStyle,
   },
   info: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.infoBackground',
+      backgroundColor: 'alert.info.background',
     },
     ...titleAndDescriptionStyle,
   },
   warning: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.warningBackground',
+      backgroundColor: 'alert.warning.background',
     },
     ...titleAndDescriptionStyle,
   },
   error: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.errorBackground',
+      backgroundColor: 'alert.error.background',
     },
     ...titleAndDescriptionStyle,
   },

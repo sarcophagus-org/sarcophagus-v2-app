@@ -1,5 +1,7 @@
 // Contains all the colors used by the sarcophagus app
 
+import { access } from 'fs';
+
 export const colors = {
   // Main brand colors
   // Colors from black to white, lowest number being the darkest and highest number being the
@@ -52,14 +54,11 @@ export const colors = {
 
   // alert components
   alert: {
-    info: '#168FFF',
-    infoBackground: '#122435',
-    success: '#17CB49',
-    successBackground: '#122D19',
-    warning: '#FF9F2D',
-    warningBackground: '#352615',
-    error: '#F74141',
-    errorBackground: '#331818',
+    info: { accent: '#168FFF', background: '#122435' },
+    success: { accent: '#17CB49', background: '#122D19' },
+    warning: { accent: '#FF9F2D', background: '#352615' },
+    error: { accent: '#F74141', background: '#331818' },
+    loading: { accent: 'brand.0', background: 'brand.0' },
   },
 
   table: {
