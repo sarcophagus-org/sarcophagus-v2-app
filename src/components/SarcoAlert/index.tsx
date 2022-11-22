@@ -62,7 +62,6 @@ export function SarcoAlert(props: AlertProps & HTMLChakraProps<'div'>) {
           <AlertDescription>{children}</AlertDescription>
         </GridItem>
       </Grid>
-      <CloseButton onClick={onClose} />
     </Alert>
   );
 }

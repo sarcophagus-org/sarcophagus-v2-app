@@ -40,7 +40,7 @@ export const colors = {
   yellow: '#FFF72D',
   gray: '#8c8c8c',
 
-  // Transparent versions of the bright colors typically used for backgrounds
+  // Transparent versions of the bright colors
   transparent: {
     blue: '#168FFF26',
     green: '#17CB4926',
@@ -53,13 +53,13 @@ export const colors = {
   // alert components
   alert: {
     info: '#168FFF',
-    infoBackground: '#168FFF26',
+    infoBackground: '#122435',
     success: '#17CB49',
-    successBackground: '#17CB4926',
+    successBackground: '#122D19',
     warning: '#FF9F2D',
-    warningBackground: '#FF9F2D26',
+    warningBackground: '#352615',
     error: '#F74141',
-    errorBackground: '#F7414126',
+    errorBackground: '#331818',
   },
 
   table: {

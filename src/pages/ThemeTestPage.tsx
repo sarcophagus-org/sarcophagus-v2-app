@@ -48,7 +48,8 @@ export function ThemeTestPage() {
     sarcoToast.open({
       title: 'Error',
       status: 'error',
-      description: 'Bad very bad error',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel velit eleifend, posuere nisi sed, condimentum dolor. Nullam laoreet odio non tortor vestibulum, vitae fringilla quam porta.',
       isClosable: true,
     });
   }
