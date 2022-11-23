@@ -145,5 +145,6 @@ export function useCreateSarcophagus(
     stageError,
     retryStage,
     successData,
+    clearSarcophagusState,
   };
 }
