@@ -5,6 +5,7 @@ import { ArchaeologistExceptionCode } from 'types';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { createSarcophagusErrors } from '../../utils/errors';
 import { PeerId } from '@libp2p/interface-peer-id';
+import { Connection } from '@libp2p/interface-connection';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -12,27 +13,53 @@ export function useDialArchaeologists() {
 
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
 
-  const dialArchaeologist = useCallback(async (peerId: PeerId) => {
-    try {
-      const connection = await libp2pNode?.dial(peerId);
-      if (!connection) throw Error('No connection obtained from dial');
-      dispatch(setArchaeologistConnection(peerId.toString(), connection));
-      return connection;
-    } catch (e) {
-      dispatch(
-        setArchaeologistException(peerId.toString(), {
-          code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-          message: 'Could not establish a connection',
-        })
-      );
-    }
-  }, [libp2pNode, dispatch]);
+  const dialArchaeologist = useCallback(
+    async (peerId: PeerId) => {
+      try {
+        const connection = await libp2pNode?.dial(peerId);
+        if (!connection) throw Error('No connection obtained from dial');
+        dispatch(setArchaeologistConnection(peerId.toString(), connection));
+        return connection;
+      } catch (e) {
+        dispatch(
+          setArchaeologistException(peerId.toString(), {
+            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+            message: 'Could not establish a connection',
+          })
+        );
+      }
+    },
+    [libp2pNode, dispatch]
+  );
 
   const dialSelectedArchaeologists = useCallback(async () => {
+    const MAX_RETRIES = 5;
+    const WAIT_BETWEEN_RETRIES = 300;
+    const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+    const dialArchaeologistWithRetry = async (dialFn: Function, depth = 0): Promise<Connection> => {
+      try {
+        const connection = await dialFn();
+        return connection;
+      } catch (e) {
+        console.log(`Dial attempt ${depth + 1} failed, retrying....`);
+        if (depth > MAX_RETRIES) {
+          throw e;
+        }
+
+        await wait(WAIT_BETWEEN_RETRIES);
+
+        return dialArchaeologistWithRetry(dialFn, depth + 1);
+      }
+    };
+
     const dialFailedArchaeologists = [];
+
     for await (const arch of selectedArchaeologists) {
       try {
-        const connection = await libp2pNode?.dial(arch.fullPeerId!);
+        const connection = await dialArchaeologistWithRetry(() =>
+          libp2pNode?.dial(arch.fullPeerId!)
+        );
         if (!connection) throw Error('No connection obtained from dial');
         dispatch(setArchaeologistConnection(arch.profile.peerId, connection));
       } catch (e) {

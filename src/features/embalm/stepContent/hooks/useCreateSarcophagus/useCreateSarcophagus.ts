@@ -83,10 +83,14 @@ export function useCreateSarcophagus(
 
           stageToExecute(isRetry)
             .then((result: any) => {
-              setStageExecuting(false);
-              setIsStageRetry(false);
-              incrementStage();
-              resolve(result);
+              // Add a slight delay before next step
+              // to account for any global dispatch delay
+              setTimeout(() => {
+                setStageExecuting(false);
+                setIsStageRetry(false);
+                incrementStage();
+                resolve(result);
+              }, 1000);
             })
             .catch((error: any) => {
               reject(error);
