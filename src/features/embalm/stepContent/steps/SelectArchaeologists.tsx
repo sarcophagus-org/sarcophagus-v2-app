@@ -87,7 +87,7 @@ export function SelectArchaeologists() {
         <>
           <Text variant="secondary">
             Currently set:
-            {resurrectionDate.getFullYear() === new Date(0).getFullYear() ? (
+            {!resurrection ? (
               ' Resurrection time not set'
             ) : (
               <chakra.span
