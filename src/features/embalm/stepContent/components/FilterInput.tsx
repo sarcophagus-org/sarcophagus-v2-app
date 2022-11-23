@@ -41,7 +41,6 @@ function validateAndSetInput(
 
   if (valueAsNumber < 0) {
     valueAsString = '0';
-    valueAsNumber = 0;
   }
 
   return action(valueAsString);
