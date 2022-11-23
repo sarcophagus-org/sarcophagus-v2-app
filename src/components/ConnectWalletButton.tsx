@@ -31,7 +31,7 @@ export function ConnectWalletButton() {
                   mx={2}
                   leftIcon={<SarcoTokenIcon />}
                 >
-                  <Text >{formattedBalance}</Text>
+                  <Text>{formattedBalance}</Text>
                 </Button>
 
                 <Button

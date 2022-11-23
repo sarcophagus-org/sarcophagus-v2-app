@@ -47,7 +47,7 @@ export const colors = {
     orange: '#FF9F2D26',
     red: '#F7414126',
     yellow: '#FFF72D26',
-    gray: '#8c8c8c26'
+    gray: '#8c8c8c26',
   },
 
   // alert components
@@ -77,15 +77,12 @@ export const colors = {
     500: '#168FFF',
   },
 
-
   //TODO, items from oldColors to be resolved and whitAlpha is still being used in places
   errorHighlight: '#F7414126',
   errorAlt: '#290e0e',
-  
+
   menuBlue: {
     700: '#343A40',
     1000: '#131416',
   },
-
-
 };

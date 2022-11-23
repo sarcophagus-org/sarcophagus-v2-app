@@ -36,7 +36,7 @@ You may deploy the contracts on a local hardhat node and simulate an Arweave con
 
 1. Run ArLocal and mint tokens
 
-```jsx
+```
 npx arlocal
 curl http://localhost:1984/mint/Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4/1000000000000000000000
 curl http://localhost:1984/mine

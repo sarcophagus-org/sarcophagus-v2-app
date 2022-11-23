@@ -7,7 +7,12 @@ export function ErrorFallback({ error }: { error: Error }) {
       flexDirection="column"
       height="100vh"
     >
-      <SarcoAlert title="There was an error." status='error'>{error.message}</SarcoAlert>
+      <SarcoAlert
+        title="There was an error."
+        status="error"
+      >
+        {error.message}
+      </SarcoAlert>
     </Center>
   );
 }

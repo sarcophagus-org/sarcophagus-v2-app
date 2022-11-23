@@ -66,7 +66,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
 
   return (
     <Flex direction="column">
-      <Text >Bundlr ETH</Text>
+      <Text>Bundlr ETH</Text>
       <Flex
         mt={1}
         align="center"
@@ -74,11 +74,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         <EthereumIcon boxSize="30px" />
         <Text fontSize="3xl">{bundlrBalance}</Text>
       </Flex>
-      <Text
-        mt={1}
-      >
-        {isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}
-      </Text>
+      <Text mt={1}>{isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}</Text>
       {balanceOffset !== 0 && (
         <Text
           mt={3}
@@ -87,18 +83,12 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
           You have a pending balance update. Your balance should be updated in a few minutes.
         </Text>
       )}
-      <Text
-        mt={6}
-      >
-        Enter Amount
-      </Text>
+      <Text mt={6}>Enter Amount</Text>
       <BundlrInput
         value={amount}
         onChange={handleChangeAmount}
       />
-      <Text
-        mt={3}
-      >
+      <Text mt={3}>
         Wallet Balance: {formattedEthBalance} ETH{' '}
         {!isNaN(ethUsdValue) && `($${ethers.utils.commify(ethUsdValue)})`}
       </Text>

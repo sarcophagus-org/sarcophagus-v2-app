@@ -44,8 +44,8 @@ export function ReviewSarcophagus() {
         >
           <SummaryErrorIcon />
           <Text
-            variant='secondary'
-            fontSize='xs'
+            variant="secondary"
+            fontSize="xs"
             ml={2}
             textAlign={'center'}
           >
@@ -64,7 +64,7 @@ export function ReviewSarcophagus() {
           }
           title={
             <Text
-              fontSize='xl'
+              fontSize="xl"
               textAlign="center"
             >
               Download PDF
@@ -72,9 +72,7 @@ export function ReviewSarcophagus() {
           }
           secondaryButton={{ label: 'Close', onClick: () => {}, dismissesModal: true }}
         >
-          <Text
-            textAlign="center"
-          >
+          <Text textAlign="center">
             Download and send this to your recipient. Do not store this online or let anyone see.
           </Text>
           <Box height={30} />

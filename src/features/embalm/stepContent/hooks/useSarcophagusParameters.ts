@@ -44,11 +44,12 @@ export const useSarcophagusParameters = () => {
   const resurrectionTimeError = !resurrection
     ? 'Please set a resurrection time'
     : resurrection > maxRewrapIntervalMs + Date.now()
-      ? 'The resurrection time you have selected is beyond the maximum rewrap interval of your selected archaeologists'
-      : resurrection - minimumResurrection < Date.now() && resurrection !== 0 ?
-        `Resurrection must be ${moment
-          .duration(minimumResurrection)
-          .humanize()} or more in the future.` : null;
+    ? 'The resurrection time you have selected is beyond the maximum rewrap interval of your selected archaeologists'
+    : resurrection - minimumResurrection < Date.now() && resurrection !== 0
+    ? `Resurrection must be ${moment
+        .duration(minimumResurrection)
+        .humanize()} or more in the future.`
+    : null;
 
   const sarcophagusParameters: SarcophagusParameter[] = [
     {
