@@ -97,7 +97,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
           w="190px"
           placeholder="Search"
           borderColor="grayBlue.700"
-          color="brand.950"
+          color="text.primary"
         />
       );
 
