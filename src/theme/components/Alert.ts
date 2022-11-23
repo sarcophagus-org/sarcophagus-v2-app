@@ -17,7 +17,7 @@ NOTE regarding the icon color: we should be able to set the styles on icon:{} pa
     see : chakra-ui\packages\components\alert\src\alert.tsx line: 44 
     where they retrieve the style "const styles = useMultiStyleConfig("Alert", { ...props, colorScheme })"
 */
-const titleAndDescriptionStyle = defineStyle( {
+const titleAndDescriptionStyle = defineStyle({
   title: {
     color: 'brand.950',
     fontSize: '16px',

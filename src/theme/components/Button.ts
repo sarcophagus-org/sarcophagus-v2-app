@@ -1,7 +1,6 @@
 import { ComponentStyleConfig } from '@chakra-ui/react';
 
 export const Button: ComponentStyleConfig = {
-
   baseStyle: {
     border: 'none',
     borderRadius: 0,
@@ -9,7 +8,7 @@ export const Button: ComponentStyleConfig = {
     paddingBottom: '20px',
     fontWeight: 400,
   },
-   variants: {
+  variants: {
     solid: {
       color: 'brand.0',
       bg: 'brand.950',
@@ -45,7 +44,7 @@ export const Button: ComponentStyleConfig = {
     },
     disabledLook: {
       bg: 'brand.200',
-      color: 'brand.0'
+      color: 'brand.0',
     },
-  } 
+  },
 };

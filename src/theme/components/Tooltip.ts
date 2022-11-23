@@ -1,4 +1,3 @@
-
 export const Tooltip = {
   baseStyle: {
     borderRadius: '0',

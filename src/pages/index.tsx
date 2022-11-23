@@ -123,7 +123,6 @@ export function Pages() {
       label: '',
       hidden: true,
     },
-
   ];
 
   const { isConnected } = useAccount();
