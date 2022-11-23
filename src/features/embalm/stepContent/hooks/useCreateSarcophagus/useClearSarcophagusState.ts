@@ -58,6 +58,7 @@ export function useClearSarcophagusState() {
     // hang up archaeologists and reset connection
     for await (const arch of selectedArchaeologists) {
       if (arch.connection) {
+        console.log('dropping connection');
         libp2pNode?.hangUp(arch.fullPeerId!);
         dispatch(setArchaeologistConnection(arch.fullPeerId!.toString(), undefined));
       }
