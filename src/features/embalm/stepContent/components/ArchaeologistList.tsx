@@ -12,16 +12,11 @@ import {
   Input,
   HStack,
   Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
+  Tooltip,
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { QuestionIcon } from '@chakra-ui/icons';
-import { DownIcon } from 'components/icons/DownIcon';
-import { UpDownIcon } from 'components/icons/UpDownIcon';
-import { UpIcon } from 'components/icons/UpIcon';
+import { DownIcon, UpDownIcon, UpIcon } from 'components/icons';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
@@ -93,7 +88,7 @@ export function ArchaeologistList({
                         variant="ghost"
                         rightIcon={sortIconsMap[archsSortDirection]}
                         onClick={onClickSortArchs}
-                        color="brand.950"
+                        color="text.primary"
                         p={'0.5'}
                       >
                         Archaeologists ({sortedFilteredArchaeologist?.length})
@@ -103,8 +98,8 @@ export function ArchaeologistList({
                         onChange={handleChangeAddressSearch}
                         value={archAddressSearch}
                         placeholder="Search"
-                        borderColor="violet.700"
-                        color="brand.950"
+                        borderColor="grayBlue.700"
+                        color="text.primary"
                       />
                     </VStack>
                   </Th>
@@ -119,20 +114,15 @@ export function ArchaeologistList({
                         >
                           <Text> Fees </Text>
                         </Button>
-                        <Popover trigger={'hover'}>
-                          <PopoverTrigger>
-                            <Icon
-                              as={QuestionIcon}
-                              color="brand.950"
-                            ></Icon>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            background="black"
+                        <Tooltip
+                          label="Amount to be paid for each rewrap"
+                          placement="top"
+                        >
+                          <Icon
+                            as={QuestionIcon}
                             color="brand.950"
-                          >
-                            <PopoverBody textAlign={'left'}>Lorem ipsum dolor sit amet</PopoverBody>
-                          </PopoverContent>
-                        </Popover>
+                          />
+                        </Tooltip>
                       </HStack>
                       <FilterInput
                         filterName={'DiggingFees'}

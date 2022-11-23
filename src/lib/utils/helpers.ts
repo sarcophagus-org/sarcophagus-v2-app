@@ -145,6 +145,6 @@ export function buildResurrectionDateString(
   const msUntilResurrection = resurrectionTime.toNumber() * 1000 - Date.now();
   const humanizedDuration = moment.duration(msUntilResurrection).humanize();
   const timeUntilResurrection =
-    msUntilResurrection < 0 ? `-${humanizedDuration}` : humanizedDuration;
+    msUntilResurrection < 0 ? `${humanizedDuration} ago` : humanizedDuration;
   return `${resurrectionDateString} (${timeUntilResurrection})`;
 }

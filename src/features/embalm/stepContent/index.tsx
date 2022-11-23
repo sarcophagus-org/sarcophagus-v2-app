@@ -10,6 +10,7 @@ import { TotalRequiredArchaegologists } from './steps/TotalRequiredArchaeologist
 import { UploadPayload } from './steps/UploadPayload';
 import { CreateSarcophagus } from './steps/CreateSarcophagus';
 import { CreateSarcophagusContextProvider } from './context/CreateSarcophagusContext';
+import { useEnterToNextStep } from './hooks/useEnterToNextStep';
 
 interface StepContentMap {
   component: JSX.Element;
@@ -19,6 +20,7 @@ interface StepContentMap {
 export function StepContent() {
   const { currentStep, goToPrev, goToNext } = useStepContent();
   const areStepsDisabled = useSelector(x => x.embalmState.areStepsDisabled);
+  useEnterToNextStep();
 
   // Manages which page to render based on the currentStep in the store
   const contentMap: { [key: number]: StepContentMap } = {
@@ -68,7 +70,7 @@ export function StepContent() {
       >
         {showPrev() ? (
           <Button
-            variant="link"
+            variant="unstyled"
             width="fit-content"
             disabled={currentStep.valueOf() === 0}
             onClick={handleClickPrev}
@@ -82,7 +84,7 @@ export function StepContent() {
 
         {currentStep.valueOf() < Object.keys(contentMap).length - 1 && (
           <Button
-            variant="link"
+            variant="unstyled"
             width="fit-content"
             onClick={handleClickNext}
           >

@@ -17,6 +17,7 @@
     "@chainsafe/libp2p-noise": "^10.0.0",
     "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/react": "^2.2.3",
+    "@chakra-ui/styled-system": "^2.3.5",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@ethersproject/providers": "^5.7.0",
@@ -27,7 +28,7 @@
     "@libp2p/webrtc-star": "^5.0.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
     "@react-pdf/renderer": "^3.0.0",
-    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.4.0",
+    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.5.0",
     "@sentry/react": "^7.8.1",
     "@sentry/tracing": "^7.8.1",
     "arbundles": "^0.6.21",
@@ -109,10 +110,10 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
+    "husky": "^8.0.0",
     "prettier": "^2.7.0",
     "process": "^0.11.10",
     "react-app-rewired": "^2.2.1",
-    "tailwindcss": "^3.1.2",
-    "husky": "^8.0.0"
+    "tailwindcss": "^3.1.2"
   }
 }

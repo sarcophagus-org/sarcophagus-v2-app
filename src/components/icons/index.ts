@@ -5,3 +5,6 @@ export { UpDownIcon } from './UpDownIcon';
 export { UpIcon } from './UpIcon';
 export { EthereumIcon } from './EthereumIcon';
 export { SuccessIcon } from './SuccessIcon';
+export { InfoIcon } from './InfoIcon';
+export { ErrorIcon } from './ErrorIcon';
+export { WarningIcon } from './WarningIcon';

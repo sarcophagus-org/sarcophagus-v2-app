@@ -9,6 +9,7 @@ import {
   humanizeUnixTimestamp,
 } from '../../../../lib/utils/helpers';
 import moment from 'moment';
+import { minimumResurrection } from 'lib/constants';
 
 export interface SarcophagusParameter {
   name: string;
@@ -40,6 +41,16 @@ export const useSarcophagusParameters = () => {
   const isHardhatNetwork = chainId === hardhatChainId;
   const maxRewrapIntervalMs = getLowestRewrapInterval(selectedArchaeologists) * 1000;
 
+  const resurrectionTimeError = !resurrection
+    ? 'Please set a resurrection time'
+    : resurrection > maxRewrapIntervalMs + Date.now()
+    ? 'The resurrection time you have selected is beyond the maximum rewrap interval of your selected archaeologists'
+    : resurrection - minimumResurrection < Date.now() && resurrection !== 0
+    ? `Resurrection must be ${moment
+        .duration(minimumResurrection)
+        .humanize()} or more in the future.`
+    : null;
+
   const sarcophagusParameters: SarcophagusParameter[] = [
     {
       name: 'NAME',
@@ -51,11 +62,7 @@ export const useSarcophagusParameters = () => {
       name: 'RESURRECTION',
       value: resurrection ? humanizeUnixTimestamp(resurrection) : null,
       step: Step.NameSarcophagus,
-      error: !resurrection
-        ? 'Please set a resurrection time'
-        : resurrection > maxRewrapIntervalMs + Date.now()
-        ? 'The resurrection time you have selected is beyond the maximum rewrap interval of your selected archaeologists'
-        : null,
+      error: resurrectionTimeError,
     },
     {
       name: 'MAXIMUM REWRAP INTERVAL',

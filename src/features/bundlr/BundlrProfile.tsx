@@ -5,6 +5,7 @@ import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
 import { useState } from 'react';
+import { useSelector } from 'store/index';
 import { BundlrInput } from './BundlrInput';
 
 export enum BundlrAction {
@@ -22,6 +23,7 @@ interface BundlrProfileProps {
 
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
   const [amount, setAmount] = useState('');
+  const { balanceOffset } = useSelector(s => s.bundlrState);
   const bundlrBalanceData = useGetBalance();
   const bundlrBalance = !bundlrBalanceData?.balance
     ? '--'
@@ -64,7 +66,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
 
   return (
     <Flex direction="column">
-      <Text color="whiteAlpha.700">Bundlr ETH</Text>
+      <Text>Bundlr ETH</Text>
       <Flex
         mt={1}
         align="center"
@@ -72,26 +74,21 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         <EthereumIcon boxSize="30px" />
         <Text fontSize="3xl">{bundlrBalance}</Text>
       </Flex>
-      <Text
-        color="whiteAlpha.700"
-        mt={1}
-      >
-        {isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}
-      </Text>
-      <Text
-        mt={6}
-        color="whiteAlpha.700"
-      >
-        Enter Amount
-      </Text>
+      <Text mt={1}>{isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}</Text>
+      {balanceOffset !== 0 && (
+        <Text
+          mt={3}
+          color="yellow"
+        >
+          You have a pending balance update. Your balance should be updated in a few minutes.
+        </Text>
+      )}
+      <Text mt={6}>Enter Amount</Text>
       <BundlrInput
         value={amount}
         onChange={handleChangeAmount}
       />
-      <Text
-        mt={3}
-        color="whiteAlpha.700"
-      >
+      <Text mt={3}>
         Wallet Balance: {formattedEthBalance} ETH{' '}
         {!isNaN(ethUsdValue) && `($${ethers.utils.commify(ethUsdValue)})`}
       </Text>

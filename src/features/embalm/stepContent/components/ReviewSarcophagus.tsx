@@ -44,8 +44,9 @@ export function ReviewSarcophagus() {
         >
           <SummaryErrorIcon />
           <Text
+            variant="secondary"
+            fontSize="xs"
             ml={2}
-            color="brand.500"
             textAlign={'center'}
           >
             = missing information
@@ -63,8 +64,7 @@ export function ReviewSarcophagus() {
           }
           title={
             <Text
-              fontSize={'20px'}
-              fontWeight={400}
+              fontSize="xl"
               textAlign="center"
             >
               Download PDF
@@ -72,10 +72,7 @@ export function ReviewSarcophagus() {
           }
           secondaryButton={{ label: 'Close', onClick: () => {}, dismissesModal: true }}
         >
-          <Text
-            fontSize={'14px'}
-            textAlign="center"
-          >
+          <Text textAlign="center">
             Download and send this to your recipient. Do not store this online or let anyone see.
           </Text>
           <Box height={30} />
