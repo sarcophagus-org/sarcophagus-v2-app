@@ -86,10 +86,17 @@ export function SelectArchaeologists() {
       <HStack>
         <>
           <Text variant="secondary">
-            Currently set:{' '}
-            <chakra.span textDecor="underline">
-              {moment(resurrectionDate).format('DD.MM.YY h:mma')}
-            </chakra.span>
+            Currently set:
+            {resurrectionDate.getFullYear() === 1970 ? (
+              ' Resurrection time not set'
+            ) : (
+              <chakra.span
+                textDecor="underline"
+                ml={2}
+              >
+                {moment(resurrectionDate).format('DD.MM.YY h:mma')}
+              </chakra.span>
+            )}
           </Text>
           <Text
             as="i"
