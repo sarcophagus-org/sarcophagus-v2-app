@@ -2,31 +2,29 @@ import {
   Button,
   FormControl,
   FormLabel,
-  InputGroup,
+  HStack,
   Input,
+  InputGroup,
   InputRightElement,
   Text,
   VStack,
-  HStack,
 } from '@chakra-ui/react';
+import { ethers } from 'ethers';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
-import { useCallback, useState } from 'react';
-import { setBalance } from 'store/bundlr/actions';
-import { useDispatch, useSelector } from 'store/index';
 import { uploadPriceDecimals } from 'lib/constants';
-import { ethers } from 'ethers';
+import { useCallback, useState } from 'react';
+import { useSelector } from 'store/index';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
-  const dispatch = useDispatch();
   const { fund, isFunding } = useBundlr();
   const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
-  const { getBalance, formattedBalance } = useGetBalance();
+  const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice, uploadPriceBN } = useUploadPrice();
   const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
-  const { pendingBalance } = useSelector(x => x.bundlrState);
+  const { balanceOffset } = useSelector(x => x.bundlrState);
 
   const isAmountValid = parseFloat(amount) > 0;
 
@@ -44,9 +42,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
   const handleFund = useCallback(async () => {
     if (!isAmountValid) return;
     await fund(amount);
-    const newBalance = await getBalance();
-    dispatch(setBalance(newBalance));
-  }, [amount, dispatch, fund, getBalance, isAmountValid]);
+  }, [amount, fund, isAmountValid]);
 
   return (
     <VStack
@@ -85,7 +81,6 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </InputGroup>
               <Button
                 float="right"
-                w="150px"
                 disabled={!isAmountValid || isFunding}
                 isLoading={isFunding}
                 onClick={handleFund}
@@ -98,7 +93,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           {children}
           <VStack
             border="1px solid "
-            borderColor="violet.700"
+            borderColor="grayBlue.700"
             spacing={0}
             align="left"
             p={3}
@@ -121,7 +116,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
             )}
           </VStack>
-          {pendingBalance.txId && (
+          {balanceOffset !== 0 && (
             <Text
               mt={3}
               color="error"

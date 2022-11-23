@@ -11,6 +11,7 @@ import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 import { RecipientsPage } from './RecipientsPage';
+import { ThemeTestPage } from './ThemeTestPage';
 import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
@@ -25,6 +26,7 @@ export enum RouteKey {
   RECIPIENTS,
   TEMP_RESURRECTION_PAGE,
   SARCOPHAGUS_CREATED,
+  THEME_TEST_PAGE,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
@@ -36,6 +38,7 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.RECIPIENTS]: '/recipients',
   [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
   [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
+  [RouteKey.THEME_TEST_PAGE]: '/theme-test',
 };
 
 export function Pages() {
@@ -99,6 +102,13 @@ export function Pages() {
       label: '',
       hidden: true,
     },
+    {
+      path: RoutesPathMap[RouteKey.THEME_TEST_PAGE],
+      element: <ThemeTestPage />,
+      label: '',
+      hidden: true,
+    },
+
   ];
 
   const { isConnected } = useAccount();
@@ -125,10 +135,10 @@ export function Pages() {
                   textDecor="bold"
                   as={NavLink}
                   mx={1.5}
-                  bgColor={route.noBackground ? 'transparent' : 'blue.1000'}
+                  bgColor={route.noBackground ? 'transparent' : 'menuBlue.1000'}
                   _activeLink={{
                     color: 'brand.950',
-                    bgColor: route.noBackground ? 'transparent' : 'blue.700',
+                    bgColor: route.noBackground ? 'transparent' : 'menuBlue.700',
                   }}
                   _hover={{ textDecor: 'none', color: 'brand.700' }}
                   key={route.path}
@@ -198,7 +208,7 @@ export function Pages() {
               ) : (
                 <Text
                   align="center"
-                  fontWeight="bold"
+                  variant="bold"
                 >
                   Supported Networks
                   {supportedNetworkNames.map(network => (

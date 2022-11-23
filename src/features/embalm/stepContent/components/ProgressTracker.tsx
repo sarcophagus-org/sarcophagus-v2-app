@@ -58,7 +58,7 @@ export function ProgressTracker({
         py={4}
         background="linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.09) 100%)"
       >
-        <Text fontWeight="bold">{title}</Text>
+        <Text variant="bold">{title}</Text>
       </Flex>
       <VStack
         flexDirection="column"

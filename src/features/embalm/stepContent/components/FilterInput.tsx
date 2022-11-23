@@ -70,7 +70,7 @@ function FilterComponent({
             pl={icon ? '12' : '3'}
             pr={1}
             placeholder={placeholder}
-            borderColor="violet.700"
+            borderColor="grayBlue.700"
           />
           {icon && (
             <InputLeftElement>
@@ -96,7 +96,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
           onChange={handleChangeAddressSearch}
           w="190px"
           placeholder="Search"
-          borderColor="violet.700"
+          borderColor="grayBlue.700"
           color="brand.950"
         />
       );

@@ -1,4 +1,4 @@
-import { Flex, Heading } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { SelectArchaeologists } from '../features/embalm/stepContent/steps/SelectArchaeologists';
 
 export function ArchaeologistsPage() {
@@ -11,12 +11,6 @@ export function ArchaeologistsPage() {
       alignItems="center"
       direction="column"
     >
-      <Heading
-        size="lg"
-        mb={'30px'}
-      >
-        Archaeologists
-      </Heading>
       <SelectArchaeologists />
     </Flex>
   );

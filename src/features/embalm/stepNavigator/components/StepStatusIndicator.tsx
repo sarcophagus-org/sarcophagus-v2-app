@@ -10,14 +10,16 @@ interface StepStatusIndicatorProps {
 export function StepStatusIndicator({ status, index, isDisabled }: StepStatusIndicatorProps) {
   const statusSize = '25px';
 
+  const disabledColor = isDisabled ? 'text.disabled' : 'text.primary';
+
   const stepStatusMap = {
     [StepStatus.Complete]: (
       <Flex
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor={isDisabled ? 'disabled' : 'brand.950'}
-        backgroundColor={isDisabled ? 'disabled' : 'brand.950'}
+        borderColor={disabledColor}
+        backgroundColor={disabledColor}
         borderRadius={100}
         align="center"
         justifyContent="center"
@@ -35,14 +37,14 @@ export function StepStatusIndicator({ status, index, isDisabled }: StepStatusInd
         h={statusSize}
         w={statusSize}
         border="1px solid"
-        borderColor={isDisabled ? 'disabled' : 'brand.950'}
+        borderColor={disabledColor}
         borderRadius={100}
         align="center"
         justifyContent="center"
       >
         <Text
           fontSize="xs"
-          color={isDisabled ? 'disabled' : 'brand.950'}
+          color={disabledColor}
         >
           {index + 1}
         </Text>
@@ -60,7 +62,7 @@ export function StepStatusIndicator({ status, index, isDisabled }: StepStatusInd
       >
         <Text
           fontSize="xs"
-          color={isDisabled ? 'disabled' : 'brand.950'}
+          color={disabledColor}
         >
           {index + 1}
         </Text>

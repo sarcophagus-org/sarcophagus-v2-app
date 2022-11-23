@@ -1,5 +1,5 @@
 import { Input, Link, Text, VStack } from '@chakra-ui/react';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import prettyBytes from 'pretty-bytes';
 import { useSelector } from 'store/index';
@@ -42,12 +42,12 @@ export function UploadPayload() {
         Your payload (corpse) will be wrapped in a later step.
       </Text>
       {error && (
-        <Alert
+        <SarcoAlert
           mb={3}
           status="error"
         >
           {error}
-        </Alert>
+        </SarcoAlert>
       )}
       <FileDragAndDrop
         onClick={handleClickFilePicker}

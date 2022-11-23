@@ -36,14 +36,14 @@ export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any)
             ...provided,
             bg: 'brand.0',
             fontSize: '14px',
-            borderColor: 'violet.700',
+            borderColor: 'grayBlue.700',
           }),
 
           option: (provided, state) => ({
             ...provided,
             background: state.isFocused ? 'brand.100' : provided.background,
             fontSize: '14px',
-            color: 'brand.600',
+            color: 'text.secondary',
             my: '-0.2rem',
             _active: {
               bg: 'brand.200',
@@ -56,7 +56,7 @@ export function SetPaginationSize({ handlePageSizeChange, paginationSize }: any)
             marginLeft: '-0.6rem',
             w: '75px',
             bg: 'brand.0',
-            color: 'brand.600',
+            color: 'text.secondary',
             borderColor: 'transparent',
             _hover: {
               borderColor: 'transparent',

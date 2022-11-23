@@ -18,9 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { QuestionIcon } from '@chakra-ui/icons';
-import { DownIcon } from 'components/icons/DownIcon';
-import { UpDownIcon } from 'components/icons/UpDownIcon';
-import { UpIcon } from 'components/icons/UpIcon';
+import { DownIcon, UpDownIcon, UpIcon } from 'components/icons';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
@@ -94,7 +92,7 @@ export function ArchaeologistList({
                             : sortIconsMap[SortDirection.NONE]
                         }
                         onClick={onClickSortArchs}
-                        color="brand.950"
+                        color="text.primary"
                         p={'0.5'}
                       >
                         Archaeologists (
