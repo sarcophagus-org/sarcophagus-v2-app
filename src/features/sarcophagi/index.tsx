@@ -1,4 +1,3 @@
-import { QuestionIcon } from '@chakra-ui/icons';
 import { Center, Flex, Spinner, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useGetEmbalmerSarcophagi, useGetRecipientSarcophagi } from 'hooks/viewStateFacet';
@@ -45,10 +44,13 @@ export function Sarcophagi() {
         py={3}
       >
         <Text>SARCOPHAGI</Text>
-        <QuestionIcon
-          ml={1}
-          fontSize="xs"
-        />
+        {/* TODO: Do we need this icon? */}
+        {/* <Tooltip label="s">
+          <QuestionIcon
+            ml={1}
+            fontSize="xs"
+          />
+        </Tooltip> */}
       </Flex>
       <Tabs
         variant="enclosed"

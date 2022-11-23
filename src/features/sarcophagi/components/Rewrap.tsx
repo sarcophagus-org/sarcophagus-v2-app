@@ -25,6 +25,11 @@ export function Rewrap() {
     resurrectionTime
   );
 
+  const nowMs = Date.now();
+
+  const rewrapIntervalSeconds = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
+  const rewrapIntervalMs = rewrapIntervalSeconds * 1000;
+
   function handleCustomDateChange(date: Date | null) {
     setResurrectionTime(date);
   }
@@ -33,20 +38,16 @@ export function Rewrap() {
     // TODO: redirect to information about protocol fee
   }
 
-  const maximumResurectionDate =
-    sarcophagus && sarcophagus.resurrectionTime
-      ? new Date(sarcophagus.resurrectionTime.toNumber() * 1000)
-      : undefined;
+  const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
+  const resurectionDateMs = maximumResurectionDate.getTime();
 
   const filterInvalidTime = (time: Date) => {
-    const resurectionDate = new Date(maximumResurectionDate || 0).getTime();
-    const selectedDate = new Date(time).getTime();
-
-    return resurectionDate >= selectedDate && Date.now() < selectedDate;
+    const selectedDateMs = new Date(time).getTime();
+    return resurectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
   };
 
   const resurrectionString = buildResurrectionDateString(
-    sarcophagus?.resurrectionTime || BigNumber.from(0)
+    BigNumber.from(Math.trunc(resurectionDateMs / 1000))
   );
 
   // Sum up the digging fees from the archaeologists objects

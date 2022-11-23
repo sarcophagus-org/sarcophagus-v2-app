@@ -12,10 +12,7 @@ import {
   Input,
   HStack,
   Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
+  Tooltip,
 } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { QuestionIcon } from '@chakra-ui/icons';
@@ -117,20 +114,15 @@ export function ArchaeologistList({
                         >
                           <Text> Fees </Text>
                         </Button>
-                        <Popover trigger={'hover'}>
-                          <PopoverTrigger>
-                            <Icon
-                              as={QuestionIcon}
-                              color="brand.950"
-                            ></Icon>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            background="black"
+                        <Tooltip
+                          label="Amount to be paid for each rewrap"
+                          placement="top"
+                        >
+                          <Icon
+                            as={QuestionIcon}
                             color="brand.950"
-                          >
-                            <PopoverBody textAlign={'left'}>Lorem ipsum dolor sit amet</PopoverBody>
-                          </PopoverContent>
-                        </Popover>
+                          />
+                        </Tooltip>
                       </HStack>
                       <FilterInput
                         filterName={'DiggingFees'}
