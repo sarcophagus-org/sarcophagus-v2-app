@@ -111,7 +111,7 @@ export function CreateSarcophagus() {
               onClick={handleCreate}
               disabled={!isSarcophagusFormDataComplete()}
             >
-              Create My Sarcophagus
+              Create Sarcophagus
             </Button>
           </Flex>
         </>
@@ -147,9 +147,11 @@ export function CreateSarcophagus() {
           <Button
             size="xs"
             variant="outline"
+            w="150px"
+            mt="20px"
             onClick={cancelCreate}
           >
-            Cancel Create Sarcophagus
+            Cancel Sarcophagus
           </Button>
         </>
       )}
