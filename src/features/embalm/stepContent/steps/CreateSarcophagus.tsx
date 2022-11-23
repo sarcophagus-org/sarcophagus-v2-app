@@ -5,7 +5,7 @@ import {
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { RouteKey, RoutesPathMap } from 'pages';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
@@ -17,9 +17,13 @@ import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
+import { goToStep } from '../../../../store/embalm/actions';
+import { Step } from '../../../../store/embalm/reducer';
+import { useDispatch } from '../../../../store';
 
 export function CreateSarcophagus() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { allowance } = useAllowance();
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
@@ -40,11 +44,8 @@ export function CreateSarcophagus() {
     signerOrProvider: signer,
   });
 
-  const { currentStage, handleCreate, stageError, retryStage, successData } = useCreateSarcophagus(
-    createSarcophagusStages,
-    embalmerFacet!,
-    sarcoToken!
-  );
+  const { currentStage, handleCreate, stageError, retryStage, successData, clearSarcophagusState } =
+    useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
   const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
 
@@ -55,6 +56,13 @@ export function CreateSarcophagus() {
   const isCreateCompleted = (): boolean => {
     return currentStage === CreateSarcophagusStage.COMPLETED;
   };
+
+  const cancelCreate = useCallback(async () => {
+    // TODO add alert to user before cancelling
+    clearSarcophagusState();
+    dispatch(goToStep(Step.NameSarcophagus));
+    navigate('/');
+  }, [clearSarcophagusState, dispatch, navigate]);
 
   useEffect(() => {
     // remove approval step if user has allowance on sarco token
@@ -136,6 +144,15 @@ export function CreateSarcophagus() {
               </Text>
             </Flex>
           )}
+          <Button
+            size="xs"
+            variant="outline"
+            w="150px"
+            mt="20px"
+            onClick={cancelCreate}
+          >
+            Cancel Sarcophagus
+          </Button>
         </>
       )}
     </Flex>
