@@ -1,4 +1,4 @@
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useBurySarcophagus } from 'hooks/embalmerFacet';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
@@ -42,28 +42,48 @@ export function Details() {
       <HStack pt={10}>
         {canRewrapOrBury && (
           <>
-            <Button
-              as={NavLink}
-              to="?action=rewrap"
+            {/* REWRAP BUTTON */}
+            <Tooltip
+              placement="top"
+              label="Extend the resurrection date of the Sarcophagus"
             >
-              Rewrap
-            </Button>
-            <Button
-              onClick={handleBury}
-              isLoading={isLoading}
-              loadingText={isBurying ? 'Burying...' : undefined}
+              <Button
+                as={NavLink}
+                to="?action=rewrap"
+              >
+                Rewrap
+              </Button>
+            </Tooltip>
+
+            {/* BURY BUTTON */}
+            <Tooltip
+              placement="top"
+              label="Deactivate this Sarcophagus so it can never be resurrected"
             >
-              Bury
-            </Button>
+              <Button
+                onClick={handleBury}
+                isLoading={isLoading}
+                loadingText={isBurying ? 'Burying...' : undefined}
+              >
+                Bury
+              </Button>
+            </Tooltip>
           </>
         )}
+
+        {/* CLAIM BUTTON */}
         {canClaim && (
-          <Button
-            as={NavLink}
-            to="?action=claim"
+          <Tooltip
+            placement="top"
+            label="Decrypt and download the Sarcophagus payload"
           >
-            Claim
-          </Button>
+            <Button
+              as={NavLink}
+              to="?action=claim"
+            >
+              Claim
+            </Button>
+          </Tooltip>
         )}
       </HStack>
     </Flex>

@@ -1,5 +1,5 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Button, IconButton, TableRowProps, Td, Text, Tr } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { Button, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
@@ -40,15 +40,51 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
   // rewrap and resurrect actions on the "My Sarcohagi" tab and the "Claim Sarcohpagi" tab.
   const isEmbalmer = sarco.embalmer === address;
   const isRecipient = sarco.recipientAddress === address;
-  const stateActionMap: { [key: string]: SarcoAction | undefined } = {
-    [SarcophagusState.Active]: isEmbalmer ? SarcoAction.Rewrap : undefined,
-    [SarcophagusState.Failed]: SarcoAction.Clean,
-    [SarcophagusState.Resurrected]: !isRecipient ? SarcoAction.Claim : undefined,
+
+  const stateToActionMap: {
+    [key: string]: {
+      action?: SarcoAction;
+      tooltip?: string;
+      stateTooltip: string;
+    };
+  } = {
+    [SarcophagusState.Active]: {
+      action: isEmbalmer ? SarcoAction.Rewrap : undefined,
+      tooltip: 'Extend the resurrection date of the Sarcophagus',
+      stateTooltip: 'The Sarcophagus is on course to be resurrected',
+    },
+    [SarcophagusState.Failed]: {
+      action: SarcoAction.Clean,
+      tooltip: 'Clean sarco',
+      stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
+    },
+    [SarcophagusState.Resurrected]: {
+      action: !isRecipient ? SarcoAction.Claim : undefined,
+      tooltip: !isRecipient ? 'Decrypt and download the Sarcophagus payload' : '',
+      stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
+    },
+    [SarcophagusState.Accused]: {
+      stateTooltip:
+        'Too many of the archaeologists have leaked assigned keys. This Sarcophagus is compromised.',
+    },
+    [SarcophagusState.Buried]: {
+      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+    },
+    [SarcophagusState.Cleaned]: {
+      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+    },
+    [SarcophagusState.Resurrecting]: {
+      stateTooltip:
+        'The Sarcophagus resurrection time has passed and is within a grace period of unwrapping',
+    },
   };
+
+  const action = stateToActionMap[sarco.state]?.action;
+  const actionTooltip = stateToActionMap[sarco.state]?.tooltip;
+  const stateTooltip = stateToActionMap[sarco.state]?.stateTooltip;
 
   // TODO: Remove console logs and navigate to the appropriate page including the sarcoId
   function handleClickAction() {
-    const action = stateActionMap[sarco.state];
     switch (action) {
       case SarcoAction.Rewrap:
         navigate(`${sarco.id}?action=rewrap`);
@@ -66,35 +102,54 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
 
   return (
     <Tr>
+      {/* SARCO STATE */}
       <Td>
-        <SarcoStateIndicator state={sarco.state} />
+        <SarcoStateIndicator
+          state={sarco.state}
+          tooltip={stateTooltip}
+        />
       </Td>
+
+      {/* SARCO NAME */}
       <Td>
         <TableText>{sarco.name?.toUpperCase()}</TableText>
       </Td>
+
+      {/* SARCO RESURRETION */}
       <Td>
         <TableText>{resurrectionString}</TableText>
       </Td>
+
+      {/* QUICK ACTION */}
       <Td textAlign="center">
-        {stateActionMap[sarco.state] ? (
-          <Button
-            variant="link"
-            onClick={handleClickAction}
-            isLoading={isLoading || isCleaning}
+        {stateToActionMap[sarco.state] ? (
+          <Tooltip
+            isDisabled={!actionTooltip}
+            openDelay={500}
+            label={actionTooltip}
+            placement="right-start"
           >
-            {stateActionMap[sarco.state]?.toUpperCase() || '--'}
-          </Button>
+            <Button
+              variant="link"
+              onClick={handleClickAction}
+              isLoading={isLoading || isCleaning}
+            >
+              {action?.toUpperCase() || '--'}
+            </Button>
+          </Tooltip>
         ) : (
           <Text>--</Text>
         )}
       </Td>
+
+      {/* SARCO DETAILS LINK */}
       <Td textAlign="center">
         <IconButton
           as={NavLink}
           to={sarco.id || ''}
           aria-label="Details"
           variant="unstyled"
-          icon={<ExternalLinkIcon />}
+          icon={<EditIcon />}
         />
       </Td>
     </Tr>

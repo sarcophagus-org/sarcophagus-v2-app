@@ -1,17 +1,4 @@
-import {
-  Flex,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Icon,
-  Box,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  chakra,
-} from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip, chakra } from '@chakra-ui/react';
 import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
@@ -33,7 +20,7 @@ import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
 
-export function SelectArchaeologists() {
+export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: boolean }) {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
@@ -76,7 +63,7 @@ export function SelectArchaeologists() {
       direction="column"
       width="100%"
     >
-      <Heading>Archaeologists</Heading>
+      {!hideHeader ?? <Heading>Archaeologists</Heading>}
       <Text
         mt="4"
         fontSize="lg"
@@ -210,19 +197,17 @@ export function SelectArchaeologists() {
 
                 <HStack mr={2}>
                   <Text variant="secondary">Show (10) hidden</Text>
-                  <Popover trigger={'hover'}>
-                    <PopoverTrigger>
-                      <Icon
-                        as={QuestionIcon}
-                        color="brand.500"
-                        w={2}
-                        h={2}
-                      ></Icon>
-                    </PopoverTrigger>
-                    <PopoverContent background="black">
-                      <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
-                    </PopoverContent>
-                  </Popover>
+                  <Tooltip
+                    placement="top"
+                    label="These archaeologists are hidden because your selected resurrection time would exceed their maximum resurrection interval"
+                  >
+                    <Icon
+                      as={QuestionIcon}
+                      color="brand.500"
+                      w={3}
+                      h={3}
+                    />
+                  </Tooltip>
                 </HStack>
               </Flex>
 
@@ -230,11 +215,7 @@ export function SelectArchaeologists() {
                 mr={2}
                 mt={3}
               >
-                <SummaryErrorIcon
-                  error={
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                  }
-                />
+                <SummaryErrorIcon />
                 <Text
                   ml={2}
                   variant="secondary"
