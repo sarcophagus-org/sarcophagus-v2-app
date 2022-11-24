@@ -48,41 +48,22 @@ export function useArchaeologistList() {
   );
 
   const length = keys(SortDirection).length / 2;
-  const directionValue = (direction: SortDirection) => {
-    return (direction + 1) % length;
-  };
+  const directionValue = (archaeologistFilterSort.sortDirection + 1) % length;
 
   function onClickSortDiggingFees() {
-    dispatch(
-      setSortDirection(
-        SortFilterType.DIGGING_FEES,
-        directionValue(archaeologistFilterSort.sortDirection)
-      )
-    );
+    dispatch(setSortDirection(SortFilterType.DIGGING_FEES, directionValue));
   }
 
   function onClickSortUnwraps() {
-    dispatch(
-      setSortDirection(
-        SortFilterType.UNWRAPS,
-        directionValue(archaeologistFilterSort.sortDirection)
-      )
-    );
+    dispatch(setSortDirection(SortFilterType.UNWRAPS, directionValue));
   }
 
   function onClickSortFails() {
-    dispatch(
-      setSortDirection(SortFilterType.FAILS, directionValue(archaeologistFilterSort.sortDirection))
-    );
+    dispatch(setSortDirection(SortFilterType.FAILS, directionValue));
   }
 
   function onClickSortArchs() {
-    dispatch(
-      setSortDirection(
-        SortFilterType.ADDRESS_SEARCH,
-        directionValue(archaeologistFilterSort.sortDirection)
-      )
-    );
+    dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, directionValue));
   }
 
   const sortedArchaeologist = () => {
