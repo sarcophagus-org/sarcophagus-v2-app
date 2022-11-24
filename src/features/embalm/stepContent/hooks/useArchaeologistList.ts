@@ -67,55 +67,27 @@ export function useArchaeologistList() {
   }
 
   const sortedArchaeologist = (): Archaeologist[] => {
-    if (
-      archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES &&
-      archaeologistFilterSort.sortDirection !== SortDirection.NONE
-    ) {
+    if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
       return orderBy(
         onlineArchaeologists,
         function (arch) {
-          return Number(arch.profile.minimumDiggingFee);
+          let sortValue;
+          if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
+            sortValue = arch.profile.minimumDiggingFee;
+          } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
+            sortValue = arch.profile.successes;
+          } else if (archaeologistFilterSort.sortType === SortFilterType.FAILS) {
+            sortValue = arch.profile.cleanups;
+          } else if (archaeologistFilterSort.sortType === SortFilterType.ADDRESS_SEARCH) {
+            sortValue = arch.profile.archAddress;
+          }
+          return Number(sortValue);
         },
         [sortOrderByMap[archaeologistFilterSort.sortDirection]!]
       );
+    } else {
+      return onlineArchaeologists;
     }
-    if (
-      archaeologistFilterSort.sortType === SortFilterType.UNWRAPS &&
-      archaeologistFilterSort.sortDirection !== SortDirection.NONE
-    ) {
-      return orderBy(
-        onlineArchaeologists,
-        function (arch) {
-          return Number(arch.profile.successes);
-        },
-        [sortOrderByMap[archaeologistFilterSort.sortDirection]!]
-      );
-    }
-    if (
-      archaeologistFilterSort.sortType === SortFilterType.FAILS &&
-      archaeologistFilterSort.sortDirection !== SortDirection.NONE
-    ) {
-      return orderBy(
-        onlineArchaeologists,
-        function (arch) {
-          return Number(arch.profile.cleanups);
-        },
-        [sortOrderByMap[archaeologistFilterSort.sortDirection]!]
-      );
-    }
-    if (
-      archaeologistFilterSort.sortType === SortFilterType.ADDRESS_SEARCH &&
-      archaeologistFilterSort.sortDirection !== SortDirection.NONE
-    ) {
-      return orderBy(
-        onlineArchaeologists,
-        function (arch) {
-          return Number(arch.profile.archAddress);
-        },
-        [sortOrderByMap[archaeologistFilterSort.sortDirection]!]
-      );
-    }
-    return onlineArchaeologists;
   };
 
   const sortedFilteredArchaeologist = (onlyShowSelected: boolean): Archaeologist[] => {
