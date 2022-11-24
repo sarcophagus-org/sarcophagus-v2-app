@@ -66,7 +66,7 @@ export function useArchaeologistList() {
     dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, directionValue));
   }
 
-  const sortedArchaeologist = () => {
+  const sortedArchaeologist = (): Archaeologist[] => {
     if (
       archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES &&
       archaeologistFilterSort.sortDirection !== SortDirection.NONE
