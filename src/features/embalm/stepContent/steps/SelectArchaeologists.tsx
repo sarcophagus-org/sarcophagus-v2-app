@@ -23,14 +23,14 @@ import moment from 'moment';
 export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: boolean }) {
   const outerLimit = 1;
   const innerLimit = 1;
-  const { sortedFilteredArchaeologist } = useArchaeologistList();
+  const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
   const [paginationSize, setPaginationSize] = useState<number>(5);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: sortedFilteredArchaeologist.length,
+      total: sortedFilteredArchaeologist(showSelectedArchaeologists).length,
       initialState: { currentPage: 1, pageSize: 5 },
       limits: {
         outer: outerLimit,
@@ -38,7 +38,10 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
+  const paginatedArchaeologist = sortedFilteredArchaeologist(showSelectedArchaeologists).slice(
+    offset,
+    offset + pageSize
+  );
   const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
@@ -70,10 +73,17 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
       <HStack>
         <>
           <Text variant="secondary">
-            Currently set:{' '}
-            <chakra.span textDecor="underline">
-              {moment(resurrectionDate).format('DD.MM.YY h:mma')}
-            </chakra.span>
+            Currently set:
+            {!resurrection ? (
+              ' Resurrection time not set'
+            ) : (
+              <chakra.span
+                textDecor="underline"
+                ml={2}
+              >
+                {moment(resurrectionDate).format('DD.MM.YY h:mma')}
+              </chakra.span>
+            )}
           </Text>
           <Text
             as="i"

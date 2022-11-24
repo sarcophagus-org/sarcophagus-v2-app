@@ -9,7 +9,6 @@ import {
   Tr,
   Button,
   VStack,
-  Input,
   HStack,
   Icon,
   Tooltip,
@@ -20,6 +19,7 @@ import { DownIcon, UpDownIcon, UpIcon } from 'components/icons';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { SortDirection } from 'store/embalm/actions';
+import { SortFilterType } from 'store/archaeologistList/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
@@ -40,15 +40,12 @@ export function ArchaeologistList({
     onClickSortUnwraps,
     onClickSortFails,
     onClickSortArchs,
-    diggingFeesSortDirection,
-    unwrapsSortDirection,
-    failsSortDirection,
-    archsSortDirection,
-    handleChangeAddressSearch,
+    archaeologistFilterSort,
     diggingFeesFilter,
+    archAddressSearch,
     unwrapsFilter,
     failsFilter,
-    archAddressSearch,
+    showSelectedArchaeologists,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -62,6 +59,12 @@ export function ArchaeologistList({
   const [isDialing, setIsDialing] = useState(false);
   // const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
+
+  function filterIcon(sortType: SortFilterType): JSX.Element {
+    return archaeologistFilterSort.sortType === sortType
+      ? sortIconsMap[archaeologistFilterSort.sortDirection]
+      : sortIconsMap[SortDirection.NONE];
+  }
 
   return (
     <Flex
@@ -86,20 +89,17 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={sortIconsMap[archsSortDirection]}
+                        rightIcon={filterIcon(SortFilterType.ADDRESS_SEARCH)}
                         onClick={onClickSortArchs}
                         color="text.primary"
                         p={'0.5'}
                       >
-                        Archaeologists ({sortedFilteredArchaeologist?.length})
+                        Archaeologists (
+                        {sortedFilteredArchaeologist(showSelectedArchaeologists)?.length})
                       </Button>
-                      <Input
-                        w="190px"
-                        onChange={handleChangeAddressSearch}
+                      <FilterInput
+                        filterName={SortFilterType.ADDRESS_SEARCH}
                         value={archAddressSearch}
-                        placeholder="Search"
-                        borderColor="grayBlue.700"
-                        color="text.primary"
                       />
                     </VStack>
                   </Th>
@@ -108,7 +108,7 @@ export function ArchaeologistList({
                       <HStack>
                         <Button
                           variant="ghost"
-                          rightIcon={sortIconsMap[diggingFeesSortDirection]}
+                          rightIcon={filterIcon(SortFilterType.DIGGING_FEES)}
                           onClick={onClickSortDiggingFees}
                           p={'0.5'}
                         >
@@ -125,7 +125,7 @@ export function ArchaeologistList({
                         </Tooltip>
                       </HStack>
                       <FilterInput
-                        filterName={'DiggingFees'}
+                        filterName={SortFilterType.DIGGING_FEES}
                         value={diggingFeesFilter}
                         placeholder="max"
                         color="brand.950"
@@ -136,14 +136,14 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={sortIconsMap[unwrapsSortDirection]}
+                        rightIcon={filterIcon(SortFilterType.UNWRAPS)}
                         onClick={onClickSortUnwraps}
                         p={'0'}
                       >
                         <Text align="left"> Unwraps </Text>
                       </Button>
                       <FilterInput
-                        filterName={'Unwraps'}
+                        filterName={SortFilterType.UNWRAPS}
                         value={unwrapsFilter}
                         placeholder="min"
                         color="brand.950"
@@ -154,14 +154,14 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={sortIconsMap[failsSortDirection]}
+                        rightIcon={filterIcon(SortFilterType.FAILS)}
                         onClick={onClickSortFails}
                         p={'0'}
                       >
                         <Text> Fails </Text>
                       </Button>
                       <FilterInput
-                        filterName={'Fails'}
+                        filterName={SortFilterType.FAILS}
                         value={failsFilter}
                         placeholder="max"
                         color="brand.950"
