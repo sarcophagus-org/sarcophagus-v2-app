@@ -24,7 +24,7 @@ interface FilterProps extends NumberInputProps {
   placeholder?: string;
 }
 
-interface FilterComponentProps {
+interface NumberInputFilterComponentProps {
   filterWidth: string;
   filterTypeAction: (search: string) => ArchaeologistListActions;
   placeholder?: string;
@@ -46,13 +46,13 @@ function validateAndSetInput(
   return action(valueAsString);
 }
 
-function FilterComponent({
+function NumberInputFilterComponent({
   filterWidth,
   placeholder,
   filterTypeAction,
   icon,
   ...rest
-}: FilterComponentProps) {
+}: NumberInputFilterComponentProps) {
   const dispatch = useDispatch();
 
   return (
@@ -102,7 +102,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
     case SortFilterType.DIGGING_FEES:
       return (
-        <FilterComponent
+        <NumberInputFilterComponent
           filterWidth={'150px'}
           placeholder={placeholder}
           filterTypeAction={setDiggingFeesFilter}
@@ -113,7 +113,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
     case SortFilterType.UNWRAPS:
       return (
-        <FilterComponent
+        <NumberInputFilterComponent
           filterWidth={'100px'}
           placeholder={placeholder}
           filterTypeAction={setUnwrapsFilter}
@@ -123,7 +123,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
 
     case SortFilterType.FAILS:
       return (
-        <FilterComponent
+        <NumberInputFilterComponent
           filterWidth={'82px'}
           placeholder={placeholder}
           filterTypeAction={setFailsFilter}
