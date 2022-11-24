@@ -131,10 +131,7 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
         />
       );
 
-    case SortFilterType.NONE:
-      return null;
-
     default:
-      return filterName;
+      return null;
   }
 }
