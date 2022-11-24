@@ -60,6 +60,12 @@ export function ArchaeologistList({
   // const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
+  function filterIcon(sortType: SortFilterType): JSX.Element {
+    return archaeologistFilterSort.sortType === sortType
+      ? sortIconsMap[archaeologistFilterSort.sortDirection]
+      : sortIconsMap[SortDirection.NONE];
+  }
+
   return (
     <Flex
       direction="column"
@@ -83,11 +89,7 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={
-                          archaeologistFilterSort.sortType === SortFilterType.ADDRESS_SEARCH
-                            ? sortIconsMap[archaeologistFilterSort.sortDirection]
-                            : sortIconsMap[SortDirection.NONE]
-                        }
+                        rightIcon={filterIcon(SortFilterType.ADDRESS_SEARCH)}
                         onClick={onClickSortArchs}
                         color="text.primary"
                         p={'0.5'}
@@ -106,11 +108,7 @@ export function ArchaeologistList({
                       <HStack>
                         <Button
                           variant="ghost"
-                          rightIcon={
-                            archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES
-                              ? sortIconsMap[archaeologistFilterSort.sortDirection]
-                              : sortIconsMap[SortDirection.NONE]
-                          }
+                          rightIcon={filterIcon(SortFilterType.DIGGING_FEES)}
                           onClick={onClickSortDiggingFees}
                           p={'0.5'}
                         >
@@ -138,11 +136,7 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={
-                          archaeologistFilterSort.sortType === SortFilterType.UNWRAPS
-                            ? sortIconsMap[archaeologistFilterSort.sortDirection]
-                            : sortIconsMap[SortDirection.NONE]
-                        }
+                        rightIcon={filterIcon(SortFilterType.UNWRAPS)}
                         onClick={onClickSortUnwraps}
                         p={'0'}
                       >
@@ -160,11 +154,7 @@ export function ArchaeologistList({
                     <VStack align="left">
                       <Button
                         variant="ghost"
-                        rightIcon={
-                          archaeologistFilterSort.sortType === SortFilterType.FAILS
-                            ? sortIconsMap[archaeologistFilterSort.sortDirection]
-                            : sortIconsMap[SortDirection.NONE]
-                        }
+                        rightIcon={filterIcon(SortFilterType.FAILS)}
                         onClick={onClickSortFails}
                         p={'0'}
                       >
