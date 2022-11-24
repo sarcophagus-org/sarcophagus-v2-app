@@ -23,8 +23,7 @@ export function useArchaeologistList() {
     showSelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
-  const onlineArchaeologists = archaeologists;
+  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
