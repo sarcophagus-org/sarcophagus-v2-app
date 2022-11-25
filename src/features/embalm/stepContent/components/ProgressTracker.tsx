@@ -1,5 +1,5 @@
 import { Flex, Text, VStack } from '@chakra-ui/react';
-import React, { FunctionComponentElement } from 'react';
+import React, { FunctionComponentElement, useEffect } from 'react';
 import { ProgressTrackerStageProps, StageStatus } from './ProgressTrackerStage';
 import { CreateSarcophagusStage } from '../utils/createSarcophagus';
 
@@ -18,6 +18,16 @@ export function ProgressTracker({
   retryStage,
   children,
 }: ProgressTrackerProps) {
+  useEffect(() => {
+    const unloadCallback = (event: { preventDefault: () => void; returnValue: string }) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', unloadCallback);
+    return () => window.removeEventListener('beforeunload', unloadCallback);
+  }, []);
+
   // Determine the current stage status using the stage of a child and the current stage passed on a
   // prop.
   function getStageStatus(stage: CreateSarcophagusStage): StageStatus {
