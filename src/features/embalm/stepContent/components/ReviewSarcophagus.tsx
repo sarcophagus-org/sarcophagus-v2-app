@@ -3,9 +3,12 @@ import { useSarcoModal } from 'components/SarcoModal';
 import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
 import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
+import usePrompt from '../hooks/usePageBlock';
 
 export function ReviewSarcophagus() {
   const { SarcoModal, openModal, closeModal } = useSarcoModal();
+
+  usePrompt('Do you want to leave?', true);
 
   return (
     <VStack
