@@ -3,12 +3,10 @@ import { useSarcoModal } from 'components/SarcoModal';
 import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
 import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
-import usePrompt from '../hooks/usePageBlock';
+import { CustomModal } from '../hooks/usePageBlock';
 
 export function ReviewSarcophagus() {
   const { SarcoModal, openModal, closeModal } = useSarcoModal();
-
-  usePrompt('Do you want to leave?', true);
 
   return (
     <VStack
@@ -16,6 +14,8 @@ export function ReviewSarcophagus() {
       spacing={6}
       mt={4}
     >
+      <CustomModal />
+
       <Text>
         Review your details below. Once you are ready, you can submit your transactions. Be aware,
         you will make two transactions: (1) encrypt your payload, and (2) upload your payload to
