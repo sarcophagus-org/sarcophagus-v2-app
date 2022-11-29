@@ -2,6 +2,7 @@ import { Button, Center, Flex, Link, Spinner, Text, Textarea } from '@chakra-ui/
 import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
+import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
@@ -51,6 +52,8 @@ export function Claim() {
       linkRef.current.click();
     }
   }
+
+  useEnterKeyCallback(handleResurrect);
 
   return (
     <Flex
