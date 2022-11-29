@@ -17,12 +17,13 @@ export enum SarcoAction {
 
 export interface SarcophagusTableRowProps extends TableRowProps {
   sarco: Sarcophagus;
+  isClaimTab?: boolean;
 }
 
 /**
  * Custom TableRow component to be used in place of the default Tr component. Adds a sort icon.
  */
-export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
+export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   const { address } = useAccount();
   const navigate = useNavigate();
 
@@ -49,8 +50,8 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
     };
   } = {
     [SarcophagusState.Active]: {
-      action: isEmbalmer ? SarcoAction.Rewrap : undefined,
-      tooltip: 'Extend the resurrection date of the Sarcophagus',
+      action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
+      tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
       stateTooltip: 'The Sarcophagus is on course to be resurrected',
     },
     [SarcophagusState.Failed]: {
@@ -59,8 +60,8 @@ export function SarcoTableRow({ sarco }: SarcophagusTableRowProps) {
       stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrected]: {
-      action: !isRecipient ? SarcoAction.Claim : undefined,
-      tooltip: !isRecipient ? 'Decrypt and download the Sarcophagus payload' : '',
+      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
+      tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
       stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
     },
     [SarcophagusState.Accused]: {

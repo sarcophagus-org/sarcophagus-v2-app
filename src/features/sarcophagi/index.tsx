@@ -71,7 +71,10 @@ export function Sarcophagi() {
         >
           <TabPanel h="100%">{embalmerPanel()}</TabPanel>
           <TabPanel h="100%">
-            <SarcoTable ids={recipientSarcophagi} />
+            <SarcoTable
+              ids={recipientSarcophagi}
+              isClaimTab
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>

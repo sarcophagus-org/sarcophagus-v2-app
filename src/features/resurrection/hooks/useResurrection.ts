@@ -31,7 +31,11 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   /**
    * Resurrects the sarcohpagus using the values passed in to the hook
    */
-  const resurrect = useCallback(async (): Promise<{ fileName: string; data: string }> => {
+  const resurrect = useCallback(async (): Promise<{
+    fileName: string;
+    data: string;
+    error?: string;
+  }> => {
     setIsResurrecting(true);
     try {
       if (!canResurrect) {
@@ -77,12 +81,17 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       const { fileName, data } = JSON.parse(decryptedPayload.toString());
 
       if (!fileName || !data) {
-        throw new Error('The payload is missing the fileName or data');
+        return { fileName, data, error: 'The payload is missing the fileName or data' };
       }
 
       return { fileName, data };
     } catch (error) {
-      throw new Error(`Error resurrecting sarcophagus: ${error}`);
+      console.error(`Error resurrecting sarcophagus: ${error}`);
+      return {
+        fileName: '',
+        data: '',
+        error: 'Could not claim Sarcophagus. Please make sure you have the right private key.',
+      };
     } finally {
       setIsResurrecting(false);
     }
