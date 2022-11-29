@@ -75,7 +75,11 @@ export function PageBlockModal() {
         isCentered
       >
         <ModalOverlay />
-        <ModalContent bgColor={colors.brand[100]}>
+        <ModalContent
+          bgColor={colors.brand[0]}
+          border={'2px solid #FFFFFF'}
+          borderRadius={'0'}
+        >
           <ModalHeader>Attention</ModalHeader>
           <ModalCloseButton />
 
@@ -83,12 +87,18 @@ export function PageBlockModal() {
           <ModalFooter alignSelf={'center'}>
             <Button
               variant="ghost"
+              border={'1px solid #FFFFFF'}
               mr={3}
               onClick={closeModal}
             >
               Cancel
             </Button>
-            <Button onClick={handleConfirmNavigationClick}>Leave</Button>
+            <Button
+              onClick={handleConfirmNavigationClick}
+              border={'1px solid #FFFFFF'}
+            >
+              Leave
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
