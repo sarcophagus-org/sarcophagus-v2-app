@@ -26,6 +26,11 @@ import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
 import { NotFoundPage } from './NotFoundPage';
+import { useCallback, useEffect } from 'react';
+import { useClearSarcophagusState } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useClearSarcophagusState';
+import { goToStep } from 'store/embalm/actions';
+import { Step } from 'store/embalm/reducer';
+import { useDispatch, useSelector } from 'store/index';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -52,6 +57,10 @@ export const RoutesPathMap: { [key: number]: string } = {
 };
 
 export function Pages() {
+  const { clearSarcophagusState } = useClearSarcophagusState();
+  const dispatch = useDispatch();
+  const { name } = useSelector(x => x.embalmState);
+
   const routes = [
     {
       path: RoutesPathMap[RouteKey.EMBALM_PAGE],
@@ -126,6 +135,21 @@ export function Pages() {
   ];
 
   const { isConnected } = useAccount();
+
+  console.log('name', name);
+
+  const clearState = useCallback(() => {
+    clearSarcophagusState();
+
+    console.log('callback clear state');
+    dispatch(goToStep(Step.NameSarcophagus));
+  }, [clearSarcophagusState, dispatch]);
+
+  const { address } = useAccount({});
+
+  useEffect(() => {
+    if (!!address) clearState();
+  }, [clearState, address]);
 
   const { isSupportedChain, supportedNetworkNames } = useSupportedNetwork();
 

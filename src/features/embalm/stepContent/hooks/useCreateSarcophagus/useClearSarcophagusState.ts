@@ -51,7 +51,7 @@ export function useClearSarcophagusState() {
     setArchaeologistSignatures(initialCreateSarcophagusState.archaeologistSignatures);
     setSarcophagusPayloadTxId(initialCreateSarcophagusState.sarcophagusPayloadTxId);
     setSarcophagusTxId(initialCreateSarcophagusState.sarcophagusTxId);
-
+    console.log('resetting state');
     // reset global embalm state
     dispatch(resetEmbalmState(Step.CreateSarcophagus));
 
