@@ -24,8 +24,12 @@ export function Claim() {
     isLoading: isLoadingResurrection,
   } = useResurrection(id || ethers.constants.HashZero, privateKey);
 
+  const privateKeyPad = (privKey: string): string => {
+    return privKey.startsWith('0x') ? privKey : `0x${privKey}`;
+  };
+
   const handleChangePrivateKey = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrivateKey(e.target.value);
+    setPrivateKey(privateKeyPad(e.target.value.trim()));
   };
 
   // linkRef is used to automatically trigger a download
@@ -60,6 +64,7 @@ export function Claim() {
                 value={privateKey}
                 onChange={handleChangePrivateKey}
                 placeholder="0x0000..."
+                _placeholder={{ color: 'text.secondary' }}
               />
               <Text mt={2}>Please enter the Private Key to decrypt the Sarcophagus</Text>
               <Button
