@@ -19,9 +19,8 @@ export function useEnterToNextStep() {
     const canGoNext =
       currentStep === Step.NameSarcophagus
         ? !currentStepParams?.error &&
-        !sarcophagusParameters.find(s => s.name === 'RESURRECTION')?.error
+          !sarcophagusParameters.find(s => s.name === 'RESURRECTION')?.error
         : !currentStepParams?.error;
-
 
     if (canGoNext) {
       goToNext();
