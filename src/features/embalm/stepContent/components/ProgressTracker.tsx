@@ -8,6 +8,7 @@ interface ProgressTrackerProps {
   currentStage: number;
   stageError: string | undefined;
   retryStage: () => void;
+  isApproved: boolean;
   children: FunctionComponentElement<ProgressTrackerStageProps>[];
 }
 
@@ -16,6 +17,7 @@ export function ProgressTracker({
   currentStage,
   stageError,
   retryStage,
+  isApproved,
   children,
 }: ProgressTrackerProps) {
   // Determine the current stage status using the stage of a child and the current stage passed on a
@@ -37,7 +39,9 @@ export function ProgressTracker({
       return React.cloneElement<ProgressTrackerStageProps>(child, {
         // index is a number but is being used as a value of the CreateSarcophagusStage enum
         stageStatus: getStageStatus(
-          currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS ? index + 2 : index + 1
+          currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS && isApproved
+            ? index + 2
+            : index + 1
         ),
         index,
         stageError,

@@ -122,6 +122,7 @@ export function CreateSarcophagus() {
             currentStage={currentStage}
             stageError={stageError}
             retryStage={retryStage}
+            isApproved={createSarcophagusStages[CreateSarcophagusStage.APPROVE] === undefined}
           >
             {Object.values(createSarcophagusStages)
               // Necessarily, a couple of these mappings don't have UI importance, thus no titles.
