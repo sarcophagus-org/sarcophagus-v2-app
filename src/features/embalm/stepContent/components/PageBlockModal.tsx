@@ -97,7 +97,7 @@ export function PageBlockModal() {
               onClick={handleConfirmNavigationClick}
               border={'1px solid #FFFFFF'}
             >
-              Leave
+              Confirm
             </Button>
           </ModalFooter>
         </ModalContent>
