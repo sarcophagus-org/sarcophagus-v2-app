@@ -22,9 +22,9 @@ export function PageBlockModal() {
   const { clearSarcophagusState } = useClearSarcophagusState();
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const [lastLocation, setLastLocation] = useState(location);
   const [confirmedNavigation, setConfirmedNavigation] = useState(false);
-  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const closeModal = () => {
@@ -77,7 +77,8 @@ export function PageBlockModal() {
         <ModalOverlay />
         <ModalContent
           bgColor={colors.brand[0]}
-          border={'2px solid #FFFFFF'}
+          border={'2px solid'}
+          borderColor={colors.brand[900]}
           borderRadius={'0'}
         >
           <ModalHeader>Attention</ModalHeader>
@@ -87,7 +88,8 @@ export function PageBlockModal() {
           <ModalFooter alignSelf={'center'}>
             <Button
               variant="ghost"
-              border={'1px solid #FFFFFF'}
+              border={'1px solid'}
+              borderColor={colors.brand[900]}
               mr={3}
               onClick={closeModal}
             >
@@ -95,7 +97,8 @@ export function PageBlockModal() {
             </Button>
             <Button
               onClick={handleConfirmNavigationClick}
-              border={'1px solid #FFFFFF'}
+              border={'1px solid'}
+              borderColor={colors.brand[900]}
             >
               Confirm
             </Button>
