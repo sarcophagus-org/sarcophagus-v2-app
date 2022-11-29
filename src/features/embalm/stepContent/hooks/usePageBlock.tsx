@@ -3,9 +3,9 @@ import { useContext, useEffect } from 'react';
 import { Navigator } from 'react-router';
 import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom';
 
-export type ExtendNavigator = Navigator & Pick<History, 'block'>;
+type ExtendNavigator = Navigator & Pick<History, 'block'>;
 
-export function useBlocker(blocker: (tx: Transition) => void) {
+function useBlocker(blocker: (tx: Transition) => void) {
   const { navigator } = useContext(NavigationContext);
 
   useEffect(() => {

@@ -84,7 +84,7 @@ export function PageBlockModal() {
           <ModalHeader>Attention</ModalHeader>
           <ModalCloseButton />
 
-          <ModalBody>Your progress will be lost if you change page.</ModalBody>
+          <ModalBody>Your progress will be lost if you navigate away from this page</ModalBody>
           <ModalFooter alignSelf={'center'}>
             <Button
               variant="ghost"
