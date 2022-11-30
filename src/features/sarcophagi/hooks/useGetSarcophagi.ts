@@ -1,7 +1,7 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useGetGracePeriod } from 'hooks/viewStateFacet/useGetGracePeriod';
 import { useNetworkConfig } from 'lib/config';
-import { getSarcophagusState } from 'lib/utils/sarcophagusState';
+import { getSarcophagusState } from 'lib/utils/getSarcophagusState';
 import { Sarcophagus, SarcophagusResponseContract } from 'types';
 import { useContractReads } from 'wagmi';
 
