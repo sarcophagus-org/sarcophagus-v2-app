@@ -1,9 +1,9 @@
 import { Actions } from '..';
-import { SarcophagusResponse } from '../../types';
+import { Sarcophagus } from '../../types';
 import { ActionType } from './actions';
 
 export interface SarcophagiState {
-  sarcophagi: SarcophagusResponse[];
+  sarcophagi: Sarcophagus[];
   value: string;
 }
 

@@ -4,9 +4,8 @@ import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
-import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { SarcophagusResponse, SarcophagusState } from 'types';
+import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 
@@ -17,7 +16,7 @@ export enum SarcoAction {
 }
 
 export interface SarcophagusTableRowProps extends TableRowProps {
-  sarco: SarcophagusResponse;
+  sarco: Sarcophagus;
   isClaimTab?: boolean;
 }
 
@@ -81,11 +80,9 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     },
   };
 
-  const sarcoState = getSarcophagusState(sarco);
-
-  const action = stateToActionMap[sarcoState]?.action;
-  const actionTooltip = stateToActionMap[sarcoState]?.tooltip;
-  const stateTooltip = stateToActionMap[sarcoState]?.stateTooltip;
+  const action = stateToActionMap[sarco.state]?.action;
+  const actionTooltip = stateToActionMap[sarco.state]?.tooltip;
+  const stateTooltip = stateToActionMap[sarco.state]?.stateTooltip;
 
   // TODO: Remove console logs and navigate to the appropriate page including the sarcoId
   function handleClickAction() {
@@ -109,7 +106,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       {/* SARCO STATE */}
       <Td>
         <SarcoStateIndicator
-          state={sarcoState}
+          state={sarco.state}
           tooltip={stateTooltip}
         />
       </Td>
@@ -126,7 +123,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
 
       {/* QUICK ACTION */}
       <Td textAlign="center">
-        {stateToActionMap[sarcoState] ? (
+        {stateToActionMap[sarco.state] ? (
           <Tooltip
             isDisabled={!actionTooltip}
             openDelay={500}

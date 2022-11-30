@@ -1,11 +1,11 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-import { SarcophagusResponse } from 'types';
+import { Sarcophagus } from 'types';
 
 interface DetailsCollapseProps {
   id?: string;
-  sarcophagus: SarcophagusResponse;
+  sarcophagus: Sarcophagus;
 }
 
 export function DetailsCollapse({
@@ -48,7 +48,7 @@ export function DetailsCollapse({
           <Text>Embalmer Address: {sarcophagus?.embalmerAddress}</Text>
           <Text>Recipient Address: {sarcophagus?.recipientAddress}</Text>
           <Text>Minimum Archaeologists: {sarcophagus?.threshold}</Text>
-          <Text>Total Archaeologists: {sarcophagus?.archaeologistAddresses.length}</Text>
+          <Text>Total Archaeologists: {sarcophagus?.archaeologistAddresses?.length}</Text>
         </VStack>
       </Collapse>
     </>

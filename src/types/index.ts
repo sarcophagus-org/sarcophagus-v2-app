@@ -67,22 +67,7 @@ export enum SarcophagusState {
   Failed,
 }
 
-// interface SarcophagusNo {
-//   id: string;
-//   name: string;
-//   state: SarcophagusState;
-//   minShards: number;
-//   resurrectionTime: BigNumber;
-//   maximumRewrapInterval: BigNumber;
-//   arweaveTxIds: string[];
-//   embalmer: string;
-//   recipientAddress: string;
-//   archaeologists: string[];
-// }
-
-export type SarcophagusResponse = SarcophagusResponseContract & { id: string };
-export type Sarcophagus = SarcophagusResponse & { state: SarcophagusState };
-
+export type Sarcophagus = SarcophagusResponseContract & { id: string; state: SarcophagusState };
 export interface SarcophagusResponseContract {
   resurrectionTime: BigNumber;
   isCompromised: boolean;

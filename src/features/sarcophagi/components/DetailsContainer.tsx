@@ -4,7 +4,7 @@ import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 import { RoutesPathMap, RouteKey } from 'pages';
-import { getSarcophagusState } from 'lib/utils/sarcophagusState';
+import { SarcophagusState } from 'types';
 
 interface SarcophagusDetailsProps {
   children?: React.ReactNode;
@@ -58,7 +58,7 @@ export function DetailsContainer({ children }: SarcophagusDetailsProps) {
           align="left"
         >
           <Heading>{sarcophagus?.name}</Heading>
-          <SarcoStateIndicator state={getSarcophagusState(sarcophagus)} />
+          <SarcoStateIndicator state={sarcophagus?.state ?? SarcophagusState.DoesNotExist} />
         </VStack>
         {children}
       </VStack>

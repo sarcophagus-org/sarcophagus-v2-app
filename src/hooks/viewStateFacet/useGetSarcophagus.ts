@@ -2,7 +2,7 @@ import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contrac
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { getSarcophagusState } from 'lib/utils/sarcophagusState';
-import { Sarcophagus, SarcophagusResponse } from 'types';
+import { Sarcophagus, SarcophagusResponseContract } from 'types';
 import { useContractRead } from 'wagmi';
 
 export function useGetSarcophagus(sarcoId: string | undefined) {
@@ -16,11 +16,14 @@ export function useGetSarcophagus(sarcoId: string | undefined) {
     enabled: !!sarcoId,
   });
 
-  const sarcophagusResponse = data as SarcophagusResponse;
-  const sarcophagus: Sarcophagus = {
-    ...sarcophagusResponse,
-    state: getSarcophagusState(sarcophagusResponse),
-  };
+  const sarcophagusResponse = data as SarcophagusResponseContract;
+  const sarcophagus: Sarcophagus | undefined = !data
+    ? undefined
+    : {
+        ...sarcophagusResponse,
+        state: getSarcophagusState(sarcophagusResponse),
+        id: sarcoId || '',
+      };
 
   return { sarcophagus, refetch, isLoading };
 }

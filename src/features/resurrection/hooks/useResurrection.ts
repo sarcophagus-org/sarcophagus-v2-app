@@ -15,7 +15,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const { sarcophagus } = useGetSarcophagus(sarcoId);
   const archaeologists = useGetSarcophagusArchaeologists(
     sarcoId,
-    sarcophagus?.archaeologistAddresses
+    sarcophagus?.archaeologistAddresses ?? []
   );
   const [canResurrect, setCanResurrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +49,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // The sarcophagus should always have arweave tx ids
       // The first one is the tx id for the payload, the second is the tx id for the encrypted
       // shards which is not used here
-      const payloadTxId = sarcophagus.arweaveTxIds[0];
+      const payloadTxId = sarcophagus?.arweaveTxIds[0];
 
       // In case the sarcophagus has no tx ids. This should never happen but we are checking just in
       // case.

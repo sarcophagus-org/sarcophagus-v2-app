@@ -3,7 +3,6 @@ import { BigNumber, ethers } from 'ethers';
 import { useBurySarcophagus } from 'hooks/embalmerFacet';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
-import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { NavLink, useParams } from 'react-router-dom';
 import { SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
@@ -18,15 +17,13 @@ export function Details() {
     sarcophagus?.resurrectionTime || BigNumber.from(0)
   );
 
-  const sarcophagusState = getSarcophagusState(sarcophagus);
-
   // Determine if the rewrap and bury functions are available
   const canRewrapOrBury =
-    sarcophagusState === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
+    sarcophagus.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
 
   // Determine if the claim function is available
   const canClaim =
-    sarcophagusState === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
+    sarcophagus.state === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
 
   function handleBury() {
     bury?.();

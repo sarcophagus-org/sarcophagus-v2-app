@@ -16,7 +16,7 @@ export function Rewrap() {
   const { sarcophagus } = useGetSarcophagus(id);
   const archaeologists = useGetSarcophagusArchaeologists(
     id || ethers.constants.HashZero,
-    sarcophagus?.archaeologistAddresses
+    sarcophagus?.archaeologistAddresses ?? []
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);

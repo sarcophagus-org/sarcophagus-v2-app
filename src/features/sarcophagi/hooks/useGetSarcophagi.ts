@@ -1,12 +1,13 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
-import { SarcophagusResponse } from 'types';
+import { getSarcophagusState } from 'lib/utils/sarcophagusState';
+import { Sarcophagus, SarcophagusResponseContract } from 'types';
 import { useContractReads } from 'wagmi';
 
 /**
  * Makes multiple view calls to the contract retrieving sarcophagi for the sarcoIds provided
  */
-export function useGetSarcophagi(sarcoIds: string[]): SarcophagusResponse[] {
+export function useGetSarcophagi(sarcoIds: string[]): Sarcophagus[] {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractReads({
@@ -18,5 +19,11 @@ export function useGetSarcophagi(sarcoIds: string[]): SarcophagusResponse[] {
     })),
   });
 
-  return data as SarcophagusResponse[];
+  if (!data) return [];
+  const response = data as SarcophagusResponseContract[];
+  return response.map((sarcoResponse, index) => ({
+    ...sarcoResponse,
+    state: getSarcophagusState(sarcoResponse),
+    id: sarcoIds?.[index] || '',
+  }));
 }
