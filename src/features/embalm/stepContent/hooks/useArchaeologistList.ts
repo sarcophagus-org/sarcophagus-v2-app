@@ -6,6 +6,7 @@ import { Archaeologist } from 'types/index';
 import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers, BigNumber } from 'ethers';
+import { filterSplit } from 'lib/utils/helpers';
 
 export function useArchaeologistList() {
   useLoadArchaeologists();
