@@ -31,10 +31,12 @@ export function Details() {
 
   return (
     <Flex direction="column">
-      {sarcophagus && <DetailsCollapse
-        id={id}
-        sarcophagus={sarcophagus}
-      />}
+      {sarcophagus && (
+        <DetailsCollapse
+          id={id}
+          sarcophagus={sarcophagus}
+        />
+      )}
       <Text mt={6}>Resurrection Date</Text>
       <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
 
