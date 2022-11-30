@@ -35,7 +35,7 @@ export interface ArchaeologistException {
 export interface SarcophagusArchaeologist {
   diggingFee: number;
   diggingFeesPaid: number;
-  unencryptedShardDoubleHash: string;
+  doubleHashedKeyShare: string;
   unencryptedShard: string;
 }
 
@@ -53,7 +53,7 @@ export interface ArchaeologistProfile {
 export interface ArchaeologistEncryptedShard {
   publicKey: string;
   encryptedShard: string;
-  unencryptedShardDoubleHash: string;
+  doubleHashedKeyShare: string;
 }
 
 export enum SarcophagusState {

@@ -82,7 +82,7 @@ export function useArchaeologistSignatureNegotiation() {
             timestamp: negotiationTimestamp,
             unencryptedShardDoubleHash: archaeologistShards.find(
               s => s.publicKey === arch.publicKey
-            )!.unencryptedShardDoubleHash,
+            )!.doubleHashedKeyShare,
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
