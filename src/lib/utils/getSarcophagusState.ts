@@ -10,17 +10,18 @@ export const getSarcophagusState = (
   if (sarco.isCompromised) return SarcophagusState.Accused;
 
   const nowSeconds = Math.trunc(Date.now() / 1000);
-  const withinGracePeriod =
-    nowSeconds >= sarco.resurrectionTime.toNumber() &&
-    nowSeconds < sarco.resurrectionTime.toNumber() + gracePeriod;
-
-  if (withinGracePeriod) return SarcophagusState.Resurrecting;
 
   const isPastGracePeriod = nowSeconds >= sarco.resurrectionTime.toNumber() + gracePeriod;
   const isCleaned = isPastGracePeriod && !sarco.hasLockedBond;
 
   if (sarco.publishedKeyShareCount >= sarco.threshold)
     return isCleaned ? SarcophagusState.CleanedResurrected : SarcophagusState.Resurrected;
+
+  const withinGracePeriod =
+    nowSeconds >= sarco.resurrectionTime.toNumber() &&
+    nowSeconds < sarco.resurrectionTime.toNumber() + gracePeriod;
+
+  if (withinGracePeriod) return SarcophagusState.Resurrecting;
 
   if (isPastGracePeriod)
     return isCleaned ? SarcophagusState.CleanedFailed : SarcophagusState.Failed;
