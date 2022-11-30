@@ -4,7 +4,7 @@ import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
-import { useGetProtocolFeeAmount, useGetSarcophagusDetails } from 'hooks/viewStateFacet';
+import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useMemo, useState } from 'react';
@@ -13,10 +13,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 export function Rewrap() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { sarcophagus } = useGetSarcophagusDetails({ sarcoId: id });
+  const { sarcophagus } = useGetSarcophagus(id);
   const archaeologists = useGetSarcophagusArchaeologists(
     id || ethers.constants.HashZero,
-    sarcophagus?.archaeologists
+    sarcophagus?.archaeologistAddresses ?? []
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);

@@ -39,7 +39,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   // This logic shows the actions a user can make on a sarcophagus regardless of which tab they are
   // on. If a user is both the embalmer and the recipient on a sarcohpagus, they will see both the
   // rewrap and resurrect actions on the "My Sarcohagi" tab and the "Claim Sarcohpagi" tab.
-  const isEmbalmer = sarco.embalmer === address;
+  const isEmbalmer = sarco.embalmerAddress === address;
   const isRecipient = sarco.recipientAddress === address;
 
   const stateToActionMap: {
@@ -56,7 +56,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     },
     [SarcophagusState.Failed]: {
       action: SarcoAction.Clean,
-      tooltip: 'Clean sarco',
+      tooltip: 'Deactivate the sarcophagus and claim a reward',
       stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrected]: {

@@ -10,13 +10,12 @@ export function useGetSarcophagusArchaeologists(
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractReads({
-    contracts:
-      archaeologistAddresses?.map(address => ({
-        address: networkConfig.diamondDeployAddress,
-        abi: ViewStateFacet__factory.abi,
-        functionName: 'getSarcophagusArchaeologist',
-        args: [sarcoId, address],
-      })) ?? [],
+    contracts: archaeologistAddresses.map(address => ({
+      address: networkConfig.diamondDeployAddress,
+      abi: ViewStateFacet__factory.abi,
+      functionName: 'getSarcophagusArchaeologist',
+      args: [sarcoId, address],
+    })),
   });
 
   return (data as SarcophagusArchaeologist[]) || [];

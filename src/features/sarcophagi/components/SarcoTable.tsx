@@ -24,11 +24,7 @@ export function SarcoTable({ ids, isClaimTab }: SarcoTableProps) {
   const [sortColumnId, setSortColumnId] = useState<SortableColumn>(SortableColumn.None);
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.None);
 
-  const sarcophagiWithoutIds = useGetSarcophagi(ids || []);
-  const sarcophagi = sarcophagiWithoutIds?.map((sarcophagus, index) => ({
-    ...sarcophagus,
-    id: ids?.[index] || '',
-  }));
+  const sarcophagi = useGetSarcophagi(ids || []);
 
   // Sort the sarcophagi using the sortColumnId and sortDirection states
   const sortedSarcophagi = sarcophagi?.sort((a, b) => {

@@ -8,6 +8,5 @@ export { useGetEmbalmerSarcophagi } from './useGetEmbalmerSarcophagi';
 export { useGetFreeBond } from './useGetFreeBond';
 export { useGetProtocolFeeAmount } from './useGetProtocolFeeAmount';
 export { useGetRecipientSarcophagi } from './useGetRecipientSarcophagi';
-export { useGetSarcophagus } from './useGetSarcophagus';
 export { useGetSarcophagusArchaeologist } from './useGetSarcophagusArchaeologist';
-export { useGetSarcophagusDetails } from './useGetSarcophagusDetails';
+export { useGetSarcophagus } from './useGetSarcophagus';

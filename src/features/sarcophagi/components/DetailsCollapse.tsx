@@ -45,10 +45,10 @@ export function DetailsCollapse({
           <Text>ID: {id}</Text>
           <Text>Arweave File ID: {sarcophagus?.arweaveTxIds[0]}</Text>
           <Text>Created On: --</Text>
-          <Text>Embalmer Address: {sarcophagus?.embalmer}</Text>
+          <Text>Embalmer Address: {sarcophagus?.embalmerAddress}</Text>
           <Text>Recipient Address: {sarcophagus?.recipientAddress}</Text>
-          <Text>Minimum Archaeologists: {sarcophagus?.minShards}</Text>
-          <Text>Total Archaeologists: {sarcophagus?.archaeologists.length}</Text>
+          <Text>Minimum Archaeologists: {sarcophagus?.threshold}</Text>
+          <Text>Total Archaeologists: {sarcophagus?.archaeologistAddresses?.length}</Text>
         </VStack>
       </Collapse>
     </>

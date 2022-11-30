@@ -35,8 +35,8 @@ export interface ArchaeologistException {
 export interface SarcophagusArchaeologist {
   diggingFee: number;
   diggingFeesPaid: number;
-  unencryptedShardDoubleHash: string;
-  unencryptedShard: string;
+  doubleHashedKeyShare: string;
+  rawKeyShare: string;
 }
 
 export interface ArchaeologistProfile {
@@ -53,7 +53,7 @@ export interface ArchaeologistProfile {
 export interface ArchaeologistEncryptedShard {
   publicKey: string;
   encryptedShard: string;
-  unencryptedShardDoubleHash: string;
+  doubleHashedKeyShare: string;
 }
 
 export enum SarcophagusState {
@@ -65,17 +65,21 @@ export enum SarcophagusState {
   Cleaned,
   Accused,
   Failed,
+  CleanedResurrected,
+  CleanedFailed,
 }
 
-export interface Sarcophagus {
-  id: string;
-  name: string;
-  state: SarcophagusState;
-  minShards: number;
+export type Sarcophagus = SarcophagusResponseContract & { id: string; state: SarcophagusState };
+export interface SarcophagusResponseContract {
   resurrectionTime: BigNumber;
+  isCompromised: boolean;
+  name: string;
+  threshold: number;
   maximumRewrapInterval: BigNumber;
-  arweaveTxIds: string[];
-  embalmer: string;
+  arweaveTxIds: [string, string];
+  embalmerAddress: string;
   recipientAddress: string;
-  archaeologists: string[];
+  archaeologistAddresses: string[];
+  publishedKeyShareCount: number;
+  hasLockedBond: boolean;
 }

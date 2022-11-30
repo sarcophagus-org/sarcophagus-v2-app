@@ -7,7 +7,7 @@ import { RecipientState } from '../../../../store/embalm/actions';
 export interface ContractArchaeologist {
   archAddress: string;
   diggingFee: BigNumber;
-  unencryptedShardDoubleHash: string;
+  doubleHashedKeyShare: string;
   v: number;
   r: string;
   s: string;
@@ -15,10 +15,10 @@ export interface ContractArchaeologist {
 
 export interface SubmitSarcophagusSettings {
   name: string;
-  recipient: string;
+  recipientAddress: string;
   resurrectionTime: number;
-  minShards: number;
-  timestamp: number;
+  threshold: number;
+  creationTime: number;
   maximumRewrapInterval: number;
 }
 
@@ -53,9 +53,9 @@ export function formatSubmitSarcophagusArgs({
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        unencryptedShardDoubleHash: archaeologistShards.filter(
+        doubleHashedKeyShare: archaeologistShards.filter(
           shard => shard.publicKey === arch.publicKey
-        )[0].unencryptedShardDoubleHash,
+        )[0].doubleHashedKeyShare,
         v,
         r,
         s,
@@ -66,10 +66,10 @@ export function formatSubmitSarcophagusArgs({
   const sarcoId = utils.id(name + Date.now().toString());
   const settings: SubmitSarcophagusSettings = {
     name,
-    recipient: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
+    recipientAddress: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
     resurrectionTime: Math.trunc(resurrection / 1000),
-    minShards: requiredArchaeologists,
-    timestamp: Math.trunc(negotiationTimestamp / 1000),
+    threshold: requiredArchaeologists,
+    creationTime: Math.trunc(negotiationTimestamp / 1000),
     maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
   };
 

@@ -10,7 +10,7 @@ export async function encryptShards(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
       encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      unencryptedShardDoubleHash: doubleHashShard(payload[i]),
+      doubleHashedKeyShare: doubleHashShard(payload[i]),
     }))
   );
 }
