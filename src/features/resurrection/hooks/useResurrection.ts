@@ -12,8 +12,11 @@ import { combine } from 'shamirs-secret-sharing-ts';
  * @param recipientPrivateKey The recipients private key
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
-  const sarcophagus = useGetSarcophagus(sarcoId);
-  const archaeologists = useGetSarcophagusArchaeologists(sarcoId, sarcophagus?.archaeologists);
+  const { sarcophagus } = useGetSarcophagus(sarcoId);
+  const archaeologists = useGetSarcophagusArchaeologists(
+    sarcoId,
+    sarcophagus?.archaeologistAddresses ?? []
+  );
   const [canResurrect, setCanResurrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isResurrecting, setIsResurrecting] = useState(false);
@@ -22,9 +25,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
   useEffect(() => {
     setIsLoading(true);
-    if (!sarcophagus || !sarcophagus.minShards) return;
-    const archsWithShards = archaeologists.filter(a => a.unencryptedShard);
-    setCanResurrect(archsWithShards.length >= sarcophagus.minShards);
+    if (!sarcophagus || !sarcophagus.threshold) return;
+    const archsWithShards = archaeologists.filter(a => a.rawKeyShare);
+    setCanResurrect(archsWithShards.length >= sarcophagus.threshold);
     setIsLoading(false);
   }, [archaeologists, sarcophagus]);
 
@@ -46,7 +49,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // The sarcophagus should always have arweave tx ids
       // The first one is the tx id for the payload, the second is the tx id for the encrypted
       // shards which is not used here
-      const payloadTxId = sarcophagus.arweaveTxIds[0];
+      const payloadTxId = sarcophagus?.arweaveTxIds[0];
 
       // In case the sarcophagus has no tx ids. This should never happen but we are checking just in
       // case.
@@ -61,9 +64,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       const outerLayerBuffer = Buffer.from(outerLayer);
 
       // Convert the shards from their hex strings to Uint8Array
-      const unencryptedShards = archaeologists
+      const rawKeyShares = archaeologists
         .map(a => {
-          const arrayifiedShard = arrayify(a.unencryptedShard);
+          const arrayifiedShard = arrayify(a.rawKeyShare);
           if (arrayifiedShard.length > 0) {
             return Buffer.from(arrayifiedShard);
           }
@@ -71,7 +74,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
         .filter(a => a);
 
       // Apply SSS with the unencryped shards to derive the outer layer private key
-      const outerLayerPrivateKey = combine(unencryptedShards).toString();
+      const outerLayerPrivateKey = combine(rawKeyShares).toString();
 
       // Decrypt the outer layer of the encrypted payload using the derived private key
       const singleEncryptedPayload = await decrypt(outerLayerPrivateKey, outerLayerBuffer);

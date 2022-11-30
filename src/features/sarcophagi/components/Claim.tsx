@@ -3,7 +3,7 @@ import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
 import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
-import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
+import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -12,9 +12,7 @@ export function Claim() {
   const { id } = useParams();
   const [privateKey, setPrivateKey] = useState('');
   const [resurrectError, setResurrectError] = useState('');
-  const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagusDetails({
-    sarcoId: id,
-  });
+  const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagus(id);
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0)
   );

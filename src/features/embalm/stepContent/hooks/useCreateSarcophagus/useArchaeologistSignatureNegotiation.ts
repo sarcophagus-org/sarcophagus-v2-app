@@ -10,7 +10,7 @@ import { useDialArchaeologists } from './useDialArchaeologists';
 
 interface ArchaeologistSignatureNegotiationParams {
   arweaveTxId: string;
-  unencryptedShardDoubleHash: string;
+  doubleHashedKeyShare: string;
   maxRewrapInterval: number;
   diggingFee: string;
   timestamp: number;
@@ -80,9 +80,8 @@ export function useArchaeologistSignatureNegotiation() {
             diggingFee: arch.profile.minimumDiggingFee.toString(),
             maxRewrapInterval: lowestRewrapInterval,
             timestamp: negotiationTimestamp,
-            unencryptedShardDoubleHash: archaeologistShards.find(
-              s => s.publicKey === arch.publicKey
-            )!.unencryptedShardDoubleHash,
+            doubleHashedKeyShare: archaeologistShards.find(s => s.publicKey === arch.publicKey)!
+              .doubleHashedKeyShare,
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
