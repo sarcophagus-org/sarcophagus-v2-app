@@ -98,7 +98,7 @@ export function Details() {
             placement="top"
             label="Deactivate the sarcophagus and claim a reward"
           >
-            <Button onClick={isCleaning ? () => { } : () => clean?.()}>
+            <Button onClick={isCleaning ? () => {} : () => clean?.()}>
               {/* TODO: Polish up after clean functionality is finalised */}
               {isCleaning ? 'Cleaning' : 'Clean'}
             </Button>
