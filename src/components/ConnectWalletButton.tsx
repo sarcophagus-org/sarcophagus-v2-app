@@ -24,11 +24,11 @@ export function ConnectWalletButton() {
               <Flex>
                 <Button
                   variant="ghost"
-                  _hover={{ bgColor: 'blue.1000' }}
-                  _focus={{ bgColor: 'blue.1000' }}
+                  _hover={{ bgColor: 'menuBlue.1000' }}
+                  _focus={{ bgColor: 'menuBlue.1000' }}
                   cursor="auto"
+                  bg="menuBlue.1000"
                   mx={2}
-                  bg="blue.1000"
                   leftIcon={<SarcoTokenIcon />}
                 >
                   <Text>{formattedBalance}</Text>
@@ -40,14 +40,14 @@ export function ConnectWalletButton() {
                   px={5}
                   bgGradient="linear-gradient(180deg, rgba(255, 255, 255, 0.044) 0%, rgba(255, 255, 255, 0.158) 100%)"
                 >
-                  <Text color="white">{account.displayName}</Text>
+                  <Text>{account.displayName}</Text>
                 </Button>
 
                 <IconButton
                   ml={2}
                   variant="ghost"
                   icon={<DotsMenuIcon />}
-                  bg="blue.1000"
+                  bg="menuBlue.1000"
                   aria-label="more"
                 />
               </Flex>

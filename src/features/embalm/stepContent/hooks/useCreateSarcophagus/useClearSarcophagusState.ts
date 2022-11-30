@@ -3,8 +3,8 @@ import {
   CreateSarcophagusContext,
   initialCreateSarcophagusState,
 } from '../../context/CreateSarcophagusContext';
-import { useDispatch } from '../../../../../store';
-import { resetEmbalmState } from '../../../../../store/embalm/actions';
+import { useDispatch, useSelector } from '../../../../../store';
+import { resetEmbalmState, setArchaeologistConnection } from '../../../../../store/embalm/actions';
 import { Step } from '../../../../../store/embalm/reducer';
 
 export interface SuccessData {
@@ -29,6 +29,9 @@ export function useClearSarcophagusState() {
   } = useContext(CreateSarcophagusContext);
 
   const dispatch = useDispatch();
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const libp2pNode = useSelector(s => s.appState.libp2pNode);
+
   const [successEncryptedShardsTxId, setSuccessEncryptedShardsTxId] = useState('');
   const [successSarcophagusPayloadTxId, setSuccessSarcophagusPayloadTxId] = useState('');
   const [successSarcophagusTxId, setSuccessSarcophagusTxId] = useState('');
@@ -51,7 +54,17 @@ export function useClearSarcophagusState() {
 
     // reset global embalm state
     dispatch(resetEmbalmState(Step.CreateSarcophagus));
+
+    // hang up archaeologists and reset connection
+    for await (const arch of selectedArchaeologists) {
+      if (arch.connection) {
+        libp2pNode?.hangUp(arch.fullPeerId!);
+        dispatch(setArchaeologistConnection(arch.fullPeerId!.toString(), undefined));
+      }
+    }
   }, [
+    libp2pNode,
+    selectedArchaeologists,
     encryptedShardsTxId,
     sarcophagusPayloadTxId,
     sarcophagusTxId,

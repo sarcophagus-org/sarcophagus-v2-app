@@ -15,6 +15,7 @@ export function SarcophagusName() {
         <FormLabel>Name</FormLabel>
         <Input
           onChange={handleNameChange}
+          autoFocus
           value={name}
           maxLength={maxSarcophagusNameLength}
         />

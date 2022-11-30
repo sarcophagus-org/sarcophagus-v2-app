@@ -13,13 +13,14 @@ enum SortableColumn {
 
 interface SarcoTableProps {
   ids?: string[];
+  isClaimTab?: boolean;
 }
 
 /**
  * A table meant to be used to display sarcophagi with fixed column headers. Accepts sarcophagus ids
  * and pulls them from the contract.
  */
-export function SarcoTable({ ids }: SarcoTableProps) {
+export function SarcoTable({ ids, isClaimTab }: SarcoTableProps) {
   const [sortColumnId, setSortColumnId] = useState<SortableColumn>(SortableColumn.None);
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.None);
 
@@ -126,6 +127,7 @@ export function SarcoTable({ ids }: SarcoTableProps) {
             <SarcoTableRow
               key={sarco.id}
               sarco={sarco}
+              isClaimTab={isClaimTab}
             />
           ))}
         </Tbody>

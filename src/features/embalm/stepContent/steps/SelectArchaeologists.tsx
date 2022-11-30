@@ -1,16 +1,4 @@
-import {
-  Flex,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Icon,
-  Box,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-} from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip, chakra } from '@chakra-ui/react';
 import { useState } from 'react';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
@@ -32,17 +20,17 @@ import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
 
-export function SelectArchaeologists() {
+export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: boolean }) {
   const outerLimit = 1;
   const innerLimit = 1;
-  const { sortedFilteredArchaeologist } = useArchaeologistList();
+  const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
   const [paginationSize, setPaginationSize] = useState<number>(5);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: sortedFilteredArchaeologist.length,
+      total: sortedFilteredArchaeologist(showSelectedArchaeologists).length,
       initialState: { currentPage: 1, pageSize: 5 },
       limits: {
         outer: outerLimit,
@@ -50,7 +38,10 @@ export function SelectArchaeologists() {
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist.slice(offset, offset + pageSize);
+  const paginatedArchaeologist = sortedFilteredArchaeologist(showSelectedArchaeologists).slice(
+    offset,
+    offset + pageSize
+  );
   const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
@@ -72,32 +63,30 @@ export function SelectArchaeologists() {
       direction="column"
       width="100%"
     >
-      <Heading>Archaeologists</Heading>
+      {!hideHeader ?? <Heading>Archaeologists</Heading>}
       <Text
-        variant="primary"
         mt="4"
-        fontSize="16px"
+        fontSize="lg"
       >
         Resurrection Time
       </Text>
       <HStack>
         <>
-          <Text
-            variant="primary"
-            color="brand.600"
-          >
-            Currently set:{' '}
-            <Text
-              as="u"
-              color="brand.600"
-            >
-              {moment(resurrectionDate).format('DD.MM.YY h:mma')}
-            </Text>
+          <Text variant="secondary">
+            Currently set:
+            {!resurrection ? (
+              ' Resurrection time not set'
+            ) : (
+              <chakra.span
+                textDecor="underline"
+                ml={2}
+              >
+                {moment(resurrectionDate).format('DD.MM.YY h:mma')}
+              </chakra.span>
+            )}
           </Text>
-
           <Text
             as="i"
-            color="brand.900"
             onClick={() => {
               setResurrectionTimeEdit(prevValue => !prevValue);
             }}
@@ -133,7 +122,7 @@ export function SelectArchaeologists() {
                 <Flex px={3}>
                   <HStack direction="row">
                     <HStack>
-                      <Text color="brand.600">Items per page:</Text>
+                      <Text variant="secondary">Items per page:</Text>
                       <SetPaginationSize
                         handlePageSizeChange={handlePageSizeChange}
                         paginationSize={paginationSize}
@@ -208,19 +197,17 @@ export function SelectArchaeologists() {
 
                 <HStack mr={2}>
                   <Text variant="secondary">Show (10) hidden</Text>
-                  <Popover trigger={'hover'}>
-                    <PopoverTrigger>
-                      <Icon
-                        as={QuestionIcon}
-                        color="brand.500"
-                        w={2}
-                        h={2}
-                      ></Icon>
-                    </PopoverTrigger>
-                    <PopoverContent background="black">
-                      <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
-                    </PopoverContent>
-                  </Popover>
+                  <Tooltip
+                    placement="top"
+                    label="These archaeologists are hidden because your selected resurrection time would exceed their maximum resurrection interval"
+                  >
+                    <Icon
+                      as={QuestionIcon}
+                      color="brand.500"
+                      w={3}
+                      h={3}
+                    />
+                  </Tooltip>
                 </HStack>
               </Flex>
 
@@ -228,14 +215,10 @@ export function SelectArchaeologists() {
                 mr={2}
                 mt={3}
               >
-                <SummaryErrorIcon
-                  error={
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                  }
-                />
+                <SummaryErrorIcon />
                 <Text
                   ml={2}
-                  color="brand.500"
+                  variant="secondary"
                   textAlign={'center'}
                 >
                   = accused archaeologists

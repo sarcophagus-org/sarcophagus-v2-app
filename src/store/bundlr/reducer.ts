@@ -2,11 +2,6 @@ import { WebBundlr } from '@bundlr-network/client';
 import { Actions } from '..';
 import { ActionType } from './actions';
 
-export interface BundlrPendingBalance {
-  txId: string | null;
-  balanceBeforeFund: string;
-}
-
 export interface BundlrState {
   balance: string;
   bundlr: WebBundlr | null;
@@ -14,7 +9,7 @@ export interface BundlrState {
   isFunding: boolean;
   isUploading: boolean;
   txId: string | null;
-  pendingBalance: BundlrPendingBalance;
+  balanceOffset: number;
 }
 
 export const bundlrInitialState: BundlrState = {
@@ -24,10 +19,7 @@ export const bundlrInitialState: BundlrState = {
   isFunding: false,
   isUploading: false,
   txId: null,
-  pendingBalance: {
-    txId: null,
-    balanceBeforeFund: '',
-  },
+  balanceOffset: 0,
 };
 
 export function bundlrReducer(state: BundlrState, action: Actions): BundlrState {
@@ -52,8 +44,14 @@ export function bundlrReducer(state: BundlrState, action: Actions): BundlrState 
       const txId = action.payload.txId;
       return { ...state, txId };
 
-    case ActionType.SetPendingBalance:
-      return { ...state, pendingBalance: action.payload.pendingBalance };
+    case ActionType.Fund:
+      return { ...state, balanceOffset: state.balanceOffset + parseFloat(action.payload.amount) };
+
+    case ActionType.Withdraw:
+      return { ...state, balanceOffset: state.balanceOffset - parseFloat(action.payload.amount) };
+
+    case ActionType.ResetBalanceOffset:
+      return { ...state, balanceOffset: 0 };
 
     default:
       return state;

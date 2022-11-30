@@ -2,7 +2,7 @@ import { VStack, Input, Button, Textarea, AlertStatus } from '@chakra-ui/react';
 import { useRecoverPublicKey, ErrorStatus } from '../hooks/useRecoverPublicKey';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 
 interface IErrorStatusMap {
   alertMessage: string;
@@ -64,9 +64,9 @@ export function RecoverPublicKey() {
         resize="none"
       />
       {errorStatus && (
-        <Alert status={ErrorStatusMap[errorStatus].alertStatus}>
+        <SarcoAlert status={ErrorStatusMap[errorStatus].alertStatus}>
           {ErrorStatusMap[errorStatus].alertMessage}
-        </Alert>
+        </SarcoAlert>
       )}
       <Button
         onClick={handleOnClick}

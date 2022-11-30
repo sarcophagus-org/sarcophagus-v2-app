@@ -1,6 +1,7 @@
-import { VStack, Heading, Text, Flex } from '@chakra-ui/react';
+import { VStack, Heading, Text, Flex, HStack, Icon, Tooltip } from '@chakra-ui/react';
 import { SetResurrection } from '../components/SetResurrection';
 import { SarcophagusName } from '../components/SarcophagusName';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 export function NameSarcophagus() {
   return (
@@ -14,7 +15,17 @@ export function NameSarcophagus() {
         pt={6}
         direction="column"
       >
-        <Heading size="sm">Resurrection</Heading>
+        <HStack>
+          <Heading size="sm">Resurrection</Heading>
+          <Tooltip
+            label="Your Sarcophagus cannot be claimed until after this date.
+            This is also the rewrap interval, and is the duration your Sarchophagus will be extended by whenever you rewrap it."
+            placement="top"
+          >
+            <Icon as={InfoOutlineIcon} />
+          </Tooltip>
+        </HStack>
+
         <Text
           variant="secondary"
           mt={4}

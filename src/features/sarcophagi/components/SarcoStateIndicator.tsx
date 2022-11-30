@@ -1,4 +1,4 @@
-import { Text, Badge, Flex } from '@chakra-ui/react';
+import { Text, Badge, Flex, Tooltip } from '@chakra-ui/react';
 import { SarcophagusState } from 'types';
 
 export const sarcoStateMap = {
@@ -14,34 +14,44 @@ export const sarcoStateMap = {
 
 interface SarcophagusStateIndicatorProps {
   state?: SarcophagusState;
+  tooltip?: string;
 }
 
 // A component that displays the state of a sarcophagus in a chip
 export function SarcoStateIndicator({
   state = SarcophagusState.Active,
+  tooltip = '',
 }: SarcophagusStateIndicatorProps) {
   const stateColorMap: { [key: string]: { text: string; bg: string } } = {
-    [SarcophagusState.Active]: { text: 'green', bg: 'greenBg' },
-    [SarcophagusState.Failed]: { text: 'red', bg: 'redBg' },
-    [SarcophagusState.Resurrecting]: { text: 'yellow', bg: 'yellowBg' },
-    [SarcophagusState.Resurrected]: { text: 'controversialBlue', bg: 'blueBg' },
-    [SarcophagusState.Buried]: { text: 'whiteAlpha.600', bg: 'whiteAlpha.300' },
+    [SarcophagusState.Active]: { text: 'green', bg: 'transparent.green' },
+    [SarcophagusState.Failed]: { text: 'red', bg: 'transparent.red' },
+    [SarcophagusState.Resurrecting]: { text: 'orange', bg: 'transparent.orange' },
+    [SarcophagusState.Resurrected]: { text: 'blue', bg: 'transparent.blue' },
+    [SarcophagusState.Buried]: { text: 'gray', bg: 'transparent.gray' },
   };
 
   return (
     <Flex>
-      <Badge
-        bg={stateColorMap[state]?.bg}
-        py="4px"
-        px="12px"
-        borderRadius={100}
-        textTransform="capitalize"
+      <Tooltip
+        placement="right-start"
+        openDelay={700}
+        isDisabled={!tooltip}
+        label={tooltip}
       >
-        <Text
-          fontSize="xs"
-          color={stateColorMap[state]?.text}
-        >{`● ${sarcoStateMap[state]}`}</Text>
-      </Badge>
+        <Badge
+          bg={stateColorMap[state]?.bg}
+          py="4px"
+          px="12px"
+          borderRadius={100}
+          textTransform="capitalize"
+          cursor={'pointer'}
+        >
+          <Text
+            fontSize="xs"
+            color={stateColorMap[state]?.text}
+          >{`● ${sarcoStateMap[state]}`}</Text>
+        </Badge>
+      </Tooltip>
     </Flex>
   );
 }

@@ -1,7 +1,8 @@
 import { Button, Center, Flex, Link, Spinner, Text, Textarea } from '@chakra-ui/react';
-import { Alert } from 'components/Alert';
+import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
+import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
@@ -10,6 +11,7 @@ import { useParams } from 'react-router-dom';
 export function Claim() {
   const { id } = useParams();
   const [privateKey, setPrivateKey] = useState('');
+  const [resurrectError, setResurrectError] = useState('');
   const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagusDetails({
     sarcoId: id,
   });
@@ -24,14 +26,25 @@ export function Claim() {
     isLoading: isLoadingResurrection,
   } = useResurrection(id || ethers.constants.HashZero, privateKey);
 
+  const privateKeyPad = (privKey: string): string => {
+    return privKey.startsWith('0x') ? privKey : `0x${privKey}`;
+  };
+
   const handleChangePrivateKey = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrivateKey(e.target.value);
+    setPrivateKey(privateKeyPad(e.target.value.trim()));
   };
 
   // linkRef is used to automatically trigger a download
   const linkRef = useRef<HTMLAnchorElement>(null);
   async function handleResurrect() {
-    const { fileName, data } = await resurrect();
+    setResurrectError('');
+
+    const { fileName, data, error } = await resurrect();
+    if (error) {
+      setResurrectError(error);
+      return;
+    }
+
     const dataUrl = data.toString();
     if (linkRef.current) {
       linkRef.current.href = dataUrl;
@@ -39,6 +52,8 @@ export function Claim() {
       linkRef.current.click();
     }
   }
+
+  useEnterKeyCallback(handleResurrect);
 
   return (
     <Flex
@@ -60,8 +75,18 @@ export function Claim() {
                 value={privateKey}
                 onChange={handleChangePrivateKey}
                 placeholder="0x0000..."
+                _placeholder={{ color: 'text.secondary' }}
               />
-              <Text mt={2}>Please enter the Private Key to decrypt the Sarcophagus</Text>
+              {resurrectError ? (
+                <Text
+                  mt={2}
+                  textColor="red"
+                >
+                  {resurrectError}
+                </Text>
+              ) : (
+                <Text mt={2}>Please enter the Private Key to decrypt the Sarcophagus</Text>
+              )}
               <Button
                 w="fit-content"
                 disabled={!canResurrect}
@@ -74,7 +99,7 @@ export function Claim() {
             </>
           ) : (
             <Flex mt={12}>
-              <Alert status="warning">This Sarcophagus cannot be claimed yet.</Alert>
+              <SarcoAlert status="warning">This Sarcophagus cannot be claimed yet.</SarcoAlert>
             </Flex>
           )}
         </>

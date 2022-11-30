@@ -1,8 +1,17 @@
-import { withDefaultVariant } from '@chakra-ui/react';
+import { ComponentStyleConfig } from '@chakra-ui/react';
 
-export const Button = {
+export const Button: ComponentStyleConfig = {
+  baseStyle: {
+    border: 'none',
+    borderRadius: 0,
+    paddingTop: '20px',
+    paddingBottom: '20px',
+    fontWeight: 400,
+  },
   variants: {
-    main: {
+    solid: {
+      color: 'brand.0',
+      bg: 'brand.950',
       _hover: {
         bg: 'brand.800',
         _disabled: {
@@ -14,15 +23,11 @@ export const Button = {
       },
     },
     ghost: {
-      fontWeight: 400,
-      fontSize: 14,
       _hover: {
         bg: 'brand.200',
       },
     },
     paginator: {
-      fontWeight: 400,
-      fontSize: 14,
       _hover: {
         bg: 'brand.200',
       },
@@ -38,21 +43,8 @@ export const Button = {
       color: 'brand.900',
     },
     disabledLook: {
-      opacity: 0.4,
+      bg: 'brand.200',
+      color: 'brand.0',
     },
   },
-  baseStyle: {
-    color: 'brand.0',
-    bg: 'brand.950',
-    border: 'none',
-    borderRadius: 0,
-    fontWeight: 400,
-    paddingTop: '20px',
-    paddingBottom: '20px',
-  },
 };
-
-export const withDefaultButtonVariant = withDefaultVariant({
-  variant: 'main',
-  components: ['Button'],
-});

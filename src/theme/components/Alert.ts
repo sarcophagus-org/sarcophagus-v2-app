@@ -1,85 +1,69 @@
-import { AlertProps, ComponentStyleConfig } from '@chakra-ui/react';
+import { defineStyle, createMultiStyleConfigHelpers } from '@chakra-ui/styled-system';
+import { AlertProps } from '@chakra-ui/react';
 
-// Controls the opacity of the toast background
-const backgroundColor = 'rgba(0, 0, 0, 1)';
+const helpers = createMultiStyleConfigHelpers([
+  'container',
+  'title',
+  'description',
+  'icon',
+  'spinner',
+]);
+
+/*
+NOTE regarding the icon color: we should be able to set the styles on icon:{} part, but the current
+ implmentation of <Alert> in the chakra library utilizes "colorScheme"
+  in the alert component to pass down the status color to the icon.
+   therefore we have to set our own icon and color on our custom component.
+    see : chakra-ui\packages\components\alert\src\alert.tsx line: 44 
+    where they retrieve the style "const styles = useMultiStyleConfig("Alert", { ...props, colorScheme })"
+*/
+const titleAndDescriptionStyle = defineStyle({
+  title: {
+    color: 'brand.950',
+    fontSize: '16px',
+    fontWeight: 'normal',
+    lineHeight: '1',
+  },
+  description: {
+    color: 'brand.950',
+    lineHeight: '1',
+  },
+});
 
 const alertStatusStyles: { [key: string]: any } = {
   success: {
     container: {
-      background: 'unset',
-      backgroundColor,
-      border: '1px',
-      borderColor: 'success',
+      bg: 'unset',
+      backgroundColor: 'alert.successBackground',
     },
-    title: {
-      color: 'brand.900',
-    },
-    description: {
-      color: 'brand.900',
-    },
-    icon: {
-      color: 'success',
-    },
+    ...titleAndDescriptionStyle,
   },
   info: {
     container: {
-      background: 'unset',
-      backgroundColor,
-      border: '1px',
-      borderColor: 'info',
+      bg: 'unset',
+      backgroundColor: 'alert.infoBackground',
     },
-    icon: {
-      color: 'info',
-    },
+    ...titleAndDescriptionStyle,
   },
   warning: {
     container: {
-      background: 'unset',
-      backgroundColor,
-      border: '1px',
-      borderColor: 'warning',
+      bg: 'unset',
+      backgroundColor: 'alert.warningBackground',
     },
-    title: {
-      color: 'warning',
-    },
-    description: {
-      color: 'warning',
-    },
-    icon: {
-      color: 'warning',
-    },
+    ...titleAndDescriptionStyle,
   },
   error: {
     container: {
-      background: 'unset',
-      backgroundColor,
-      border: '1px',
-      borderColor: 'error',
+      bg: 'unset',
+      backgroundColor: 'alert.errorBackground',
     },
-    title: {
-      color: 'error',
-    },
-    description: {
-      color: 'error',
-    },
-    icon: {
-      color: 'error',
-    },
-  },
-  default: {
-    container: {
-      background: 'unset',
-      backgroundColor,
-      border: '1px',
-      borderColor: 'info',
-    },
-    icon: {
-      color: 'info',
-    },
+    ...titleAndDescriptionStyle,
   },
 };
 
-// Border radius for this component is adjusted in theme/styles.ts. See comments for more details.
-export const Alert: ComponentStyleConfig = {
+export const Alert = helpers.defineMultiStyleConfig({
   baseStyle: (props: AlertProps) => alertStatusStyles[props.status || 'default'],
-};
+  sizes: {},
+  variants: {},
+  defaultProps: {},
+});

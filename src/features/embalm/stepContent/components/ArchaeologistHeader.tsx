@@ -1,4 +1,13 @@
-import { Text, Box, Flex, useColorModeValue, HStack, Checkbox, Icon } from '@chakra-ui/react';
+import {
+  Text,
+  Box,
+  Flex,
+  useColorModeValue,
+  HStack,
+  Checkbox,
+  Icon,
+  Tooltip,
+} from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { sumDiggingFees } from 'lib/utils/helpers';
 import { useDispatch, useSelector } from 'store/index';
@@ -32,7 +41,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         <Flex px={3}>
           <HStack direction="row">
             <Checkbox
-              colorScheme="blue"
+              colorScheme="checkboxScheme"
               onChange={() => selectAndReset()}
             ></Checkbox>
             <HStack>
@@ -40,7 +49,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
                 Show
                 <Text
                   m={1.5}
-                  fontWeight={700}
+                  variant="bold"
                   as="u"
                 >
                   {selectedArchaeologists.length === 0 ? '0' : selectedArchaeologists.length}
@@ -52,12 +61,17 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         </Flex>
 
         <HStack mr={2}>
-          <Icon as={InfoOutlineIcon}></Icon>
+          <Tooltip
+            label="This is how much SARCO it will cost you each time you rewrap your Sarchophagus"
+            placement="top"
+          >
+            <Icon as={InfoOutlineIcon}></Icon>
+          </Tooltip>
           <Text>
             Total Fee:
             <Text
               ml={1.5}
-              fontWeight={700}
+              variant="bold"
               as="u"
             >
               {sumDiggingFees(selectedArchaeologists).toString()} SARCO
@@ -65,9 +79,8 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
           </Text>
           <Text
             variant="secondary"
-            text-align={'bottom'}
             as="i"
-            fontSize={'10'}
+            fontSize="10"
           >
             +1% protocol fee
           </Text>

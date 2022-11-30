@@ -3,10 +3,7 @@ import { ActionMap } from '../ActionMap';
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
-  SetDiggingFeesSortDirection = 'EMBALM_SET_DIGGING_FEES_SORT_DIRECTION',
-  SetUnwrapsSortDirection = 'EMBALM_UNWRAPS_SORT_DIRECTION',
-  SetFailsSortDirection = 'EMBALM_FAILS_SORT_DIRECTION',
-  SetArchsSortDirection = 'EMBALM_ARCHS_SORT_DIRECTION',
+  SetSortDirection = 'EMBALM_SET_ARCHAEOLOGISTS_SORT_DIRECTION',
   SetShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
@@ -20,11 +17,16 @@ export enum SortDirection {
   NONE,
 }
 
+export enum SortFilterType {
+  ADDRESS_SEARCH,
+  DIGGING_FEES,
+  UNWRAPS,
+  FAILS,
+  NONE,
+}
+
 type ArchaeologistListPayload = {
-  [ActionType.SetDiggingFeesSortDirection]: { direction: SortDirection };
-  [ActionType.SetUnwrapsSortDirection]: { direction: SortDirection };
-  [ActionType.SetFailsSortDirection]: { direction: SortDirection };
-  [ActionType.SetArchsSortDirection]: { direction: SortDirection };
+  [ActionType.SetSortDirection]: { direction: SortDirection; sortType: SortFilterType };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
   [ActionType.SetUnwrapsFilter]: { filter: string };
   [ActionType.SetFailsFilter]: { filter: string };
@@ -32,29 +34,15 @@ type ArchaeologistListPayload = {
   [ActionType.SetShowSelectedArchaeologists]: { selected: boolean };
 };
 
-export function setDiggingFeesSortDirection(direction: SortDirection): ArchaeologistListActions {
+export function setSortDirection(
+  sortType: SortFilterType,
+  direction: SortDirection
+): ArchaeologistListActions {
   return {
-    type: ActionType.SetDiggingFeesSortDirection,
+    type: ActionType.SetSortDirection,
     payload: {
       direction,
-    },
-  };
-}
-
-export function setFailsSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetFailsSortDirection,
-    payload: {
-      direction,
-    },
-  };
-}
-
-export function setArchsSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetArchsSortDirection,
-    payload: {
-      direction,
+      sortType,
     },
   };
 }
@@ -91,15 +79,6 @@ export function setArchAddressSearch(search: string): ArchaeologistListActions {
     type: ActionType.SetArchAddressSearch,
     payload: {
       search,
-    },
-  };
-}
-
-export function setUnwrapsSortDirection(direction: SortDirection): ArchaeologistListActions {
-  return {
-    type: ActionType.SetUnwrapsSortDirection,
-    payload: {
-      direction,
     },
   };
 }

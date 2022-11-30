@@ -6,16 +6,8 @@ export function BusyIndicator({ children }: { children?: React.ReactNode }) {
       flexDirection="column"
       py="64px"
     >
-      <Spinner
-        color="whiteAlpha.700"
-        size="xl"
-      />
-      <Text
-        color="whiteAlpha.800"
-        mt={6}
-      >
-        {children}
-      </Text>
+      <Spinner size="xl" />
+      <Text mt={6}>{children}</Text>
     </Center>
   );
 }
