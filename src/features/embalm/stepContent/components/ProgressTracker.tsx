@@ -2,6 +2,7 @@ import { Flex, Text, VStack } from '@chakra-ui/react';
 import React, { FunctionComponentElement } from 'react';
 import { ProgressTrackerStageProps, StageStatus } from './ProgressTrackerStage';
 import { CreateSarcophagusStage } from '../utils/createSarcophagus';
+import { PageBlockModal } from './PageBlockModal';
 
 interface ProgressTrackerProps {
   title: string;
@@ -72,6 +73,7 @@ export function ProgressTracker({
       >
         {childrenWithProps}
       </VStack>
+      <PageBlockModal />
     </Flex>
   );
 }
