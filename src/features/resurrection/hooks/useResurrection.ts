@@ -12,7 +12,7 @@ import { combine } from 'shamirs-secret-sharing-ts';
  * @param recipientPrivateKey The recipients private key
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
-  const sarcophagus = useGetSarcophagus(sarcoId);
+  const { sarcophagus } = useGetSarcophagus(sarcoId);
   const archaeologists = useGetSarcophagusArchaeologists(
     sarcoId,
     sarcophagus?.archaeologistAddresses

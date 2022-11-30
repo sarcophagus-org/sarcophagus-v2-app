@@ -81,6 +81,7 @@ export enum SarcophagusState {
 // }
 
 export type SarcophagusResponse = SarcophagusResponseContract & { id: string };
+export type Sarcophagus = SarcophagusResponse & { state: SarcophagusState };
 
 export interface SarcophagusResponseContract {
   resurrectionTime: BigNumber;

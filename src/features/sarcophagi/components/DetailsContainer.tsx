@@ -1,6 +1,6 @@
 import { Button, Heading, HStack, Link, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from 'hooks/useQuery';
-import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
+import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 import { RoutesPathMap, RouteKey } from 'pages';
@@ -12,7 +12,7 @@ interface SarcophagusDetailsProps {
 
 export function DetailsContainer({ children }: SarcophagusDetailsProps) {
   const { id } = useParams();
-  const { sarcophagus } = useGetSarcophagusDetails({ sarcoId: id });
+  const { sarcophagus } = useGetSarcophagus(id);
 
   const navigate = useNavigate();
 

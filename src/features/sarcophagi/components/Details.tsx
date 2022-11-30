@@ -1,7 +1,7 @@
 import { Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useBurySarcophagus } from 'hooks/embalmerFacet';
-import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
+import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { NavLink, useParams } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { DetailsCollapse } from './DetailsCollapse';
 
 export function Details() {
   const { id } = useParams();
-  const { sarcophagus } = useGetSarcophagusDetails({ sarcoId: id });
+  const { sarcophagus } = useGetSarcophagus(id);
   const { address } = useAccount();
   const { bury, isLoading, isBurying } = useBurySarcophagus(id || ethers.constants.HashZero);
   const resurrectionString = buildResurrectionDateString(
