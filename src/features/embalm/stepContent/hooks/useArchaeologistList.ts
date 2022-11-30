@@ -25,6 +25,20 @@ export function useArchaeologistList() {
 
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
+  const resurrection = useSelector(s => s.embalmState.resurrection);
+
+  // If the difference between the ressurection time and the current time is less than an
+  // archaeologist's rewrap interval, that archaeologist goes in the visible list. Otherwise it goes in
+  // the hidden list.
+  const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
+    const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
+    const resurrectionTimeMs = resurrection;
+
+    // If resurrection time has not been set, it will default to 0, in which case this will return
+    // false and no archaeologists will be hidden
+    return resurrectionTimeMs - Date.now() < maxRewrapIntervalMs;
+  });
+
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
     [SortDirection.ASC]: 'asc',
@@ -68,7 +82,7 @@ export function useArchaeologistList() {
   const sortedArchaeologist = (): Archaeologist[] => {
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
       return orderBy(
-        onlineArchaeologists,
+        visibleArchaeologists,
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
@@ -85,7 +99,7 @@ export function useArchaeologistList() {
         [sortOrderByMap[archaeologistFilterSort.sortDirection]!]
       );
     } else {
-      return onlineArchaeologists;
+      return visibleArchaeologists;
     }
   };
 
@@ -112,20 +126,21 @@ export function useArchaeologistList() {
   };
 
   return {
-    handleCheckArchaeologist,
-    selectedArchaeologists,
-    onClickSortDiggingFees,
-    onClickSortUnwraps,
-    onClickSortFails,
-    onClickSortArchs,
-    SortDirection,
-    archaeologistFilterSort,
-    sortedFilteredArchaeologist,
-    diggingFeesFilter,
-    unwrapsFilter,
-    failsFilter,
     archAddressSearch,
-    sortedArchaeologist,
+    archaeologistFilterSort,
+    diggingFeesFilter,
+    failsFilter,
+    handleCheckArchaeologist,
+    hiddenArchaeologists,
+    onClickSortArchs,
+    onClickSortDiggingFees,
+    onClickSortFails,
+    onClickSortUnwraps,
+    selectedArchaeologists,
     showSelectedArchaeologists,
+    SortDirection,
+    sortedArchaeologist,
+    sortedFilteredArchaeologist,
+    unwrapsFilter,
   };
 }
