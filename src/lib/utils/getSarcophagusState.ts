@@ -7,6 +7,7 @@ export const getSarcophagusState = (
 ): SarcophagusState => {
   if (sarco.resurrectionTime.eq(ethers.constants.Zero)) return SarcophagusState.DoesNotExist;
   if (sarco.resurrectionTime.eq(ethers.constants.MaxUint256)) return SarcophagusState.Buried;
+  if (sarco.isCompromised) return SarcophagusState.Accused;
 
   const nowSeconds = Math.trunc(Date.now() / 1000);
   const withinGracePeriod =
@@ -24,6 +25,5 @@ export const getSarcophagusState = (
   if (isPastGracePeriod)
     return isCleaned ? SarcophagusState.CleanedFailed : SarcophagusState.Failed;
 
-  if (sarco.isCompromised) return SarcophagusState.Accused;
   return SarcophagusState.Active;
 };
