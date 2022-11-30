@@ -56,7 +56,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     },
     [SarcophagusState.Failed]: {
       action: SarcoAction.Clean,
-      tooltip: 'Clean sarco',
+      tooltip: 'Deactivate the sarcophagus and claim a reward',
       stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrected]: {

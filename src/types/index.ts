@@ -36,7 +36,7 @@ export interface SarcophagusArchaeologist {
   diggingFee: number;
   diggingFeesPaid: number;
   doubleHashedKeyShare: string;
-  unencryptedShard: string;
+  rawKeyShare: string;
 }
 
 export interface ArchaeologistProfile {

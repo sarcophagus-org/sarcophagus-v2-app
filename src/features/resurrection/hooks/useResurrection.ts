@@ -26,7 +26,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   useEffect(() => {
     setIsLoading(true);
     if (!sarcophagus || !sarcophagus.threshold) return;
-    const archsWithShards = archaeologists.filter(a => a.unencryptedShard);
+    const archsWithShards = archaeologists.filter(a => a.rawKeyShare);
     setCanResurrect(archsWithShards.length >= sarcophagus.threshold);
     setIsLoading(false);
   }, [archaeologists, sarcophagus]);
@@ -64,9 +64,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       const outerLayerBuffer = Buffer.from(outerLayer);
 
       // Convert the shards from their hex strings to Uint8Array
-      const unencryptedShards = archaeologists
+      const rawKeyShares = archaeologists
         .map(a => {
-          const arrayifiedShard = arrayify(a.unencryptedShard);
+          const arrayifiedShard = arrayify(a.rawKeyShare);
           if (arrayifiedShard.length > 0) {
             return Buffer.from(arrayifiedShard);
           }
@@ -74,7 +74,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
         .filter(a => a);
 
       // Apply SSS with the unencryped shards to derive the outer layer private key
-      const outerLayerPrivateKey = combine(unencryptedShards).toString();
+      const outerLayerPrivateKey = combine(rawKeyShares).toString();
 
       // Decrypt the outer layer of the encrypted payload using the derived private key
       const singleEncryptedPayload = await decrypt(outerLayerPrivateKey, outerLayerBuffer);
