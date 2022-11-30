@@ -31,6 +31,8 @@ export function SarcoStateIndicator({
     [SarcophagusState.Resurrecting]: { text: 'orange', bg: 'transparent.orange' },
     [SarcophagusState.Resurrected]: { text: 'blue', bg: 'transparent.blue' },
     [SarcophagusState.Buried]: { text: 'gray', bg: 'transparent.gray' },
+    [SarcophagusState.DoesNotExist]: { text: 'gray', bg: 'transparent.gray' },
+    // TODO: add colours for cleaned states
   };
 
   return (
