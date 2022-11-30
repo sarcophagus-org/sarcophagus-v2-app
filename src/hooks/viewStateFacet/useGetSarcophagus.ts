@@ -4,9 +4,11 @@ import { useNetworkConfig } from 'lib/config';
 import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { Sarcophagus, SarcophagusResponseContract } from 'types';
 import { useContractRead } from 'wagmi';
+import { useGetGracePeriod } from './useGetGracePeriod';
 
 export function useGetSarcophagus(sarcoId: string | undefined) {
   const networkConfig = useNetworkConfig();
+  const gracePeriod = useGetGracePeriod();
 
   const { data, refetch, isLoading } = useContractRead({
     address: networkConfig.diamondDeployAddress,
@@ -21,7 +23,7 @@ export function useGetSarcophagus(sarcoId: string | undefined) {
     ? undefined
     : {
         ...sarcophagusResponse,
-        state: getSarcophagusState(sarcophagusResponse),
+        state: getSarcophagusState(sarcophagusResponse, gracePeriod),
         id: sarcoId || '',
       };
 

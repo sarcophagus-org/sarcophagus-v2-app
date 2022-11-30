@@ -1,4 +1,5 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { useGetGracePeriod } from 'hooks/viewStateFacet/useGetGracePeriod';
 import { useNetworkConfig } from 'lib/config';
 import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { Sarcophagus, SarcophagusResponseContract } from 'types';
@@ -9,6 +10,7 @@ import { useContractReads } from 'wagmi';
  */
 export function useGetSarcophagi(sarcoIds: string[]): Sarcophagus[] {
   const networkConfig = useNetworkConfig();
+  const gracePeriod = useGetGracePeriod();
 
   const { data } = useContractReads({
     contracts: sarcoIds.map(id => ({
@@ -23,7 +25,7 @@ export function useGetSarcophagi(sarcoIds: string[]): Sarcophagus[] {
   const response = data as SarcophagusResponseContract[];
   return response.map((sarcoResponse, index) => ({
     ...sarcoResponse,
-    state: getSarcophagusState(sarcoResponse),
+    state: getSarcophagusState(sarcoResponse, gracePeriod),
     id: sarcoIds?.[index] || '',
   }));
 }

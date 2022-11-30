@@ -80,9 +80,8 @@ export function useArchaeologistSignatureNegotiation() {
             diggingFee: arch.profile.minimumDiggingFee.toString(),
             maxRewrapInterval: lowestRewrapInterval,
             timestamp: negotiationTimestamp,
-            doubleHashedKeyShare: archaeologistShards.find(
-              s => s.publicKey === arch.publicKey
-            )!.doubleHashedKeyShare,
+            doubleHashedKeyShare: archaeologistShards.find(s => s.publicKey === arch.publicKey)!
+              .doubleHashedKeyShare,
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
