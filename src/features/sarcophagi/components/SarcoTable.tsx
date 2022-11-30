@@ -1,4 +1,5 @@
 import { Table, TableContainer, Tbody, Thead, Tr } from '@chakra-ui/react';
+import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { useState } from 'react';
 import { useGetSarcophagi } from '../hooks/useGetSarcophagi';
 import { SarcoTableHead, SortDirection } from './SarcoTableHead';
@@ -32,11 +33,13 @@ export function SarcoTable({ ids, isClaimTab }: SarcoTableProps) {
 
   // Sort the sarcophagi using the sortColumnId and sortDirection states
   const sortedSarcophagi = sarcophagi?.sort((a, b) => {
+    const aState = getSarcophagusState(a);
+    const bState = getSarcophagusState(b);
     if (sortColumnId === SortableColumn.State) {
       if (sortDirection === SortDirection.Ascending) {
-        return a.state > b.state ? 1 : -1;
+        return aState > bState ? 1 : -1;
       } else if (sortDirection === SortDirection.Descending) {
-        return a.state < b.state ? 1 : -1;
+        return aState < bState ? 1 : -1;
       }
     } else if (sortColumnId === SortableColumn.Name) {
       if (sortDirection === SortDirection.Ascending) {

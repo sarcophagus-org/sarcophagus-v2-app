@@ -1,6 +1,6 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
-import { Sarcophagus } from 'types';
+import { SarcophagusResponse } from 'types';
 import { useContractRead } from 'wagmi';
 
 export function useGetSarcophagusDetails({ sarcoId }: { sarcoId: string | undefined }) {
@@ -14,7 +14,7 @@ export function useGetSarcophagusDetails({ sarcoId }: { sarcoId: string | undefi
     enabled: !!sarcoId,
   });
 
-  const sarcophagus = data as Sarcophagus;
+  const sarcophagus = data as SarcophagusResponse;
 
   return { sarcophagus, refetch, isLoading };
 }

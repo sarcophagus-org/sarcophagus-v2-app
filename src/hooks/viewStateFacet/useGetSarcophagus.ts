@@ -1,10 +1,10 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { Sarcophagus } from 'types';
+import { SarcophagusResponse } from 'types';
 import { useContractRead } from 'wagmi';
 
-export function useGetSarcophagus(sarcoId: string | number): Sarcophagus {
+export function useGetSarcophagus(sarcoId: string | number): SarcophagusResponse {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
@@ -14,5 +14,5 @@ export function useGetSarcophagus(sarcoId: string | number): Sarcophagus {
     args: [sarcoId !== '' ? sarcoId : ethers.constants.HashZero],
   });
 
-  return data as Sarcophagus;
+  return data as SarcophagusResponse;
 }

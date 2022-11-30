@@ -3,6 +3,7 @@ import { ThirdPartyFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contra
 import { Abi } from 'abitype';
 import { useGetSarcophagusDetails } from 'hooks/viewStateFacet';
 import { useNetworkConfig } from 'lib/config';
+import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
 import { SarcophagusState } from 'types';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
@@ -17,7 +18,8 @@ export function useCleanSarcophagus(sarcoId: string, paymentAddress: string | un
     address: networkConfig.diamondDeployAddress,
     abi: ThirdPartyFacet__factory.abi as Abi,
     functionName: 'clean',
-    enabled: sarcophagus?.state === SarcophagusState.Failed && !!paymentAddress && !!sarcoId,
+    enabled:
+      getSarcophagusState(sarcophagus) === SarcophagusState.Failed && !!paymentAddress && !!sarcoId,
     args: [sarcoId, paymentAddress],
   });
 

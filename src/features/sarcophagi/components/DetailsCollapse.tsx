@@ -1,11 +1,11 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-import { Sarcophagus } from 'types';
+import { SarcophagusResponse } from 'types';
 
 interface DetailsCollapseProps {
   id?: string;
-  sarcophagus: Sarcophagus;
+  sarcophagus: SarcophagusResponse;
 }
 
 export function DetailsCollapse({
@@ -45,10 +45,10 @@ export function DetailsCollapse({
           <Text>ID: {id}</Text>
           <Text>Arweave File ID: {sarcophagus?.arweaveTxIds[0]}</Text>
           <Text>Created On: --</Text>
-          <Text>Embalmer Address: {sarcophagus?.embalmer}</Text>
+          <Text>Embalmer Address: {sarcophagus?.embalmerAddress}</Text>
           <Text>Recipient Address: {sarcophagus?.recipientAddress}</Text>
-          <Text>Minimum Archaeologists: {sarcophagus?.minShards}</Text>
-          <Text>Total Archaeologists: {sarcophagus?.archaeologists.length}</Text>
+          <Text>Minimum Archaeologists: {sarcophagus?.threshold}</Text>
+          <Text>Total Archaeologists: {sarcophagus?.archaeologistAddresses.length}</Text>
         </VStack>
       </Collapse>
     </>

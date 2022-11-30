@@ -13,7 +13,10 @@ import { combine } from 'shamirs-secret-sharing-ts';
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const sarcophagus = useGetSarcophagus(sarcoId);
-  const archaeologists = useGetSarcophagusArchaeologists(sarcoId, sarcophagus?.archaeologists);
+  const archaeologists = useGetSarcophagusArchaeologists(
+    sarcoId,
+    sarcophagus?.archaeologistAddresses
+  );
   const [canResurrect, setCanResurrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isResurrecting, setIsResurrecting] = useState(false);
@@ -22,9 +25,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
   useEffect(() => {
     setIsLoading(true);
-    if (!sarcophagus || !sarcophagus.minShards) return;
+    if (!sarcophagus || !sarcophagus.threshold) return;
     const archsWithShards = archaeologists.filter(a => a.unencryptedShard);
-    setCanResurrect(archsWithShards.length >= sarcophagus.minShards);
+    setCanResurrect(archsWithShards.length >= sarcophagus.threshold);
     setIsLoading(false);
   }, [archaeologists, sarcophagus]);
 

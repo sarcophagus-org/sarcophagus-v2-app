@@ -4,8 +4,9 @@ import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
+import { getSarcophagusState } from 'lib/utils/sarcophagusState';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Sarcophagus, SarcophagusState } from 'types';
+import { SarcophagusResponse, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 
@@ -16,7 +17,7 @@ export enum SarcoAction {
 }
 
 export interface SarcophagusTableRowProps extends TableRowProps {
-  sarco: Sarcophagus;
+  sarco: SarcophagusResponse;
   isClaimTab?: boolean;
 }
 
@@ -39,7 +40,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   // This logic shows the actions a user can make on a sarcophagus regardless of which tab they are
   // on. If a user is both the embalmer and the recipient on a sarcohpagus, they will see both the
   // rewrap and resurrect actions on the "My Sarcohagi" tab and the "Claim Sarcohpagi" tab.
-  const isEmbalmer = sarco.embalmer === address;
+  const isEmbalmer = sarco.embalmerAddress === address;
   const isRecipient = sarco.recipientAddress === address;
 
   const stateToActionMap: {
@@ -80,9 +81,11 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     },
   };
 
-  const action = stateToActionMap[sarco.state]?.action;
-  const actionTooltip = stateToActionMap[sarco.state]?.tooltip;
-  const stateTooltip = stateToActionMap[sarco.state]?.stateTooltip;
+  const sarcoState = getSarcophagusState(sarco);
+
+  const action = stateToActionMap[sarcoState]?.action;
+  const actionTooltip = stateToActionMap[sarcoState]?.tooltip;
+  const stateTooltip = stateToActionMap[sarcoState]?.stateTooltip;
 
   // TODO: Remove console logs and navigate to the appropriate page including the sarcoId
   function handleClickAction() {
@@ -106,7 +109,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       {/* SARCO STATE */}
       <Td>
         <SarcoStateIndicator
-          state={sarco.state}
+          state={sarcoState}
           tooltip={stateTooltip}
         />
       </Td>
@@ -123,7 +126,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
 
       {/* QUICK ACTION */}
       <Td textAlign="center">
-        {stateToActionMap[sarco.state] ? (
+        {stateToActionMap[sarcoState] ? (
           <Tooltip
             isDisabled={!actionTooltip}
             openDelay={500}
