@@ -44,9 +44,10 @@ export interface ArchaeologistProfile {
   exists: boolean;
   minimumDiggingFee: BigNumber;
   maximumRewrapInterval: BigNumber;
-  successes: string[];
-  cleanups: string[];
-  accusals: string[];
+  successes: BigNumber;
+  cleanups: BigNumber;
+  accusals: BigNumber;
+  failures: BigNumber;
   peerId: string;
 }
 

@@ -57,6 +57,7 @@ export function useLoadArchaeologists() {
             successes: stats[i].successes,
             cleanups: stats[i].cleanups,
             accusals: stats[i].accusals,
+            failures: stats[i].failures,
           },
           isOnline: false,
         }));

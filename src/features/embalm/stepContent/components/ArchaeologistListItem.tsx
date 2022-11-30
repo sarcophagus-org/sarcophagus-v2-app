@@ -105,7 +105,7 @@ export function ArchaeologistListItem({
         icon={false}
         checkbox={false}
       >
-        {archaeologist.profile.cleanups.toString()}
+        {archaeologist.profile.failures.toString()}
       </TableContent>
 
       {includeDialButton ? (
