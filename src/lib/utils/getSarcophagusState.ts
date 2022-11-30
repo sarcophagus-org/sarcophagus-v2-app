@@ -8,13 +8,21 @@ export const getSarcophagusState = (
   if (sarco.resurrectionTime.eq(ethers.constants.Zero)) return SarcophagusState.DoesNotExist;
   if (sarco.resurrectionTime.eq(ethers.constants.MaxUint256)) return SarcophagusState.Buried;
 
-  if (sarco.publishedKeyShareCount >= sarco.threshold) return SarcophagusState.Resurrected;
-  if (sarco.publishedKeyShareCount > 0) return SarcophagusState.Resurrecting;
-
   const nowSeconds = Math.trunc(Date.now() / 1000);
-  const isPastResurrectionTime = nowSeconds >= sarco.resurrectionTime.toNumber() + gracePeriod; // TODO: add grace period
-  if (isPastResurrectionTime && !sarco.hasLockedBond) return SarcophagusState.Cleaned;
-  if (isPastResurrectionTime) return SarcophagusState.Failed;
+  const withinGracePeriod =
+    nowSeconds >= sarco.resurrectionTime.toNumber() &&
+    nowSeconds < sarco.resurrectionTime.toNumber() + gracePeriod;
+
+  if (withinGracePeriod) return SarcophagusState.Resurrecting;
+
+  const isPastGracePeriod = nowSeconds >= sarco.resurrectionTime.toNumber() + gracePeriod;
+  const isCleaned = isPastGracePeriod && !sarco.hasLockedBond;
+
+  if (sarco.publishedKeyShareCount >= sarco.threshold)
+    return isCleaned ? SarcophagusState.CleanedResurrected : SarcophagusState.Resurrected;
+
+  if (isPastGracePeriod)
+    return isCleaned ? SarcophagusState.CleanedFailed : SarcophagusState.Failed;
 
   if (sarco.isCompromised) return SarcophagusState.Accused;
   return SarcophagusState.Active;

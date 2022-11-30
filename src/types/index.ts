@@ -65,6 +65,8 @@ export enum SarcophagusState {
   Cleaned,
   Accused,
   Failed,
+  CleanedResurrected,
+  CleanedFailed,
 }
 
 export type Sarcophagus = SarcophagusResponseContract & { id: string; state: SarcophagusState };
