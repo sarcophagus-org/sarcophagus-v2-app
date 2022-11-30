@@ -19,11 +19,11 @@ export function Details() {
 
   // Determine if the rewrap and bury functions are available
   const canRewrapOrBury =
-    sarcophagus.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
+    sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
 
   // Determine if the claim function is available
   const canClaim =
-    sarcophagus.state === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
+    sarcophagus?.state === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
 
   function handleBury() {
     bury?.();
@@ -31,12 +31,12 @@ export function Details() {
 
   return (
     <Flex direction="column">
-      <DetailsCollapse
+      {sarcophagus && <DetailsCollapse
         id={id}
         sarcophagus={sarcophagus}
-      />
+      />}
       <Text mt={6}>Resurrection Date</Text>
-      <Text variant="secondary">{sarcophagus.resurrectionTime ? resurrectionString : '--'}</Text>
+      <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
 
       <HStack pt={10}>
         {canRewrapOrBury && (
