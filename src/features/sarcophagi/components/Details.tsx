@@ -1,6 +1,7 @@
 import { Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useBurySarcophagus } from 'hooks/embalmerFacet';
+import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useParams } from 'react-router-dom';
@@ -17,6 +18,8 @@ export function Details() {
     sarcophagus?.resurrectionTime || BigNumber.from(0)
   );
 
+  const { clean, isCleaning } = useCleanSarcophagus(sarcophagus?.id ?? '', address);
+
   // Determine if the rewrap and bury functions are available
   const canRewrapOrBury =
     sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
@@ -24,6 +27,8 @@ export function Details() {
   // Determine if the claim function is available
   const canClaim =
     sarcophagus?.state === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
+
+  const canClean = sarcophagus?.state === SarcophagusState.Failed && sarcophagus?.hasLockedBond;
 
   function handleBury() {
     bury?.();
@@ -83,6 +88,19 @@ export function Details() {
               to="?action=claim"
             >
               Claim
+            </Button>
+          </Tooltip>
+        )}
+
+        {/* CLEAN BUTTON */}
+        {canClean && (
+          <Tooltip
+            placement="top"
+            label="Deactivate the sarcophagus and claim a reward"
+          >
+            <Button onClick={isCleaning ? () => { } : () => clean?.()}>
+              {/* TODO: Polish up after clean functionality is finalised */}
+              {isCleaning ? 'Cleaning' : 'Clean'}
             </Button>
           </Tooltip>
         )}
