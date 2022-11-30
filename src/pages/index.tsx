@@ -1,17 +1,6 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Link,
-  Text,
-  Heading,
-  Image,
-  Container,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { useAccount } from 'wagmi';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
@@ -22,15 +11,11 @@ import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 import { RecipientsPage } from './RecipientsPage';
 import { ThemeTestPage } from './ThemeTestPage';
-import pharaoh from 'assets/images/pharaoh.gif';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
 import { NotFoundPage } from './NotFoundPage';
-import { useCallback, useEffect } from 'react';
-import { useClearSarcophagusState } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useClearSarcophagusState';
-import { goToStep } from 'store/embalm/actions';
-import { Step } from 'store/embalm/reducer';
-import { useDispatch, useSelector } from 'store/index';
+import { CreateSarcophagusContextProvider } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
+import { WalletDisconnectPage } from './WalletDisconnectPage';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -57,10 +42,6 @@ export const RoutesPathMap: { [key: number]: string } = {
 };
 
 export function Pages() {
-  const { clearSarcophagusState } = useClearSarcophagusState();
-  const dispatch = useDispatch();
-  const { name } = useSelector(x => x.embalmState);
-
   const routes = [
     {
       path: RoutesPathMap[RouteKey.EMBALM_PAGE],
@@ -136,24 +117,7 @@ export function Pages() {
 
   const { isConnected } = useAccount();
 
-  console.log('name', name);
-
-  const clearState = useCallback(() => {
-    clearSarcophagusState();
-
-    console.log('callback clear state');
-    dispatch(goToStep(Step.NameSarcophagus));
-  }, [clearSarcophagusState, dispatch]);
-
-  const { address } = useAccount({});
-
-  useEffect(() => {
-    if (!!address) clearState();
-  }, [clearState, address]);
-
-  const { isSupportedChain, supportedNetworkNames } = useSupportedNetwork();
-
-  const { openConnectModal } = useConnectModal();
+  const { isSupportedChain } = useSupportedNetwork();
 
   return (
     <Router>
@@ -230,42 +194,9 @@ export function Pages() {
               />
             </Routes>
           ) : (
-            <Container
-              maxW="sm"
-              centerContent
-            >
-              <Heading pb={2}>
-                {!isConnected ? 'No Wallet Detected' : 'Unsupported Network'}
-              </Heading>
-              <Text align="center">
-                {!isConnected
-                  ? 'Please connect to your web3 wallet to access this dapp.'
-                  : 'Please connect to a supported network.'}
-              </Text>
-              <Image
-                src={pharaoh}
-                w="125px"
-                py={8}
-              />
-              {!isConnected ? (
-                <Button onClick={openConnectModal}>Connect Wallet</Button>
-              ) : (
-                <Text
-                  align="center"
-                  variant="bold"
-                >
-                  Supported Networks
-                  {supportedNetworkNames.map(network => (
-                    <Text
-                      fontWeight="normal"
-                      key={network}
-                    >
-                      {network}
-                    </Text>
-                  ))}
-                </Text>
-              )}
-            </Container>
+            <CreateSarcophagusContextProvider>
+              <WalletDisconnectPage />
+            </CreateSarcophagusContextProvider>
           )}
         </Flex>
       </Flex>
