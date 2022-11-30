@@ -10,6 +10,9 @@ export const sarcoStateMap = {
   [SarcophagusState.Cleaned]: 'Cleaned',
   [SarcophagusState.Accused]: 'Accused',
   [SarcophagusState.Failed]: 'Failed',
+  // TODO: Will need a way to convey this info more appropriately
+  [SarcophagusState.CleanedFailed]: 'Failed',
+  [SarcophagusState.CleanedResurrected]: 'Resurrected',
 };
 
 interface SarcophagusStateIndicatorProps {
