@@ -90,7 +90,7 @@ export function CreateSarcophagus() {
       navigate(RoutesPathMap[RouteKey.SARCOPHAGUS_CREATED], {
         state: successData,
       });
-    }, 0);
+    }, 10);
   }
 
   return (
