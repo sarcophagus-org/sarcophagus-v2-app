@@ -9,21 +9,13 @@ Sarcophagus is a decentralized dead man's switch built on Ethereum and Arweave.
 
 ## Clone the repo and install dependencies
 
-```jsx
-git
-clone
-git
-@github.com:
-sarcophagus - org / sarcophagus - v2 - app.git
-cd
-sarcophagus - v2 - app
-nvm
-use
-npm
-i--
-legacy - peer - deps
+```
+git clone git@github.com:sarcophagus-org/sarcophagus-v2-app.git
+cd sarcophagus-v2-app
+nvm use
+npm i --legacy-peer-deps
 
-cp.env.example.env
+cp .env.example .env
 ```
 
 - after creating a .env file, you’ll need to set `REACT_APP_INFURA_API_KEY` to an Infura API key that you own
