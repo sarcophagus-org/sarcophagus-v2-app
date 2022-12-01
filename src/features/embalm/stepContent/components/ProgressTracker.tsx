@@ -73,7 +73,7 @@ export function ProgressTracker({
       >
         {childrenWithProps}
       </VStack>
-      <PageBlockModal />
+      {currentStage < CreateSarcophagusStage.COMPLETED ? <PageBlockModal /> : null}
     </Flex>
   );
 }
