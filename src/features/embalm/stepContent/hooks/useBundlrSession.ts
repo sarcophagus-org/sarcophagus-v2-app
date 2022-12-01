@@ -1,24 +1,19 @@
 import { WebBundlr } from '@bundlr-network/client';
-import { useToast } from '@chakra-ui/react';
 import { InjectedEthereumSigner } from 'arbundles/src/signing';
+import { useSarcoToast } from 'components/SarcoToast';
 import { ethers } from 'ethers';
-import {
-  connectFailure,
-  connectStart,
-  connectSuccess,
-  disconnect as disconnectToast,
-} from 'lib/utils/toast';
+import { useNetworkConfig } from 'lib/config';
+import { connectFailure, connectStart, connectSuccess, disconnect } from 'lib/utils/toast';
 import { useCallback, useEffect, useMemo } from 'react';
 import { connect, disconnect as disconnectBundlr, setBundlr } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useAccount } from 'wagmi';
-import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
 
 export function useBundlrSession() {
   const dispatch = useDispatch();
   const { isConnected } = useSelector(x => x.bundlrState);
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
   const networkConfig = useNetworkConfig();
   const isHardhatNetwork = networkConfig.chainId === hardhatChainId;
 
@@ -29,10 +24,11 @@ export function useBundlrSession() {
     localStorage.removeItem('publicKey');
     dispatch(disconnectBundlr());
     const id = 'disconnectFromBundlr';
-    if (!toast.isActive(id)) {
-      toast({ ...disconnectToast(), id });
+
+    if (!sarcoToast.isActive(id)) {
+      sarcoToast.open({ ...disconnect(), id });
     }
-  }, [dispatch, toast]);
+  }, [dispatch, sarcoToast]);
 
   const { address } = useAccount({
     onDisconnect() {
@@ -61,7 +57,7 @@ export function useBundlrSession() {
       }
     );
 
-    toast(connectStart());
+    sarcoToast.open(connectStart());
     try {
       // Prompts the user to sign a message. I beleive the primary purpose of this signature is to
       // get inject the user's public key into the bundlr instance.
@@ -73,12 +69,12 @@ export function useBundlrSession() {
 
       dispatch(connect());
       dispatch(setBundlr(newBundlr));
-      toast(connectSuccess());
+      sarcoToast.open(connectSuccess());
     } catch (_error) {
       const error = _error as Error;
-      toast(connectFailure(error.message));
+      sarcoToast.open(connectFailure(error.message));
     }
-  }, [dispatch, networkConfig, provider, toast, isHardhatNetwork]);
+  }, [dispatch, networkConfig, provider, sarcoToast, isHardhatNetwork]);
 
   /**
    * Manually injects a public key into a bundlr instance, bypassing the signature.

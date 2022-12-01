@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react';
-import { useSelector } from '../../store';
-import { useToast } from '@chakra-ui/react';
-import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
 import { PeerId } from '@libp2p/interface-peer-id';
+import { useSarcoToast } from 'components/SarcoToast';
+import React, { useCallback } from 'react';
+import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
+import { useSelector } from '../../store';
 
 export function useAttemptDialArchaeologists(
   setIsDialing: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
 
   // Dials the archaeologist and hangs up after an interval
   // sets dial status for use in the UX
@@ -22,17 +22,17 @@ export function useAttemptDialArchaeologists(
         setIsDialing(true);
 
         await libp2pNode?.dial(peerId);
-        toast(dialArchaeologistSuccess());
+        sarcoToast.open(dialArchaeologistSuccess());
         setTimeout(async () => {
           await libp2pNode?.hangUp(peerId);
         }, hangUpInterval);
       } catch (error) {
-        toast(dialArchaeologistFailure());
+        sarcoToast.open(dialArchaeologistFailure());
       } finally {
         setIsDialing(false);
       }
     },
-    [libp2pNode, setIsDialing, toast]
+    [libp2pNode, setIsDialing, sarcoToast]
   );
 
   return {

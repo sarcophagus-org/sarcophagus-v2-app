@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
-import { createEncryptionKeypairAsync } from '../hooks/useCreateEncryptionKeypair';
+import { createEncryptionKeypairAsync } from '../utils/createEncryptionKeypairAsync.ts';
 import { ArchaeologistEncryptedShard } from '../../../../types';
 
 interface CreateSarcophagusContextProps {

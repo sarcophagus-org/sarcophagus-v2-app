@@ -10,8 +10,8 @@ import { Page, Text, Image, View, Document, StyleSheet, pdf } from '@react-pdf/r
 import { saveAs } from 'file-saver';
 import QRCode from 'qrcode';
 import sanitize from 'sanitize-filename';
-import { createEncryptionKeypairAsync } from '../useCreateEncryptionKeypair';
 import { ethers } from 'ethers';
+import { createEncryptionKeypairAsync } from '../../utils/createEncryptionKeypairAsync.ts';
 
 const document = async (name: string, recipient: RecipientState) => {
   const styles = StyleSheet.create({

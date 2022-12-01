@@ -1,7 +1,7 @@
-import { useToast } from '@chakra-ui/react';
 import { ThirdPartyFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { Abi } from 'abitype';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
+import { useSarcoToast } from 'components/SarcoToast';
 import { useNetworkConfig } from 'lib/config';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
 import { SarcophagusState } from 'types';
@@ -9,7 +9,7 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 export function useCleanSarcophagus(sarcoId: string, paymentAddress: string | undefined) {
   const networkConfig = useNetworkConfig();
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
 
   const { sarcophagus } = useGetSarcophagus(sarcoId);
 
@@ -27,11 +27,11 @@ export function useCleanSarcophagus(sarcoId: string, paymentAddress: string | un
     isSuccess,
   } = useContractWrite({
     onSuccess() {
-      toast(cleanSuccess());
+      sarcoToast.open(cleanSuccess());
     },
     onError(e) {
       console.error(e);
-      toast(cleanFailure());
+      sarcoToast.open(cleanFailure());
     },
     ...config,
   });

@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/react';
+import { useSarcoToast } from 'components/SarcoToast';
 import { arrayify, hashMessage, recoverPublicKey } from 'ethers/lib/utils';
 import { publicKeyRetrieved } from 'lib/utils/toast';
 import { useState } from 'react';
@@ -6,7 +6,7 @@ import { useSignMessage } from 'wagmi';
 
 // A hook that uses wagmi's signMessge and ethers' recoverPublicKey to get the public key of a wallet
 export function usePublicKey() {
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
   const [publicKey, setPublicKey] = useState('');
 
   const message = 'Sign this message to retrieve your public key.';
@@ -26,7 +26,7 @@ export function usePublicKey() {
         signature
       );
       setPublicKey(recoveredPublicKey);
-      toast(publicKeyRetrieved());
+      sarcoToast.open(publicKeyRetrieved());
     },
   });
 

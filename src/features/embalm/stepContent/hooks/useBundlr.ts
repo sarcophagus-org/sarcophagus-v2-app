@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/react';
+import { useSarcoToast } from 'components/SarcoToast';
 import { BigNumber, ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import {
@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'store/index';
 
 export function useBundlr() {
   const dispatch = useDispatch();
-  const toast = useToast();
+  const sarcoTast = useSarcoToast();
 
   // Pull some bundlr data from store
   const { bundlr, txId, isConnected, isFunding } = useSelector(x => x.bundlrState);
@@ -30,15 +30,16 @@ export function useBundlr() {
   const fund = useCallback(
     async (amount: string) => {
       dispatch(setIsFunding(true));
-      toast(fundStart());
+      sarcoTast.open(fundStart());
       try {
         const parsedAmount = ethers.utils.parseUnits(amount);
         await bundlr?.fund(Number(parsedAmount));
 
-        toast(fundSuccess());
+        sarcoTast.open(fundSuccess());
       } catch (_error) {
         const error = _error as Error;
         console.error(error);
+        sarcoTast.open(fundFailure(error.message));
       } finally {
         // Many times the fund call throws an error even though the fund is actually happening, so
         // we want to proceed as if the fund is working even if an error is thrown.  If the fund
@@ -49,7 +50,7 @@ export function useBundlr() {
         dispatch(setIsFunding(false));
       }
     },
-    [bundlr, dispatch, toast]
+    [bundlr, dispatch, sarcoTast]
   );
 
   /**
@@ -60,13 +61,13 @@ export function useBundlr() {
   const withdraw = useCallback(
     async (amount: BigNumber) => {
       setIsWithdrawing(true);
-      toast(withdrawStart());
+      sarcoTast.open(withdrawStart());
       try {
         await bundlr?.withdrawBalance(Number(amount));
-        toast(withdrawSuccess());
+        sarcoTast.open(withdrawSuccess());
       } catch (_error) {
         const error = _error as Error;
-        console.error(error);
+        sarcoTast.open(withdrawFailure(error.message));
       } finally {
         // Many times the withdraw call throws an error even though the withdraw is actually
         // happening, so we want to proceed as if the withdraw is working even if an error is
@@ -78,7 +79,7 @@ export function useBundlr() {
         setIsWithdrawing(false);
       }
     },
-    [bundlr, dispatch, toast]
+    [bundlr, dispatch, sarcoTast]
   );
 
   /**
@@ -91,16 +92,16 @@ export function useBundlr() {
         throw new Error('Bundlr not connected');
       }
 
-      toast(uploadStart());
+      sarcoTast.open(uploadStart());
       try {
         const res = await bundlr?.upload(fileBuffer);
-        toast(uploadSuccess());
+        sarcoTast.open(uploadSuccess());
         return res.data.id;
       } catch (_error) {
         throw _error;
       }
     },
-    [bundlr, toast]
+    [bundlr, sarcoTast]
   );
 
   return {

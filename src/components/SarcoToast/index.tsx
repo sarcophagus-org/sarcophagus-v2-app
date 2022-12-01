@@ -1,27 +1,36 @@
 import {
+  AlertStatus,
   CloseButton,
   HStack,
-  AlertStatus,
-  ToastProps as ChakraToastProps,
-  useToast,
   ToastId,
+  ToastProps as ChakraToastProps,
+  useTheme,
+  useToast,
 } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
-import { colors } from 'theme/colors';
 
 const defaultDuration = 5000;
 const defaultPosition = 'bottom-right';
 
+export interface ToastProps extends Omit<ChakraToastProps, 'status' | 'description'> {
+  description?: React.ReactNode;
+  status: AlertStatus;
+  title?: string;
+}
+
 export function useSarcoToast() {
+  const theme = useTheme();
   const charkaToast = useToast();
-  interface ToastProps extends Omit<ChakraToastProps, 'status' | 'description'> {
-    description: React.ReactNode;
-    status: AlertStatus;
-    title?: string;
-  }
 
   const open = (props: ToastProps): ToastId => {
     const { status, title, description, duration, position, isClosable } = props;
+
+    const toastColorMap: { [key: string]: string } = {
+      info: theme.colors.blue[100],
+      warning: theme.colors.orange[100],
+      success: theme.colors.green[100],
+      error: theme.colors.red[100],
+    };
 
     return charkaToast({
       duration: duration === undefined ? defaultDuration : duration,
@@ -31,8 +40,7 @@ export function useSarcoToast() {
         <HStack
           alignItems="flex-start"
           spacing={0}
-          //TODO; set this to the colorscheme of the alert?
-          bg="grayBlue.500"
+          bg={toastColorMap[status]}
         >
           <SarcoAlert
             title={title}
@@ -46,5 +54,5 @@ export function useSarcoToast() {
       ),
     });
   };
-  return { open };
+  return { open, isActive: charkaToast.isActive };
 }

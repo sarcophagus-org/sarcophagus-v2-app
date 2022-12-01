@@ -1,13 +1,13 @@
-import { useToast } from '@chakra-ui/react';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { Abi } from 'abitype';
+import { useSarcoToast } from 'components/SarcoToast';
 import { useNetworkConfig } from 'lib/config';
 import { buryFailure, burySuccess } from 'lib/utils/toast';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 export function useBurySarcophagus(sarcoId: string) {
   const networkConfig = useNetworkConfig();
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
 
   const { config, isLoading } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
@@ -23,11 +23,11 @@ export function useBurySarcophagus(sarcoId: string) {
     isSuccess,
   } = useContractWrite({
     onSuccess() {
-      toast(burySuccess());
+      sarcoToast.open(burySuccess());
     },
     onError(e) {
       console.error(e);
-      toast(buryFailure());
+      sarcoToast.open(buryFailure());
     },
     ...config,
   });

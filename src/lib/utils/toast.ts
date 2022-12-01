@@ -1,7 +1,7 @@
 // Sarcophagus toast messages
 // All toast message parameters are defined in this file
 
-import { UseToastOptions } from '@chakra-ui/react';
+import { ToastProps } from 'components/SarcoToast';
 import { maxFileSize } from 'lib/constants';
 import prettyBytes from 'pretty-bytes';
 import { formatToastMessage } from './helpers';
@@ -9,7 +9,7 @@ import { formatToastMessage } from './helpers';
 const duration = 5000;
 const position = 'bottom-right';
 
-export const infoSample = (): UseToastOptions => ({
+export const infoSample = (): ToastProps => ({
   title: 'Toast message',
   description: 'This is some info',
   status: 'info',
@@ -17,7 +17,7 @@ export const infoSample = (): UseToastOptions => ({
   position,
 });
 
-export const successSample = (): UseToastOptions => ({
+export const successSample = (): ToastProps => ({
   title: 'Toast message',
   description: 'This is a success',
   status: 'success',
@@ -25,7 +25,7 @@ export const successSample = (): UseToastOptions => ({
   position,
 });
 
-export const warningSample = (): UseToastOptions => ({
+export const warningSample = (): ToastProps => ({
   title: 'Toast message',
   description: 'This is a warning',
   status: 'warning',
@@ -33,7 +33,7 @@ export const warningSample = (): UseToastOptions => ({
   position,
 });
 
-export const errorSample = (): UseToastOptions => ({
+export const errorSample = (): ToastProps => ({
   title: 'Toast message',
   description: 'This is an error',
   status: 'error',
@@ -41,7 +41,7 @@ export const errorSample = (): UseToastOptions => ({
   position,
 });
 
-export const connectStart = (): UseToastOptions => ({
+export const connectStart = (): ToastProps => ({
   title: 'Attempting to Connect',
   description: 'Attempting to connect to the Bundlr node...',
   status: 'info',
@@ -49,7 +49,7 @@ export const connectStart = (): UseToastOptions => ({
   position,
 });
 
-export const connectSuccess = (): UseToastOptions => ({
+export const connectSuccess = (): ToastProps => ({
   title: 'Connection Successful',
   description: 'Successfully connected to the Bundlr node',
   status: 'success',
@@ -57,7 +57,7 @@ export const connectSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const connectFailure = (errorMessage: string): UseToastOptions => ({
+export const connectFailure = (errorMessage: string): ToastProps => ({
   title: 'Failed to connect to Bundlr',
   description: formatToastMessage(errorMessage),
   status: 'error',
@@ -65,7 +65,7 @@ export const connectFailure = (errorMessage: string): UseToastOptions => ({
   position,
 });
 
-export const disconnect = (): UseToastOptions => ({
+export const disconnect = (): ToastProps => ({
   title: 'Disconnected',
   description: 'Disconnected from the Bundlr node',
   status: 'info',
@@ -73,7 +73,7 @@ export const disconnect = (): UseToastOptions => ({
   position,
 });
 
-export const fundStart = (): UseToastOptions => ({
+export const fundStart = (): ToastProps => ({
   title: 'Funding...',
   description: 'Funding the Bundlr node',
   status: 'info',
@@ -81,7 +81,7 @@ export const fundStart = (): UseToastOptions => ({
   position,
 });
 
-export const fundSuccess = (): UseToastOptions => ({
+export const fundSuccess = (): ToastProps => ({
   title: 'Successful Bundlr fund transaction!',
   description:
     'Bundlr transaction is confirmed. It may take a few minutes for your Bundlr balance to update.',
@@ -90,7 +90,7 @@ export const fundSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const fundFailure = (errorMessage: string): UseToastOptions => ({
+export const fundFailure = (errorMessage: string): ToastProps => ({
   title: 'Funding failed',
   description: formatToastMessage(errorMessage),
   status: 'error',
@@ -98,7 +98,7 @@ export const fundFailure = (errorMessage: string): UseToastOptions => ({
   position,
 });
 
-export const withdrawStart = (): UseToastOptions => ({
+export const withdrawStart = (): ToastProps => ({
   title: 'Withdrawing...',
   description: 'Withdrawing balance from the Bundlr node',
   status: 'info',
@@ -106,7 +106,7 @@ export const withdrawStart = (): UseToastOptions => ({
   position,
 });
 
-export const withdrawSuccess = (): UseToastOptions => ({
+export const withdrawSuccess = (): ToastProps => ({
   title: 'Withdraw Successful!',
   description: 'Successfully withdrew funds from Bundlr node',
   status: 'success',
@@ -114,7 +114,7 @@ export const withdrawSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const withdrawFailure = (errorMessage: string): UseToastOptions => ({
+export const withdrawFailure = (errorMessage: string): ToastProps => ({
   title: 'Withdraw failed',
   description: formatToastMessage(errorMessage),
   status: 'error',
@@ -122,7 +122,7 @@ export const withdrawFailure = (errorMessage: string): UseToastOptions => ({
   position,
 });
 
-export const uploadStart = (): UseToastOptions => ({
+export const uploadStart = (): ToastProps => ({
   title: 'Uploading...',
   description: 'Uploading file to the Bundlr node',
   status: 'info',
@@ -130,7 +130,7 @@ export const uploadStart = (): UseToastOptions => ({
   position,
 });
 
-export const uploadSuccess = (): UseToastOptions => ({
+export const uploadSuccess = (): ToastProps => ({
   title: 'Upload Successful!',
   description: 'Successful uploaded file to Bundlr node',
   status: 'success',
@@ -138,7 +138,7 @@ export const uploadSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const uploadFailure = (errorMessage: string): UseToastOptions => ({
+export const uploadFailure = (errorMessage: string): ToastProps => ({
   title: 'Upload failed',
   description: formatToastMessage(errorMessage),
   status: 'error',
@@ -146,7 +146,7 @@ export const uploadFailure = (errorMessage: string): UseToastOptions => ({
   position,
 });
 
-export const fileTooBig = (): UseToastOptions => ({
+export const fileTooBig = (): ToastProps => ({
   title: 'File too big',
   description: `Your file size must not exceed ${prettyBytes(maxFileSize)}.`,
   status: 'error',
@@ -154,7 +154,7 @@ export const fileTooBig = (): UseToastOptions => ({
   position,
 });
 
-export const payloadSaveSuccess = (): UseToastOptions => ({
+export const payloadSaveSuccess = (): ToastProps => ({
   title: 'Payload saved',
   description: 'Your payload has been saved for a later step.',
   status: 'success',
@@ -162,7 +162,7 @@ export const payloadSaveSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const generateOuterKeys = (): UseToastOptions => ({
+export const generateOuterKeys = (): ToastProps => ({
   title: 'Keys generated',
   description: 'A new pair of encryption keys have been generated.',
   status: 'success',
@@ -170,7 +170,7 @@ export const generateOuterKeys = (): UseToastOptions => ({
   position,
 });
 
-export const generateOuterKeysFailure = (errorMessage: string): UseToastOptions => ({
+export const generateOuterKeysFailure = (errorMessage: string): ToastProps => ({
   title: 'Failed to generate keys',
   description: formatToastMessage(errorMessage),
   status: 'error',
@@ -178,7 +178,7 @@ export const generateOuterKeysFailure = (errorMessage: string): UseToastOptions 
   position,
 });
 
-export const dialArchaeologistSuccess = (): UseToastOptions => ({
+export const dialArchaeologistSuccess = (): ToastProps => ({
   title: 'Connected Successfully!',
   description: 'Connected to archaeologist',
   status: 'success',
@@ -186,7 +186,7 @@ export const dialArchaeologistSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const dialArchaeologistFailure = (): UseToastOptions => ({
+export const dialArchaeologistFailure = (): ToastProps => ({
   title: 'Connection failed',
   description: 'Unable to connect to archaeologist',
   status: 'error',
@@ -194,7 +194,7 @@ export const dialArchaeologistFailure = (): UseToastOptions => ({
   position,
 });
 
-export const rewrapSuccess = (): UseToastOptions => ({
+export const rewrapSuccess = (): ToastProps => ({
   title: 'Rewrap Successful!',
   description: 'Your sarcophagus was successfully rewrapped',
   status: 'success',
@@ -202,7 +202,7 @@ export const rewrapSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const rewrapFailure = (): UseToastOptions => ({
+export const rewrapFailure = (): ToastProps => ({
   title: 'Rewrap Failed.',
   description: 'Your sarcophagus was not rewrapped',
   status: 'error',
@@ -210,7 +210,7 @@ export const rewrapFailure = (): UseToastOptions => ({
   position,
 });
 
-export const burySuccess = (): UseToastOptions => ({
+export const burySuccess = (): ToastProps => ({
   title: 'Bury Successful.',
   description: 'Your sarcophagus was buried successfully',
   status: 'success',
@@ -218,7 +218,7 @@ export const burySuccess = (): UseToastOptions => ({
   position,
 });
 
-export const buryFailure = (): UseToastOptions => ({
+export const buryFailure = (): ToastProps => ({
   title: 'Bury Failed.',
   description: 'Your sarcophagus was not buried',
   status: 'error',
@@ -226,7 +226,7 @@ export const buryFailure = (): UseToastOptions => ({
   position,
 });
 
-export const cleanSuccess = (): UseToastOptions => ({
+export const cleanSuccess = (): ToastProps => ({
   title: 'Clean Successful.',
   description: 'Your sarcophagus was cleaned successfully',
   status: 'success',
@@ -234,7 +234,7 @@ export const cleanSuccess = (): UseToastOptions => ({
   position,
 });
 
-export const cleanFailure = (): UseToastOptions => ({
+export const cleanFailure = (): ToastProps => ({
   title: 'Clean Failed.',
   description: 'The sarcophagus was not cleaned',
   status: 'error',
@@ -242,7 +242,7 @@ export const cleanFailure = (): UseToastOptions => ({
   position,
 });
 
-export const publicKeyRetrieved = (): UseToastOptions => ({
+export const publicKeyRetrieved = (): ToastProps => ({
   title: 'Public key successfully retrieved!',
   status: 'success',
   duration,

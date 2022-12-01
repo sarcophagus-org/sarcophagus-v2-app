@@ -1,20 +1,19 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Divider,
   FormControl,
   FormLabel,
   Heading,
+  HStack,
   Input,
   Text,
   VStack,
-  HStack,
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  AlertIcon,
 } from '@chakra-ui/react';
-import { CheckIcon } from '@chakra-ui/icons';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useSarcoToast } from 'components/SarcoToast';
 
@@ -31,7 +30,6 @@ export function ThemeTestPage() {
       status: 'success',
       description: 'This is a success',
       duration: 1000,
-      position: 'top',
     });
   }
 

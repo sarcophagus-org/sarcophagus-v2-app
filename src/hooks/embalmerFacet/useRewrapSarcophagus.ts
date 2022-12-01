@@ -1,13 +1,13 @@
-import { useToast } from '@chakra-ui/react';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { Abi } from 'abitype';
+import { useSarcoToast } from 'components/SarcoToast';
 import { useNetworkConfig } from 'lib/config';
 import { rewrapFailure, rewrapSuccess } from 'lib/utils/toast';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | null) {
   const networkConfig = useNetworkConfig();
-  const toast = useToast();
+  const sarcoToast = useSarcoToast();
 
   const timeInSeconds = resurrectionTime ? Math.trunc(resurrectionTime.getTime() / 1000) : 0;
 
@@ -25,11 +25,11 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     isSuccess,
   } = useContractWrite({
     onSuccess() {
-      toast(rewrapSuccess());
+      sarcoToast.open(rewrapSuccess());
     },
     onError(e) {
       console.error(e);
-      toast(rewrapFailure());
+      sarcoToast.open(rewrapFailure());
     },
     ...config,
   });
