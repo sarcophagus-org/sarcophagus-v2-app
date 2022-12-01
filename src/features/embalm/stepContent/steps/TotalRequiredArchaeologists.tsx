@@ -31,12 +31,15 @@ export function TotalRequiredArchaegologists() {
       spacing={5}
     >
       <Heading>Archaeologists</Heading>
-      <Text fontStyle="italic">
+      <Text
+        fontStyle="italic"
+        color="text.secondary"
+      >
         <chakra.span
           fontStyle="normal"
-          color="text.secondary"
+          color="text.primary"
         >
-          How many of your archeologists are required to rewrap or resurrect your sarco.{' '}
+          How many of your archeologists are required to rewrap or resurrect your sarco?{' '}
         </chakra.span>
         Hint - the greater the minimum, the greater the security.
       </Text>

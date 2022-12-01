@@ -9,14 +9,14 @@ import { Textarea } from './Textarea';
 import { Tooltip } from './Tooltip';
 
 export const components = {
-  Button: Button,
-  Heading: Heading,
-  Text: Text,
+  Button,
+  Heading,
+  Text,
   Input,
   NumberInput: Input,
   FormLabel,
   Divider,
-  Alert: Alert,
+  Alert,
   Tooltip,
   Textarea,
 };

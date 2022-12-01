@@ -73,7 +73,6 @@ export function Claim() {
                 value={privateKey}
                 onChange={handleChangePrivateKey}
                 placeholder="0x0000..."
-                _placeholder={{ color: 'text.secondary' }}
               />
               {resurrectError ? (
                 <Text

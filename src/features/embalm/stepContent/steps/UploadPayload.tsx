@@ -64,7 +64,7 @@ export function UploadPayload() {
             <Text>Size: {prettyBytes(file.size)}</Text>
             <Text>
               {"Bundlr's upload price: "}
-              {isConnected ? formattedUploadPrice : 'Not connected to the Bundlr'}
+              {isConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
             </Text>
             <Link textDecor="underline">Upload a different file</Link>
           </VStack>
