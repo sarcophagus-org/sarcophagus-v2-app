@@ -23,9 +23,10 @@ export function mochArchaeologists(numberOfArcheologists: number): Archaeologist
       maximumRewrapInterval: BigNumber.from(
         getRandomIntInclusive(20000000000, 60000000000).toString()
       ),
-      successes: [getRandomIntInclusive(1, 20).toString()],
-      cleanups: [getRandomIntInclusive(1, 15).toString()],
-      accusals: [getRandomIntInclusive(1, 10).toString()],
+      successes: BigNumber.from('0'),
+      cleanups: BigNumber.from('0'),
+      accusals: BigNumber.from('0'),
+      failures: BigNumber.from('0'),
       peerId: '00' + id,
     };
 
