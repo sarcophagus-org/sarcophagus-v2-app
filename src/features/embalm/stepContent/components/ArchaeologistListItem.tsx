@@ -38,7 +38,7 @@ export function ArchaeologistListItem({
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
   const { data } = useEnsName({
-    address: archaeologist.profile.archAddress as any,
+    address: archaeologist.profile.archAddress as `0x${string}`,
     chainId: 1,
   });
 
