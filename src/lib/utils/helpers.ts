@@ -62,6 +62,22 @@ export function removeFromArray<T>(array: T[], value: T) {
   }
 }
 
+/**
+ * Split an array into two arrays based on the result of a predicate function
+ */
+export const filterSplit = <T>(arr: T[], predicate: (item: T) => boolean): [T[], T[]] => {
+  const trueArray: T[] = [];
+  const falseArray: T[] = [];
+  arr.forEach(item => {
+    if (predicate(item)) {
+      trueArray.push(item);
+    } else {
+      falseArray.push(item);
+    }
+  });
+  return [trueArray, falseArray];
+};
+
 export function humanizeUnixTimestamp(unixTimestamp: number): string {
   return new Date(unixTimestamp).toLocaleDateString('en-US');
 }
