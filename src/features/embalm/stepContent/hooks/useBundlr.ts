@@ -4,10 +4,12 @@ import { formatEther } from 'ethers/lib/utils';
 import {
   fundStart,
   fundSuccess,
+  fundFailure,
   uploadStart,
   uploadSuccess,
   withdrawStart,
   withdrawSuccess,
+  withdrawFailure,
 } from 'lib/utils/toast';
 import { useCallback, useState } from 'react';
 import { fund as fundAction, setIsFunding, withdraw as withdrawAction } from 'store/bundlr/actions';
