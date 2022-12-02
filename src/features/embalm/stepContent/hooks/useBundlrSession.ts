@@ -152,7 +152,7 @@ export function useBundlrSession() {
 
     dispatch(connect());
     dispatch(setBundlr(newBundlr));
-  }, [createInjectedBundlr, dispatch, isConnected, isHardhatNetwork]);
+  }, [createInjectedBundlr, dispatch, isConnected, isHardhatNetwork, networkConfig.bundlr.nodeUrl]);
 
   /**
    * Disconnects from the bundlr node if the chain or account changes.
