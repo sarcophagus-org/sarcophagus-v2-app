@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
+import { useEnsName } from 'wagmi';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -35,6 +36,15 @@ export function ArchaeologistListItem({
   const dispatch = useDispatch();
 
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
+
+  const { data } = useEnsName({
+    address: archaeologist.profile.archAddress as any,
+    chainId: 1,
+  });
+
+  const formattedArchAddress = () => {
+    return data ? data : formatAddress(archaeologist.profile.archAddress);
+  };
 
   function TableContent({ children, icon, checkbox }: TableContentProps) {
     return (
@@ -84,7 +94,7 @@ export function ArchaeologistListItem({
         icon={false}
         checkbox={true}
       >
-        {formatAddress(archaeologist.profile.archAddress)}
+        {formattedArchAddress()}
       </TableContent>
 
       <TableContent

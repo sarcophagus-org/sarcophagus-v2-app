@@ -27,8 +27,6 @@ export function useArchaeologistList() {
   // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
   const onlineArchaeologists = mochArchaeologists();
 
-  // const ensOnlineArchaeologists = await ReverseRecords.getNames(onlineArchaeologists);
-
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
     [SortDirection.ASC]: 'asc',
