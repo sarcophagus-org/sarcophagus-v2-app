@@ -140,7 +140,7 @@ export function useBundlrSession() {
    * connect to the bundlr the standard way using the `connectToBundlr()` function.
    */
   useEffect(() => {
-    if (isHardhatNetwork || isConnected) return;
+    if (isHardhatNetwork || isConnected || !networkConfig.bundlr.nodeUrl) return;
 
     const publicKeyJson = localStorage.getItem('publicKey');
     if (!publicKeyJson) return;
