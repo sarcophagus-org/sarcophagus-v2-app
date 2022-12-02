@@ -24,12 +24,13 @@ import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
+import { useDialArchaeologists } from '../hooks/useCreateSarcophagus/useDialArchaeologists';
 
 export function ArchaeologistList({
-  includeDialButton,
+  showDial,
   paginatedArchaeologist,
 }: {
-  includeDialButton?: boolean;
+  showDial?: boolean;
   paginatedArchaeologist: Archaeologist[];
 }) {
   const {
@@ -57,7 +58,6 @@ export function ArchaeologistList({
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
-  // const { testDialArchaeologist } = useDialArchaeologists(setIsDialing);
   useBootLibp2pNode();
 
   function filterIcon(sortType: SortFilterType): JSX.Element {
@@ -168,7 +168,7 @@ export function ArchaeologistList({
                       />
                     </VStack>
                   </Th>
-                  {includeDialButton ? <Th>Dial</Th> : <></>}
+                  {showDial ? <Th>Dial</Th> : <></>}
                 </Tr>
               </Thead>
               <Tbody>
@@ -183,10 +183,10 @@ export function ArchaeologistList({
                       key={arch.profile.archAddress}
                       archaeologist={arch}
                       onClick={() => {
-                        if (includeDialButton) return;
+                        if (showDial) return;
                         handleCheckArchaeologist(arch);
                       }}
-                      includeDialButton={includeDialButton!}
+                      includeDialButton={showDial!}
                       isDialing={isDialing}
                       setIsDialing={setIsDialing}
                       isSelected={isSelected}

@@ -105,21 +105,12 @@ export function Rewrap() {
       >
         <Text>Fees</Text>
         <HStack spacing={3}>
-          <Button variant="link">
-            <Text variant="secondary">Digging fee</Text>
-          </Button>
-          <>:</>
-          <Text>{formatEther(totalDiggingFeeBn)} SARCO</Text>
+          <Text variant="secondary">Digging fee : {formatEther(totalDiggingFeeBn)} SARCO</Text>
         </HStack>
         <HStack spacing={3}>
-          <Button
-            variant="link"
-            onClick={handleClickProtocolFee}
-          >
-            <Text variant="secondary">Protocol fee ({protocolFeeAmountInt}%)</Text>
-          </Button>
-          <>:</>
-          <Text>{formatEther(protocolFeeBn)} SARCO</Text>
+          <Text variant="secondary">
+            Protocol fee ({protocolFeeAmountInt}%) : {formatEther(protocolFeeBn)} SARCO
+          </Text>
         </HStack>
       </VStack>
       <HStack>

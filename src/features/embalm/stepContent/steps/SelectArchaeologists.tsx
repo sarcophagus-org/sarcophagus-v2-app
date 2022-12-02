@@ -20,7 +20,12 @@ import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
 
-export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: boolean }) {
+export function SelectArchaeologists({
+  hideHeader = false,
+}: {
+  hideHeader?: boolean;
+  showDial?: boolean;
+}) {
   const outerLimit = 1;
   const innerLimit = 1;
   const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
@@ -116,7 +121,10 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
           w="full"
         >
           <VStack>
-            <ArchaeologistList paginatedArchaeologist={paginatedArchaeologist} />
+            <ArchaeologistList
+              paginatedArchaeologist={paginatedArchaeologist}
+              showDial={true}
+            />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
                 <Flex px={3}>

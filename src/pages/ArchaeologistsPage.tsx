@@ -17,7 +17,10 @@ export function ArchaeologistsPage() {
       >
         Archaeologists
       </Heading>
-      <SelectArchaeologists hideHeader />
+      <SelectArchaeologists
+        hideHeader
+        showDial
+      />
     </Flex>
   );
 }
