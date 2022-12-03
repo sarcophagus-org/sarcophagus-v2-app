@@ -71,6 +71,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     },
     // TODO - update when clean is ready
     [SarcophagusState.CleanedResurrected]: {
+      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
       stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
     },
