@@ -39,7 +39,7 @@ export function UploadPayload() {
         mb={6}
         variant="secondary"
       >
-        Your payload (corpse) will be wrapped in a later step.
+        This is the payload the recipient will receive when you fail to rewrap (attest).
       </Text>
       {error && (
         <SarcoAlert

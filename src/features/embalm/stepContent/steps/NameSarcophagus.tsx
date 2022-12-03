@@ -18,8 +18,7 @@ export function NameSarcophagus() {
         <HStack>
           <Heading size="sm">Resurrection</Heading>
           <Tooltip
-            label="Your Sarcophagus cannot be claimed until after this date.
-            This is also the rewrap interval, and is the duration your Sarchophagus will be extended by whenever you rewrap it."
+            label="This is the time you must rewrap your sarcophagus by. If you fail to rewrap by this date, your sarcophagus will be unwrapped and available to the recipient."
             placement="top"
           >
             <Icon as={InfoOutlineIcon} />
@@ -30,7 +29,7 @@ export function NameSarcophagus() {
           variant="secondary"
           mt={4}
         >
-          When do you want your Sarcophagus resurrected? You can change this later.
+          When do you want your Sarcophagus resurrected?
         </Text>
       </Flex>
       <SetResurrection />
