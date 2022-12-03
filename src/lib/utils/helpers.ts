@@ -134,11 +134,13 @@ export function formatFee(value: number | string, fixed = 2): string {
 /**
  * Given a list of archaeologists, sums up their digging fees
  */
-export function sumDiggingFees(archaeologists: Archaeologist[]): BigNumber {
-  return archaeologists.reduce(
-    (acc, curr) => acc.add(parseInt(formatEther(curr.profile.minimumDiggingFee))),
+export function sumDiggingFeesFormatted(archaeologists: Archaeologist[]): string {
+  const totalDiggingFees = archaeologists.reduce(
+    (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
     ethers.constants.Zero
   );
+
+  return formatEther(totalDiggingFees);
 }
 
 /**

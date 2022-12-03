@@ -49,8 +49,8 @@ export function useRequestPublicKeys() {
           );
         };
 
+        const stream = await arch.connection.newStream(PUBLIC_KEY_STREAM);
         try {
-          const stream = await arch.connection.newStream(PUBLIC_KEY_STREAM);
           await pipe([new Uint8Array(0)], stream, async source => {
             for await (const data of source) {
               try {
@@ -72,7 +72,7 @@ export function useRequestPublicKeys() {
                       message,
                     })
                   );
-                  continue;
+                  throw Error(message);
                 }
 
                 archPublicKeys.push(publicKeyResponse.encryptionPublicKey);
@@ -92,15 +92,18 @@ export function useRequestPublicKeys() {
                 );
               }
             }
-          })
-            .catch(handleException)
-            .finally(() => stream.close());
-        } catch (e) {
+          });
+        } catch (e: any) {
           handleException(e);
+          throw Error(e || 'Something went wrong during public key request');
+        } finally {
+          stream.close();
         }
       }
 
       if (archPublicKeys.length < selectedArchaeologists.length) {
+        console.log('received num of pub keys:', archPublicKeys.length);
+        console.log('expected:', selectedArchaeologists.length);
         throw new Error('Not enough public keys');
       }
     },
