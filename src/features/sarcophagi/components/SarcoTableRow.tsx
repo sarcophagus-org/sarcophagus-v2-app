@@ -54,14 +54,12 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
       stateTooltip: 'The Sarcophagus is on course to be resurrected',
     },
+    // TODO - update action when clean is ready
     [SarcophagusState.Failed]: {
-      action: SarcoAction.Clean,
       tooltip: 'Deactivate the sarcophagus and claim a reward',
       stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
-    // TODO - update when clean is ready
     [SarcophagusState.CleanedFailed]: {
-      tooltip: 'Deactivate the sarcophagus and claim a reward',
       stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrected]: {
@@ -69,7 +67,6 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
       stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
     },
-    // TODO - update when clean is ready
     [SarcophagusState.CleanedResurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
