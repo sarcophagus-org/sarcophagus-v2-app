@@ -20,7 +20,7 @@ export function Rewrap() {
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
-  const { rewrap, isLoading, isRewrapping, isSuccess } = useRewrapSarcophagus(
+  const { rewrap, isRewrapping, isSuccess } = useRewrapSarcophagus(
     id || ethers.constants.HashZero,
     resurrectionTime
   );
@@ -118,10 +118,11 @@ export function Rewrap() {
         </Button>
         <Button
           onClick={() => rewrap?.()}
-          isDisabled={!!!resurrectionTime || !rewrap}
-          isLoading={isLoading}
+          isDisabled={!!!resurrectionTime || !rewrap || isRewrapping}
+          isLoading={isRewrapping}
+          loadingText="Rewrapping..."
         >
-          {isRewrapping ? 'Rewrapping...' : 'Rewrap'}
+          Rewrap
         </Button>
       </HStack>
     </VStack>

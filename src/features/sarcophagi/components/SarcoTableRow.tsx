@@ -46,51 +46,24 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     [key: string]: {
       action?: SarcoAction;
       tooltip?: string;
-      stateTooltip: string;
     };
   } = {
     [SarcophagusState.Active]: {
       action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
       tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
-      stateTooltip: 'The Sarcophagus is on course to be resurrected',
-    },
-    // TODO - update action when clean is ready
-    [SarcophagusState.Failed]: {
-      tooltip: 'Deactivate the sarcophagus and claim a reward',
-      stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
-    },
-    [SarcophagusState.CleanedFailed]: {
-      stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
-      stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
     },
     [SarcophagusState.CleanedResurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
-      stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
-    },
-    [SarcophagusState.Accused]: {
-      stateTooltip:
-        'Too many of the archaeologists have leaked assigned keys. This Sarcophagus is compromised.',
-    },
-    [SarcophagusState.Buried]: {
-      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
-    },
-    [SarcophagusState.Cleaned]: {
-      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
-    },
-    [SarcophagusState.Resurrecting]: {
-      stateTooltip:
-        'The Sarcophagus resurrection time has passed and is within a grace period of unwrapping',
     },
   };
 
   const action = stateToActionMap[sarco.state]?.action;
   const actionTooltip = stateToActionMap[sarco.state]?.tooltip;
-  const stateTooltip = stateToActionMap[sarco.state]?.stateTooltip;
 
   function handleClickAction() {
     switch (action) {
@@ -112,10 +85,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     <Tr>
       {/* SARCO STATE */}
       <Td>
-        <SarcoStateIndicator
-          state={sarco.state}
-          tooltip={stateTooltip}
-        />
+        <SarcoStateIndicator state={sarco.state} />
       </Td>
 
       {/* SARCO NAME */}
