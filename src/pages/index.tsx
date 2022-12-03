@@ -81,7 +81,7 @@ export function Pages() {
       path: RoutesPathMap[RouteKey.ARCHEOLOGIST_PAGE],
       element: <ArchaeologistsPage />,
       label: 'Archaeologists',
-      tooltip: 'View and select from all registered archaeologists',
+      tooltip: 'View all registered archaeologists that are online',
     },
     {
       path: RoutesPathMap[RouteKey.BUNDLER_PAGE],

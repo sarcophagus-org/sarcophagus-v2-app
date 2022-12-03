@@ -17,7 +17,12 @@ export function DetailsCollapse({
   return (
     <>
       <Flex align="center">
-        <Text>Sarco Details</Text>
+        <Text
+          cursor="pointer"
+          onClick={onToggle}
+        >
+          Details
+        </Text>
         <IconButton
           aria-label="Expand details"
           bg="none"

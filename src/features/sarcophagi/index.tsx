@@ -1,10 +1,23 @@
-import { Center, Flex, Spinner, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import {
+  Center,
+  Flex,
+  HStack,
+  Icon,
+  Spinner,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useGetEmbalmerSarcophagi, useGetRecipientSarcophagi } from 'hooks/viewStateFacet';
 import { useAccount } from 'wagmi';
 import { NoSarcpohagi } from './components/NoSarcophagi';
 import { SarcoTab } from './components/SarcoTab';
 import { SarcoTable } from './components/SarcoTable';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 /**
  * A component that manages the app's sarcophagi. Should be styled to fit any container.
@@ -62,8 +75,28 @@ export function Sarcophagi() {
         borderColor="whiteAlpha.300"
       >
         <TabList border="none">
-          <SarcoTab>My Sarcophagi</SarcoTab>
-          <SarcoTab>Claim Sarcophagi</SarcoTab>
+          <SarcoTab>
+            <HStack>
+              <Text>My Sarcophagi</Text>
+              <Tooltip
+                label="Sarcophagi you have created."
+                placement="top"
+              >
+                <Icon as={InfoOutlineIcon} />
+              </Tooltip>
+            </HStack>
+          </SarcoTab>
+          <SarcoTab>
+            <HStack>
+              <Text>Claim Sarcophagi</Text>
+              <Tooltip
+                label="Sarcophagi you are the recipient for."
+                placement="top"
+              >
+                <Icon as={InfoOutlineIcon} />
+              </Tooltip>
+            </HStack>
+          </SarcoTab>
         </TabList>
         <TabPanels
           overflow="hidden"
