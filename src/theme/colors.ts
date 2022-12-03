@@ -1,7 +1,5 @@
 // Contains all the colors used by the sarcophagus app
 
-import { access } from 'fs';
-
 export const colors = {
   // Main brand colors
   // Colors from black to white, lowest number being the darkest and highest number being the
