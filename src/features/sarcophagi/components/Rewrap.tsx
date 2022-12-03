@@ -34,10 +34,6 @@ export function Rewrap() {
     setResurrectionTime(date);
   }
 
-  function handleClickProtocolFee() {
-    // TODO: redirect to information about protocol fee
-  }
-
   const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
   const resurectionDateMs = maximumResurectionDate.getTime();
 
