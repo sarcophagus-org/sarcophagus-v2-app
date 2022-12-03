@@ -17,22 +17,60 @@ export const sarcoStateMap = {
 
 interface SarcophagusStateIndicatorProps {
   state?: SarcophagusState;
-  tooltip?: string;
 }
 
 // A component that displays the state of a sarcophagus in a chip
 export function SarcoStateIndicator({
   state = SarcophagusState.Active,
-  tooltip = '',
 }: SarcophagusStateIndicatorProps) {
-  const stateColorMap: { [key: string]: { text: string; bg: string } } = {
-    [SarcophagusState.Active]: { text: 'green', bg: 'transparent.green' },
-    [SarcophagusState.Failed]: { text: 'red', bg: 'transparent.red' },
-    [SarcophagusState.CleanedFailed]: { text: 'red', bg: 'transparent.red' },
-    [SarcophagusState.Resurrecting]: { text: 'orange', bg: 'transparent.orange' },
-    [SarcophagusState.Resurrected]: { text: 'blue', bg: 'transparent.blue' },
-    [SarcophagusState.CleanedResurrected]: { text: 'blue', bg: 'transparent.blue' },
-    [SarcophagusState.Buried]: { text: 'gray', bg: 'transparent.gray' },
+  const stateMap: { [key: string]: { text?: string; bg?: string; tooltip?: string } } = {
+    [SarcophagusState.Active]: {
+      text: 'green',
+      bg: 'transparent.green',
+      tooltip: 'The Sarcophagus is on course to be resurrected.',
+    },
+    [SarcophagusState.Accused]: {
+      text: 'red',
+      bg: 'transparent.red',
+      tooltip:
+        'Too many of the archaeologists have leaked assigned keys. This Sarcophagus is compromised.',
+    },
+    [SarcophagusState.Cleaned]: {
+      text: 'gray',
+      bg: 'transparent.gray',
+      tooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+    },
+    [SarcophagusState.Failed]: {
+      text: 'red',
+      bg: 'transparent.red',
+      tooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
+    },
+    [SarcophagusState.CleanedFailed]: {
+      text: 'red',
+      bg: 'transparent.red',
+      tooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
+    },
+    [SarcophagusState.Resurrecting]: {
+      text: 'orange',
+      bg: 'transparent.orange',
+      tooltip:
+        'The Sarcophagus resurrection time has passed and is within a grace period of unwrapping.',
+    },
+    [SarcophagusState.Resurrected]: {
+      text: 'blue',
+      bg: 'transparent.blue',
+      tooltip: 'The Sarcophagus has been resurrected and can be claimed.',
+    },
+    [SarcophagusState.CleanedResurrected]: {
+      text: 'blue',
+      bg: 'transparent.blue',
+      tooltip: 'The Sarcophagus has been resurrected and can be claimed.',
+    },
+    [SarcophagusState.Buried]: {
+      text: 'gray',
+      bg: 'transparent.gray',
+      tooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+    },
     [SarcophagusState.DoesNotExist]: { text: 'gray', bg: 'transparent.gray' },
   };
 
@@ -41,11 +79,11 @@ export function SarcoStateIndicator({
       <Tooltip
         placement="right-start"
         openDelay={700}
-        isDisabled={!tooltip}
-        label={tooltip}
+        isDisabled={!stateMap[state].tooltip}
+        label={stateMap[state].tooltip}
       >
         <Badge
-          bg={stateColorMap[state]?.bg}
+          bg={stateMap[state]?.bg}
           py="4px"
           px="12px"
           borderRadius={100}
@@ -54,7 +92,7 @@ export function SarcoStateIndicator({
         >
           <Text
             fontSize="xs"
-            color={stateColorMap[state]?.text}
+            color={stateMap[state]?.text}
           >{`● ${sarcoStateMap[state]}`}</Text>
         </Badge>
       </Tooltip>

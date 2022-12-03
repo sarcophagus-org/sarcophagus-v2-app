@@ -7,7 +7,7 @@ import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
-import { SarcoStateIndicator, sarcoStateMap } from './SarcoStateIndicator';
+import { SarcoStateIndicator } from './SarcoStateIndicator';
 
 export enum SarcoAction {
   Rewrap = 'rewrap',
@@ -81,8 +81,6 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     }
   }
 
-  console.log(sarcoStateMap[sarco.state]);
-
   return (
     <Tr>
       {/* SARCO STATE */}
@@ -114,7 +112,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
               onClick={handleClickAction}
               isLoading={isLoading || isCleaning}
             >
-              {action?.toUpperCase()}
+              {action.toUpperCase()}
             </Button>
           </Tooltip>
         ) : (
