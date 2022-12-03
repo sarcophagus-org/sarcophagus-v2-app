@@ -132,7 +132,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
 
       {/* QUICK ACTION */}
       <Td textAlign="center">
-        {stateToActionMap[sarco.state] && action ? (
+        {action ? (
           <Tooltip
             isDisabled={!actionTooltip}
             openDelay={500}
@@ -144,7 +144,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
               onClick={handleClickAction}
               isLoading={isLoading || isCleaning}
             >
-              {action.toUpperCase() || '--'}
+              {action.toUpperCase()}
             </Button>
           </Tooltip>
         ) : (
