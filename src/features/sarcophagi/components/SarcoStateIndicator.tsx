@@ -28,11 +28,12 @@ export function SarcoStateIndicator({
   const stateColorMap: { [key: string]: { text: string; bg: string } } = {
     [SarcophagusState.Active]: { text: 'green', bg: 'transparent.green' },
     [SarcophagusState.Failed]: { text: 'red', bg: 'transparent.red' },
+    [SarcophagusState.CleanedFailed]: { text: 'red', bg: 'transparent.red' },
     [SarcophagusState.Resurrecting]: { text: 'orange', bg: 'transparent.orange' },
     [SarcophagusState.Resurrected]: { text: 'blue', bg: 'transparent.blue' },
+    [SarcophagusState.CleanedResurrected]: { text: 'blue', bg: 'transparent.blue' },
     [SarcophagusState.Buried]: { text: 'gray', bg: 'transparent.gray' },
     [SarcophagusState.DoesNotExist]: { text: 'gray', bg: 'transparent.gray' },
-    // TODO: add colours for cleaned states
   };
 
   return (

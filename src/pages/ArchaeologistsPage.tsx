@@ -1,5 +1,6 @@
 import { Flex, Heading } from '@chakra-ui/react';
 import { SelectArchaeologists } from '../features/embalm/stepContent/steps/SelectArchaeologists';
+import { SarcoAlert } from '../components/SarcoAlert';
 
 export function ArchaeologistsPage() {
   return (
@@ -11,6 +12,12 @@ export function ArchaeologistsPage() {
       alignItems="center"
       direction="column"
     >
+      <SarcoAlert
+        mb={6}
+        status="warning"
+      >
+        This page is incomplete / experimental.
+      </SarcoAlert>
       <Heading
         size="lg"
         mb={'30px'}
