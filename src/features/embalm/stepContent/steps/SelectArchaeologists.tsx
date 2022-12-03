@@ -22,6 +22,7 @@ import moment from 'moment';
 
 export function SelectArchaeologists({
   hideHeader = false,
+  showDial = false,
 }: {
   hideHeader?: boolean;
   showDial?: boolean;
@@ -124,7 +125,7 @@ export function SelectArchaeologists({
           <VStack>
             <ArchaeologistList
               paginatedArchaeologist={paginatedArchaeologist}
-              showDial={true}
+              showDial={showDial}
             />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>

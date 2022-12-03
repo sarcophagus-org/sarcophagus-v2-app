@@ -11,7 +11,11 @@ export function SarcophagusSummaryFees() {
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
   const diggingFees = sumDiggingFeesFormatted(selectedArchaeologists);
-  const protocolFee = parseEther(diggingFees).div(BigNumber.from(100 * protocolFeeBasePercentage));
+
+  // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
+  const protocolFee = protocolFeeBasePercentage
+    ? parseEther(diggingFees).div(BigNumber.from(100 * protocolFeeBasePercentage))
+    : BigNumber.from(0);
 
   return (
     <Box

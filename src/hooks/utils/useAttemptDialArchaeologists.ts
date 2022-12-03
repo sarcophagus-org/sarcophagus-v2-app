@@ -20,8 +20,8 @@ export function useAttemptDialArchaeologists(
 
       try {
         setIsDialing(true);
-
-        await libp2pNode?.dial(peerId);
+        await libp2pNode.dialProtocol(peerId, '/archaeologist-public-key');
+        // await libp2pNode?.dial(peerId.multihash);
         toast(dialArchaeologistSuccess());
         setTimeout(async () => {
           await libp2pNode?.hangUp(peerId);
