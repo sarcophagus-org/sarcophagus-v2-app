@@ -1,22 +1,22 @@
 import { Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
-import { BigNumber, ethers } from 'ethers';
-import { useBurySarcophagus } from 'hooks/embalmerFacet';
+import { BigNumber } from 'ethers';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
+import { BuryButton } from './BuryButton';
 import { DetailsCollapse } from './DetailsCollapse';
 
 export function Details() {
   const { id } = useParams();
   const { sarcophagus } = useGetSarcophagus(id);
   const { address } = useAccount();
-  const { bury, isLoading, isBurying } = useBurySarcophagus(id || ethers.constants.HashZero);
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0)
   );
 
+  // TODO: Find a way to recalculate canWrapOrBury when bury happens
   // Determine if the rewrap and bury functions are available
   const canRewrapOrBury =
     sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
@@ -24,10 +24,6 @@ export function Details() {
   // Determine if the claim function is available
   const canClaim =
     sarcophagus?.state === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
-
-  function handleBury() {
-    bury?.();
-  }
 
   return (
     <Flex direction="column">
@@ -57,18 +53,7 @@ export function Details() {
             </Tooltip>
 
             {/* BURY BUTTON */}
-            <Tooltip
-              placement="top"
-              label="Deactivate this Sarcophagus so it can never be resurrected"
-            >
-              <Button
-                onClick={handleBury}
-                isLoading={isLoading}
-                loadingText={isBurying ? 'Burying...' : undefined}
-              >
-                Bury
-              </Button>
-            </Tooltip>
+            <BuryButton id={id} />
           </>
         )}
 

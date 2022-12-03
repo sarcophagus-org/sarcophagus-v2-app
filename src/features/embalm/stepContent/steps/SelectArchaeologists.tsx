@@ -20,10 +20,17 @@ import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
 
-export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: boolean }) {
+export function SelectArchaeologists({
+  hideHeader = false,
+  showDial = false,
+}: {
+  hideHeader?: boolean;
+  showDial?: boolean;
+}) {
   const outerLimit = 1;
   const innerLimit = 1;
-  const { sortedFilteredArchaeologist, showSelectedArchaeologists } = useArchaeologistList();
+  const { sortedFilteredArchaeologist, showSelectedArchaeologists, hiddenArchaeologists } =
+    useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
   const [paginationSize, setPaginationSize] = useState<number>(5);
@@ -116,7 +123,10 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
           w="full"
         >
           <VStack>
-            <ArchaeologistList paginatedArchaeologist={paginatedArchaeologist} />
+            <ArchaeologistList
+              paginatedArchaeologist={paginatedArchaeologist}
+              showDial={showDial}
+            />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
                 <Flex px={3}>
@@ -195,20 +205,26 @@ export function SelectArchaeologists({ hideHeader = false }: { hideHeader?: bool
                   </PaginationNext>
                 </Flex>
 
-                <HStack mr={2}>
-                  <Text variant="secondary">Show (10) hidden</Text>
-                  <Tooltip
-                    placement="top"
-                    label="These archaeologists are hidden because your selected resurrection time would exceed their maximum resurrection interval"
-                  >
-                    <Icon
-                      as={QuestionIcon}
-                      color="brand.500"
-                      w={3}
-                      h={3}
-                    />
-                  </Tooltip>
-                </HStack>
+                {hiddenArchaeologists.length > 0 ? (
+                  <HStack mr={2}>
+                    <Text variant="secondary">
+                      {hiddenArchaeologists.length} Hidden Archaeologists
+                    </Text>
+                    <Tooltip
+                      placement="top"
+                      label="These archeologists are hidden because they are not available by your resurrection time. Adjust your resurrection time to include them."
+                    >
+                      <Icon
+                        as={QuestionIcon}
+                        color="brand.500"
+                        w={3}
+                        h={3}
+                      />
+                    </Tooltip>
+                  </HStack>
+                ) : (
+                  <Box w="200px" />
+                )}
               </Flex>
 
               <HStack

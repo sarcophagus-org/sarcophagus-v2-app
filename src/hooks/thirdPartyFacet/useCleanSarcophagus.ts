@@ -7,6 +7,7 @@ import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
 import { SarcophagusState } from 'types';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
+// TODO - revisit when clean is ready
 export function useCleanSarcophagus(sarcoId: string, paymentAddress: string | undefined) {
   const networkConfig = useNetworkConfig();
   const sarcoToast = useSarcoToast();

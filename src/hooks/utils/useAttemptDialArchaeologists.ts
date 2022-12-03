@@ -20,8 +20,7 @@ export function useAttemptDialArchaeologists(
 
       try {
         setIsDialing(true);
-
-        await libp2pNode?.dial(peerId);
+        await libp2pNode.dial(peerId);
         sarcoToast.open(dialArchaeologistSuccess());
         setTimeout(async () => {
           await libp2pNode?.hangUp(peerId);

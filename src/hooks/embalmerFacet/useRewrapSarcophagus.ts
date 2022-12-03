@@ -3,7 +3,8 @@ import { Abi } from 'abitype';
 import { useSarcoToast } from 'components/SarcoToast';
 import { useNetworkConfig } from 'lib/config';
 import { rewrapFailure, rewrapSuccess } from 'lib/utils/toast';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useState } from 'react';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 
 export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | null) {
   const networkConfig = useNetworkConfig();
@@ -11,7 +12,7 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
 
   const timeInSeconds = resurrectionTime ? Math.trunc(resurrectionTime.getTime() / 1000) : 0;
 
-  const { config, isLoading } = usePrepareContractWrite({
+  const { config } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'rewrapSarcophagus',
@@ -19,20 +20,27 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     args: [sarcoId, timeInSeconds],
   });
 
-  const {
-    write,
-    isLoading: isRewrapping,
-    isSuccess,
-  } = useContractWrite({
+  const { write, data } = useContractWrite(config);
+
+  const [isRewrapping, setIsRewrapping] = useState(false);
+
+  function rewrap() {
+    write?.();
+    setIsRewrapping(true);
+  }
+
+  const { isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
     onSuccess() {
       sarcoToast.open(rewrapSuccess());
+      setIsRewrapping(false);
     },
     onError(e) {
       console.error(e);
       sarcoToast.open(rewrapFailure());
+      setIsRewrapping(false);
     },
-    ...config,
   });
 
-  return { rewrap: write, isLoading, isRewrapping, isSuccess };
+  return { rewrap, isRewrapping, isSuccess };
 }

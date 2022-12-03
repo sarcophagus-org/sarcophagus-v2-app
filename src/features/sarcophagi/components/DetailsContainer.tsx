@@ -31,7 +31,7 @@ export function DetailsContainer({ children }: SarcophagusDetailsProps) {
           color="brand.400"
           _hover={{ color: 'brand.950', textDecor: 'underline' }}
         >
-          Dashboard
+          Tomb
         </Link>
         <Text> / </Text>
         {currentAction ? (
@@ -49,7 +49,7 @@ export function DetailsContainer({ children }: SarcophagusDetailsProps) {
             <Text textTransform="capitalize"> / {currentAction}</Text>
           </HStack>
         ) : (
-          <Text>Details</Text>
+          <Text>Sarcophagus Details</Text>
         )}
       </HStack>
       <VStack align="left">

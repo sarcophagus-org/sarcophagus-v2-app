@@ -39,7 +39,7 @@ export function UploadPayload() {
         mb={6}
         variant="secondary"
       >
-        Your payload (corpse) will be wrapped in a later step.
+        This is the payload the recipient will receive when you fail to rewrap (attest).
       </Text>
       {error && (
         <SarcoAlert
@@ -64,7 +64,7 @@ export function UploadPayload() {
             <Text>Size: {prettyBytes(file.size)}</Text>
             <Text>
               {"Bundlr's upload price: "}
-              {isConnected ? formattedUploadPrice : 'Not connected to the Bundlr'}
+              {isConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
             </Text>
             <Link textDecor="underline">Upload a different file</Link>
           </VStack>

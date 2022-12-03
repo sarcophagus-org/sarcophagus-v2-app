@@ -27,7 +27,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   const { address } = useAccount();
   const navigate = useNavigate();
 
-  // Payment for clean automacally goes to the current user
+  // Payment for clean automatically goes to the current user
   const { clean, isLoading, isCleaning } = useCleanSarcophagus(sarco.id, address);
 
   const resurrectionString = buildResurrectionDateString(
@@ -38,7 +38,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   // here.
   // This logic shows the actions a user can make on a sarcophagus regardless of which tab they are
   // on. If a user is both the embalmer and the recipient on a sarcohpagus, they will see both the
-  // rewrap and resurrect actions on the "My Sarcohagi" tab and the "Claim Sarcohpagi" tab.
+  // rewrap and resurrect actions on the "My Sarcophagi" tab and the "Claim Sarcophagi" tab.
   const isEmbalmer = sarco.embalmerAddress === address;
   const isRecipient = sarco.recipientAddress === address;
 
@@ -46,45 +46,25 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     [key: string]: {
       action?: SarcoAction;
       tooltip?: string;
-      stateTooltip: string;
     };
   } = {
     [SarcophagusState.Active]: {
       action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
       tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
-      stateTooltip: 'The Sarcophagus is on course to be resurrected',
-    },
-    [SarcophagusState.Failed]: {
-      action: SarcoAction.Clean,
-      tooltip: 'Deactivate the sarcophagus and claim a reward',
-      stateTooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
-      stateTooltip: 'The Sarcophagus has been resurrected can be claimed',
     },
-    [SarcophagusState.Accused]: {
-      stateTooltip:
-        'Too many of the archaeologists have leaked assigned keys. This Sarcophagus is compromised.',
-    },
-    [SarcophagusState.Buried]: {
-      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
-    },
-    [SarcophagusState.Cleaned]: {
-      stateTooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
-    },
-    [SarcophagusState.Resurrecting]: {
-      stateTooltip:
-        'The Sarcophagus resurrection time has passed and is within a grace period of unwrapping',
+    [SarcophagusState.CleanedResurrected]: {
+      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
+      tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
     },
   };
 
   const action = stateToActionMap[sarco.state]?.action;
   const actionTooltip = stateToActionMap[sarco.state]?.tooltip;
-  const stateTooltip = stateToActionMap[sarco.state]?.stateTooltip;
 
-  // TODO: Remove console logs and navigate to the appropriate page including the sarcoId
   function handleClickAction() {
     switch (action) {
       case SarcoAction.Rewrap:
@@ -105,10 +85,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     <Tr>
       {/* SARCO STATE */}
       <Td>
-        <SarcoStateIndicator
-          state={sarco.state}
-          tooltip={stateTooltip}
-        />
+        <SarcoStateIndicator state={sarco.state} />
       </Td>
 
       {/* SARCO NAME */}
@@ -116,14 +93,14 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
         <TableText>{sarco.name?.toUpperCase()}</TableText>
       </Td>
 
-      {/* SARCO RESURRETION */}
+      {/* SARCO RESURRECTION */}
       <Td>
         <TableText>{resurrectionString}</TableText>
       </Td>
 
       {/* QUICK ACTION */}
       <Td textAlign="center">
-        {stateToActionMap[sarco.state] ? (
+        {action ? (
           <Tooltip
             isDisabled={!actionTooltip}
             openDelay={500}
@@ -135,7 +112,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
               onClick={handleClickAction}
               isLoading={isLoading || isCleaning}
             >
-              {action?.toUpperCase() || '--'}
+              {action.toUpperCase()}
             </Button>
           </Tooltip>
         ) : (

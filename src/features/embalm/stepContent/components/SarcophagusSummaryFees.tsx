@@ -1,15 +1,21 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
-import { formatFee, sumDiggingFees } from 'lib/utils/helpers';
+import { formatFee, sumDiggingFeesFormatted } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
+import { formatEther, parseEther } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
-  const diggingFees = sumDiggingFees(selectedArchaeologists).toNumber();
-  const protocolFee = diggingFees / (100 * protocolFeeBasePercentage);
+  const diggingFees = sumDiggingFeesFormatted(selectedArchaeologists);
+
+  // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
+  const protocolFee = protocolFeeBasePercentage
+    ? parseEther(diggingFees).div(BigNumber.from(100 * protocolFeeBasePercentage))
+    : BigNumber.from(0);
 
   return (
     <Box
@@ -38,7 +44,7 @@ export function SarcophagusSummaryFees() {
             justifyContent="space-between"
           >
             <Text as="i">Digging Fee</Text>
-            <Text as="i">{sumDiggingFees(selectedArchaeologists).toString()} SARCO</Text>
+            <Text as="i">{diggingFees} SARCO</Text>
           </Flex>
           <Flex
             w="100%"
@@ -56,7 +62,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              {formatFee(protocolFee)} SARCO
+              {formatEther(protocolFee)} SARCO
             </Text>
           </Flex>
           <Divider

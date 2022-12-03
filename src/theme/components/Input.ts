@@ -14,6 +14,7 @@ export const Input: ComponentStyleConfig = {
           borderColor: 'brand.300',
           color: 'brand.300',
         },
+        _placeholder: { color: 'text.secondary' },
       },
     },
   },

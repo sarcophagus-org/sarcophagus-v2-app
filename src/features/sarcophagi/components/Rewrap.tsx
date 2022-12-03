@@ -20,7 +20,7 @@ export function Rewrap() {
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
-  const { rewrap, isLoading, isRewrapping, isSuccess } = useRewrapSarcophagus(
+  const { rewrap, isRewrapping, isSuccess } = useRewrapSarcophagus(
     id || ethers.constants.HashZero,
     resurrectionTime
   );
@@ -32,10 +32,6 @@ export function Rewrap() {
 
   function handleCustomDateChange(date: Date | null) {
     setResurrectionTime(date);
-  }
-
-  function handleClickProtocolFee() {
-    // TODO: redirect to information about protocol fee
   }
 
   const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
@@ -105,21 +101,12 @@ export function Rewrap() {
       >
         <Text>Fees</Text>
         <HStack spacing={3}>
-          <Button variant="link">
-            <Text variant="secondary">Digging fee</Text>
-          </Button>
-          <>:</>
-          <Text>{formatEther(totalDiggingFeeBn)} SARCO</Text>
+          <Text variant="secondary">Digging fee : {formatEther(totalDiggingFeeBn)} SARCO</Text>
         </HStack>
         <HStack spacing={3}>
-          <Button
-            variant="link"
-            onClick={handleClickProtocolFee}
-          >
-            <Text variant="secondary">Protocol fee ({protocolFeeAmountInt}%)</Text>
-          </Button>
-          <>:</>
-          <Text>{formatEther(protocolFeeBn)} SARCO</Text>
+          <Text variant="secondary">
+            Protocol fee ({protocolFeeAmountInt}%) : {formatEther(protocolFeeBn)} SARCO
+          </Text>
         </HStack>
       </VStack>
       <HStack>
@@ -131,10 +118,11 @@ export function Rewrap() {
         </Button>
         <Button
           onClick={() => rewrap?.()}
-          isDisabled={!!!resurrectionTime || !rewrap}
-          isLoading={isLoading}
+          isDisabled={!!!resurrectionTime || !rewrap || isRewrapping}
+          isLoading={isRewrapping}
+          loadingText="Rewrapping..."
         >
-          {isRewrapping ? 'Rewrapping...' : 'Rewrap'}
+          Rewrap
         </Button>
       </HStack>
     </VStack>

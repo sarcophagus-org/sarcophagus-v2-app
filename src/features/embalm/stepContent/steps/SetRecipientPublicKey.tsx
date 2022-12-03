@@ -44,7 +44,8 @@ export function SetRecipientPublicKey() {
         mb={6}
       >
         Sarco can lookup a public key by recipient wallet address if the address has made a
-        transaction. Otherwise you will need the public key or choose ‘Create New’.
+        transaction. Otherwise you will need the public key, or choose ‘Create New’ to generate a
+        new key.
       </Text>
       <VStack
         align="left"
@@ -111,7 +112,7 @@ export function SetRecipientPublicKey() {
                   )
                 }
                 disabled={false}
-                placeholder="public key"
+                placeholder="0x0000..."
                 value={recipientState.publicKey}
                 height="110px"
                 resize="none"
