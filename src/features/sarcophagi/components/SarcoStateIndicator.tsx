@@ -25,50 +25,50 @@ export function SarcoStateIndicator({
 }: SarcophagusStateIndicatorProps) {
   const stateMap: { [key: string]: { text?: string; bg?: string; tooltip?: string } } = {
     [SarcophagusState.Active]: {
-      text: 'green',
-      bg: 'transparent.green',
+      text: 'green.500',
+      bg: 'green.100',
       tooltip: 'The Sarcophagus is on course to be resurrected.',
     },
     [SarcophagusState.Accused]: {
-      text: 'red',
-      bg: 'transparent.red',
+      text: 'red.500',
+      bg: 'red.100',
       tooltip:
         'Too many of the archaeologists have leaked assigned keys. This Sarcophagus is compromised.',
     },
     [SarcophagusState.Cleaned]: {
-      text: 'gray',
-      bg: 'transparent.gray',
+      text: 'brand.500',
+      bg: 'brand.100',
       tooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
     },
     [SarcophagusState.Failed]: {
-      text: 'red',
-      bg: 'transparent.red',
+      text: 'red.500',
+      bg: 'red.100',
       tooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.CleanedFailed]: {
-      text: 'red',
-      bg: 'transparent.red',
+      text: 'red.500',
+      bg: 'red.100',
       tooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
     },
     [SarcophagusState.Resurrecting]: {
-      text: 'orange',
-      bg: 'transparent.orange',
+      text: 'orange.500',
+      bg: 'orange.100',
       tooltip:
         'The Sarcophagus resurrection time has passed and is within a grace period of unwrapping.',
     },
     [SarcophagusState.Resurrected]: {
-      text: 'blue',
-      bg: 'transparent.blue',
+      text: 'blue.500',
+      bg: 'blue.100',
       tooltip: 'The Sarcophagus has been resurrected and can be claimed.',
     },
     [SarcophagusState.CleanedResurrected]: {
-      text: 'blue',
-      bg: 'transparent.blue',
+      text: 'blue.500',
+      bg: 'blue.100',
       tooltip: 'The Sarcophagus has been resurrected and can be claimed.',
     },
     [SarcophagusState.Buried]: {
-      text: 'gray',
-      bg: 'transparent.gray',
+      text: 'brand.500',
+      bg: 'brand.100',
       tooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
     },
     [SarcophagusState.DoesNotExist]: { text: 'gray', bg: 'transparent.gray' },

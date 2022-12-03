@@ -1,4 +1,4 @@
-import { Tab, TabProps, Text } from '@chakra-ui/react';
+import { Flex, Tab, TabProps } from '@chakra-ui/react';
 
 // The tab component used in the sarcophagi component as part of the tabs panel
 export function SarcoTab({ children, ...props }: TabProps) {
@@ -16,7 +16,7 @@ export function SarcoTab({ children, ...props }: TabProps) {
       }}
       {...props}
     >
-      <Text>{children}</Text>
+      <Flex>{children}</Flex>
     </Tab>
   );
 }
