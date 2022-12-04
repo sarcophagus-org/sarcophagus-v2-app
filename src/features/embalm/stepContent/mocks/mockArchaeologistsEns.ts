@@ -1,7 +1,7 @@
 import { Archaeologist } from '../../../../types/index';
 import { BigNumber } from 'ethers';
 
-export function mochArchaeologists(): Archaeologist[] {
+export function mochArchaeologistsEns(): Archaeologist[] {
   return [
     {
       profile: {
