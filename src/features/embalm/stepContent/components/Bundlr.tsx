@@ -13,13 +13,15 @@ import { ethers } from 'ethers';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { uploadPriceDecimals } from 'lib/constants';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'store/index';
+import { useAccount } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
+  const { address } = useAccount();
   const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
   const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice, uploadPriceBN } = useUploadPrice();
@@ -38,6 +40,12 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
   function handleDisconnect() {
     disconnectFromBundlr();
   }
+
+  useEffect(() => {
+    if (!address) {
+      disconnectFromBundlr();
+    }
+  }, [address, disconnectFromBundlr]);
 
   const handleFund = useCallback(async () => {
     if (!isAmountValid) return;

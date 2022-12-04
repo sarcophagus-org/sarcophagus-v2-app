@@ -13,7 +13,6 @@ export function WalletDisconnectPage() {
   const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { supportedNetworkNames } = useSupportedNetwork();
-
   const { clearSarcophagusState } = useClearSarcophagusState();
   const dispatch = useDispatch();
 

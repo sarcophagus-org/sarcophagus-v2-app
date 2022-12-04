@@ -5,7 +5,7 @@ export function mochArchaeologistsEns(): Archaeologist[] {
   return [
     {
       profile: {
-        archAddress: '0x51EfafFE68e654180Bc85e9C83bf46c83a5987e7',
+        archAddress: '0x225f137127d9067788314bc7fcc1f36746a3c3B5',
         exists: true,
         minimumDiggingFee: BigNumber.from('3000000000000000000'),
         maximumRewrapInterval: BigNumber.from('3'),
