@@ -8,6 +8,7 @@ import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttempt
 import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
 import { useEnsName } from 'wagmi';
+import { useNetworkConfig } from 'lib/config';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -34,16 +35,16 @@ export function ArchaeologistListItem({
 }: ArchaeologistListItemProps) {
   const { testDialArchaeologist } = useAttemptDialArchaeologists(setIsDialing);
   const dispatch = useDispatch();
-
+  const networkConfig = useNetworkConfig();
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
   const { data } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
-    chainId: 1,
+    chainId: networkConfig.chainId,
   });
 
   const formattedArchAddress = () => {
-    return data ? data : formatAddress(archaeologist.profile.archAddress);
+    return data ?? formatAddress(archaeologist.profile.archAddress);
   };
 
   function TableContent({ children, icon, checkbox }: TableContentProps) {
@@ -116,7 +117,7 @@ export function ArchaeologistListItem({
         icon={false}
         checkbox={false}
       >
-        {Number(archaeologist.profile.failures).toString()}
+        {archaeologist.profile.failures.toString()}
       </TableContent>
 
       {includeDialButton ? (
