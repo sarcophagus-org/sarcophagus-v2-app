@@ -15,6 +15,7 @@ export function WalletDisconnectPage() {
   const { openConnectModal } = useConnectModal();
   const { supportedNetworkNames } = useSupportedNetwork();
   const { disconnectFromBundlr } = useBundlrSession();
+
   const { clearSarcophagusState } = useClearSarcophagusState();
   const dispatch = useDispatch();
 
