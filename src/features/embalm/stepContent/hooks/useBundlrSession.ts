@@ -2,13 +2,15 @@ import { WebBundlr } from '@bundlr-network/client';
 import { useToast } from '@chakra-ui/react';
 import { InjectedEthereumSigner } from 'arbundles/src/signing';
 import { connectFailure, connectStart, connectSuccess } from 'lib/utils/toast';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { connect, setBundlr } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
 import { useBundlrDisconnect } from './useBundlrDisconnect';
+import { publicProvider } from 'wagmi/providers/public';
+import { ethers } from 'ethers';
 
 export function useBundlrSession() {
   const dispatch = useDispatch();
@@ -16,13 +18,20 @@ export function useBundlrSession() {
   const toast = useToast();
   const networkConfig = useNetworkConfig();
   const isHardhatNetwork = networkConfig.chainId === hardhatChainId;
-  const { disconnectFromBundlr, provider } = useBundlrDisconnect();
+  const { disconnectFromBundlr } = useBundlrDisconnect();
 
   const { address } = useAccount({
     onDisconnect() {
       disconnectFromBundlr();
     },
   });
+
+  // TODO: Find a way to use the provider from wagmi
+  const connector: any = window.ethereum;
+  const provider: ethers.providers.Web3Provider = useMemo(
+    () => new ethers.providers.Web3Provider(connector),
+    [connector]
+  );
 
   const connectToBundlr = useCallback(async (): Promise<void> => {
     if (isHardhatNetwork) {
@@ -69,6 +78,7 @@ export function useBundlrSession() {
    * needed.
    *
    */
+
   const createInjectedBundlr = useCallback(
     (publicKey: Buffer) => {
       const injectedSigner = new InjectedEthereumSigner(provider);
@@ -90,7 +100,7 @@ export function useBundlrSession() {
       newBundlr.currencyConfig._address = address?.toLowerCase();
       newBundlr.currencyConfig.signer = injectedSigner;
       newBundlr.currencyConfig.providerInstance = provider;
-      newBundlr.currencyConfig.w3signer = provider.getSigner();
+      newBundlr.currencyConfig.w3signer = publicProvider;
 
       return newBundlr;
     },

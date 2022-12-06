@@ -1,17 +1,14 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { useDispatch } from 'store/index';
 import { disconnect as disconnectBundlr } from 'store/bundlr/actions';
 import { disconnect as disconnectToast } from 'lib/utils/toast';
-import { ethers } from 'ethers';
+import { useProvider } from 'wagmi';
 
 export function useBundlrDisconnect() {
   const dispatch = useDispatch();
   const toast = useToast();
-
-  // TODO: Find a way to use the provider from wagmi
-  const connector: any = window.ethereum;
-  const provider = useMemo(() => new ethers.providers.Web3Provider(connector), [connector]);
+  const provider = useProvider();
 
   /**
    * Disconnects from the arweave bundlr node
@@ -25,14 +22,10 @@ export function useBundlrDisconnect() {
     }
   }, [dispatch, toast]);
 
-  // Uses the connect wallet button to detect chain change.
-  // I was not able to use an wagmi hooks to detect a chain change from the wallet.
   const handleChainChange = useCallback(() => {
     disconnectFromBundlr();
   }, [disconnectFromBundlr]);
 
-  // Uses the connect wallet button to detect account change.
-  // I was not able to use an wagmi hooks to detect an account change from the wallet.
   const handleAccountsChange = useCallback(() => {
     disconnectFromBundlr();
   }, [disconnectFromBundlr]);
