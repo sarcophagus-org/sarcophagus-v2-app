@@ -74,7 +74,6 @@ export function useBundlrSession() {
    * needed.
    *
    */
-
   const createInjectedBundlr = useCallback(
     (publicKey: Buffer) => {
       const injectedSigner = new InjectedEthereumSigner(provider);

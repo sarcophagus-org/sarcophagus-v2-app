@@ -23,7 +23,6 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
   const { connectToBundlr, isConnected } = useBundlrSession();
   const { disconnectFromBundlr } = useBundlrDisconnect();
-
   const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice, uploadPriceBN } = useUploadPrice();
   const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
