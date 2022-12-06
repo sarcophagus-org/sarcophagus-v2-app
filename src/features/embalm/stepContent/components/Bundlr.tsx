@@ -15,12 +15,15 @@ import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPri
 import { uploadPriceDecimals } from 'lib/constants';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'store/index';
+import { useBundlrDisconnect } from '../hooks/useBundlrDisconnect';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
-  const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
+  const { connectToBundlr, isConnected } = useBundlrSession();
+  const { disconnectFromBundlr } = useBundlrDisconnect();
+
   const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice, uploadPriceBN } = useUploadPrice();
   const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));

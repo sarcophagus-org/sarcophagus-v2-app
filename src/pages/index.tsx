@@ -16,6 +16,7 @@ import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
 import { NotFoundPage } from './NotFoundPage';
 import { CreateSarcophagusContextProvider } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
 import { WalletDisconnectPage } from './WalletDisconnectPage';
+import { useBundlrDisconnect } from 'features/embalm/stepContent/hooks/useBundlrDisconnect';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -116,6 +117,11 @@ export function Pages() {
   ];
 
   const { isConnected } = useAccount();
+
+  /**
+   * Disconnects from the bundlr node if the chain or account changes.
+   */
+  useBundlrDisconnect();
 
   const { isSupportedChain } = useSupportedNetwork();
 

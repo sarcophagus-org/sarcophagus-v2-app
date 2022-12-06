@@ -8,13 +8,13 @@ import { useDispatch } from 'store/index';
 import { useEffect } from 'react';
 import { goToStep } from 'store/embalm/actions';
 import { Step } from 'store/embalm/reducer';
-import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
+import { useBundlrDisconnect } from 'features/embalm/stepContent/hooks/useBundlrDisconnect';
 
 export function WalletDisconnectPage() {
   const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { supportedNetworkNames } = useSupportedNetwork();
-  const { disconnectFromBundlr } = useBundlrSession();
+  const { disconnectFromBundlr } = useBundlrDisconnect();
 
   const { clearSarcophagusState } = useClearSarcophagusState();
   const dispatch = useDispatch();
