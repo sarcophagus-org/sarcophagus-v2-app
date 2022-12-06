@@ -1,5 +1,6 @@
 import { Alert } from './Alert';
 import { Button } from './Button';
+import { Checkbox } from './Checkbox';
 import { Divider } from './Divider';
 import { FormLabel } from './FormLabel';
 import { Heading } from './Heading';
@@ -18,5 +19,6 @@ export const components = {
   Divider,
   Alert,
   Tooltip,
+  Checkbox,
   Textarea,
 };

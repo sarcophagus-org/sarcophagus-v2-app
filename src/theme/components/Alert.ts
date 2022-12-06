@@ -1,23 +1,12 @@
-import { defineStyle, createMultiStyleConfigHelpers } from '@chakra-ui/styled-system';
+import { alertAnatomy } from '@chakra-ui/anatomy';
 import { AlertProps } from '@chakra-ui/react';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/styled-system';
 
-const helpers = createMultiStyleConfigHelpers([
-  'container',
-  'title',
-  'description',
-  'icon',
-  'spinner',
-]);
+const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(
+  alertAnatomy.keys
+);
 
-/*
-NOTE regarding the icon color: we should be able to set the styles on icon:{} part, but the current
- implmentation of <Alert> in the chakra library utilizes "colorScheme"
-  in the alert component to pass down the status color to the icon.
-   therefore we have to set our own icon and color on our custom component.
-    see : chakra-ui\packages\components\alert\src\alert.tsx line: 44 
-    where they retrieve the style "const styles = useMultiStyleConfig("Alert", { ...props, colorScheme })"
-*/
-const titleAndDescriptionStyle = defineStyle({
+const titleAndDescriptionStyle = definePartsStyle({
   title: {
     color: 'brand.950',
     fontSize: '16px',
@@ -27,6 +16,7 @@ const titleAndDescriptionStyle = defineStyle({
   description: {
     color: 'brand.950',
     lineHeight: '1',
+    marginTop: '8px',
   },
 });
 
@@ -34,34 +24,54 @@ const alertStatusStyles: { [key: string]: any } = {
   success: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.successBackground',
+      backgroundColor: 'background.green',
+      borderLeft: '4px solid',
+      borderColor: 'green',
+    },
+    icon: {
+      color: 'green',
     },
     ...titleAndDescriptionStyle,
   },
   info: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.infoBackground',
+      backgroundColor: 'background.blue',
+      borderLeft: '4px solid',
+      borderColor: 'blue',
+    },
+    icon: {
+      color: 'blue',
     },
     ...titleAndDescriptionStyle,
   },
   warning: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.warningBackground',
+      backgroundColor: 'background.orange',
+      borderLeft: '4px solid',
+      borderColor: 'orange',
+    },
+    icon: {
+      color: 'orange',
     },
     ...titleAndDescriptionStyle,
   },
   error: {
     container: {
       bg: 'unset',
-      backgroundColor: 'alert.errorBackground',
+      backgroundColor: 'background.red',
+      borderLeft: '4px solid',
+      borderColor: 'red',
+    },
+    icon: {
+      color: 'red',
     },
     ...titleAndDescriptionStyle,
   },
 };
 
-export const Alert = helpers.defineMultiStyleConfig({
+export const Alert = defineMultiStyleConfig({
   baseStyle: (props: AlertProps) => alertStatusStyles[props.status || 'default'],
   sizes: {},
   variants: {},

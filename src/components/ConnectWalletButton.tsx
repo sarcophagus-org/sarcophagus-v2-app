@@ -24,10 +24,10 @@ export function ConnectWalletButton() {
               <Flex>
                 <Button
                   variant="ghost"
-                  _hover={{ bgColor: 'menuBlue.1000' }}
-                  _focus={{ bgColor: 'menuBlue.1000' }}
+                  _hover={{ bgColor: 'grayBlue.700' }}
+                  _focus={{ bgColor: 'grayBlue.700' }}
                   cursor="auto"
-                  bg="menuBlue.1000"
+                  bg="grayBlue.1000"
                   mx={2}
                   leftIcon={<SarcoTokenIcon />}
                 >
@@ -47,7 +47,7 @@ export function ConnectWalletButton() {
                   ml={2}
                   variant="ghost"
                   icon={<DotsMenuIcon />}
-                  bg="menuBlue.1000"
+                  bg="grayBlue.1000"
                   aria-label="more"
                 />
               </Flex>
