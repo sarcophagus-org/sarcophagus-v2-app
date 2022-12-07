@@ -23,6 +23,7 @@ export function mochArchaeologists(numberOfArcheologists: number): Archaeologist
       maximumRewrapInterval: BigNumber.from(
         getRandomIntInclusive(20000000000, 60000000000).toString()
       ),
+      freeBond: BigNumber.from('0'),
       successes: BigNumber.from('0'),
       cleanups: BigNumber.from('0'),
       accusals: BigNumber.from('0'),

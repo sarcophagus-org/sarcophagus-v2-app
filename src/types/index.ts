@@ -40,15 +40,16 @@ export interface SarcophagusArchaeologist {
 }
 
 export interface ArchaeologistProfile {
-  archAddress: string;
-  exists: boolean;
-  minimumDiggingFee: BigNumber;
-  maximumRewrapInterval: BigNumber;
-  successes: BigNumber;
-  cleanups: BigNumber;
   accusals: BigNumber;
+  archAddress: string;
+  cleanups: BigNumber;
+  exists: boolean;
   failures: BigNumber;
+  freeBond: BigNumber;
+  maximumRewrapInterval: BigNumber;
+  minimumDiggingFee: BigNumber;
   peerId: string;
+  successes: BigNumber;
 }
 
 export interface ArchaeologistEncryptedShard {
