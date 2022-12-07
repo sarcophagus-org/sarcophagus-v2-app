@@ -29,15 +29,18 @@ export function useArchaeologistList() {
   const resurrection = useSelector(s => s.embalmState.resurrection);
 
   // If the difference between the ressurection time and the current time is less than an
-  // archaeologist's rewrap interval, that archaeologist goes in the visible list. Otherwise it goes in
-  // the hidden list.
+  // archaeologist's rewrap interval and if the archaeologist's free bond is greater than the
+  // digging fee, that archaeologist goes in the visible list. Otherwise it goes in the hidden list.
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
     const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
     const resurrectionTimeMs = resurrection;
 
     // If resurrection time has not been set, it will default to 0, in which case this will return
     // false and no archaeologists will be hidden
-    return resurrectionTimeMs - Date.now() < maxRewrapIntervalMs;
+    return (
+      resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
+      a.profile.minimumDiggingFee.lt(a.profile.freeBond)
+    );
   });
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
