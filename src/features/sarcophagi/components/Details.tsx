@@ -22,8 +22,7 @@ export function Details() {
     sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
 
   // Determine if the claim function is available
-  const canClaim =
-    sarcophagus?.state === SarcophagusState.Resurrected && sarcophagus.recipientAddress === address;
+  const canClaim = sarcophagus?.state === SarcophagusState.Resurrected;
 
   return (
     <Flex direction="column">
