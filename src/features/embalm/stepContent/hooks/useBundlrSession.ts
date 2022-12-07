@@ -2,14 +2,18 @@ import { WebBundlr } from '@bundlr-network/client';
 import { useToast } from '@chakra-ui/react';
 import { InjectedEthereumSigner } from 'arbundles/src/signing';
 import { ethers } from 'ethers';
-import { connectFailure, connectStart, connectSuccess } from 'lib/utils/toast';
+import {
+  connectFailure,
+  connectStart,
+  connectSuccess,
+  disconnect as disconnectToast,
+} from 'lib/utils/toast';
 import { useCallback, useEffect, useMemo } from 'react';
-import { connect, setBundlr } from 'store/bundlr/actions';
+import { connect, disconnect as disconnectBundlr, setBundlr } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useAccount } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
-import { useBundlrDisconnect } from './useBundlrDisconnect';
 
 export function useBundlrSession() {
   const dispatch = useDispatch();
@@ -17,7 +21,18 @@ export function useBundlrSession() {
   const toast = useToast();
   const networkConfig = useNetworkConfig();
   const isHardhatNetwork = networkConfig.chainId === hardhatChainId;
-  const { disconnectFromBundlr } = useBundlrDisconnect();
+
+  /**
+   * Disconnects from the arweave bundlr node
+   */
+  const disconnectFromBundlr = useCallback(() => {
+    localStorage.removeItem('publicKey');
+    dispatch(disconnectBundlr());
+    const id = 'disconnectFromBundlr';
+    if (!toast.isActive(id)) {
+      toast({ ...disconnectToast(), id });
+    }
+  }, [dispatch, toast]);
 
   const { address } = useAccount({
     onDisconnect() {
@@ -102,6 +117,18 @@ export function useBundlrSession() {
     [address, networkConfig, provider]
   );
 
+  // Uses the connect wallet button to detect chain change.
+  // I was not able to use an wagmi hooks to detect a chain change from the wallet.
+  const handleChainChange = useCallback(() => {
+    disconnectFromBundlr();
+  }, [disconnectFromBundlr]);
+
+  // Uses the connect wallet button to detect account change.
+  // I was not able to use an wagmi hooks to detect an account change from the wallet.
+  const handleAccountsChange = useCallback(() => {
+    disconnectFromBundlr();
+  }, [disconnectFromBundlr]);
+
   /**
    * Automatically instantiates the WebBundlr if it doesn't exist.
    *
@@ -130,10 +157,19 @@ export function useBundlrSession() {
   /**
    * Disconnects from the bundlr node if the chain or account changes.
    */
-  useBundlrDisconnect();
+  useEffect(() => {
+    window?.ethereum?.on?.('chainChanged', handleChainChange);
+    window?.ethereum?.on?.('accountsChanged', handleAccountsChange);
+
+    return () => {
+      window?.ethereum?.removeListener?.('chainChanged', handleChainChange);
+      window?.ethereum?.removeListener?.('accountsChanged', handleAccountsChange);
+    };
+  }, [handleAccountsChange, handleChainChange, provider]);
 
   return {
     connectToBundlr,
+    disconnectFromBundlr,
     isConnected,
   };
 }
