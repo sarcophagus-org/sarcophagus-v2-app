@@ -4,7 +4,7 @@ import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
 import { formatFee, sumDiggingFeesFormatted } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 import { formatEther, parseEther } from 'ethers/lib/utils';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists } = useSelector(x => x.embalmState);
@@ -74,7 +74,7 @@ export function SarcophagusSummaryFees() {
             justifyContent="space-between"
           >
             <Text as="i">Payload Upload</Text>
-            <Text as="i">{formatFee(uploadPrice, 4)} ETH</Text>
+            <Text as="i">{formatFee(ethers.utils.formatUnits(uploadPrice), 4)} ETH</Text>
           </Flex>
         </Flex>
       </Flex>

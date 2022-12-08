@@ -3,6 +3,7 @@ import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
+import { BigNumber } from 'ethers';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -91,7 +92,7 @@ type EmbalmPayload = {
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
   [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: Archaeologist[] };
-  [ActionType.SetUploadPrice]: { price: string };
+  [ActionType.SetUploadPrice]: { price: BigNumber };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
   [ActionType.ResetEmbalmState]: { step: Step };
@@ -215,7 +216,7 @@ export function setRequiredArchaeologists(count: number): EmbalmActions {
   };
 }
 
-export function setUploadPrice(price: string): EmbalmActions {
+export function setUploadPrice(price: BigNumber): EmbalmActions {
   return {
     type: ActionType.SetUploadPrice,
     payload: {

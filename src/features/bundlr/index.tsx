@@ -12,19 +12,20 @@ export function Bundlr() {
   const { fund, withdraw, isFunding, isWithdrawing } = useBundlr();
   const bundlr = useSelector(s => s.bundlrState.bundlr);
 
-  function handleDeposit(amount: string) {
-    if (parseFloat(amount) <= 0) {
+  function handleDeposit(amount: BigNumber) {
+    if (amount.lte(ethers.constants.Zero)) {
       throw new Error('Deposit amount must be a positive number');
     }
+
     fund(amount);
   }
 
-  function handleWithdraw(amount: string) {
-    if (parseFloat(amount) <= 0) {
+  function handleWithdraw(amount: BigNumber) {
+    if (amount.lte(ethers.constants.Zero)) {
       throw new Error('Withdraw amount must be a positive number');
     }
-    const parsedAmount = ethers.utils.parseUnits(amount);
-    withdraw(BigNumber.from(parsedAmount));
+
+    withdraw(amount);
   }
 
   function handleConnect() {

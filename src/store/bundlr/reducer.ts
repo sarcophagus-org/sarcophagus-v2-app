@@ -1,25 +1,26 @@
 import { WebBundlr } from '@bundlr-network/client';
+import { BigNumber, ethers } from 'ethers';
 import { Actions } from '..';
 import { ActionType } from './actions';
 
 export interface BundlrState {
-  balance: string;
+  balance: BigNumber;
   bundlr: WebBundlr | null;
   isConnected: boolean;
   isFunding: boolean;
   isUploading: boolean;
   txId: string | null;
-  balanceOffset: number;
+  balanceOffset: BigNumber;
 }
 
 export const bundlrInitialState: BundlrState = {
-  balance: '0',
+  balance: ethers.constants.Zero,
   bundlr: null,
   isConnected: false,
   isFunding: false,
   isUploading: false,
   txId: null,
-  balanceOffset: 0,
+  balanceOffset: ethers.constants.Zero,
 };
 
 export function bundlrReducer(state: BundlrState, action: Actions): BundlrState {
@@ -45,13 +46,13 @@ export function bundlrReducer(state: BundlrState, action: Actions): BundlrState 
       return { ...state, txId };
 
     case ActionType.Fund:
-      return { ...state, balanceOffset: state.balanceOffset + parseFloat(action.payload.amount) };
+      return { ...state, balanceOffset: state.balanceOffset.add(action.payload.amount) };
 
     case ActionType.Withdraw:
-      return { ...state, balanceOffset: state.balanceOffset - parseFloat(action.payload.amount) };
+      return { ...state, balanceOffset: state.balanceOffset.sub(action.payload.amount) };
 
     case ActionType.ResetBalanceOffset:
-      return { ...state, balanceOffset: 0 };
+      return { ...state, balanceOffset: ethers.constants.Zero };
 
     default:
       return state;

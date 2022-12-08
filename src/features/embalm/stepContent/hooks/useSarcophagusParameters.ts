@@ -10,6 +10,7 @@ import {
 } from '../../../../lib/utils/helpers';
 import moment from 'moment';
 import { minimumResurrection } from 'lib/constants';
+import { ethers } from 'ethers';
 
 export interface SarcophagusParameter {
   name: string;
@@ -86,10 +87,10 @@ export const useSarcophagusParameters = () => {
     },
     {
       name: 'BUNDLR BALANCE',
-      value: balance,
+      value: ethers.utils.formatUnits(balance),
       step: Step.FundBundlr,
       error:
-        !isHardhatNetwork && (balance === '0' || !balance)
+        !isHardhatNetwork && (balance.eq(ethers.constants.Zero) || !balance)
           ? 'You do not have enough balance on Bundlr'
           : null,
     },

@@ -11,7 +11,7 @@ import {
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
 
@@ -80,10 +80,7 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if (
-      (isBundlrConnected && parseFloat(balance) > parseFloat(uploadPrice)) ||
-      chain?.id === hardhatChainId
-    ) {
+    if ((isBundlrConnected && balance.gt(uploadPrice)) || chain?.id === hardhatChainId) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
