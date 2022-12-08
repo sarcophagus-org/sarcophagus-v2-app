@@ -68,4 +68,6 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
       }
     })();
   }, [addNodeEventListeners, createAndStartNode, dispatch, globalLibp2pNode, onPeerDiscovery]);
+
+  return { addNodeEventListeners, createAndStartNode };
 }
