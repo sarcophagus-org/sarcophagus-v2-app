@@ -18,15 +18,23 @@ export function useUploadDoubleEncryptedFile() {
       };
 
       // Step 1: Encrypt the inner layer
+      console.log('step 1');
+      console.log('recipientState.publicKey', recipientState.publicKey);
+      console.log('JSON.stringify(payload))', JSON.stringify(payload));
+      console.log('Buffer.from(JSON.stringify(payload))', Buffer.from(JSON.stringify(payload)));
+
       const encryptedInnerLayer = await encrypt(
         recipientState.publicKey,
         Buffer.from(JSON.stringify(payload))
       );
 
+      console.log(' encryptedInnerLayer complete');
       // Step 2: Encrypt the outer layer
+      console.log('step 2');
       const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
 
       // Step 3: Upload the double encrypted payload to arweave
+      console.log('step 3');
       const payloadTxId = await uploadToArweave(encryptedOuterLayer);
 
       setSarcophagusPayloadTxId(payloadTxId);
