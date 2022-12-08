@@ -11,7 +11,7 @@ import {
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
 
