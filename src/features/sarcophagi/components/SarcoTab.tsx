@@ -16,7 +16,7 @@ export function SarcoTab({ children, ...props }: TabProps) {
       }}
       {...props}
     >
-      <Text>{children}</Text>
+      {children}
     </Tab>
   );
 }
