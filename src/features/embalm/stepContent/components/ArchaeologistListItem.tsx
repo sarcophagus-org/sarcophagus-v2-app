@@ -62,12 +62,11 @@ export function ArchaeologistListItem({
                   dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
                 }
               }}
-              colorScheme="checkboxScheme"
             ></Checkbox>
           )}
           <Text
             ml={3}
-            bg={'table.textBackground'}
+            bg={'grayBlue.950'}
             color={rowTextColor}
             py={0.5}
             px={2}
@@ -86,7 +85,7 @@ export function ArchaeologistListItem({
 
   return (
     <Tr
-      background={isSelected ? (archaeologist.exception ? 'errorHighlight' : 'brand.50') : ''}
+      background={isSelected ? (archaeologist.exception ? 'background.red' : 'brand.50') : ''}
       onClick={() => handleClickRow()}
       cursor="pointer"
       _hover={isSelected ? {} : { background: 'brand.0' }}
