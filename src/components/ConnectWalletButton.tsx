@@ -1,7 +1,7 @@
-import { Button, Flex, Text, IconButton } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { SarcoTokenIcon } from 'components/icons';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { DotsMenuIcon, SarcoTokenIcon } from 'components/icons';
 
 export function ConnectWalletButton() {
   const { formattedBalance } = useSarcoBalance();
@@ -42,14 +42,6 @@ export function ConnectWalletButton() {
                 >
                   <Text>{account.displayName}</Text>
                 </Button>
-
-                <IconButton
-                  ml={2}
-                  variant="ghost"
-                  icon={<DotsMenuIcon />}
-                  bg="grayBlue.1000"
-                  aria-label="more"
-                />
               </Flex>
             )}
           </Flex>
