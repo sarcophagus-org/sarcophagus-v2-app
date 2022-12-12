@@ -42,14 +42,6 @@ export function ConnectWalletButton() {
                 >
                   <Text>{account.displayName}</Text>
                 </Button>
-
-                <IconButton
-                  ml={2}
-                  variant="ghost"
-                  icon={<DotsMenuIcon />}
-                  bg="menuBlue.1000"
-                  aria-label="more"
-                />
               </Flex>
             )}
           </Flex>
