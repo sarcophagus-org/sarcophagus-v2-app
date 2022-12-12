@@ -26,6 +26,8 @@
     "@libp2p/kad-dht": "^5.0.1",
     "@libp2p/mplex": "^7.0.0",
     "@libp2p/webrtc-star": "^5.0.3",
+    "@libp2p/websockets": "^5.0.1",
+    "@multiformats/multiaddr": "^10.0.3",
     "@rainbow-me/rainbowkit": "^0.4.1",
     "@react-pdf/renderer": "^3.0.0",
     "@sarcophagus-org/sarcophagus-v2-contracts": "^0.7.0",
