@@ -23,7 +23,7 @@ export function useLoadArchaeologists() {
         // archaeologists would need to be loaded from the contract again is when a new
         // archaeologist registers.
         //
-        // Additoinally we will reload the archeaolgist on network switch.
+        // Additionally we will reload the archaeologist on network switch.
         if (archaeologists.length > 0 && currentChainId === chain?.id) return;
         dispatch(startLoad());
         dispatch(setCurrentChainId(chain?.id));
@@ -59,7 +59,8 @@ export function useLoadArchaeologists() {
             accusals: stats[i].accusals,
             failures: stats[i].failures,
           },
-          isOnline: false,
+          // TODO: Remove when done testing - temp hack detect if peerID is a domain.
+          isOnline: p.peerId.includes('.'),
         }));
         dispatch(setArchaeologists(newArchaeologists));
       } catch (error) {

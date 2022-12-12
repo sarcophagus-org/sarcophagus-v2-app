@@ -2,6 +2,7 @@ import { noise } from '@chainsafe/libp2p-noise';
 import { mplex } from '@libp2p/mplex';
 import { kadDHT } from '@libp2p/kad-dht';
 import { webRTCStar } from '@libp2p/webrtc-star';
+import { webSockets } from '@libp2p/websockets';
 
 // protocol names used to set up communication with archaeologist nodes
 // these values must be the same for webapp's and archaeologist's node config
@@ -28,7 +29,7 @@ export const nodeConfig: any = {
         return `/dns4/${server}/tcp/443/wss/p2p-webrtc-star`;
       }),
   },
-  transports: [webRtcStar.transport],
+  transports: [webSockets(), webRtcStar.transport],
   connectionEncryption: [noise()],
   streamMuxers: [mplex()],
   peerDiscovery: [webRtcStar.discovery],
