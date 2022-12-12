@@ -1,7 +1,7 @@
-import { Flex, Text, VStack, HStack, Button, FlexProps, forwardRef } from '@chakra-ui/react';
+import { Button, Flex, FlexProps, forwardRef, HStack, Text, VStack } from '@chakra-ui/react';
+import { DatePicker } from 'components/DatePicker';
 import { Radio } from 'components/Radio';
 import { useSetResurrection } from '../hooks/useSetResurrection';
-import { DatePicker } from 'components/DatePicker';
 
 export enum ResurrectionRadioValue {
   OneMonth = '1 month',
@@ -72,6 +72,7 @@ export function SetResurrection({ ...rest }: FlexProps) {
               timeFormat="hh:mma"
               dateFormat="MM.dd.yyyy hh:mma"
               fixedHeight
+              filterTime={date => new Date().getTime() < date.getTime()}
               customInput={<CustomResurrectionButton />}
             />
           </Radio>

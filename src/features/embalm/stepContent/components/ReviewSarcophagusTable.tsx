@@ -39,7 +39,7 @@ export function ReviewSarcophagusTable() {
                     py={0.5}
                     mr={2}
                     rounded="sm"
-                    bg={error ? 'table.errorBackground' : 'table.textBackground'}
+                    bg={error ? 'background.red' : 'grayBlue.950'}
                   >
                     {name}
                   </Text>
@@ -53,7 +53,7 @@ export function ReviewSarcophagusTable() {
                   px={2}
                   py={0.5}
                   rounded="sm"
-                  bg={error ? 'table.errorBackground' : 'table.textBackground'}
+                  bg={error ? 'background.red' : 'grayBlue.950'}
                 >
                   {value || '----'}
                 </Text>
