@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
+import { chunkedUploaderFileSize } from 'lib/constants';
 import {
   fundStart,
   fundSuccess,
@@ -92,7 +93,15 @@ export function useBundlr() {
 
       toast(uploadStart());
       try {
-        const res = await bundlr?.upload(fileBuffer);
+        let res;
+
+        if (Buffer.byteLength(fileBuffer) < chunkedUploaderFileSize) {
+          res = await bundlr?.upload(fileBuffer);
+        } else {
+          const uploader = bundlr?.uploader.chunkedUploader;
+          res = await uploader?.uploadData(fileBuffer);
+        }
+
         toast(uploadSuccess());
         return res.data.id;
       } catch (_error) {

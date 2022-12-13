@@ -20,7 +20,7 @@ export function useUploadDoubleEncryptedFile() {
       // Step 1: Encrypt the inner layer
       const encryptedInnerLayer = await encrypt(
         recipientState.publicKey,
-        Buffer.from(JSON.stringify(payload))
+        Buffer.from(JSON.stringify(payload), 'hex')
       );
 
       // Step 2: Encrypt the outer layer
