@@ -12,7 +12,7 @@ export function BundlrAlertMessage() {
     return <SarcoAlert status="warning">Upload a payload to get the upload price.</SarcoAlert>;
   }
 
-  if (parseFloat(balance) < parseFloat(uploadPrice)) {
+  if (balance.lt(uploadPrice)) {
     return <SarcoAlert status="warning">You need to add funds to Bundlr.</SarcoAlert>;
   }
 

@@ -1,3 +1,4 @@
+import { BigNumber, ethers } from 'ethers';
 import { bundlrBalanceDecimals } from 'lib/constants';
 import { useCallback, useEffect, useMemo } from 'react';
 import { resetBalanceOffset, setBalance } from 'store/bundlr/actions';
@@ -16,7 +17,7 @@ export function useGetBalance() {
   const formattedBalance = useMemo(
     () =>
       isConnected && balance
-        ? `${parseFloat(balance).toFixed(bundlrBalanceDecimals)} ${
+        ? `${parseFloat(ethers.utils.formatUnits(balance)).toFixed(bundlrBalanceDecimals)} ${
             chain?.nativeCurrency?.name || 'ETH'
           }`
         : '',
@@ -27,10 +28,9 @@ export function useGetBalance() {
    * The hook returns this to manually load the balance after a successful fund
    */
   const getBalance = useCallback(async () => {
-    if (!bundlr) return '0';
+    if (!bundlr) return ethers.constants.Zero;
     const newBalance = await bundlr.getLoadedBalance();
-    const converted = bundlr.utils.unitConverter(newBalance);
-    return converted.toString();
+    return BigNumber.from(newBalance.toString());
   }, [bundlr]);
 
   // Effect that loads the balance when the component mounts and if the bundlr is instantiated
@@ -40,7 +40,7 @@ export function useGetBalance() {
         const newBalance = await getBalance();
         dispatch(setBalance(newBalance));
       } else {
-        dispatch(setBalance(''));
+        dispatch(setBalance(ethers.constants.Zero));
       }
     })();
   }, [bundlr, dispatch, getBalance]);
@@ -53,12 +53,12 @@ export function useGetBalance() {
   // value.
   useEffect(() => {
     const timeoutId = setInterval(async () => {
-      if (balanceOffset !== 0) {
+      if (!balanceOffset.eq(ethers.constants.Zero)) {
         const newBalance = await getBalance();
         // Check if the sum of the balance stored in state and the balance offset is equal to the
         // new balance. This indicates that the balance has finally been updated to the expected
         // amount.
-        if (parseFloat(balance) + balanceOffset === parseFloat(newBalance)) {
+        if (balance.add(balanceOffset).eq(newBalance)) {
           dispatch(resetBalanceOffset());
         }
 
