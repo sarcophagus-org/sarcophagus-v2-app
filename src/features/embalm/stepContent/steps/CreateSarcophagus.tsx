@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
-import { useDispatch } from '../../../../store';
+import { useDispatch, useSelector } from '../../../../store';
 import { goToStep, setArchaeologists } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -25,7 +25,8 @@ import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils
 
 export function CreateSarcophagus() {
   const { getProfiles } = useLoadArchaeologists();
-  const { addNodeEventListeners, createAndStartNode } = useBootLibp2pNode(20_000);
+  const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
+  const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -95,12 +96,11 @@ export function CreateSarcophagus() {
         const profiles = await getProfiles();
         dispatch(setArchaeologists(profiles));
 
-        // Run the discovery process
-        const newLibp2pNode = await createAndStartNode();
-        addNodeEventListeners(newLibp2pNode);
+        // restart the peer discovery process
+        await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
-  }, [addNodeEventListeners, createAndStartNode, dispatch, getProfiles, isCreateCompleted]);
+  }, [addPeerDiscoveryEventListener, globalLibp2pNode, dispatch, getProfiles, isCreateCompleted]);
 
   if (isCreateCompleted()) {
     // setTimeout with delay set to 0 is an easy fix for the following error:
