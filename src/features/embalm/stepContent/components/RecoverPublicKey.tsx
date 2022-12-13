@@ -32,7 +32,7 @@ export function RecoverPublicKey() {
   const dispatch = useDispatch();
   const { recipientState } = useSelector(x => x.embalmState);
 
-  const { recoverPublicKey, isLoading, errorStatus } = useRecoverPublicKey();
+  const { recoverPublicKey, isLoading, errorStatus, clearErrorStatus } = useRecoverPublicKey();
 
   async function handleOnClick(): Promise<void> {
     if (recipientState.address !== '') await recoverPublicKey(recipientState.address);
@@ -45,15 +45,16 @@ export function RecoverPublicKey() {
     >
       <Input
         placeholder="0x0..."
-        onChange={e =>
+        onChange={e => {
+          if (errorStatus) clearErrorStatus();
           dispatch(
             setRecipientState({
               address: e.target.value,
               publicKey: '',
               setByOption: RecipientSetByOption.ADDRESS,
             })
-          )
-        }
+          );
+        }}
         value={recipientState.address}
         disabled={isLoading}
         maxLength={42}
