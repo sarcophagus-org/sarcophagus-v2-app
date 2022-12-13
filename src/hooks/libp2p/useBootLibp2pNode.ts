@@ -22,17 +22,9 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { onPeerDisconnect, onPeerDiscovery } = useLibp2p();
 
-  const createAndStartNode = useCallback(async (): Promise<Libp2p> => {
-    const newLibp2pNode = await createLibp2p(nodeConfig);
-    await newLibp2pNode.start();
-
-    return newLibp2pNode;
-  }, []);
-
-  const addNodeEventListeners = useCallback(
+  const addPeerDiscoveryEventListener = useCallback(
     (libp2pNode: Libp2p): void => {
       libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
-      libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
 
       // TODO: Remove this once we refactor how libp2p works
       // Sets a limited time discovery period by removing the listener after a certain period of
@@ -44,28 +36,39 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
         }, discoveryPeriod);
       }
     },
-    [onPeerDiscovery, onPeerDisconnect, discoveryPeriod]
+    [onPeerDiscovery, discoveryPeriod]
   );
+
+  const addPeerDisconnectEventListener = useCallback(
+    (libp2pNode: Libp2p): void => {
+      libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
+    },
+    [onPeerDisconnect]
+  );
+
+  const createAndStartNode = useCallback(async (): Promise<void> => {
+    const newLibp2pNode = await createLibp2p(nodeConfig);
+    await newLibp2pNode.start();
+    log(`Browser node starting with peerID: ${newLibp2pNode.peerId.toString()}`);
+
+    addPeerDiscoveryEventListener(newLibp2pNode);
+    addPeerDisconnectEventListener(newLibp2pNode);
+
+    // set global libp2p node for later use
+    dispatch(setLibp2p(newLibp2pNode));
+  }, [addPeerDiscoveryEventListener, addPeerDisconnectEventListener, dispatch]);
 
   useEffect(() => {
     (async () => {
       try {
         if (!globalLibp2pNode) {
-          const newLibp2pNode = await createAndStartNode();
-
-          log(`Browser node starting with peerID: ${newLibp2pNode.peerId.toString()}`);
-
-          addNodeEventListeners(newLibp2pNode);
-          // set global libp2p node for later use
-          dispatch(setLibp2p(newLibp2pNode));
-
-          // TODO: remove event listeners
-          // Need to find correct place to call this without disrupting the event listeners
-          // Was previously removing on unmount of the useLibp2p hook, but that was not working
+          await createAndStartNode();
         }
       } catch (error) {
         console.error(error);
       }
     })();
-  }, [addNodeEventListeners, createAndStartNode, dispatch, globalLibp2pNode, onPeerDiscovery]);
+  }, [createAndStartNode, globalLibp2pNode]);
+
+  return { addPeerDiscoveryEventListener, createAndStartNode };
 }

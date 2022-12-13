@@ -4,24 +4,29 @@ import {
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber, ethers } from 'ethers';
+import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
+import { useDispatch, useSelector } from '../../../../store';
+import { goToStep, setArchaeologists } from '../../../../store/embalm/actions';
+import { Step } from '../../../../store/embalm/reducer';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
+import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
-import { goToStep } from '../../../../store/embalm/actions';
-import { Step } from '../../../../store/embalm/reducer';
-import { useDispatch } from '../../../../store';
 
 export function CreateSarcophagus() {
+  const { getProfiles } = useLoadArchaeologists();
+  const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
+  const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -53,9 +58,9 @@ export function CreateSarcophagus() {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
   };
 
-  const isCreateCompleted = (): boolean => {
+  const isCreateCompleted = useCallback(() => {
     return currentStage === CreateSarcophagusStage.COMPLETED;
-  };
+  }, [currentStage]);
 
   const cancelCreate = useCallback(async () => {
     // TODO add alert to user before cancelling
@@ -81,6 +86,21 @@ export function CreateSarcophagus() {
       }
     }
   }, [allowance, signer]);
+
+  // Reload the archaeologist list when create is completed. This is so that free bonds from the
+  // arch profiles will be updated.
+  useEffect(() => {
+    (async () => {
+      if (isCreateCompleted()) {
+        // Get the profiles from the contract
+        const profiles = await getProfiles();
+        dispatch(setArchaeologists(profiles));
+
+        // restart the peer discovery process
+        await addPeerDiscoveryEventListener(globalLibp2pNode!);
+      }
+    })();
+  }, [addPeerDiscoveryEventListener, globalLibp2pNode, dispatch, getProfiles, isCreateCompleted]);
 
   if (isCreateCompleted()) {
     // setTimeout with delay set to 0 is an easy fix for the following error:
