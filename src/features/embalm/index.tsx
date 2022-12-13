@@ -1,9 +1,7 @@
 import { Flex, Heading } from '@chakra-ui/react';
 import { MagicFormFiller } from 'components/MagicFormFiller';
 import { StepContent } from 'features/embalm/stepContent';
-
 import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
-import { useBundlrSession } from './stepContent/hooks/useBundlrSession';
 import { useLoadArchaeologists } from './stepContent/hooks/useLoadArchaeologists';
 import { StepNavigator } from './stepNavigator';
 
@@ -12,7 +10,6 @@ const hideMagicFormFiller = false;
 
 export function Embalm() {
   useLoadArchaeologists();
-  useBundlrSession();
   useBootLibp2pNode(20_000);
 
   return (

@@ -20,7 +20,7 @@ import { useGetBalance } from '../hooks/useGetBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
-  const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
+  const { connectToBundlr, disconnectFromBundlr, isConnected } = useBundlrSession();
   const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
   const [inputAmount, setInputAmount] = useState(
