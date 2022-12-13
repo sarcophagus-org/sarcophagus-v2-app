@@ -49,7 +49,7 @@ export function RecoverPublicKey() {
           if (errorStatus) clearErrorStatus();
           dispatch(
             setRecipientState({
-              address: e.target.value,
+              address: e.target.value.trim(),
               publicKey: '',
               setByOption: RecipientSetByOption.ADDRESS,
             })
@@ -72,6 +72,7 @@ export function RecoverPublicKey() {
       <Button
         onClick={handleOnClick}
         isLoading={isLoading}
+        disabled={!recipientState.address.trim()}
         w="190px"
       >
         Lookup Public Key
