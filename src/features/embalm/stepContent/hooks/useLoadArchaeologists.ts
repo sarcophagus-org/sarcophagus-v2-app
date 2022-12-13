@@ -39,7 +39,7 @@ export function useLoadArchaeologists() {
       args: [addresses],
     })) as any[];
 
-    const newArchaeologists = profiles.map((p, i) => ({
+    return profiles.map((p, i) => ({
       profile: {
         ...p,
         archAddress: addresses[i],
@@ -48,10 +48,10 @@ export function useLoadArchaeologists() {
         accusals: stats[i].accusals,
         failures: stats[i].failures,
       },
-      isOnline: false,
+      // TODO - temporarily list all archs that have domains as online
+      // until discovery for archs using websockets is updated
+      isOnline: p.peerId.includes(':'),
     }));
-
-    return newArchaeologists;
   }, [networkConfig.diamondDeployAddress]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export function useLoadArchaeologists() {
         // archaeologists would need to be loaded from the contract again is when a new
         // archaeologist registers.
         //
-        // Additionally we will reload the archeaolgist on network switch.
+        // Additionally we will reload the archaeologist on network switch.
         if (archaeologists.length > 0 && currentChainId === chain?.id) return;
 
         dispatch(startLoad());

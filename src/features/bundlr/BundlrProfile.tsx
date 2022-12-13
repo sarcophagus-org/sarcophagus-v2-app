@@ -1,6 +1,6 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { EthereumIcon } from 'components/icons/EthereumIcon';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
@@ -16,13 +16,13 @@ export enum BundlrAction {
 
 interface BundlrProfileProps {
   action: BundlrAction;
-  onDeposit?: (amount: string) => void;
-  onWithdraw?: (amount: string) => void;
+  onDeposit?: (amount: BigNumber) => void;
+  onWithdraw?: (amount: BigNumber) => void;
   onConnect?: () => void;
 }
 
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
-  const [amount, setAmount] = useState('');
+  const [inputAmount, setInputAmount] = useState('');
   const { balanceOffset } = useSelector(s => s.bundlrState);
   const bundlrBalanceData = useGetBalance();
   const bundlrBalance = !bundlrBalanceData?.balance
@@ -45,16 +45,16 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
 
   function handleChangeAmount(valueAsString: string) {
     if (valueAsString.length > 20) return;
-    setAmount(valueAsString);
+    setInputAmount(valueAsString);
   }
 
   function handleClickButton() {
     switch (action) {
       case BundlrAction.Deposit:
-        onDeposit?.(amount);
+        onDeposit?.(ethers.utils.parseUnits(inputAmount));
         break;
       case BundlrAction.Withdraw:
-        onWithdraw?.(amount);
+        onWithdraw?.(ethers.utils.parseUnits(inputAmount));
         break;
       case BundlrAction.Connect:
         onConnect?.();
@@ -75,7 +75,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         <Text fontSize="3xl">{bundlrBalance}</Text>
       </Flex>
       <Text mt={1}>{isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}</Text>
-      {balanceOffset !== 0 && (
+      {!balanceOffset.eq(ethers.constants.Zero) && (
         <Text
           mt={3}
           color="yellow"
@@ -85,7 +85,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       )}
       <Text mt={6}>Enter Amount</Text>
       <BundlrInput
-        value={amount}
+        value={inputAmount}
         onChange={handleChangeAmount}
       />
       <Text mt={3}>

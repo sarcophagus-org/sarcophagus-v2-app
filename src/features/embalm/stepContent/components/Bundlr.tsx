@@ -20,19 +20,21 @@ import { useGetBalance } from '../hooks/useGetBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
-  const { connectToBundlr, isConnected, disconnectFromBundlr } = useBundlrSession();
+  const { connectToBundlr, disconnectFromBundlr, isConnected } = useBundlrSession();
   const { formattedBalance } = useGetBalance();
-  const { uploadPrice, formattedUploadPrice, uploadPriceBN } = useUploadPrice();
-  const [amount, setAmount] = useState(parseFloat(uploadPrice || '0').toFixed(uploadPriceDecimals));
+  const { uploadPrice, formattedUploadPrice } = useUploadPrice();
+  const [inputAmount, setInputAmount] = useState(
+    parseFloat(ethers.utils.formatUnits(uploadPrice)).toFixed(uploadPriceDecimals)
+  );
   const { balanceOffset } = useSelector(x => x.bundlrState);
 
-  const isAmountValid = parseFloat(amount) > 0;
+  const isInputAmountValid = parseFloat(inputAmount) > 0;
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value } = event.target;
     if (Number(value) < 0 || !ethers.utils.parseEther(value)) return;
     const inputLimit = 46;
-    setAmount(value.slice(0, inputLimit));
+    setInputAmount(value.slice(0, inputLimit));
   }
 
   function handleDisconnect() {
@@ -40,9 +42,9 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
   }
 
   const handleFund = useCallback(async () => {
-    if (!isAmountValid) return;
-    await fund(amount);
-  }, [amount, fund, isAmountValid]);
+    if (!isInputAmountValid) return;
+    await fund(ethers.utils.parseUnits(inputAmount));
+  }, [inputAmount, fund, isInputAmountValid]);
 
   return (
     <VStack
@@ -71,7 +73,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               >
                 <Input
                   onChange={handleInputChange}
-                  value={amount}
+                  value={inputAmount}
                   isDisabled={isFunding}
                   type="text"
                   placeholder="0.00000000"
@@ -81,7 +83,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </InputGroup>
               <Button
                 float="right"
-                disabled={!isAmountValid || isFunding}
+                disabled={!isInputAmountValid || isFunding}
                 isLoading={isFunding}
                 onClick={handleFund}
               >
@@ -112,11 +114,11 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               </Button>
             </HStack>
             <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            {uploadPriceBN.gt(0) && (
+            {uploadPrice.gt(0) && (
               <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
             )}
           </VStack>
-          {balanceOffset !== 0 && (
+          {!balanceOffset.eq(ethers.constants.Zero) && (
             <Text
               mt={3}
               color="error"

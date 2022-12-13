@@ -8,13 +8,11 @@ import { useDispatch } from 'store/index';
 import { useEffect } from 'react';
 import { goToStep } from 'store/embalm/actions';
 import { Step } from 'store/embalm/reducer';
-import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 
 export function WalletDisconnectPage() {
   const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { supportedNetworkNames } = useSupportedNetwork();
-  const { disconnectFromBundlr } = useBundlrSession();
 
   const { clearSarcophagusState } = useClearSarcophagusState();
   const dispatch = useDispatch();
@@ -22,10 +20,9 @@ export function WalletDisconnectPage() {
   useEffect(() => {
     if (!address) {
       clearSarcophagusState();
-      disconnectFromBundlr();
       dispatch(goToStep(Step.NameSarcophagus));
     }
-  }, [address, clearSarcophagusState, disconnectFromBundlr, dispatch]);
+  }, [address, clearSarcophagusState, dispatch]);
 
   return (
     <Container

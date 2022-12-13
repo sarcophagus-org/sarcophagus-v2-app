@@ -4,11 +4,13 @@ import { Abi } from 'abitype';
 import { useNetworkConfig } from 'lib/config';
 import { rewrapFailure, rewrapSuccess } from 'lib/utils/toast';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 
 export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | null) {
   const networkConfig = useNetworkConfig();
   const toast = useToast();
+  const navigate = useNavigate();
 
   const timeInSeconds = resurrectionTime ? Math.trunc(resurrectionTime.getTime() / 1000) : 0;
 
@@ -34,6 +36,7 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     onSuccess() {
       toast(rewrapSuccess());
       setIsRewrapping(false);
+      navigate(`/dashboard/${sarcoId}`);
     },
     onError(e) {
       console.error(e);

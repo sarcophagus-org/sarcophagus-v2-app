@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import {
   fundStart,
@@ -28,12 +28,11 @@ export function useBundlr() {
    * @param amount The amount to fund the bundlr node
    */
   const fund = useCallback(
-    async (amount: string) => {
+    async (amount: BigNumber) => {
       dispatch(setIsFunding(true));
       toast(fundStart());
       try {
-        const parsedAmount = ethers.utils.parseUnits(amount);
-        await bundlr?.fund(Number(parsedAmount));
+        await bundlr?.fund(amount.toString());
 
         toast(fundSuccess());
       } catch (_error) {

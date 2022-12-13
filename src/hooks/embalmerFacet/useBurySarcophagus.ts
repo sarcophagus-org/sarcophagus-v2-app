@@ -18,10 +18,15 @@ export function useBurySarcophagus(sarcoId: string) {
     args: [sarcoId],
   });
 
-  const { write, data } = useContractWrite(config);
-
   // Wagmi is for some reason unable to track when write has been called
   const [isBurying, setIsBurying] = useState(false);
+
+  const { write, data } = useContractWrite({
+    ...config,
+    onError() {
+      setIsBurying(false);
+    },
+  });
 
   function bury() {
     write?.();

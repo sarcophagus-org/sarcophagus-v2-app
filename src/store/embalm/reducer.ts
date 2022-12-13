@@ -1,3 +1,4 @@
+import { BigNumber, ethers } from 'ethers';
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
@@ -34,7 +35,7 @@ export interface EmbalmState {
   customResurrectionDate: Date | null;
   selectedArchaeologists: Archaeologist[];
   stepStatuses: { [key: number]: StepStatus };
-  uploadPrice: string;
+  uploadPrice: BigNumber;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
   currentChainId: number | undefined;
@@ -58,7 +59,7 @@ export const embalmInitialState: EmbalmState = {
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
-  uploadPrice: '0',
+  uploadPrice: ethers.constants.Zero,
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
   currentChainId: undefined,

@@ -6,6 +6,7 @@ import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { createSarcophagusErrors } from '../../utils/errors';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
+import { multiaddr } from '@multiformats/multiaddr';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -58,7 +59,14 @@ export function useDialArchaeologists() {
     for await (const arch of selectedArchaeologists) {
       try {
         const connection = await dialArchaeologistWithRetry(() =>
-          libp2pNode?.dial(arch.fullPeerId!)
+          !arch.profile.peerId.includes('.')
+            ? libp2pNode?.dial(arch.fullPeerId!)
+            : libp2pNode?.dial(
+                // @ts-ignore
+                multiaddr(
+                  '/dns4/wss.encryptafile.com/tcp/443/wss/p2p/12D3KooWPLcrUEMREHW3eT6EWTTbgaKFeay8Ywqck7dyVSERfJZd'
+                )
+              )
         );
         if (!connection) throw Error('No connection obtained from dial');
         dispatch(setArchaeologistConnection(arch.profile.peerId, connection));

@@ -1,4 +1,5 @@
 import { WebBundlr } from '@bundlr-network/client';
+import { BigNumber } from 'ethers';
 import { ActionMap } from '../ActionMap';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
@@ -18,8 +19,8 @@ export enum ActionType {
 type BundlrPayload = {
   [ActionType.Connect]: {};
   [ActionType.Disconnect]: {};
-  [ActionType.Fund]: { amount: string };
-  [ActionType.SetBalance]: { balance: string };
+  [ActionType.Fund]: { amount: BigNumber };
+  [ActionType.SetBalance]: { balance: BigNumber };
   [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
   [ActionType.SetIsFunding]: { isFunding: boolean };
   [ActionType.SetTxId]: { txId: string };
@@ -50,7 +51,7 @@ export function setBundlr(bundlr: WebBundlr | null): BundlrActions {
   };
 }
 
-export function setBalance(balance: string): BundlrActions {
+export function setBalance(balance: BigNumber): BundlrActions {
   return {
     type: ActionType.SetBalance,
     payload: {
@@ -68,7 +69,7 @@ export function setIsFunding(isFunding: boolean): BundlrActions {
   };
 }
 
-export function fund(amount: string): BundlrActions {
+export function fund(amount: BigNumber): BundlrActions {
   return {
     type: ActionType.Fund,
     payload: {

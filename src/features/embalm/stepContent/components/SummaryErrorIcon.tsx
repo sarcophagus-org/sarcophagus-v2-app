@@ -12,7 +12,7 @@ export function SummaryErrorIcon({ error }: { error?: string }) {
         h="1.2rem"
         w="1.2rem"
         borderRadius={100}
-        background="errorAlt"
+        background="background.red"
         alignItems="center"
         justifyContent="center"
       >
@@ -20,7 +20,7 @@ export function SummaryErrorIcon({ error }: { error?: string }) {
           h="1.2rem"
           w="1.2rem"
           borderRadius={100}
-          background="errorAlt"
+          background="background.red"
           alignItems="center"
           justifyContent="center"
           color="red"

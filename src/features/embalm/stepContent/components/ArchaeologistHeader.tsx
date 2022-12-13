@@ -41,9 +41,9 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         <Flex px={3}>
           <HStack direction="row">
             <Checkbox
-              colorScheme="checkboxScheme"
+              variant="brand"
               onChange={() => selectAndReset()}
-            ></Checkbox>
+            />
             <HStack>
               <Text>
                 Show
