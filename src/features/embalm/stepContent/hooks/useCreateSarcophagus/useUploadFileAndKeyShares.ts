@@ -9,14 +9,14 @@ import {
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
 
-export function useUploadDoubleEncryptedFile() {
+export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
   const { outerPrivateKey, outerPublicKey, setSarcophagusPayloadTxId } =
     useContext(CreateSarcophagusContext);
 
-  const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
+  const uploadAndSetArweavePayload = useCallback(async () => {
     try {
       const data = await readFileDataAsBase64(file!);
       const payload = {
@@ -66,6 +66,8 @@ export function useUploadDoubleEncryptedFile() {
         {}
       );
 
+      // TODO -- will need to test this
+      // TODO -- this will affect the resurrection
       const combinedPayload = {
         file: encryptedOuterLayer,
         keyShares: Buffer.from(JSON.stringify(doubleEncryptedKeyShares)),
@@ -78,9 +80,18 @@ export function useUploadDoubleEncryptedFile() {
     } catch (error: any) {
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }
-  }, [file, outerPublicKey, recipientState.publicKey, uploadToArweave, setSarcophagusPayloadTxId]);
+  }, [
+    file,
+    requiredArchaeologists,
+    selectedArchaeologists,
+    outerPublicKey,
+    outerPrivateKey,
+    recipientState.publicKey,
+    uploadToArweave,
+    setSarcophagusPayloadTxId,
+  ]);
 
   return {
-    uploadAndSetDoubleEncryptedFile,
+    uploadAndSetArweavePayload: uploadAndSetArweavePayload,
   };
 }

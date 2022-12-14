@@ -1,6 +1,6 @@
 import { ArchaeologistEncryptedShard } from '../../../../types';
 import { ethers } from 'ethers';
-import { doubleHashShard, encrypt } from '../../../../lib/utils/helpers';
+import { encrypt } from '../../../../lib/utils/helpers';
 
 export async function encryptShardsWithArchaeologistPublicKeys(
   publicKeys: string[],
@@ -20,7 +20,7 @@ export async function encryptShardsWithRecipientPublicKey(
 ): Promise<Uint8Array[]> {
   return Promise.all(
     keyShares.map(async (share, i) => {
-      return await encrypt(publicKey, Buffer.from(keyShares[i]));
+      return encrypt(publicKey, Buffer.from(keyShares[i]));
     })
   );
 }

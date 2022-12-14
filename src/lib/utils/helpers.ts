@@ -1,6 +1,6 @@
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers } from 'ethers';
-import { formatEther, keccak256 } from 'ethers/lib/utils';
+import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import { Archaeologist } from 'types';
 
@@ -105,14 +105,6 @@ export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffe
 
 export async function decrypt(privateKey: string, payload: Buffer): Promise<Buffer> {
   return eciesDecrypt(Buffer.from(ethers.utils.arrayify(privateKey)), payload);
-}
-
-export function doubleHashShard(shard: Uint8Array): string {
-  if (shard) {
-    return keccak256(keccak256(Buffer.from(shard)));
-  } else {
-    return '';
-  }
 }
 
 export function formatFee(value: number | string, fixed = 2): string {

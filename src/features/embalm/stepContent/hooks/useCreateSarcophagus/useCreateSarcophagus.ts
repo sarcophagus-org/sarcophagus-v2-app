@@ -6,12 +6,10 @@ import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { ethers } from 'ethers';
 import { formatCreateSarcophagusError } from '../../utils/errors';
 import { useDialArchaeologists } from './useDialArchaeologists';
-import { useUploadEncryptedShards } from './useUploadEncryptedShards';
-import { useUploadDoubleEncryptedFile } from './useUploadDoubleEncryptedFile';
+import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
 import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 import { useClearSarcophagusState } from './useClearSarcophagusState';
-import { useRequestPublicKeys } from './useRequestPublicKeys';
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
@@ -27,13 +25,10 @@ export function useCreateSarcophagus(
   const [stageError, setStageError] = useState<string>();
   const [isStageRetry, setIsStageRetry] = useState(false);
 
-  // Returns true when all public keys have been received from archaoelogists
-
   // Each hook represents a stage in the create sarcophagus process
   const { dialSelectedArchaeologists } = useDialArchaeologists();
-  const { uploadAndSetEncryptedShards } = useUploadEncryptedShards();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
-  const { uploadAndSetDoubleEncryptedFile } = useUploadDoubleEncryptedFile();
+  const { uploadAndSetArweavePayload } = useUploadFileAndKeyShares();
   const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
   const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
   const { clearSarcophagusState, successData } = useClearSarcophagusState();
@@ -42,7 +37,7 @@ export function useCreateSarcophagus(
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
-      [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetDoubleEncryptedFile],
+      [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetArweavePayload],
       [CreateSarcophagusStage.APPROVE, approveSarcoToken],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, submitSarcophagus],
       [CreateSarcophagusStage.CLEAR_STATE, clearSarcophagusState],
@@ -51,7 +46,7 @@ export function useCreateSarcophagus(
   }, [
     dialSelectedArchaeologists,
     initiateSarcophagusNegotiation,
-    uploadAndSetDoubleEncryptedFile,
+    uploadAndSetArweavePayload,
     approveSarcoToken,
     submitSarcophagus,
     clearSarcophagusState,

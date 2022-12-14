@@ -1,6 +1,6 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { getLowestRewrapInterval } from '../../../../lib/utils/helpers';
-import { Archaeologist, ArchaeologistEncryptedShard } from '../../../../types';
+import { Archaeologist } from '../../../../types';
 import { computeAddress } from 'ethers/lib/utils';
 import { RecipientState } from '../../../../store/embalm/actions';
 
