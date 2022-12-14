@@ -1,5 +1,5 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
 import { formatFee, sumDiggingFeesFormatted } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
@@ -27,7 +27,12 @@ export function SarcophagusSummaryFees() {
         px={6}
       >
         <Flex alignItems="center">
-          <InfoOutlineIcon fontSize="md" />
+          <Tooltip
+            label="Fee to be paid on each rewrap, and a one time upload fee"
+            placement="top"
+          >
+            <InfoOutlineIcon fontSize="md" />
+          </Tooltip>
           <Text
             ml={2}
             fontSize="sm"

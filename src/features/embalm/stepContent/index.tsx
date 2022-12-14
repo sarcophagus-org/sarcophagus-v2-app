@@ -11,6 +11,7 @@ import { UploadPayload } from './steps/UploadPayload';
 import { CreateSarcophagus } from './steps/CreateSarcophagus';
 import { CreateSarcophagusContextProvider } from './context/CreateSarcophagusContext';
 import { useEnterToNextStep } from './hooks/useEnterToNextStep';
+import { PageBlockModal } from './components/PageBlockModal';
 
 interface StepContentMap {
   component: JSX.Element;
@@ -92,6 +93,7 @@ export function StepContent() {
           </Button>
         )}
       </HStack>
+      <PageBlockModal />
     </VStack>
   );
 }

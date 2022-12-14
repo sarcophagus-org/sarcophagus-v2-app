@@ -151,5 +151,5 @@ export function useRecoverPublicKey() {
     [dispatch, provider, networkConfig.etherscanApiKey, networkConfig.etherscanApiUrl, chain?.id]
   );
 
-  return { recoverPublicKey, isLoading, errorStatus };
+  return { recoverPublicKey, isLoading, errorStatus, clearErrorStatus: () => setErrorStatus(null) };
 }
