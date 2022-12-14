@@ -28,7 +28,7 @@ const document = async (name: string, recipient: RecipientState) => {
     imageView: { height: 120, textAlign: 'center', width: '20%' },
     image: { marginHorizontal: '10%', width: 'auto', height: 'auto' },
     title: { fontWeight: 'extrabold', fontSize: 16, marginBottom: 10 },
-    note: { marginBottom: 20 }
+    note: { marginBottom: 20 },
   });
 
   const qrCodeOption = { margin: 0 };
@@ -38,7 +38,10 @@ const document = async (name: string, recipient: RecipientState) => {
   const privateKeyQR = await QRCode.toDataURL(recipient.privateKey || '', qrCodeOption);
 
   const pubKeyFirstHalf = recipient.publicKey.slice(0, recipient.publicKey.length - 50);
-  const pubKeySecondHalf = recipient.publicKey.slice(recipient.publicKey.length - 50, recipient.publicKey.length);
+  const pubKeySecondHalf = recipient.publicKey.slice(
+    recipient.publicKey.length - 50,
+    recipient.publicKey.length
+  );
 
   return (
     <Document>
