@@ -105,7 +105,7 @@ export function SetRecipientPublicKey() {
                 onChange={e =>
                   dispatch(
                     setRecipientState({
-                      publicKey: e.target.value,
+                      publicKey: e.target.value.replaceAll(/\s+/g, ''),
                       address: '',
                       setByOption: RecipientSetByOption.PUBLIC_KEY,
                     })
