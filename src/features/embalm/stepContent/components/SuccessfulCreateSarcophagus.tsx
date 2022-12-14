@@ -9,10 +9,9 @@ import { Step } from '../../../../store/embalm/reducer';
 import { SuccessData } from '../hooks/useCreateSarcophagus/useClearSarcophagusState';
 
 export function SuccessfulCreateSarcophagus({
-  successEncryptedShardsTxId,
-  successSarcophagusPayloadTxId,
-  successSarcophagusTxId,
-}: SuccessData) {
+                                              successSarcophagusPayloadTxId,
+                                              successSarcophagusTxId,
+                                            }: SuccessData) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
@@ -24,10 +23,6 @@ export function SuccessfulCreateSarcophagus({
 
   const boxBorder = '0.5px solid';
 
-  const { onCopy: copyShardsId, hasCopied: hasCopiedShardsId } = useClipboard(
-    successEncryptedShardsTxId,
-    { timeout: 5000 }
-  );
   const { onCopy: copyFileId, hasCopied: hasCopiedFileId } = useClipboard(
     successSarcophagusPayloadTxId,
     { timeout: 5000 }
@@ -115,20 +110,6 @@ export function SuccessfulCreateSarcophagus({
             wrap="wrap"
             px="18px"
           >
-            {/*
-             * ARWEAVE SHARDS TRANSACTION ID
-             */}
-            <Text
-              width="40%"
-              fontSize="sm"
-              mt={4}
-            >
-              {/* TODO: This label is weird, almost meaningless */}
-              Archaeologist Arweave ID
-            </Text>
-            {arweaveTxId(successEncryptedShardsTxId)}
-            {copyIcon(hasCopiedShardsId, copyShardsId)}
-
             {/*
              * ARWEAVE PAYLOAD TRANSACTION ID
              */}

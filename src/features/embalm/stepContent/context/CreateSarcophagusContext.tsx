@@ -21,7 +21,6 @@ interface CreateSarcophagusContextProps {
 const initialCreateSarcophagusState = {
   outerPrivateKey: '',
   outerPublicKey: '',
-  encryptedShardsTxId: '',
   negotiationTimestamp: 0,
   archaeologistPublicKeys: new Map<string, string>([]),
   archaeologistSignatures: new Map<string, string>([]),
