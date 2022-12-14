@@ -12,7 +12,7 @@ interface PublicKeyResponseFromArchaeologist {
   encryptionPublicKey: string;
 }
 
-// TODO -- remove this file
+// TODO: #multiple-key-update - remove this file
 export function useRequestPublicKeys() {
   const dispatch = useDispatch();
   const { dialArchaeologist } = useDialArchaeologists();

@@ -29,6 +29,7 @@ export interface SubmitSarcophagusProps {
   selectedArchaeologists: Archaeologist[];
   requiredArchaeologists: number;
   negotiationTimestamp: number;
+  archaeologistPublicKeys: Map<string, string>;
   archaeologistSignatures: Map<string, string>;
   arweaveTxId: string;
 }
@@ -40,6 +41,7 @@ export function formatSubmitSarcophagusArgs({
   selectedArchaeologists,
   requiredArchaeologists,
   negotiationTimestamp,
+  archaeologistPublicKeys,
   archaeologistSignatures,
   arweaveTxId,
 }: SubmitSarcophagusProps) {
@@ -51,7 +53,8 @@ export function formatSubmitSarcophagusArgs({
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        publicKey: arch.publicKey!,
+        // TODO: #multiple-key-update - we may want further validation this exsits
+        publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
         v,
         r,
         s,

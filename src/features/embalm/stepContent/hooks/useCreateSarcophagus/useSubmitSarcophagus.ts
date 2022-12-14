@@ -10,6 +10,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
 
   const {
     negotiationTimestamp,
+    archaeologistPublicKeys,
     archaeologistSignatures,
     sarcophagusPayloadTxId,
     setSarcophagusTxId,
@@ -23,6 +24,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
       selectedArchaeologists,
       requiredArchaeologists,
       negotiationTimestamp,
+      archaeologistPublicKeys,
       archaeologistSignatures,
       arweaveTxId: sarcophagusPayloadTxId,
     });
@@ -39,6 +41,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     selectedArchaeologists,
     requiredArchaeologists,
     negotiationTimestamp,
+    archaeologistPublicKeys,
     archaeologistSignatures,
     sarcophagusPayloadTxId,
     setSarcophagusTxId,

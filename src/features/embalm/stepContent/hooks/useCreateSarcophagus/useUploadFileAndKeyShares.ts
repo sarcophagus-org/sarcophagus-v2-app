@@ -13,7 +13,7 @@ export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
-  const { outerPrivateKey, outerPublicKey, setSarcophagusPayloadTxId } =
+  const { outerPrivateKey, outerPublicKey, archaeologistPublicKeys, setSarcophagusPayloadTxId } =
     useContext(CreateSarcophagusContext);
 
   const uploadAndSetArweavePayload = useCallback(async () => {
@@ -49,9 +49,8 @@ export function useUploadFileAndKeyShares() {
       );
 
       // Step 3: Encrypt each shard again with the arch public keys
-      const archPublicKeys = selectedArchaeologists.map(arch => arch.publicKey!);
       const keySharesEncryptedOuter = await encryptShardsWithArchaeologistPublicKeys(
-        archPublicKeys,
+        Array.from(archaeologistPublicKeys.values()),
         keySharesEncryptedInner
       );
 
@@ -59,15 +58,14 @@ export function useUploadFileAndKeyShares() {
        * Format data for upload
        */
       const doubleEncryptedKeyShares: Record<string, string> = keySharesEncryptedOuter.reduce(
-        (acc, shard) => ({
+        (acc, keyShare) => ({
           ...acc,
-          [shard.publicKey]: shard.encryptedShard,
+          [keyShare.publicKey]: keyShare.encryptedShard,
         }),
         {}
       );
 
-      // TODO -- will need to test this
-      // TODO -- this will affect the resurrection
+      // TODO: #multiple-key-update - this affects resurrection, may need to change (and be tested)
       const combinedPayload = {
         file: encryptedOuterLayer,
         keyShares: Buffer.from(JSON.stringify(doubleEncryptedKeyShares)),
@@ -84,6 +82,7 @@ export function useUploadFileAndKeyShares() {
     file,
     requiredArchaeologists,
     selectedArchaeologists,
+    archaeologistPublicKeys,
     outerPublicKey,
     outerPrivateKey,
     recipientState.publicKey,
