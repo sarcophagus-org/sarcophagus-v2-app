@@ -7,7 +7,7 @@ import { RecipientState } from '../../../../store/embalm/actions';
 export interface ContractArchaeologist {
   archAddress: string;
   diggingFee: BigNumber;
-  doubleHashedKeyShare: string;
+  publicKey: string;
   v: number;
   r: string;
   s: string;
@@ -30,8 +30,7 @@ export interface SubmitSarcophagusProps {
   requiredArchaeologists: number;
   negotiationTimestamp: number;
   archaeologistSignatures: Map<string, string>;
-  archaeologistShards: ArchaeologistEncryptedShard[];
-  arweaveTxIds: string[];
+  arweaveTxId: string;
 }
 
 export function formatSubmitSarcophagusArgs({
@@ -42,8 +41,7 @@ export function formatSubmitSarcophagusArgs({
   requiredArchaeologists,
   negotiationTimestamp,
   archaeologistSignatures,
-  archaeologistShards,
-  arweaveTxIds,
+  arweaveTxId,
 }: SubmitSarcophagusProps) {
   const getContractArchaeologists = (): ContractArchaeologist[] => {
     return selectedArchaeologists.map(arch => {
@@ -53,9 +51,7 @@ export function formatSubmitSarcophagusArgs({
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        doubleHashedKeyShare: archaeologistShards.filter(
-          shard => shard.publicKey === arch.publicKey
-        )[0].doubleHashedKeyShare,
+        publicKey: arch.publicKey!,
         v,
         r,
         s,
@@ -81,7 +77,7 @@ export function formatSubmitSarcophagusArgs({
       ...settings,
     },
     contractArchaeologists,
-    arweaveTxIds,
+    arweaveTxId,
   ];
 
   return { submitSarcophagusArgs: args };

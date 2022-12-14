@@ -55,7 +55,6 @@ export interface ArchaeologistProfile {
 export interface ArchaeologistEncryptedShard {
   publicKey: string;
   encryptedShard: string;
-  doubleHashedKeyShare: string;
 }
 
 export enum SarcophagusState {
@@ -72,6 +71,7 @@ export enum SarcophagusState {
 }
 
 export type Sarcophagus = SarcophagusResponseContract & { id: string; state: SarcophagusState };
+
 export interface SarcophagusResponseContract {
   resurrectionTime: BigNumber;
   isCompromised: boolean;

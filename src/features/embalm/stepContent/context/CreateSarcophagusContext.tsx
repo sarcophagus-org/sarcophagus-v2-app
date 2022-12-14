@@ -7,8 +7,6 @@ interface CreateSarcophagusContextProps {
   outerPublicKey: string;
   archaeologistShards: ArchaeologistEncryptedShard[];
   setArchaeologistShards: React.Dispatch<React.SetStateAction<ArchaeologistEncryptedShard[]>>;
-  encryptedShardsTxId: string;
-  setEncryptedShardsTxId: React.Dispatch<React.SetStateAction<string>>;
   negotiationTimestamp: number;
   setNegotiationTimestamp: React.Dispatch<React.SetStateAction<number>>;
   archaeologistSignatures: Map<string, string>;
@@ -58,9 +56,6 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
   const [archaeologistShards, setArchaeologistShards] = useState(
     initialCreateSarcophagusState.archaeologistShards
   );
-  const [encryptedShardsTxId, setEncryptedShardsTxId] = useState(
-    initialCreateSarcophagusState.encryptedShardsTxId
-  );
   const [negotiationTimestamp, setNegotiationTimestamp] = useState(
     initialCreateSarcophagusState.negotiationTimestamp
   );
@@ -81,8 +76,6 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
         outerPublicKey,
         archaeologistShards,
         setArchaeologistShards,
-        encryptedShardsTxId,
-        setEncryptedShardsTxId,
         negotiationTimestamp,
         setNegotiationTimestamp,
         archaeologistSignatures,

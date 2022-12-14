@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { split } from 'shamirs-secret-sharing-ts';
-import { encryptShards } from '../../utils/createSarcophagus';
+import { encryptShardsWithArchaeologistPublicKeys } from '../../utils/createSarcophagus';
 import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
@@ -24,7 +24,7 @@ export function useUploadEncryptedShards() {
       // key
       const archPublicKeys = selectedArchaeologists.map(arch => arch.publicKey!);
 
-      const encShards = await encryptShards(archPublicKeys, shards);
+      const encShards = await encryptShardsWithArchaeologistPublicKeys(archPublicKeys, shards);
 
       // Step 3: Create a mapping of arch public keys -> encrypted shards; upload to arweave
       const mapping: Record<string, string> = encShards.reduce(

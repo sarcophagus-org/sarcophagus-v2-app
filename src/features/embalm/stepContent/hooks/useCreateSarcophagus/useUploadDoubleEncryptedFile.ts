@@ -3,11 +3,18 @@ import { encrypt, readFileDataAsBase64 } from '../../../../../lib/utils/helpers'
 import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
+import {
+  encryptShardsWithArchaeologistPublicKeys,
+  encryptShardsWithRecipientPublicKey,
+} from '../../utils/createSarcophagus';
+import { split } from 'shamirs-secret-sharing-ts';
 
 export function useUploadDoubleEncryptedFile() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
-  const { outerPublicKey, setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
+  const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
+  const { outerPrivateKey, outerPublicKey, setSarcophagusPayloadTxId } =
+    useContext(CreateSarcophagusContext);
 
   const uploadAndSetDoubleEncryptedFile = useCallback(async () => {
     try {
@@ -17,17 +24,55 @@ export function useUploadDoubleEncryptedFile() {
         data,
       };
 
-      // Step 1: Encrypt the inner layer
-      const encryptedInnerLayer = await encrypt(
-        recipientState.publicKey,
+      /**
+       * File upload data
+       */
+      // Step 1: Encrypt the payload with the generated keypair
+      const encryptedOuterLayer = await encrypt(
+        outerPublicKey!,
         Buffer.from(JSON.stringify(payload), 'hex')
       );
 
-      // Step 2: Encrypt the outer layer
-      const encryptedOuterLayer = await encrypt(outerPublicKey!, encryptedInnerLayer);
+      /**
+       * Double encrypted keyshares upload data
+       */
+      // Step 1: Split the outer layer private key using shamirs secret sharing
+      const keyShares: Uint8Array[] = split(outerPrivateKey, {
+        shares: selectedArchaeologists.length,
+        threshold: requiredArchaeologists,
+      });
 
-      // Step 3: Upload the double encrypted payload to arweave
-      const payloadTxId = await uploadToArweave(encryptedOuterLayer);
+      // Step 2: Encrypt each shard with the recipient public key
+      const keySharesEncryptedInner = await encryptShardsWithRecipientPublicKey(
+        recipientState.publicKey,
+        keyShares
+      );
+
+      // Step 3: Encrypt each shard again with the arch public keys
+      const archPublicKeys = selectedArchaeologists.map(arch => arch.publicKey!);
+      const keySharesEncryptedOuter = await encryptShardsWithArchaeologistPublicKeys(
+        archPublicKeys,
+        keySharesEncryptedInner
+      );
+
+      /**
+       * Format data for upload
+       */
+      const doubleEncryptedKeyShares: Record<string, string> = keySharesEncryptedOuter.reduce(
+        (acc, shard) => ({
+          ...acc,
+          [shard.publicKey]: shard.encryptedShard,
+        }),
+        {}
+      );
+
+      const combinedPayload = {
+        file: encryptedOuterLayer,
+        keyShares: Buffer.from(JSON.stringify(doubleEncryptedKeyShares)),
+      };
+
+      // Upload file data + keyshares data to arweave
+      const payloadTxId = await uploadToArweave(Buffer.from(JSON.stringify(combinedPayload)));
 
       setSarcophagusPayloadTxId(payloadTxId);
     } catch (error: any) {
