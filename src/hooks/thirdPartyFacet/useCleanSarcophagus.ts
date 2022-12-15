@@ -10,7 +10,7 @@ export function useCleanSarcophagus(sarcoId: string) {
   const networkConfig = useNetworkConfig();
   const toast = useToast();
 
-  const { config } = usePrepareContractWrite({
+  const { config, isError: mayFail } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: ThirdPartyFacet__factory.abi as Abi,
     functionName: 'clean',
@@ -35,5 +35,5 @@ export function useCleanSarcophagus(sarcoId: string) {
 
   console.log('isError', isError);
 
-  return { clean: write, isCleaning, isSuccess, isError };
+  return { clean: write, isCleaning, isSuccess, isError, mayFail };
 }

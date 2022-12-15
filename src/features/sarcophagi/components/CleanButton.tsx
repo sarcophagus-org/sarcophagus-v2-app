@@ -3,7 +3,7 @@ import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { Sarcophagus } from 'types';
 
 export function CleanButton({ sarco }: { sarco: Sarcophagus }) {
-  const { clean, isCleaning, isError } = useCleanSarcophagus(sarco.id);
+  const { clean, isCleaning, isError, mayFail } = useCleanSarcophagus(sarco.id);
 
   return (
     <>
@@ -16,7 +16,7 @@ export function CleanButton({ sarco }: { sarco: Sarcophagus }) {
             onClick={() => clean?.()}
             isLoading={isCleaning}
             loadingText={isCleaning ? 'Cleaning...' : undefined}
-            disabled={isCleaning || isError}
+            disabled={isCleaning || isError || mayFail}
           >
             Clean
           </Button>

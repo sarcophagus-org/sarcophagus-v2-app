@@ -24,7 +24,7 @@ export function Details() {
     sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
 
   const canClaim = sarcophagus?.state === SarcophagusState.Resurrected;
-  const canClean = useGetEmbalmerCanClean(sarcophagus);
+  const canEmbalmerClean = useGetEmbalmerCanClean(sarcophagus);
 
   return (
     <Flex direction="column">
@@ -74,7 +74,7 @@ export function Details() {
         )}
 
         {/* CLEAN BUTTON */}
-        {canClean && !!sarcophagus && <CleanButton sarco={sarcophagus} />}
+        {canEmbalmerClean && !!sarcophagus && <CleanButton sarco={sarcophagus} />}
       </HStack>
     </Flex>
   );
