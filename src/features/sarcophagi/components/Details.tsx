@@ -23,7 +23,9 @@ export function Details() {
   const canRewrapOrBury =
     sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
 
-  const canClaim = sarcophagus?.state === SarcophagusState.Resurrected;
+  const canClaim =
+    sarcophagus?.state === SarcophagusState.Resurrected ||
+    sarcophagus?.state === SarcophagusState.CleanedResurrected;
   const canEmbalmerClean = useGetEmbalmerCanClean(sarcophagus);
 
   return (

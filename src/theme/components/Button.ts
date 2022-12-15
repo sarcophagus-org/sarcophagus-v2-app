@@ -23,6 +23,7 @@ export const Button: ComponentStyleConfig = {
       },
     },
     ghost: {
+      color: 'brand.950',
       _hover: {
         bg: 'brand.200',
       },

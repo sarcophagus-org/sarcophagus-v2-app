@@ -27,13 +27,8 @@ export function PageBlockModal() {
   const [confirmedNavigation, setConfirmedNavigation] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => setIsModalOpen(true);
 
   const showModal = (nextLocation: Transition) => {
     openModal();
