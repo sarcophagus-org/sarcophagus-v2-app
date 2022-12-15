@@ -60,8 +60,8 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       action: canEmbalmerClean
         ? SarcoAction.Clean
         : isRecipient && isClaimTab
-          ? SarcoAction.Claim
-          : undefined,
+        ? SarcoAction.Claim
+        : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
     },
     [SarcophagusState.CleanedResurrected]: {
