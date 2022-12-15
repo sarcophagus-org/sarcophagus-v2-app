@@ -25,7 +25,8 @@ export function useGetEmbalmerCanClean(sarcophagus: Sarcophagus | undefined): bo
   if (!sarcophagus) return false;
   if (sarcophagus.embalmerAddress !== address) return false;
 
-  const cleanWindow = BigNumber.from(data).toNumber();
+  const sarcoResurrectionTime = Number.parseInt(sarcophagus.resurrectionTime.toString());
+  const cleanWindow = Number.parseInt((data as BigNumber).toString());
   const nowSeconds = Math.trunc(Date.now() / 1000);
 
   // Embalmer can clean the sarcophagus if there's still locked bond to be claimed because not all archaeologists unwrapped before grace period,
@@ -34,7 +35,7 @@ export function useGetEmbalmerCanClean(sarcophagus: Sarcophagus | undefined): bo
     sarcophagus.publishedKeyShareCount < sarcophagus.archaeologistAddresses.length &&
     sarcophagus.hasLockedBond;
 
-  const sarcoGracePeriod = sarcophagus.resurrectionTime.toNumber() + gracePeriod;
+  const sarcoGracePeriod = sarcoResurrectionTime + gracePeriod;
   const isWithinCleanWindow =
     nowSeconds > sarcoGracePeriod && nowSeconds < sarcoGracePeriod + cleanWindow;
 
