@@ -1,5 +1,5 @@
-import { EditIcon } from '@chakra-ui/icons';
-import { Button, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
+import { EditIcon, InfoOutlineIcon } from '@chakra-ui/icons';
+import { Button, HStack, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
@@ -54,16 +54,14 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
       tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
     },
-    // TODO: Consider adding a `ResurrectedCleanable` state, or using `canEmbalmerClean` to draw attention to this
-    // special resurrected state if `true`
     [SarcophagusState.Resurrected]: {
       // The embalmer isn't concerned with claiming a sarco. BUT, if they can clean a resurrected sarco,
       // that's something they care about. Otherwise we show the Claim action to the recipient.
       action: canEmbalmerClean
         ? SarcoAction.Clean
         : isRecipient && isClaimTab
-        ? SarcoAction.Claim
-        : undefined,
+          ? SarcoAction.Claim
+          : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
     },
     [SarcophagusState.CleanedResurrected]: {
@@ -101,7 +99,19 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     <Tr>
       {/* SARCO STATE */}
       <Td>
-        <SarcoStateIndicator state={sarco.state} />
+        <HStack>
+          <SarcoStateIndicator state={sarco.state} />
+
+          {/* Using `canEmbalmerClean` to draw attention to this row */}
+          {canEmbalmerClean && (
+            <Tooltip
+              placement="right-start"
+              label="You can clean this sarcophagus to claim back funds"
+            >
+              <InfoOutlineIcon color="orange" />
+            </Tooltip>
+          )}
+        </HStack>
       </Td>
 
       {/* SARCO NAME */}

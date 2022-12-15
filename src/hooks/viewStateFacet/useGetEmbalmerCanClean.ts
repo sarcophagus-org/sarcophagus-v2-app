@@ -22,7 +22,7 @@ export function useGetEmbalmerCanClean(sarcophagus: Sarcophagus | undefined): bo
   const { address } = useAccount();
 
   if (!data) return false;
-  if (!sarcophagus) return false;
+  if (!sarcophagus || sarcophagus.isCleaned) return false;
   if (sarcophagus.embalmerAddress !== address) return false;
 
   const sarcoResurrectionTime = Number.parseInt(sarcophagus.resurrectionTime.toString());
