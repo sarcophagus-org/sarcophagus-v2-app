@@ -5,7 +5,6 @@ import { useNetworkConfig } from 'lib/config';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-// TODO - revisit when clean is ready
 export function useCleanSarcophagus(sarcoId: string) {
   const networkConfig = useNetworkConfig();
   const toast = useToast();
