@@ -1,31 +1,27 @@
 import { useToast } from '@chakra-ui/react';
 import { ThirdPartyFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { Abi } from 'abitype';
-import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useNetworkConfig } from 'lib/config';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
-import { SarcophagusState } from 'types';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 // TODO - revisit when clean is ready
-export function useCleanSarcophagus(sarcoId: string, paymentAddress: string | undefined) {
+export function useCleanSarcophagus(sarcoId: string) {
   const networkConfig = useNetworkConfig();
   const toast = useToast();
 
-  const { sarcophagus } = useGetSarcophagus(sarcoId);
-
-  const { config, isLoading } = usePrepareContractWrite({
+  const { config } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: ThirdPartyFacet__factory.abi as Abi,
     functionName: 'clean',
-    enabled: sarcophagus?.state === SarcophagusState.Failed && !!paymentAddress && !!sarcoId,
-    args: [sarcoId, paymentAddress],
+    args: [sarcoId],
   });
 
   const {
     write,
     isLoading: isCleaning,
     isSuccess,
+    isError,
   } = useContractWrite({
     onSuccess() {
       toast(cleanSuccess());
@@ -37,5 +33,7 @@ export function useCleanSarcophagus(sarcoId: string, paymentAddress: string | un
     ...config,
   });
 
-  return { clean: write, isLoading, isCleaning, isSuccess };
+  console.log('isError', isError);
+
+  return { clean: write, isCleaning, isSuccess, isError };
 }

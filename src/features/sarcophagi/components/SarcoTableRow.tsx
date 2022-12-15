@@ -3,6 +3,7 @@ import { Button, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakr
 import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
+import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanClean';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Sarcophagus, SarcophagusState } from 'types';
@@ -28,7 +29,8 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   const navigate = useNavigate();
 
   // Payment for clean automatically goes to the current user
-  const { clean, isLoading, isCleaning } = useCleanSarcophagus(sarco.id, address);
+  const { clean, isCleaning } = useCleanSarcophagus(sarco.id);
+  const canEmbalmerClean = useGetEmbalmerCanClean(sarco);
 
   const resurrectionString = buildResurrectionDateString(
     sarco.resurrectionTime || BigNumber.from(0)
@@ -52,13 +54,27 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
       action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
       tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
     },
+    // TODO: Consider adding a `ResurrectedCleanable` state, or using `canEmbalmerClean` to draw attention to this
+    // special resurrected state if `true`
     [SarcophagusState.Resurrected]: {
-      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
+      // The embalmer isn't concerned with claiming a sarco. BUT, if they can clean a resurrected sarco,
+      // that's something they care about. Otherwise we show the Claim action to the recipient.
+      action: canEmbalmerClean
+        ? SarcoAction.Clean
+        : isRecipient && isClaimTab
+        ? SarcoAction.Claim
+        : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
     },
     [SarcophagusState.CleanedResurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
       tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
+    },
+    [SarcophagusState.Failed]: {
+      action: canEmbalmerClean ? SarcoAction.Clean : undefined,
+      tooltip: canEmbalmerClean
+        ? 'Deactivate the Sarcophagus and claim back culprit archaeologist locked bonds and digging fees'
+        : '',
     },
   };
 
@@ -110,7 +126,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
             <Button
               variant="link"
               onClick={handleClickAction}
-              isLoading={isLoading || isCleaning}
+              isLoading={isCleaning}
             >
               {action.toUpperCase()}
             </Button>
