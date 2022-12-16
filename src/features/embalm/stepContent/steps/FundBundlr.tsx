@@ -13,7 +13,8 @@ export function FundBundlr() {
         mb={6}
         variant="secondary"
       >
-        Bundlr will package your payload and send to Arweave using Ethereum.
+        Bundlr will package your payload and send to Arweave. Upload fees are paid from your Bundlr
+        balance which is funded with ETH.
         <Spacer />
         <Link
           color="brand.950"
