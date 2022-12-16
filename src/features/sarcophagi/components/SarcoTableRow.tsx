@@ -8,6 +8,8 @@ import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
+import { cleanTooltip } from './CleanButton';
+import { resurrectTooltip } from './Details';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 
 export enum SarcoAction {
@@ -44,6 +46,8 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   const isEmbalmer = sarco.embalmerAddress === address;
   const isRecipient = sarco.recipientAddress === address;
 
+  const claimTooltip = 'Decrypt and download the Sarcophagus payload';
+
   const stateToActionMap: {
     [key: string]: {
       action?: SarcoAction;
@@ -52,7 +56,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   } = {
     [SarcophagusState.Active]: {
       action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
-      tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
+      tooltip: isEmbalmer && !isClaimTab ? resurrectTooltip : '',
     },
     [SarcophagusState.Resurrected]: {
       // The embalmer isn't concerned with claiming a sarco. BUT, if they can clean a resurrected sarco,
@@ -62,17 +66,15 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
         : isRecipient && isClaimTab
         ? SarcoAction.Claim
         : undefined,
-      tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
+      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
     },
     [SarcophagusState.CleanedResurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
-      tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
+      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
     },
     [SarcophagusState.Failed]: {
       action: canEmbalmerClean ? SarcoAction.Clean : undefined,
-      tooltip: canEmbalmerClean
-        ? 'Deactivate the Sarcophagus and claim back culprit archaeologist locked bonds and digging fees'
-        : '',
+      tooltip: canEmbalmerClean ? cleanTooltip : '',
     },
   };
 

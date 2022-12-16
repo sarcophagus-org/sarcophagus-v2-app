@@ -10,6 +10,8 @@ import { BuryButton } from './BuryButton';
 import { CleanButton } from './CleanButton';
 import { DetailsCollapse } from './DetailsCollapse';
 
+export const resurrectTooltip = 'Extend the resurrection date of the Sarcophagus';
+
 export function Details() {
   const { id } = useParams();
   const { sarcophagus } = useGetSarcophagus(id);
@@ -45,7 +47,7 @@ export function Details() {
             {/* REWRAP BUTTON */}
             <Tooltip
               placement="top"
-              label="Extend the resurrection date of the Sarcophagus"
+              label={resurrectTooltip}
             >
               <Button
                 as={NavLink}

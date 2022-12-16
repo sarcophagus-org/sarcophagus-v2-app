@@ -2,6 +2,9 @@ import { Button, Tooltip } from '@chakra-ui/react';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { Sarcophagus } from 'types';
 
+export const cleanTooltip =
+  'Claim bonds and digging fees from Archaeologists that did not participate in the unwrapping ceremony';
+
 export function CleanButton({ sarco }: { sarco: Sarcophagus }) {
   const { clean, isCleaning, isError, mayFail } = useCleanSarcophagus(sarco.id);
 
@@ -10,7 +13,7 @@ export function CleanButton({ sarco }: { sarco: Sarcophagus }) {
       {!isError ? (
         <Tooltip
           placement="top"
-          label="Deactivate the Sarcophagus and claim back culprit archaeologist locked bonds and digging fees"
+          label={cleanTooltip}
         >
           <Button
             onClick={() => clean?.()}
