@@ -44,12 +44,12 @@ export function RecoverPublicKey() {
       spacing={6}
     >
       <Input
-        placeholder="0x0..."
+        placeholder="0x0000..."
         onChange={e => {
           if (errorStatus) clearErrorStatus();
           dispatch(
             setRecipientState({
-              address: e.target.value.trim(),
+              address: e.target.value.replaceAll(/\s+/g, ''),
               publicKey: '',
               setByOption: RecipientSetByOption.ADDRESS,
             })

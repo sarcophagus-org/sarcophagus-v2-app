@@ -1,12 +1,15 @@
-import { EditIcon } from '@chakra-ui/icons';
-import { Button, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
+import { EditIcon, InfoOutlineIcon } from '@chakra-ui/icons';
+import { Button, HStack, IconButton, TableRowProps, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { TableText } from 'components/TableText';
 import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
+import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanClean';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
+import { cleanTooltip } from './CleanButton';
+import { resurrectTooltip } from './Details';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 
 export enum SarcoAction {
@@ -28,7 +31,8 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   const navigate = useNavigate();
 
   // Payment for clean automatically goes to the current user
-  const { clean, isLoading, isCleaning } = useCleanSarcophagus(sarco.id, address);
+  const { clean, isCleaning } = useCleanSarcophagus(sarco.id);
+  const canEmbalmerClean = useGetEmbalmerCanClean(sarco);
 
   const resurrectionString = buildResurrectionDateString(
     sarco.resurrectionTime || BigNumber.from(0)
@@ -42,6 +46,8 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   const isEmbalmer = sarco.embalmerAddress === address;
   const isRecipient = sarco.recipientAddress === address;
 
+  const claimTooltip = 'Decrypt and download the Sarcophagus payload';
+
   const stateToActionMap: {
     [key: string]: {
       action?: SarcoAction;
@@ -50,15 +56,25 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
   } = {
     [SarcophagusState.Active]: {
       action: isEmbalmer && !isClaimTab ? SarcoAction.Rewrap : undefined,
-      tooltip: isEmbalmer && !isClaimTab ? 'Extend the resurrection date of the Sarcophagus' : '',
+      tooltip: isEmbalmer && !isClaimTab ? resurrectTooltip : '',
     },
     [SarcophagusState.Resurrected]: {
-      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
-      tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
+      // The embalmer isn't concerned with claiming a sarco. BUT, if they can clean a resurrected sarco,
+      // that's something they care about. Otherwise we show the Claim action to the recipient.
+      action: canEmbalmerClean
+        ? SarcoAction.Clean
+        : isRecipient && isClaimTab
+        ? SarcoAction.Claim
+        : undefined,
+      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
     },
     [SarcophagusState.CleanedResurrected]: {
       action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
-      tooltip: isRecipient && isClaimTab ? 'Decrypt and download the Sarcophagus payload' : '',
+      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
+    },
+    [SarcophagusState.Failed]: {
+      action: canEmbalmerClean ? SarcoAction.Clean : undefined,
+      tooltip: canEmbalmerClean ? cleanTooltip : '',
     },
   };
 
@@ -85,7 +101,19 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
     <Tr>
       {/* SARCO STATE */}
       <Td>
-        <SarcoStateIndicator state={sarco.state} />
+        <HStack>
+          <SarcoStateIndicator state={sarco.state} />
+
+          {/* Using `canEmbalmerClean` to draw attention to this row */}
+          {canEmbalmerClean && (
+            <Tooltip
+              placement="right-start"
+              label="You can clean this sarcophagus to claim back funds"
+            >
+              <InfoOutlineIcon color="orange" />
+            </Tooltip>
+          )}
+        </HStack>
       </Td>
 
       {/* SARCO NAME */}
@@ -110,7 +138,7 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
             <Button
               variant="link"
               onClick={handleClickAction}
-              isLoading={isLoading || isCleaning}
+              isLoading={isCleaning}
             >
               {action.toUpperCase()}
             </Button>

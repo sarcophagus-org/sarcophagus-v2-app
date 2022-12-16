@@ -23,6 +23,10 @@ interface SarcophagusStateIndicatorProps {
 export function SarcoStateIndicator({
   state = SarcophagusState.Active,
 }: SarcophagusStateIndicatorProps) {
+  const failedTooltip =
+    'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.';
+  const resurrectedTooltip = 'The Sarcophagus has been resurrected and can be claimed.';
+
   const stateMap: { [key: string]: { text?: string; bg?: string; tooltip?: string } } = {
     [SarcophagusState.Active]: {
       text: 'green',
@@ -38,17 +42,17 @@ export function SarcoStateIndicator({
     [SarcophagusState.Cleaned]: {
       text: 'gray',
       bg: 'transparent.gray',
-      tooltip: 'The Sarcophagus has been deactivated. No further action can be taken on it.',
+      tooltip: 'The Sarcophagus has been cleaned. No further action can be taken on it.',
     },
     [SarcophagusState.Failed]: {
       text: 'red',
       bg: 'transparent.red',
-      tooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
+      tooltip: failedTooltip,
     },
     [SarcophagusState.CleanedFailed]: {
       text: 'red',
       bg: 'transparent.red',
-      tooltip: 'Too few archeologists unwrapped the Sarcophagus. It can no longer be claimed.',
+      tooltip: failedTooltip,
     },
     [SarcophagusState.Resurrecting]: {
       text: 'orange',
@@ -59,12 +63,12 @@ export function SarcoStateIndicator({
     [SarcophagusState.Resurrected]: {
       text: 'blue',
       bg: 'transparent.blue',
-      tooltip: 'The Sarcophagus has been resurrected and can be claimed.',
+      tooltip: resurrectedTooltip,
     },
     [SarcophagusState.CleanedResurrected]: {
       text: 'blue',
       bg: 'transparent.blue',
-      tooltip: 'The Sarcophagus has been resurrected and can be claimed.',
+      tooltip: resurrectedTooltip,
     },
     [SarcophagusState.Buried]: {
       text: 'gray',

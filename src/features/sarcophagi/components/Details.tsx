@@ -1,12 +1,16 @@
 import { Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useGetSarcophagus } from 'hooks/viewStateFacet';
+import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanClean';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { BuryButton } from './BuryButton';
+import { CleanButton } from './CleanButton';
 import { DetailsCollapse } from './DetailsCollapse';
+
+export const resurrectTooltip = 'Extend the resurrection date of the Sarcophagus';
 
 export function Details() {
   const { id } = useParams();
@@ -21,10 +25,10 @@ export function Details() {
   const canRewrapOrBury =
     sarcophagus?.state === SarcophagusState.Active && sarcophagus?.embalmerAddress === address;
 
-  // Determine if the claim function is available
   const canClaim =
     sarcophagus?.state === SarcophagusState.Resurrected ||
     sarcophagus?.state === SarcophagusState.CleanedResurrected;
+  const canEmbalmerClean = useGetEmbalmerCanClean(sarcophagus);
 
   return (
     <Flex direction="column">
@@ -43,7 +47,7 @@ export function Details() {
             {/* REWRAP BUTTON */}
             <Tooltip
               placement="top"
-              label="Extend the resurrection date of the Sarcophagus"
+              label={resurrectTooltip}
             >
               <Button
                 as={NavLink}
@@ -72,6 +76,9 @@ export function Details() {
             </Button>
           </Tooltip>
         )}
+
+        {/* CLEAN BUTTON */}
+        {canEmbalmerClean && !!sarcophagus && <CleanButton sarco={sarcophagus} />}
       </HStack>
     </Flex>
   );

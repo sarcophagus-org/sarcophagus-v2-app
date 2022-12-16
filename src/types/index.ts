@@ -75,6 +75,7 @@ export type Sarcophagus = SarcophagusResponseContract & { id: string; state: Sar
 export interface SarcophagusResponseContract {
   resurrectionTime: BigNumber;
   isCompromised: boolean;
+  isCleaned: boolean;
   name: string;
   threshold: number;
   maximumRewrapInterval: BigNumber;
