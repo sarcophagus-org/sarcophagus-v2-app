@@ -14,7 +14,7 @@ export const getSarcophagusState = (
   const isPastGracePeriod = nowSeconds >= sarco.resurrectionTime.toNumber() + gracePeriod;
   const isCleaned = isPastGracePeriod && !sarco.hasLockedBond;
 
-  if (sarco.publishedKeyShareCount >= sarco.threshold)
+  if (sarco.publishedPrivateKeyCount >= sarco.threshold)
     return isCleaned ? SarcophagusState.CleanedResurrected : SarcophagusState.Resurrected;
 
   const withinGracePeriod =

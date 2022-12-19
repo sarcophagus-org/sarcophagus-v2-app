@@ -82,6 +82,6 @@ export interface SarcophagusResponseContract {
   embalmerAddress: string;
   recipientAddress: string;
   archaeologistAddresses: string[];
-  publishedKeyShareCount: number;
+  publishedPrivateKeyCount: number;
   hasLockedBond: boolean;
 }
