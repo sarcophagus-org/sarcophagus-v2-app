@@ -107,6 +107,8 @@ export function useArchaeologistSignatureNegotiation() {
                     })
                   );
                 } else {
+                  console.log('response', response);
+
                   archaeologistPublicKeys.set(arch.profile.archAddress, response.publicKey);
                   archaeologistSignatures.set(arch.profile.archAddress, response.signature);
                 }
@@ -132,6 +134,8 @@ export function useArchaeologistSignatureNegotiation() {
       ).catch(error => {
         throw Error(`Error retrieving arch signatures ${error}`);
       });
+
+      console.log('archaeologistPublicKeys nego', archaeologistPublicKeys);
 
       if (archaeologistPublicKeys.size !== selectedArchaeologists.length) {
         throw Error('Not enough public keys');

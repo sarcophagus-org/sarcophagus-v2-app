@@ -48,12 +48,16 @@ export function useUploadFileAndKeyShares() {
         keyShares
       );
 
+      console.log('archaeologistPublicKeys', archaeologistPublicKeys);
+
+
       // Step 3: Encrypt each shard again with the arch public keys
       const keySharesEncryptedOuter = await encryptShardsWithArchaeologistPublicKeys(
         Array.from(archaeologistPublicKeys.values()),
         keySharesEncryptedInner
       );
 
+      console.log(',keySharesEncryptedOuter', keySharesEncryptedOuter);
       /**
        * Format data for upload
        */
@@ -65,14 +69,17 @@ export function useUploadFileAndKeyShares() {
         {}
       );
 
+      console.log(', doubleEncryptedKeyShares', doubleEncryptedKeyShares);
       // TODO: #multiple-key-update - this affects resurrection, may need to change (and be tested)
       const combinedPayload = {
         file: encryptedOuterLayer,
         keyShares: Buffer.from(JSON.stringify(doubleEncryptedKeyShares)),
       };
 
+      console.log('combinedPayload', combinedPayload);
       // Upload file data + keyshares data to arweave
       const payloadTxId = await uploadToArweave(Buffer.from(JSON.stringify(combinedPayload)));
+      console.log('payloadTxId', payloadTxId);
 
       setSarcophagusPayloadTxId(payloadTxId);
     } catch (error: any) {
