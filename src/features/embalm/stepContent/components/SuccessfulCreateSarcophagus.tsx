@@ -9,9 +9,9 @@ import { Step } from '../../../../store/embalm/reducer';
 import { SuccessData } from '../hooks/useCreateSarcophagus/useClearSarcophagusState';
 
 export function SuccessfulCreateSarcophagus({
-                                              successSarcophagusPayloadTxId,
-                                              successSarcophagusTxId,
-                                            }: SuccessData) {
+  successSarcophagusPayloadTxId,
+  successSarcophagusTxId,
+}: SuccessData) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
