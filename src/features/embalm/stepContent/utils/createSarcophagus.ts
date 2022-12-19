@@ -6,24 +6,11 @@ export async function encryptShardsWithArchaeologistPublicKeys(
   publicKeys: string[],
   keyShares: Uint8Array[]
 ): Promise<ArchaeologistEncryptedShard[]> {
-  console.log('publicKeys', publicKeys);
-  console.log('keyShares', keyShares);
-
   return Promise.all(
-    publicKeys.map(async (publicKey, i) => {
-      const asdf = await encrypt(publicKey, Buffer.from(keyShares[i]));
-      console.log('await encrypt(publicKey, Buffer.from(keyShares[i]))', asdf
-      );
-
-      const hexlified = ethers.utils.hexlify(asdf);
-      console.log('hexlified', hexlified);
-
-
-      return ({
-        publicKey,
-        encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(keyShares[i]))),
-      });
-    })
+    publicKeys.map(async (publicKey, i) => ({
+      publicKey,
+      encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(keyShares[i]))),
+    }))
   );
 }
 
