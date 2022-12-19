@@ -133,7 +133,6 @@ export function useArchaeologistSignatureNegotiation() {
         throw Error(`Error retrieving arch signatures ${error}`);
       });
 
-
       if (archaeologistPublicKeys.size !== selectedArchaeologists.length) {
         throw Error('Not enough public keys');
       }
