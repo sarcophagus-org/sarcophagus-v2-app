@@ -28,9 +28,10 @@ export function useUploadFileAndKeyShares() {
        * File upload data
        */
       // Step 1: Encrypt the payload with the generated keypair
+
       const encryptedOuterLayer = await encrypt(
         outerPublicKey!,
-        Buffer.from(JSON.stringify(payload), 'hex')
+        Buffer.from(JSON.stringify(payload))
       );
 
       /**
@@ -65,7 +66,6 @@ export function useUploadFileAndKeyShares() {
         {}
       );
 
-      // TODO: #multiple-key-update - this affects resurrection, may need to change (and be tested)
       const combinedPayload = {
         file: encryptedOuterLayer,
         keyShares: Buffer.from(JSON.stringify(doubleEncryptedKeyShares)),
