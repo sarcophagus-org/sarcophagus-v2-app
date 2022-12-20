@@ -5,6 +5,7 @@ import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
+import { ArweavePayload } from 'types';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -57,20 +58,13 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // Load the payload from arweave using the txId, and retrieve the double-encrypted key shares
       // Uses the fallback function by default which makes a direct api call for the payload
       const payloadBuffer = await fetchArweaveFileFallback(payloadTxId);
-      const payload: {
-        file: any;
-        keyShares: Buffer;
-      } = JSON.parse(Buffer.from(payloadBuffer).toString());
-
-      const doubleEncryptedKeyShares: Record<string, string> = JSON.parse(
-        Buffer.from(payload.keyShares).toString()
-      );
+      const payload: ArweavePayload = JSON.parse(Buffer.from(payloadBuffer).toString());
 
       // Decrypt the key shares. Each share is double-encrypted with an inner layer of encryption
       // with the recipient's key, and an outer layer of encryption with the archaeologist's key.
       const decryptedKeyShares: Buffer[] = [];
       for await (const arch of archaeologists) {
-        const archDoubleEncryptedKeyShare = doubleEncryptedKeyShares[arch.publicKey];
+        const archDoubleEncryptedKeyShare = payload.keyShares[arch.publicKey];
 
         // Decrypt outer layer with arch private key
         const recipientEncryptedKeyShare = await decrypt(

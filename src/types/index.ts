@@ -87,3 +87,8 @@ export interface SarcophagusResponseContract {
   publishedPrivateKeyCount: number;
   hasLockedBond: boolean;
 }
+
+export interface ArweavePayload {
+  file: Buffer;
+  keyShares: Record<string, string>;
+}

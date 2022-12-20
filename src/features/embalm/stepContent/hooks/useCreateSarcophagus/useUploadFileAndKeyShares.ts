@@ -8,6 +8,7 @@ import {
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
+import { ArweavePayload } from 'types';
 
 export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
@@ -66,9 +67,9 @@ export function useUploadFileAndKeyShares() {
         {}
       );
 
-      const combinedPayload = {
+      const combinedPayload: ArweavePayload = {
         file: encryptedOuterLayer,
-        keyShares: Buffer.from(JSON.stringify(doubleEncryptedKeyShares)),
+        keyShares: doubleEncryptedKeyShares,
       };
 
       // Upload file data + keyshares data to arweave
