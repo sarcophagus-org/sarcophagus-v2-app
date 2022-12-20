@@ -32,7 +32,5 @@ export function useCleanSarcophagus(sarcoId: string) {
     ...config,
   });
 
-  console.log('isError', isError);
-
   return { clean: write, isCleaning, isSuccess, isError, mayFail };
 }

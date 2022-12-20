@@ -29,7 +29,7 @@ export function Claim() {
   };
 
   const handleChangePrivateKey = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrivateKey(privateKeyPad(e.target.value.trim()));
+    setPrivateKey(!e.target.value.trim() ? '' : privateKeyPad(e.target.value.trim()));
   };
 
   // linkRef is used to automatically trigger a download
@@ -86,7 +86,7 @@ export function Claim() {
               )}
               <Button
                 w="fit-content"
-                disabled={!canResurrect}
+                disabled={!canResurrect || !privateKey}
                 mt={6}
                 onClick={handleResurrect}
                 isLoading={isResurrecting}

@@ -45,7 +45,6 @@ export function DetailsCollapse({
           p={6}
           bg="brand.100"
           align="left"
-
           spacing={2}
         >
           <Text>ID: {id}</Text>
