@@ -27,6 +27,8 @@ const document = async (name: string, recipient: RecipientState) => {
     },
     imageView: { height: 120, textAlign: 'center', width: '20%' },
     image: { marginHorizontal: '10%', width: 'auto', height: 'auto' },
+    title: { fontWeight: 'extrabold', fontSize: 16, marginBottom: 10 },
+    note: { marginBottom: 20 },
   });
 
   const qrCodeOption = { margin: 0 };
@@ -35,18 +37,25 @@ const document = async (name: string, recipient: RecipientState) => {
   const publicKeyQR = await QRCode.toDataURL(recipient.publicKey, qrCodeOption);
   const privateKeyQR = await QRCode.toDataURL(recipient.privateKey || '', qrCodeOption);
 
+  const pubKeyFirstHalf = recipient.publicKey.slice(0, recipient.publicKey.length - 50);
+  const pubKeySecondHalf = recipient.publicKey.slice(
+    recipient.publicKey.length - 50,
+    recipient.publicKey.length
+  );
+
   return (
     <Document>
       <Page
         size="LETTER"
         style={styles.page}
       >
-        <Text>Recipient information for sarcophagus: {name}</Text>
-        <Text>
-          Note: Keep in a safe location. Anyone with the private key can decrypt the payload.
+        <Text style={styles.title}>Recipient information for sarcophagus: {name}</Text>
+        <Text style={styles.note}>
+          Note: Keep in a safe location! Anyone with this private key can decrypt the payload.
         </Text>
+
         <View style={styles.section}>
-          <Text>Address:{recipient.address}</Text>
+          <Text>Address: {recipient.address}</Text>
           <View style={styles.imageView}>
             <Image
               style={styles.image}
@@ -54,8 +63,11 @@ const document = async (name: string, recipient: RecipientState) => {
             />
           </View>
         </View>
+
         <View style={styles.section}>
-          <Text>Public Key: {recipient.publicKey}</Text>
+          <Text>Public Key:</Text>
+          <Text>{pubKeyFirstHalf}</Text>
+          <Text>{pubKeySecondHalf}</Text>
           <View style={styles.imageView}>
             <Image
               style={styles.image}
@@ -63,8 +75,10 @@ const document = async (name: string, recipient: RecipientState) => {
             />
           </View>
         </View>
+
         <View style={styles.section}>
-          <Text>Private Key: {recipient.privateKey}</Text>
+          <Text>Private Key:</Text>
+          <Text>{recipient.privateKey}</Text>
           <View style={styles.imageView}>
             <Image
               style={styles.image}

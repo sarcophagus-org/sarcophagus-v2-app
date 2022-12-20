@@ -15,6 +15,7 @@ import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPri
 import { uploadPriceDecimals } from 'lib/constants';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'store/index';
+import { useNetwork } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useGetBalance } from '../hooks/useGetBalance';
 
@@ -24,11 +25,14 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
   const [inputAmount, setInputAmount] = useState(
-    parseFloat(ethers.utils.formatUnits(uploadPrice)).toFixed(uploadPriceDecimals)
+    uploadPrice.eq(ethers.constants.Zero)
+      ? undefined
+      : parseFloat(ethers.utils.formatUnits(uploadPrice)).toFixed(uploadPriceDecimals)
   );
   const { balanceOffset } = useSelector(x => x.bundlrState);
+  const { chain } = useNetwork();
 
-  const isInputAmountValid = parseFloat(inputAmount) > 0;
+  const isInputAmountValid = !!inputAmount && parseFloat(inputAmount) > 0;
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value } = event.target;
@@ -56,7 +60,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           py={8}
           spacing={6}
         >
-          <Text>Click to connect to Arweave Bundlr</Text>
+          <Text variant="secondary">Click to connect to Arweave Bundlr</Text>
           <Button onClick={connectToBundlr}>Connect to Bundlr</Button>
         </VStack>
       ) : (
@@ -67,17 +71,13 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           <FormControl>
             <FormLabel>Amount</FormLabel>
             <HStack>
-              <InputGroup
-                flex={1}
-                mr={3}
-              >
+              <InputGroup flex={1}>
                 <Input
                   onChange={handleInputChange}
                   value={inputAmount}
                   isDisabled={isFunding}
                   type="text"
-                  placeholder="0.00000000"
-                  _placeholder={{ color: 'inherit' }}
+                  placeholder="0.000"
                 />
                 <InputRightElement fontWeight={700}>ETH</InputRightElement>
               </InputGroup>
@@ -105,7 +105,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
               justify="space-between"
               align="flex-start"
             >
-              <Text>Connected to Bundlr service.</Text>
+              <Text variant="bold">Connected to Bundlr service.</Text>
               <Button
                 ml={6}
                 onClick={handleDisconnect}
@@ -113,19 +113,20 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
                 Disconnect
               </Button>
             </HStack>
-            <Text variant="secondary">Bundlr balance: {formattedBalance}</Text>
-            {uploadPrice.gt(0) && (
-              <Text variant="secondary">Estimated payload price: {formattedUploadPrice}</Text>
+            <Text>Bundlr balance: {formattedBalance}</Text>
+            {!balanceOffset.eq(ethers.constants.Zero) && (
+              <Text
+                mt={3}
+                color="error"
+              >
+                Pending Balance:{' '}
+                {`${parseFloat(ethers.utils.formatUnits(balanceOffset)).toFixed(8)} ${
+                  chain?.nativeCurrency?.name || 'ETH'
+                }`}
+              </Text>
             )}
+            {uploadPrice.gt(0) && <Text>Estimated payload price: {formattedUploadPrice}</Text>}
           </VStack>
-          {!balanceOffset.eq(ethers.constants.Zero) && (
-            <Text
-              mt={3}
-              color="error"
-            >
-              You have a pending balance update. Your balance should be updated in a few minutes
-            </Text>
-          )}
         </VStack>
       )}
     </VStack>

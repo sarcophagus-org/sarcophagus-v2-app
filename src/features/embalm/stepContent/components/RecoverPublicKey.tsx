@@ -32,7 +32,7 @@ export function RecoverPublicKey() {
   const dispatch = useDispatch();
   const { recipientState } = useSelector(x => x.embalmState);
 
-  const { recoverPublicKey, isLoading, errorStatus } = useRecoverPublicKey();
+  const { recoverPublicKey, isLoading, errorStatus, clearErrorStatus } = useRecoverPublicKey();
 
   async function handleOnClick(): Promise<void> {
     if (recipientState.address !== '') await recoverPublicKey(recipientState.address);
@@ -44,16 +44,17 @@ export function RecoverPublicKey() {
       spacing={6}
     >
       <Input
-        placeholder="0x0..."
-        onChange={e =>
+        placeholder="0x0000..."
+        onChange={e => {
+          if (errorStatus) clearErrorStatus();
           dispatch(
             setRecipientState({
-              address: e.target.value,
+              address: e.target.value.replaceAll(/\s+/g, ''),
               publicKey: '',
               setByOption: RecipientSetByOption.ADDRESS,
             })
-          )
-        }
+          );
+        }}
         value={recipientState.address}
         disabled={isLoading}
         maxLength={42}
@@ -71,6 +72,7 @@ export function RecoverPublicKey() {
       <Button
         onClick={handleOnClick}
         isLoading={isLoading}
+        disabled={!recipientState.address.trim()}
         w="190px"
       >
         Lookup Public Key
