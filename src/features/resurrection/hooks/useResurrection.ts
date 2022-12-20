@@ -46,41 +46,49 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       }
 
       // Get the payload txId from the contract using the sarcoId
-      // The sarcophagus should always have arweave tx ids
-      // The first one is the tx id for the payload, the second is the tx id for the encrypted
-      // shards which is not used here
       const payloadTxId = sarcophagus?.arweaveTxId;
 
-      // In case the sarcophagus has no tx ids. This should never happen but we are checking just in
+      // In case the sarcophagus has no tx id. This should never happen but we are checking just in
       // case.
       if (!payloadTxId) {
         throw new Error(`The Arwevae tx id for the payload is missing on sarcophagus ${sarcoId}`);
       }
 
-      // Load the double encrypted payload from arweave using the txId
+      // Load the payload from arweave using the txId, and retrieve the double-encrypted key shares
       // Uses the fallback function by default which makes a direct api call for the payload
-      // outerLayer is returned as an arraybuffer
-      const outerLayer = await fetchArweaveFileFallback(payloadTxId);
-      const outerLayerBuffer = Buffer.from(outerLayer);
+      const payloadBuffer = await fetchArweaveFileFallback(payloadTxId);
+      const payload: {
+        file: any;
+        keyShares: Buffer;
+      } = JSON.parse(Buffer.from(payloadBuffer).toString());
 
-      // Convert the shards from their hex strings to Uint8Array
-      const rawKeyShares = archaeologists
-        .map(a => {
-          const arrayifiedShard = arrayify(a.privateKey);
-          if (arrayifiedShard.length > 0) {
-            return Buffer.from(arrayifiedShard);
-          }
-        })
-        .filter(a => a);
+      const doubleEncryptedKeyShares: Record<string, string> = JSON.parse(
+        Buffer.from(payload.keyShares).toString()
+      );
 
-      // Apply SSS with the unencryped shards to derive the outer layer private key
-      const outerLayerPrivateKey = combine(rawKeyShares).toString();
+      // Decrypt the key shares. Each share is double-encrypted with an inner layer of encryption
+      // with the recipient's key, and an outer layer of encryption with the archaeologist's key.
+      const decryptedKeyShares: Buffer[] = [];
+      for await (const arch of archaeologists) {
+        const archDoubleEncryptedKeyShare = doubleEncryptedKeyShares[arch.publicKey];
 
-      // Decrypt the outer layer of the encrypted payload using the derived private key
-      const singleEncryptedPayload = await decrypt(outerLayerPrivateKey, outerLayerBuffer);
+        // Decrypt outer layer with arch private key
+        const recipientEncryptedKeyShare = await decrypt(
+          arch.privateKey,
+          Buffer.from(arrayify(archDoubleEncryptedKeyShare))
+        );
 
-      // Decrypt the inner layer of the encrypted payload using the recipientPublic key
-      const decryptedPayload = await decrypt(recipientPrivateKey, singleEncryptedPayload);
+        // Decrypt inner layer with rceipient private key
+        const decryptedKeyShare = await decrypt(recipientPrivateKey, recipientEncryptedKeyShare);
+
+        decryptedKeyShares.push(decryptedKeyShare);
+      }
+
+      // Apply SSS with the decrypted shards to derive the payload file's decryption key
+      const payloadDecryptionKey = combine(decryptedKeyShares).toString();
+
+      // Decrypt the payload with the recombined key
+      const decryptedPayload = await decrypt(payloadDecryptionKey, Buffer.from(payload.file));
       const { fileName, data } = JSON.parse(decryptedPayload.toString());
 
       if (!fileName || !data) {
