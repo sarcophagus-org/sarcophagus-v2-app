@@ -34,9 +34,10 @@ export interface ArchaeologistException {
 
 export interface SarcophagusArchaeologist {
   diggingFee: number;
+  isAccused: boolean;
   diggingFeesPaid: number;
-  doubleHashedKeyShare: string;
-  rawKeyShare: string;
+  publicKey: string;
+  privateKey: string;
 }
 
 export interface ArchaeologistProfile {
@@ -79,7 +80,7 @@ export interface SarcophagusResponseContract {
   name: string;
   threshold: number;
   maximumRewrapInterval: BigNumber;
-  arweaveTxIds: [string, string];
+  arweaveTxId: string;
   embalmerAddress: string;
   recipientAddress: string;
   archaeologistAddresses: string[];

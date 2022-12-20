@@ -26,7 +26,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   useEffect(() => {
     setIsLoading(true);
     if (!sarcophagus || !sarcophagus.threshold) return;
-    const archsWithShards = archaeologists.filter(a => a.rawKeyShare);
+    const archsWithShards = archaeologists.filter(a => a.privateKey);
     setCanResurrect(archsWithShards.length >= sarcophagus.threshold);
     setIsLoading(false);
   }, [archaeologists, sarcophagus]);
@@ -49,7 +49,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // The sarcophagus should always have arweave tx ids
       // The first one is the tx id for the payload, the second is the tx id for the encrypted
       // shards which is not used here
-      const payloadTxId = sarcophagus?.arweaveTxIds[0];
+      const payloadTxId = sarcophagus?.arweaveTxId;
 
       // In case the sarcophagus has no tx ids. This should never happen but we are checking just in
       // case.
@@ -66,7 +66,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // Convert the shards from their hex strings to Uint8Array
       const rawKeyShares = archaeologists
         .map(a => {
-          const arrayifiedShard = arrayify(a.rawKeyShare);
+          const arrayifiedShard = arrayify(a.privateKey);
           if (arrayifiedShard.length > 0) {
             return Buffer.from(arrayifiedShard);
           }
