@@ -14,6 +14,7 @@ import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
 import { goToStep, setArchaeologists } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
+import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
@@ -176,6 +177,8 @@ export function CreateSarcophagus() {
           </Button>
         </>
       )}
+
+      {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}
     </Flex>
   );
 }

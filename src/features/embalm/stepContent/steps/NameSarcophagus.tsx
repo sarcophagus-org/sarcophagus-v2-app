@@ -2,6 +2,7 @@ import { VStack, Heading, Text, Flex, HStack, Icon, Tooltip } from '@chakra-ui/r
 import { SetResurrection } from '../components/SetResurrection';
 import { SarcophagusName } from '../components/SarcophagusName';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
+import { PageBlockModal } from '../components/PageBlockModal';
 
 export function NameSarcophagus() {
   return (
@@ -33,6 +34,7 @@ export function NameSarcophagus() {
         </Text>
       </Flex>
       <SetResurrection />
+      <PageBlockModal />
     </VStack>
   );
 }
