@@ -19,7 +19,6 @@ import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icon
 import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
-import { PageBlockModal } from '../components/PageBlockModal';
 
 export function SelectArchaeologists({
   hideHeader = false,
@@ -252,7 +251,6 @@ export function SelectArchaeologists({
           </VStack>
         </PaginationContainer>
       </Pagination>
-      <PageBlockModal />
     </Flex>
   );
 }

@@ -13,7 +13,6 @@ import {
 import { setRequiredArchaeologists } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { SarcoAlert } from 'components/SarcoAlert';
-import { PageBlockModal } from '../components/PageBlockModal';
 
 export function TotalRequiredArchaegologists() {
   const dispatch = useDispatch();
@@ -68,7 +67,6 @@ export function TotalRequiredArchaegologists() {
           You cannot have more required archaeologist than total archaeologists
         </SarcoAlert>
       )}
-      <PageBlockModal />
     </VStack>
   );
 }

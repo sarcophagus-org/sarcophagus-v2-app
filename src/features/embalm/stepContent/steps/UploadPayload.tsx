@@ -4,7 +4,6 @@ import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPri
 import prettyBytes from 'pretty-bytes';
 import { useSelector } from 'store/index';
 import { FileDragAndDrop } from '../components/FileDragAndDrop';
-import { PageBlockModal } from '../components/PageBlockModal';
 import { useUploadPayload } from '../hooks/useUploadPayload';
 
 export function UploadPayload() {
@@ -81,7 +80,6 @@ export function UploadPayload() {
         ref={fileInputRef}
         type="file"
       />
-      <PageBlockModal />
     </VStack>
   );
 }

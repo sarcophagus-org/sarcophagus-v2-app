@@ -7,7 +7,6 @@ import { GenerateRecipientPDF } from '../components/GenerateRecipientPDF';
 import { Select, OptionBase, GroupBase } from 'chakra-react-select';
 import { validateRecipient } from 'features/embalm/stepNavigator/hooks/useSetStatuses';
 import { SarcoAlert } from 'components/SarcoAlert';
-import { PageBlockModal } from '../components/PageBlockModal';
 
 interface IRecipientSetByOption extends OptionBase {
   label: string;
@@ -132,7 +131,6 @@ export function SetRecipientPublicKey() {
           {recipientState.setByOption === RecipientSetByOption.GENERATE && <GenerateRecipientPDF />}
         </VStack>
       </VStack>
-      <PageBlockModal />
     </VStack>
   );
 }

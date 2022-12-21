@@ -2,7 +2,6 @@ import { QuestionIcon } from '@chakra-ui/icons';
 import { Text, VStack, Box, Link, Spacer } from '@chakra-ui/react';
 import { Bundlr } from '../components/Bundlr';
 import { BundlrAlertMessage } from '../components/BundlrAlertMessage';
-import { PageBlockModal } from '../components/PageBlockModal';
 
 export function FundBundlr() {
   return (
@@ -31,7 +30,6 @@ export function FundBundlr() {
           <BundlrAlertMessage />
         </Box>
       </Bundlr>
-      <PageBlockModal />
     </VStack>
   );
 }
