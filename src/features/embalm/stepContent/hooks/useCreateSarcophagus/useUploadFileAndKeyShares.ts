@@ -14,7 +14,7 @@ export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
-  const { outerPrivateKey, outerPublicKey, archaeologistPublicKeys, setSarcophagusPayloadTxId } =
+  const { payloadPrivateKey, payloadPublicKey, archaeologistPublicKeys, setSarcophagusPayloadTxId } =
     useContext(CreateSarcophagusContext);
 
   const uploadAndSetArweavePayload = useCallback(async () => {
@@ -30,8 +30,8 @@ export function useUploadFileAndKeyShares() {
        */
       // Step 1: Encrypt the payload with the generated keypair
 
-      const encryptedOuterLayer = await encrypt(
-        outerPublicKey!,
+      const encryptedPayload = await encrypt(
+        payloadPublicKey!,
         Buffer.from(JSON.stringify(payload))
       );
 
@@ -39,7 +39,7 @@ export function useUploadFileAndKeyShares() {
        * Double encrypted keyshares upload data
        */
       // Step 1: Split the outer layer private key using shamirs secret sharing
-      const keyShares: Uint8Array[] = split(outerPrivateKey, {
+      const keyShares: Uint8Array[] = split(payloadPrivateKey, {
         shares: selectedArchaeologists.length,
         threshold: requiredArchaeologists,
       });
@@ -68,7 +68,7 @@ export function useUploadFileAndKeyShares() {
       );
 
       const combinedPayload: ArweavePayload = {
-        file: encryptedOuterLayer,
+        file: encryptedPayload,
         keyShares: doubleEncryptedKeyShares,
       };
 
@@ -84,8 +84,8 @@ export function useUploadFileAndKeyShares() {
     requiredArchaeologists,
     selectedArchaeologists,
     archaeologistPublicKeys,
-    outerPublicKey,
-    outerPrivateKey,
+    payloadPublicKey,
+    payloadPrivateKey,
     recipientState.publicKey,
     uploadToArweave,
     setSarcophagusPayloadTxId,

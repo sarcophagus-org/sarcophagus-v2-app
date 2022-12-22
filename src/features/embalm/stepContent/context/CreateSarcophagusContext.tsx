@@ -2,8 +2,8 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { createEncryptionKeypairAsync } from '../hooks/useCreateEncryptionKeypair';
 
 interface CreateSarcophagusContextProps {
-  outerPrivateKey: string;
-  outerPublicKey: string;
+  payloadPrivateKey: string;
+  payloadPublicKey: string;
   negotiationTimestamp: number;
   setNegotiationTimestamp: React.Dispatch<React.SetStateAction<number>>;
   archaeologistSignatures: Map<string, string>;
@@ -12,15 +12,15 @@ interface CreateSarcophagusContextProps {
   setArchaeologistPublicKeys: React.Dispatch<React.SetStateAction<Map<string, string>>>;
   sarcophagusPayloadTxId: string;
   setSarcophagusPayloadTxId: React.Dispatch<React.SetStateAction<string>>;
-  setOuterPrivateKey: React.Dispatch<React.SetStateAction<string>>;
-  setOuterPublicKey: React.Dispatch<React.SetStateAction<string>>;
+  setPayloadPrivateKey: React.Dispatch<React.SetStateAction<string>>;
+  setPayloadPublicKey: React.Dispatch<React.SetStateAction<string>>;
   sarcophagusTxId: string;
   setSarcophagusTxId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const initialCreateSarcophagusState = {
-  outerPrivateKey: '',
-  outerPublicKey: '',
+  payloadPrivateKey: '',
+  payloadPublicKey: '',
   negotiationTimestamp: 0,
   archaeologistPublicKeys: new Map<string, string>([]),
   archaeologistSignatures: new Map<string, string>([]),
@@ -33,21 +33,21 @@ const CreateSarcophagusContext = createContext({} as CreateSarcophagusContextPro
 // Global state from embalm steps, used to create sarcophagus
 function CreateSarcophagusContextProvider({ children }: { children: ReactNode }) {
   // Generate the outer layer keypair for the sarcophagus.
-  const [outerPrivateKey, setOuterPrivateKey] = useState(
-    initialCreateSarcophagusState.outerPrivateKey
+  const [payloadPrivateKey, setPayloadPrivateKey] = useState(
+    initialCreateSarcophagusState.payloadPrivateKey
   );
-  const [outerPublicKey, setOuterPublicKey] = useState(
-    initialCreateSarcophagusState.outerPublicKey
+  const [payloadPublicKey, setPayloadPublicKey] = useState(
+    initialCreateSarcophagusState.payloadPublicKey
   );
 
   useEffect(() => {
     (async () => {
-      if (outerPrivateKey) {
+      if (payloadPrivateKey) {
         return;
       }
       const { privateKey, publicKey } = await createEncryptionKeypairAsync();
-      setOuterPrivateKey(privateKey);
-      setOuterPublicKey(publicKey);
+      setPayloadPrivateKey(privateKey);
+      setPayloadPublicKey(publicKey);
     })();
   });
 
@@ -70,8 +70,8 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
   return (
     <CreateSarcophagusContext.Provider
       value={{
-        outerPrivateKey,
-        outerPublicKey,
+        payloadPrivateKey,
+        payloadPublicKey,
         negotiationTimestamp,
         setNegotiationTimestamp,
         archaeologistPublicKeys,
@@ -80,8 +80,8 @@ function CreateSarcophagusContextProvider({ children }: { children: ReactNode })
         setArchaeologistSignatures,
         sarcophagusPayloadTxId,
         setSarcophagusPayloadTxId,
-        setOuterPrivateKey,
-        setOuterPublicKey,
+        setPayloadPrivateKey,
+        setPayloadPublicKey,
         sarcophagusTxId,
         setSarcophagusTxId,
       }}
