@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { setArchaeologistConnection, setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
-import { ArchaeologistExceptionCode } from 'types';
+import { Archaeologist, ArchaeologistExceptionCode } from 'types';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { createSarcophagusErrors } from '../../utils/errors';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
-import { multiaddr } from '@multiformats/multiaddr';
+import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -14,23 +14,56 @@ export function useDialArchaeologists() {
 
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
 
+  const getDialAddress = useCallback((arch: Archaeologist): PeerId | Multiaddr => {
+    // If peerIdParsed has 2 elements, it has a domain and peerId <domain>:<peerId>
+    // Otherwise it is just <peerId>
+    const peerIdParsed = arch.profile.peerId.split(':');
+
+    if (peerIdParsed.length === 2) {
+      return multiaddr(`/dns4/${peerIdParsed[0]}/tcp/443/wss/p2p/${peerIdParsed[1]}`);
+    } else {
+      return arch.fullPeerId!;
+    }
+  }, []);
+
+  const dialPeerIdOrMultiAddr = useCallback(
+    (arch: Archaeologist, isPing?: boolean): Promise<Connection> | Promise<number> | undefined => {
+      const dialAddr = getDialAddress(arch);
+
+      // @ts-ignore
+      return isPing ? libp2pNode?.ping(dialAddr) : libp2pNode?.dial(dialAddr);
+    },
+    [libp2pNode, getDialAddress]
+  );
+
+  const hangUpPeerIdOrMultiAddr = useCallback(
+    (arch: Archaeologist) => {
+      const dialAddr = getDialAddress(arch);
+
+      // @ts-ignore
+      return libp2pNode?.hangUp(dialAddr);
+    },
+    [libp2pNode, getDialAddress]
+  );
+
   const dialArchaeologist = useCallback(
-    async (peerId: PeerId) => {
+    async (arch: Archaeologist) => {
+      const peerIdString = arch.profile.peerId;
       try {
-        const connection = await libp2pNode?.dial(peerId);
+        const connection = (await dialPeerIdOrMultiAddr(arch)) as Connection;
         if (!connection) throw Error('No connection obtained from dial');
-        dispatch(setArchaeologistConnection(peerId.toString(), connection));
+        dispatch(setArchaeologistConnection(peerIdString, connection));
         return connection;
       } catch (e) {
         dispatch(
-          setArchaeologistException(peerId.toString(), {
+          setArchaeologistException(peerIdString, {
             code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
             message: 'Could not establish a connection',
           })
         );
       }
     },
-    [libp2pNode, dispatch]
+    [dispatch, dialPeerIdOrMultiAddr]
   );
 
   const dialSelectedArchaeologists = useCallback(async () => {
@@ -57,44 +90,36 @@ export function useDialArchaeologists() {
     const dialFailedArchaeologists = [];
 
     for await (const arch of selectedArchaeologists) {
+      const peerIdString = arch.profile.peerId;
       try {
-        const connection = await dialArchaeologistWithRetry(() =>
-          !arch.profile.peerId.includes('.')
-            ? libp2pNode?.dial(arch.fullPeerId!)
-            : libp2pNode?.dial(
-                // @ts-ignore
-                multiaddr(
-                  '/dns4/wss.encryptafile.com/tcp/443/wss/p2p/12D3KooWPLcrUEMREHW3eT6EWTTbgaKFeay8Ywqck7dyVSERfJZd'
-                )
-              )
-        );
+        const connection = await dialArchaeologistWithRetry(() => dialPeerIdOrMultiAddr(arch));
         if (!connection) throw Error('No connection obtained from dial');
-        dispatch(setArchaeologistConnection(arch.profile.peerId, connection));
+        dispatch(setArchaeologistConnection(peerIdString, connection));
       } catch (e) {
         dispatch(
-          setArchaeologistException(arch.profile.peerId, {
+          setArchaeologistException(peerIdString, {
             code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
             message: 'Could not establish a connection',
           })
         );
-        dialFailedArchaeologists.push(arch.profile.peerId);
+        dialFailedArchaeologists.push(peerIdString);
       }
     }
 
     if (dialFailedArchaeologists.length) {
       throw Error(createSarcophagusErrors[CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]);
     }
-  }, [selectedArchaeologists, libp2pNode, dispatch]);
+  }, [selectedArchaeologists, dispatch, dialPeerIdOrMultiAddr]);
 
   const pingArchaeologist = useCallback(
-    async (peerId: PeerId, onComplete: Function) => {
+    async (arch: Archaeologist, onComplete: Function) => {
       const pingTimeout = 5000;
-
+      const peerIdString = arch.profile.peerId;
       const couldNotConnect = setTimeout(() => {
         console.log('ping timeout!');
 
         dispatch(
-          setArchaeologistException(peerId.toString(), {
+          setArchaeologistException(peerIdString, {
             code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
             message: 'Ping timeout',
           })
@@ -102,23 +127,23 @@ export function useDialArchaeologists() {
         onComplete();
       }, pingTimeout);
 
-      console.log(`pinging ${peerId.toString()}`);
+      console.log(`pinging ${peerIdString}`);
 
-      const latency = await libp2pNode?.ping(peerId);
-      console.log('latency: ', latency);
-      libp2pNode?.hangUp(peerId);
+      const latency = await dialPeerIdOrMultiAddr(arch, true);
+      await hangUpPeerIdOrMultiAddr(arch);
 
       if (!!latency) {
         clearTimeout(couldNotConnect);
         onComplete();
       }
     },
-    [libp2pNode, dispatch]
+    [dispatch, dialPeerIdOrMultiAddr, hangUpPeerIdOrMultiAddr]
   );
 
   return {
     dialSelectedArchaeologists,
     pingArchaeologist,
     dialArchaeologist,
+    hangUpPeerIdOrMultiAddr,
   };
 }

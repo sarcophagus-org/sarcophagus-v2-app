@@ -12,12 +12,14 @@ export function useApprove() {
 
   const { submit } = useSubmitTransaction(
     {
-      abi: SarcoTokenMock__factory.abi as Abi,
-      functionName: 'approve',
-      args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
+      contractConfigParams: {
+        abi: SarcoTokenMock__factory.abi as Abi,
+        functionName: 'approve',
+        args: [networkConfig.diamondDeployAddress, ethers.constants.MaxUint256],
+        mode: 'prepared',
+      },
       toastDescription,
       transactionDescription,
-      mode: 'prepared',
     },
     networkConfig.sarcoTokenAddress
   );
