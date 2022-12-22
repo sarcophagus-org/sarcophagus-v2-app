@@ -1,6 +1,8 @@
-import { Icon } from '@chakra-ui/react';
+import { Icon, useTheme } from '@chakra-ui/react';
 
 export function AddIcon(props: any) {
+  const theme = useTheme();
+  const color = theme.colors.brand[700];
   return (
     <Icon
       width="25"
@@ -12,11 +14,11 @@ export function AddIcon(props: any) {
       <g clipPath="url(#clip0_4261_30515)">
         <path
           d="M9.06137 5.83203H9.90582V13.432H9.06137V5.83203Z"
-          fill="white"
+          fill={color}
         />
         <path
           d="M13.2836 9.35034V10.1948H5.68359L5.68359 9.35034L13.2836 9.35034Z"
-          fill="white"
+          fill={color}
         />
       </g>
       <rect
@@ -25,7 +27,7 @@ export function AddIcon(props: any) {
         width="18.24"
         height="18.24"
         rx="9.12"
-        stroke="white"
+        stroke={color}
         strokeWidth="0.76"
       />
       <defs>
@@ -34,7 +36,7 @@ export function AddIcon(props: any) {
             width="19"
             height="19"
             rx="9.5"
-            fill="white"
+            fill={color}
           />
         </clipPath>
       </defs>
