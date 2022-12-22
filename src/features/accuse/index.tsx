@@ -1,16 +1,46 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  IconButton,
-  Input,
-  Text,
-  Textarea,
-} from '@chakra-ui/react';
-import { AddIcon } from 'components/icons';
+import { Button, Flex, FormControl, FormLabel, Input, Text } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { PrivateKeyInput } from './PrivateKeyInput';
 
 export function Accuse() {
+  const [sarcophagusId, setSarcophagusId] = useState('');
+  const [archaeologistPrivateKeys, setArchaeologistPrivateKeys] = useState<string[]>(['']);
+  const [paymentAddress, setPaymentAddress] = useState('');
+
+  function handleChangeSarcophagusId(e: React.ChangeEvent<HTMLInputElement>) {
+    setSarcophagusId(e.target.value);
+  }
+
+  function handleAddPrivateKey() {
+    setArchaeologistPrivateKeys(prev => [...prev, '']);
+  }
+
+  function handleRemovePrivateKey(index: number) {
+    const newArchaeologistPrivateKeys = [...archaeologistPrivateKeys];
+    newArchaeologistPrivateKeys.splice(index, 1);
+
+    // if there are no archaeologist private keys left, add an empty one
+    if (newArchaeologistPrivateKeys.length === 0) {
+      newArchaeologistPrivateKeys.push('');
+    }
+
+    setArchaeologistPrivateKeys(newArchaeologistPrivateKeys);
+  }
+
+  function handleChangePrivateKey(e: React.ChangeEvent<HTMLTextAreaElement>, index: number) {
+    const newArchaeologistPrivateKeys = [...archaeologistPrivateKeys];
+    newArchaeologistPrivateKeys[index] = e.target.value;
+    setArchaeologistPrivateKeys(newArchaeologistPrivateKeys);
+  }
+
+  function handleChangePaymentAddress(e: React.ChangeEvent<HTMLInputElement>) {
+    setPaymentAddress(e.target.value);
+  }
+
+  function handleAccuse() {
+    //
+  }
+
   return (
     <Flex
       w="100%"
@@ -29,6 +59,8 @@ export function Accuse() {
         <FormLabel mt={12}>Sarcophagus ID</FormLabel>
         <Input
           placeholder="0x000..."
+          value={sarcophagusId}
+          onChange={handleChangeSarcophagusId}
           mt={1}
           p={6}
         />
@@ -39,29 +71,19 @@ export function Accuse() {
           Archaeologist Private Key
         </FormLabel>
         <>
-          <Flex>
-            <Textarea
-              placeholder="0x000..."
-              h={125}
-              mb={6}
-              p={6}
+          {archaeologistPrivateKeys.map((privateKey, index) => (
+            <PrivateKeyInput
+              key={index}
+              value={privateKey}
+              onChange={e => handleChangePrivateKey(e, index)}
+              onClickAddButton={handleAddPrivateKey}
+              onClickRemoveButton={() => handleRemovePrivateKey(index)}
+              showAddButton={index === archaeologistPrivateKeys.length - 1}
+              hideRemoveButton={
+                archaeologistPrivateKeys.length === 1 && archaeologistPrivateKeys[0].trim() === ''
+              }
             />
-          </Flex>
-          <Flex position="relative">
-            <Textarea
-              placeholder="0x000..."
-              h={125}
-              p={6}
-            />
-            <IconButton
-              size="sm"
-              position="absolute"
-              right="-48px"
-              variant="unstyled"
-              aria-label="Add Private Key"
-              icon={<AddIcon />}
-            />
-          </Flex>
+          ))}
         </>
         <Text mt={3}>
           To accuse multiple achaeologists, click the plus sign to the right of the field. You must
@@ -72,11 +94,14 @@ export function Accuse() {
           placeholder="Wallet address or ENS name"
           mt={1}
           p={6}
+          value={paymentAddress}
+          onChange={handleChangePaymentAddress}
         />
         <Text mt={2}>Leave this blank if you want funds send to the connected wallet.</Text>
         <Button
           mt={12}
           px={6}
+          onClick={handleAccuse}
         >
           Accuse
         </Button>
