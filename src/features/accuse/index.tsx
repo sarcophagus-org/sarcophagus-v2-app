@@ -1,11 +1,22 @@
 import { Button, Flex, FormControl, FormLabel, Input, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { useAccuse } from 'hooks/thirdPartyFacet/useAccuse';
+import React, { useEffect, useState } from 'react';
 import { PrivateKeyInput } from './PrivateKeyInput';
+import { useSignatures } from './useSignatures';
 
 export function Accuse() {
   const [sarcophagusId, setSarcophagusId] = useState('');
   const [archaeologistPrivateKeys, setArchaeologistPrivateKeys] = useState<string[]>(['']);
   const [paymentAddress, setPaymentAddress] = useState('');
+
+  // Sign the messages using the private keys whenever the form is provided valid values
+  const signatures = useSignatures(sarcophagusId, archaeologistPrivateKeys, paymentAddress);
+
+  const { accuse, isError, isAccusing, isLoading, isSuccess } = useAccuse(
+    sarcophagusId,
+    signatures,
+    paymentAddress
+  );
 
   function handleChangeSarcophagusId(e: React.ChangeEvent<HTMLInputElement>) {
     setSarcophagusId(e.target.value);
@@ -38,8 +49,17 @@ export function Accuse() {
   }
 
   function handleAccuse() {
-    //
+    accuse();
   }
+
+  // Reset the form when the accuse transaction is successful
+  useEffect(() => {
+    if (isSuccess) {
+      setSarcophagusId('');
+      setArchaeologistPrivateKeys(['']);
+      setPaymentAddress('');
+    }
+  }, [isSuccess, setArchaeologistPrivateKeys]);
 
   return (
     <Flex
@@ -101,7 +121,9 @@ export function Accuse() {
         <Button
           mt={12}
           px={6}
+          disabled={isError}
           onClick={handleAccuse}
+          isLoading={isLoading || isAccusing}
         >
           Accuse
         </Button>
