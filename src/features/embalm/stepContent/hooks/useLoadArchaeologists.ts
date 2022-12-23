@@ -17,6 +17,10 @@ export function useLoadArchaeologists() {
   const { chain } = useNetwork();
 
   const getProfiles = useCallback(async () => {
+    if (!networkConfig.diamondDeployAddress) {
+      return;
+    }
+
     const addresses: string[] = (await readContract({
       address: networkConfig.diamondDeployAddress,
       abi: ViewStateFacet__factory.abi,
@@ -68,7 +72,9 @@ export function useLoadArchaeologists() {
         dispatch(setCurrentChainId(chain?.id));
 
         const newArchaeologists = await getProfiles();
-        dispatch(setArchaeologists(newArchaeologists));
+        if (newArchaeologists) {
+          dispatch(setArchaeologists(newArchaeologists));
+        }
       } catch (error) {
         console.error(error);
       } finally {

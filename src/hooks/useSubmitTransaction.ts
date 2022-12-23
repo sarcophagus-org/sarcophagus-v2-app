@@ -1,19 +1,26 @@
 import { useToast } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { UseContractWriteArgs } from 'wagmi/dist/declarations/src/hooks/contracts/useContractWrite';
 import { formatToastMessage } from 'lib/utils/helpers';
 import { useNetworkConfig } from 'lib/config';
+import { Abi } from 'abitype';
+import { ethers } from 'ethers';
 
-type UseSubmitTransactionsArgs = UseContractWriteArgs & {
-  toastDescription?: string;
-  transactionDescription?: string;
-};
+interface ContractConfigParams {
+  address?: string;
+  abi: Abi;
+  functionName: string;
+  args: (string | ethers.BigNumber)[];
+  mode: string;
+}
 
-export function useSubmitTransaction(
-  contractConfig: Omit<UseSubmitTransactionsArgs, 'address'>,
-  address?: string
-) {
+interface UseSubmitTransactionParams {
+  toastDescription: string;
+  transactionDescription: string;
+  contractConfigParams: ContractConfigParams;
+}
+
+export function useSubmitTransaction(contractConfig: UseSubmitTransactionParams, address?: string) {
   const defaultSuccessToast = 'Transaction submitted';
   const defaultTransactionDescription = 'Unknown transaction submitted';
   const toastDuration = 5000;
@@ -23,7 +30,7 @@ export function useSubmitTransaction(
 
   const { config, error } = usePrepareContractWrite({
     address: address ?? networkConfig.diamondDeployAddress,
-    ...contractConfig,
+    ...contractConfig.contractConfigParams,
   });
 
   const { writeAsync } = useContractWrite({
@@ -42,7 +49,10 @@ export function useSubmitTransaction(
       });
     },
     onError(e) {
-      console.log('Transaction failed with args\n:', JSON.stringify(contractConfig.args));
+      console.log(
+        'Transaction failed with args\n:',
+        JSON.stringify(contractConfig.contractConfigParams.args)
+      );
       // TODO: Add a click to see more button on the toast message
       toast({
         title: 'Error',

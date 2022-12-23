@@ -19,8 +19,8 @@ export function Embalm() {
       height="100%"
     >
       {process.env.NODE_ENV === 'development' && !hideMagicFormFiller && <MagicFormFiller />}
-      {/* Upper section with title */}
 
+      {/* Upper section with title */}
       <Heading pb="48px">New Sarcophagus</Heading>
 
       {/* Lower section with content */}

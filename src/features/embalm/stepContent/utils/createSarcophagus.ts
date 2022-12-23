@@ -1,17 +1,27 @@
 import { ArchaeologistEncryptedShard } from '../../../../types';
 import { ethers } from 'ethers';
-import { doubleHashShard, encrypt } from '../../../../lib/utils/helpers';
+import { encrypt } from '../../../../lib/utils/helpers';
 
-export async function encryptShards(
+export async function encryptShardsWithArchaeologistPublicKeys(
   publicKeys: string[],
-  payload: Uint8Array[]
+  keyShares: Uint8Array[]
 ): Promise<ArchaeologistEncryptedShard[]> {
   return Promise.all(
     publicKeys.map(async (publicKey, i) => ({
       publicKey,
-      encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(payload[i]))),
-      doubleHashedKeyShare: doubleHashShard(payload[i]),
+      encryptedShard: ethers.utils.hexlify(await encrypt(publicKey, Buffer.from(keyShares[i]))),
     }))
+  );
+}
+
+export async function encryptShardsWithRecipientPublicKey(
+  publicKey: string,
+  keyShares: Uint8Array[]
+): Promise<Uint8Array[]> {
+  return Promise.all(
+    keyShares.map(async (share, i) => {
+      return encrypt(publicKey, Buffer.from(keyShares[i]));
+    })
   );
 }
 
@@ -19,8 +29,6 @@ export async function encryptShards(
 export enum CreateSarcophagusStage {
   NOT_STARTED,
   DIAL_ARCHAEOLOGISTS,
-  GET_PUBLIC_KEYS,
-  UPLOAD_ENCRYPTED_SHARDS,
   ARCHAEOLOGIST_NEGOTIATION,
   UPLOAD_PAYLOAD,
   APPROVE,
@@ -32,8 +40,6 @@ export enum CreateSarcophagusStage {
 export const defaultCreateSarcophagusStages: Record<number, string> = {
   [CreateSarcophagusStage.NOT_STARTED]: '',
   [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
-  [CreateSarcophagusStage.GET_PUBLIC_KEYS]: 'Request Archaeologist Public Keys',
-  [CreateSarcophagusStage.UPLOAD_ENCRYPTED_SHARDS]: 'Upload Archaeologist Data to Arweave',
   [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
   [CreateSarcophagusStage.APPROVE]: 'Approve',

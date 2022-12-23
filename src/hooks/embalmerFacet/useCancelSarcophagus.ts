@@ -11,12 +11,14 @@ export function useCancelSarcophagus({ sarcoId }: CancelSarcophagusArgs) {
   const transactionDescription = 'Cancel sarcophagus';
 
   const { submit } = useSubmitTransaction({
-    abi: EmbalmerFacet__factory.abi as Abi,
-    functionName: 'cancelSarcophagus',
-    args: [sarcoId],
+    contractConfigParams: {
+      abi: EmbalmerFacet__factory.abi as Abi,
+      functionName: 'cancelSarcophagus',
+      args: [sarcoId],
+      mode: 'prepared',
+    },
     toastDescription,
     transactionDescription,
-    mode: 'prepared',
   });
 
   return { cancelSarcophagus: submit };

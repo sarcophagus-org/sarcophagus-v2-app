@@ -1,13 +1,13 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { getLowestRewrapInterval } from '../../../../lib/utils/helpers';
-import { Archaeologist, ArchaeologistEncryptedShard } from '../../../../types';
+import { Archaeologist } from '../../../../types';
 import { computeAddress } from 'ethers/lib/utils';
 import { RecipientState } from '../../../../store/embalm/actions';
 
 export interface ContractArchaeologist {
   archAddress: string;
   diggingFee: BigNumber;
-  doubleHashedKeyShare: string;
+  publicKey: string;
   v: number;
   r: string;
   s: string;
@@ -29,9 +29,9 @@ export interface SubmitSarcophagusProps {
   selectedArchaeologists: Archaeologist[];
   requiredArchaeologists: number;
   negotiationTimestamp: number;
+  archaeologistPublicKeys: Map<string, string>;
   archaeologistSignatures: Map<string, string>;
-  archaeologistShards: ArchaeologistEncryptedShard[];
-  arweaveTxIds: string[];
+  arweaveTxId: string;
 }
 
 export function formatSubmitSarcophagusArgs({
@@ -41,9 +41,9 @@ export function formatSubmitSarcophagusArgs({
   selectedArchaeologists,
   requiredArchaeologists,
   negotiationTimestamp,
+  archaeologistPublicKeys,
   archaeologistSignatures,
-  archaeologistShards,
-  arweaveTxIds,
+  arweaveTxId,
 }: SubmitSarcophagusProps) {
   const getContractArchaeologists = (): ContractArchaeologist[] => {
     return selectedArchaeologists.map(arch => {
@@ -53,9 +53,8 @@ export function formatSubmitSarcophagusArgs({
       return {
         archAddress: arch.profile.archAddress,
         diggingFee: arch.profile.minimumDiggingFee,
-        doubleHashedKeyShare: archaeologistShards.filter(
-          shard => shard.publicKey === arch.publicKey
-        )[0].doubleHashedKeyShare,
+        // TODO: #multiple-key-update - we may want further validation this exsits
+        publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
         v,
         r,
         s,
@@ -81,7 +80,7 @@ export function formatSubmitSarcophagusArgs({
       ...settings,
     },
     contractArchaeologists,
-    arweaveTxIds,
+    arweaveTxId,
   ];
 
   return { submitSarcophagusArgs: args };

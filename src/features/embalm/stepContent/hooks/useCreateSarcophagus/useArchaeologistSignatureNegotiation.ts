@@ -9,23 +9,23 @@ import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext
 import { useDialArchaeologists } from './useDialArchaeologists';
 
 interface ArchaeologistSignatureNegotiationParams {
-  arweaveTxId: string;
-  doubleHashedKeyShare: string;
   maxRewrapInterval: number;
   diggingFee: string;
   timestamp: number;
+}
+
+interface ArchaeologistResponse {
+  publicKey: string;
+  signature: string;
+  error?: any;
 }
 
 export function useArchaeologistSignatureNegotiation() {
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
 
-  const {
-    archaeologistShards,
-    encryptedShardsTxId,
-    setArchaeologistSignatures,
-    setNegotiationTimestamp,
-  } = useContext(CreateSarcophagusContext);
+  const { setArchaeologistPublicKeys, setArchaeologistSignatures, setNegotiationTimestamp } =
+    useContext(CreateSarcophagusContext);
 
   const { dialArchaeologist } = useDialArchaeologists();
 
@@ -37,13 +37,12 @@ export function useArchaeologistSignatureNegotiation() {
     switch (code) {
       case SarcophagusValidationError.DIGGING_FEE_TOO_LOW:
         return `Digging fee set for ${archAddress} is too low`;
-      case SarcophagusValidationError.INVALID_ARWEAVE_SHARD:
-        return `${archAddress} was assigned an invalid shard`;
       case SarcophagusValidationError.INVALID_TIMESTAMP:
         return `${archAddress} rejected negotiation time`;
       case SarcophagusValidationError.MAX_REWRAP_INTERVAL_TOO_LARGE:
         return `Rewrap interval set for ${archAddress} is too large`;
       case SarcophagusValidationError.UNKNOWN_ERROR:
+      default:
         return `Exception while waiting for signature from ${archAddress}`;
     }
   }
@@ -57,6 +56,7 @@ export function useArchaeologistSignatureNegotiation() {
       setNegotiationTimestamp(negotiationTimestamp);
 
       const archaeologistSignatures = new Map<string, string>([]);
+      const archaeologistPublicKeys = new Map<string, string>([]);
 
       await Promise.all(
         selectedArchaeologists.map(async arch => {
@@ -68,7 +68,7 @@ export function useArchaeologistSignatureNegotiation() {
             });
 
             if (isRetry && arch.fullPeerId) {
-              arch.connection = await dialArchaeologist(arch.fullPeerId);
+              arch.connection = await dialArchaeologist(arch);
               if (!arch.connection) return;
             } else {
               return;
@@ -76,12 +76,9 @@ export function useArchaeologistSignatureNegotiation() {
           }
 
           const negotiationParams: ArchaeologistSignatureNegotiationParams = {
-            arweaveTxId: encryptedShardsTxId,
             diggingFee: arch.profile.minimumDiggingFee.toString(),
             maxRewrapInterval: lowestRewrapInterval,
             timestamp: negotiationTimestamp,
-            doubleHashedKeyShare: archaeologistShards.find(s => s.publicKey === arch.publicKey)!
-              .doubleHashedKeyShare,
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
@@ -92,7 +89,11 @@ export function useArchaeologistSignatureNegotiation() {
             await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
               for await (const data of source) {
                 const dataStr = new TextDecoder().decode(data.subarray());
-                const response = JSON.parse(dataStr);
+                const response: ArchaeologistResponse = JSON.parse(dataStr);
+
+                // TODO: #multiple-key-update - verify signature in response using:
+                // the signature from arch and all data in that sig
+                // maxRewrapInterval, diggingFee, timestamp, publicKey
 
                 if (response.error) {
                   console.log(`error response from arch: \n${response.error.message}`);
@@ -106,6 +107,7 @@ export function useArchaeologistSignatureNegotiation() {
                     })
                   );
                 } else {
+                  archaeologistPublicKeys.set(arch.profile.archAddress, response.publicKey);
                   archaeologistSignatures.set(arch.profile.archAddress, response.signature);
                 }
               }
@@ -131,18 +133,22 @@ export function useArchaeologistSignatureNegotiation() {
         throw Error(`Error retrieving arch signatures ${error}`);
       });
 
+      if (archaeologistPublicKeys.size !== selectedArchaeologists.length) {
+        throw Error('Not enough public keys');
+      }
+
       if (archaeologistSignatures.size !== selectedArchaeologists.length) {
         throw Error('Not enough signatures');
       }
 
+      setArchaeologistPublicKeys(archaeologistPublicKeys);
       setArchaeologistSignatures(archaeologistSignatures);
     },
     [
       dispatch,
       selectedArchaeologists,
-      archaeologistShards,
-      encryptedShardsTxId,
       dialArchaeologist,
+      setArchaeologistPublicKeys,
       setArchaeologistSignatures,
       setNegotiationTimestamp,
     ]

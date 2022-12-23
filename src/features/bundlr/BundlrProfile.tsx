@@ -7,6 +7,7 @@ import { useEthPrice } from 'hooks/useEthPrice';
 import { useState } from 'react';
 import { useSelector } from 'store/index';
 import { BundlrInput } from './BundlrInput';
+import { formatEther } from 'ethers/lib/utils';
 
 export enum BundlrAction {
   Deposit,
@@ -25,6 +26,9 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
   const [inputAmount, setInputAmount] = useState('');
   const { balanceOffset } = useSelector(s => s.bundlrState);
   const bundlrBalanceData = useGetBalance();
+  const bundlrBalanceInEth = !bundlrBalanceData?.balance
+    ? '--'
+    : formatEther(bundlrBalanceData.balance.toString());
   const bundlrBalance = !bundlrBalanceData?.balance
     ? '--'
     : Number(bundlrBalanceData?.balance).toFixed(2);
@@ -72,7 +76,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         align="center"
       >
         <EthereumIcon boxSize="30px" />
-        <Text fontSize="3xl">{bundlrBalance}</Text>
+        <Text fontSize="3xl">{`${bundlrBalanceInEth}`}</Text>
       </Flex>
       <Text mt={1}>{isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}</Text>
       {!balanceOffset.eq(ethers.constants.Zero) && (

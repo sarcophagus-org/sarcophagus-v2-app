@@ -34,9 +34,10 @@ export interface ArchaeologistException {
 
 export interface SarcophagusArchaeologist {
   diggingFee: number;
+  isAccused: boolean;
   diggingFeesPaid: number;
-  doubleHashedKeyShare: string;
-  rawKeyShare: string;
+  publicKey: string;
+  privateKey: string;
 }
 
 export interface ArchaeologistProfile {
@@ -55,7 +56,6 @@ export interface ArchaeologistProfile {
 export interface ArchaeologistEncryptedShard {
   publicKey: string;
   encryptedShard: string;
-  doubleHashedKeyShare: string;
 }
 
 export enum SarcophagusState {
@@ -72,6 +72,7 @@ export enum SarcophagusState {
 }
 
 export type Sarcophagus = SarcophagusResponseContract & { id: string; state: SarcophagusState };
+
 export interface SarcophagusResponseContract {
   resurrectionTime: BigNumber;
   isCompromised: boolean;
@@ -79,10 +80,15 @@ export interface SarcophagusResponseContract {
   name: string;
   threshold: number;
   maximumRewrapInterval: BigNumber;
-  arweaveTxIds: [string, string];
+  arweaveTxId: string;
   embalmerAddress: string;
   recipientAddress: string;
   archaeologistAddresses: string[];
-  publishedKeyShareCount: number;
+  publishedPrivateKeyCount: number;
   hasLockedBond: boolean;
+}
+
+export interface ArweavePayload {
+  file: Buffer;
+  keyShares: Record<string, string>;
 }

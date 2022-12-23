@@ -6,9 +6,9 @@ import {
 import { useDispatch, useSelector } from '../../../../../store';
 import { resetEmbalmState, setArchaeologistConnection } from '../../../../../store/embalm/actions';
 import { Step } from '../../../../../store/embalm/reducer';
+import { useDialArchaeologists } from './useDialArchaeologists';
 
 export interface SuccessData {
-  successEncryptedShardsTxId: string;
   successSarcophagusPayloadTxId: string;
   successSarcophagusTxId: string;
 }
@@ -17,9 +17,6 @@ export function useClearSarcophagusState() {
   const {
     setOuterPrivateKey,
     setOuterPublicKey,
-    setArchaeologistShards,
-    encryptedShardsTxId,
-    setEncryptedShardsTxId,
     setNegotiationTimestamp,
     setArchaeologistSignatures,
     sarcophagusPayloadTxId,
@@ -30,23 +27,19 @@ export function useClearSarcophagusState() {
 
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(x => x.embalmState);
-  const libp2pNode = useSelector(s => s.appState.libp2pNode);
+  const { hangUpPeerIdOrMultiAddr } = useDialArchaeologists();
 
-  const [successEncryptedShardsTxId, setSuccessEncryptedShardsTxId] = useState('');
   const [successSarcophagusPayloadTxId, setSuccessSarcophagusPayloadTxId] = useState('');
   const [successSarcophagusTxId, setSuccessSarcophagusTxId] = useState('');
 
   const clearSarcophagusState = useCallback(async () => {
     // Set local TX IDs to display on the success page
-    setSuccessEncryptedShardsTxId(encryptedShardsTxId);
     setSuccessSarcophagusPayloadTxId(sarcophagusPayloadTxId);
     setSuccessSarcophagusTxId(sarcophagusTxId);
 
     // reset state local to create sarcophagus
     setOuterPrivateKey(initialCreateSarcophagusState.outerPrivateKey);
     setOuterPublicKey(initialCreateSarcophagusState.outerPublicKey);
-    setArchaeologistShards(initialCreateSarcophagusState.archaeologistShards);
-    setEncryptedShardsTxId(initialCreateSarcophagusState.encryptedShardsTxId);
     setNegotiationTimestamp(initialCreateSarcophagusState.negotiationTimestamp);
     setArchaeologistSignatures(initialCreateSarcophagusState.archaeologistSignatures);
     setSarcophagusPayloadTxId(initialCreateSarcophagusState.sarcophagusPayloadTxId);
@@ -58,31 +51,27 @@ export function useClearSarcophagusState() {
     // hang up archaeologists and reset connection
     for await (const arch of selectedArchaeologists) {
       if (arch.connection) {
-        libp2pNode?.hangUp(arch.fullPeerId!);
-        dispatch(setArchaeologistConnection(arch.fullPeerId!.toString(), undefined));
+        hangUpPeerIdOrMultiAddr(arch);
+        dispatch(setArchaeologistConnection(arch.profile.peerId, undefined));
       }
     }
   }, [
-    libp2pNode,
     selectedArchaeologists,
-    encryptedShardsTxId,
     sarcophagusPayloadTxId,
     sarcophagusTxId,
     setOuterPrivateKey,
     setOuterPublicKey,
-    setArchaeologistShards,
-    setEncryptedShardsTxId,
     setNegotiationTimestamp,
     setArchaeologistSignatures,
     setSarcophagusPayloadTxId,
     setSarcophagusTxId,
     dispatch,
+    hangUpPeerIdOrMultiAddr,
   ]);
 
   return {
     clearSarcophagusState,
     successData: {
-      successEncryptedShardsTxId,
       successSarcophagusPayloadTxId,
       successSarcophagusTxId,
     } as SuccessData,

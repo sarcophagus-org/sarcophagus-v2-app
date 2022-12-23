@@ -10,10 +10,9 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
 
   const {
     negotiationTimestamp,
+    archaeologistPublicKeys,
     archaeologistSignatures,
-    archaeologistShards,
     sarcophagusPayloadTxId,
-    encryptedShardsTxId,
     setSarcophagusTxId,
   } = useContext(CreateSarcophagusContext);
 
@@ -25,9 +24,9 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
       selectedArchaeologists,
       requiredArchaeologists,
       negotiationTimestamp,
+      archaeologistPublicKeys,
       archaeologistSignatures,
-      archaeologistShards,
-      arweaveTxIds: [sarcophagusPayloadTxId, encryptedShardsTxId],
+      arweaveTxId: sarcophagusPayloadTxId,
     });
 
     const tx = await embalmerFacet.createSarcophagus(...submitSarcophagusArgs);
@@ -42,10 +41,9 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     selectedArchaeologists,
     requiredArchaeologists,
     negotiationTimestamp,
+    archaeologistPublicKeys,
     archaeologistSignatures,
-    archaeologistShards,
     sarcophagusPayloadTxId,
-    encryptedShardsTxId,
     setSarcophagusTxId,
   ]);
 

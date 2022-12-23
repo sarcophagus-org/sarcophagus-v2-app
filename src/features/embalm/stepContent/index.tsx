@@ -92,8 +92,9 @@ export function StepContent() {
             <Text fontSize="lg">{'Next >'}</Text>
           </Button>
         )}
+        {/* Create Sarcophagus Step internally adds its own PageBlockModal */}
+        {currentStep === Step.CreateSarcophagus ? null : <PageBlockModal />}
       </HStack>
-      <PageBlockModal />
     </VStack>
   );
 }

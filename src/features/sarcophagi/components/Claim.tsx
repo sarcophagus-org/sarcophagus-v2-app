@@ -1,4 +1,4 @@
-import { Button, Center, Flex, Link, Spinner, Text, Textarea } from '@chakra-ui/react';
+import { Button, Center, Flex, Link, Spinner, Text, Textarea, useToast } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export function Claim() {
+  const toast = useToast();
   const { id } = useParams();
   const [privateKey, setPrivateKey] = useState('');
   const [resurrectError, setResurrectError] = useState('');
@@ -29,7 +30,7 @@ export function Claim() {
   };
 
   const handleChangePrivateKey = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrivateKey(privateKeyPad(e.target.value.trim()));
+    setPrivateKey(!e.target.value.trim() ? '' : privateKeyPad(e.target.value.trim()));
   };
 
   // linkRef is used to automatically trigger a download
@@ -48,6 +49,13 @@ export function Claim() {
       linkRef.current.href = dataUrl;
       linkRef.current.download = fileName;
       linkRef.current.click();
+      toast({
+        title: 'Success',
+        description: 'Your payload has been downloaded',
+        status: 'success',
+        isClosable: true,
+        position: 'bottom-right',
+      });
     }
   }
 
@@ -86,7 +94,7 @@ export function Claim() {
               )}
               <Button
                 w="fit-content"
-                disabled={!canResurrect}
+                disabled={!canResurrect || !privateKey}
                 mt={6}
                 onClick={handleResurrect}
                 isLoading={isResurrecting}
