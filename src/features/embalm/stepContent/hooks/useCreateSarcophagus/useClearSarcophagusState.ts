@@ -6,6 +6,7 @@ import {
 import { useDispatch, useSelector } from '../../../../../store';
 import { resetEmbalmState, setArchaeologistConnection } from '../../../../../store/embalm/actions';
 import { Step } from '../../../../../store/embalm/reducer';
+import { useDialArchaeologists } from './useDialArchaeologists';
 
 export interface SuccessData {
   successSarcophagusPayloadTxId: string;
@@ -26,7 +27,7 @@ export function useClearSarcophagusState() {
 
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(x => x.embalmState);
-  const libp2pNode = useSelector(s => s.appState.libp2pNode);
+  const { hangUpPeerIdOrMultiAddr } = useDialArchaeologists();
 
   const [successSarcophagusPayloadTxId, setSuccessSarcophagusPayloadTxId] = useState('');
   const [successSarcophagusTxId, setSuccessSarcophagusTxId] = useState('');
@@ -50,12 +51,11 @@ export function useClearSarcophagusState() {
     // hang up archaeologists and reset connection
     for await (const arch of selectedArchaeologists) {
       if (arch.connection) {
-        libp2pNode?.hangUp(arch.fullPeerId!);
-        dispatch(setArchaeologistConnection(arch.fullPeerId!.toString(), undefined));
+        hangUpPeerIdOrMultiAddr(arch);
+        dispatch(setArchaeologistConnection(arch.profile.peerId, undefined));
       }
     }
   }, [
-    libp2pNode,
     selectedArchaeologists,
     sarcophagusPayloadTxId,
     sarcophagusTxId,
@@ -66,6 +66,7 @@ export function useClearSarcophagusState() {
     setSarcophagusPayloadTxId,
     setSarcophagusTxId,
     dispatch,
+    hangUpPeerIdOrMultiAddr,
   ]);
 
   return {

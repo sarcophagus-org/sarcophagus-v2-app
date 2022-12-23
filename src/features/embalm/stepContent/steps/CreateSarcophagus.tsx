@@ -95,7 +95,9 @@ export function CreateSarcophagus() {
       if (isCreateCompleted()) {
         // Get the profiles from the contract
         const profiles = await getProfiles();
-        dispatch(setArchaeologists(profiles));
+        if (profiles) {
+          dispatch(setArchaeologists(profiles));
+        }
 
         // restart the peer discovery process
         await addPeerDiscoveryEventListener(globalLibp2pNode!);

@@ -68,7 +68,7 @@ export function useArchaeologistSignatureNegotiation() {
             });
 
             if (isRetry && arch.fullPeerId) {
-              arch.connection = await dialArchaeologist(arch.fullPeerId);
+              arch.connection = await dialArchaeologist(arch);
               if (!arch.connection) return;
             } else {
               return;
