@@ -12,30 +12,19 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     // required for "type-aware linting"
-    "project": [
-      "./tsconfig.json"
-    ],
+    "project": ["./tsconfig.json"],
     "ecmaFeatures": {
       "jsx": true
     },
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [
-    "react",
-    "import",
-    "@typescript-eslint",
-    "prettier",
-    "react-hooks"
-  ],
+  "plugins": ["react", "import", "@typescript-eslint", "prettier", "react-hooks"],
   "settings": {
     // resolves imports without file extensions for listed extensions
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".ts",
-          ".tsx"
-        ]
+        "extensions": [".ts", ".tsx"]
       }
     },
     "react": {
