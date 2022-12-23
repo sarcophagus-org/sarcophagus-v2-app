@@ -40,13 +40,8 @@ export function useUploadFileAndKeyShares() {
       const payloadBuffer = Buffer.from(payloadStr, 'base64');
       console.log('buffer', payloadBuffer);
 
-
-      const encryptedPayload = await encrypt(
-        payloadPublicKey!,
-        payloadBuffer
-      );
+      const encryptedPayload = await encrypt(payloadPublicKey!, payloadBuffer);
       console.log(' done encrypt payload');
-
 
       /**
        * Double encrypted keyshares upload data

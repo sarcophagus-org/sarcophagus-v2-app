@@ -64,7 +64,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // const payload: ArweavePayload = JSON.parse(Buffer.from(payloadBuffer).toString());
 
       const payloadBuffer = Buffer.from(arweaveFile);
-      const splitIndex = payloadBuffer.findIndex((char) => char === 10);
+      const splitIndex = payloadBuffer.findIndex(char => char === 10);
 
       if (splitIndex === -1) throw Error('Bad data');
       const sharesBuffer = payloadBuffer.slice(0, splitIndex);

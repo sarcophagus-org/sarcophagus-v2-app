@@ -107,7 +107,6 @@ export function useBundlr() {
 
           res = await uploader?.uploadData(fileBuffer);
           console.log('res', res.statusText);
-
         }
 
         toast(uploadSuccess());
