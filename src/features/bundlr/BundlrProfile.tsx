@@ -7,7 +7,7 @@ import { useEthPrice } from 'hooks/useEthPrice';
 import { useState } from 'react';
 import { useSelector } from 'store/index';
 import { BundlrInput } from './BundlrInput';
-import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils';
+import { formatEther } from 'ethers/lib/utils';
 
 export enum BundlrAction {
   Deposit,
