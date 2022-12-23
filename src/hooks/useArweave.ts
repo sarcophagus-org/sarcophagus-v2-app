@@ -26,11 +26,16 @@ export function useArweave() {
       }
 
       try {
+        console.log('api call');
+
         const res = await arweave.api.get(`/${arweaveTxId}`, {
           responseType: 'arraybuffer',
         });
+        console.log('api call done');
         return res.data;
       } catch (error) {
+        console.log('error', error);
+
         throw new Error(`Error fetching arweave file: ${error}`);
       }
     },

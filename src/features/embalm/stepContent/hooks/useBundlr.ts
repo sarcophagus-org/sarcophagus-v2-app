@@ -96,10 +96,18 @@ export function useBundlr() {
         let res;
 
         if (Buffer.byteLength(fileBuffer) < chunkedUploaderFileSize) {
+          console.log('n upld');
+
           res = await bundlr?.upload(fileBuffer);
         } else {
+          console.log('chunked upload');
+
           const uploader = bundlr?.uploader.chunkedUploader;
+          console.log(uploader);
+
           res = await uploader?.uploadData(fileBuffer);
+          console.log('res', res.statusText);
+
         }
 
         toast(uploadSuccess());

@@ -20,7 +20,7 @@ export const hardhatNetworkConfig: NetworkConfig = {
     host: 'localhost',
     port: 1984,
     protocol: 'http',
-    timeout: 20000,
-    logging: false,
+    timeout: 60000 * 30,
+    logging: true,
   },
 };

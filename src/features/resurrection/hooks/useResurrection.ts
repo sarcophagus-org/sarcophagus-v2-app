@@ -57,14 +57,27 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
 
       // Load the payload from arweave using the txId, and retrieve the double-encrypted key shares
       // Uses the fallback function by default which makes a direct api call for the payload
-      const payloadBuffer = await fetchArweaveFileFallback(payloadTxId);
-      const payload: ArweavePayload = JSON.parse(Buffer.from(payloadBuffer).toString());
+      console.log('get arweave file');
+
+      const arweaveFile = await fetchArweaveFileFallback(payloadTxId);
+      // const payloadBuffer = await fetchArweaveFileFallback(payloadTxId);
+      // const payload: ArweavePayload = JSON.parse(Buffer.from(payloadBuffer).toString());
+
+      const payloadBuffer = Buffer.from(arweaveFile);
+      const splitIndex = payloadBuffer.findIndex((char) => char === 10);
+
+      if (splitIndex === -1) throw Error('Bad data');
+      const sharesBuffer = payloadBuffer.slice(0, splitIndex);
+
+      const payloadFile = payloadBuffer.slice(splitIndex + 1, payloadBuffer.length);
+
+      const payloadKeyShares = JSON.parse(sharesBuffer.toString());
 
       // Decrypt the key shares. Each share is double-encrypted with an inner layer of encryption
       // with the recipient's key, and an outer layer of encryption with the archaeologist's key.
       const decryptedKeyShares: Buffer[] = [];
       for await (const arch of archaeologists) {
-        const archDoubleEncryptedKeyShare = payload.keyShares[arch.publicKey];
+        const archDoubleEncryptedKeyShare = payloadKeyShares[arch.publicKey];
 
         // Decrypt outer layer with arch private key
         const recipientEncryptedKeyShare = await decrypt(
@@ -82,7 +95,11 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       const payloadDecryptionKey = combine(decryptedKeyShares).toString();
 
       // Decrypt the payload with the recombined key
-      const decryptedPayload = await decrypt(payloadDecryptionKey, Buffer.from(payload.file));
+      const decryptedPayload = await decrypt(payloadDecryptionKey, payloadFile);
+      console.log('decryptedPayload', decryptedPayload);
+      console.log('decryptedPayload', decryptedPayload.toString());
+      console.log('decryptedPayload', JSON.parse(decryptedPayload.toString()));
+
       const { fileName, data } = JSON.parse(decryptedPayload.toString());
 
       if (!fileName || !data) {

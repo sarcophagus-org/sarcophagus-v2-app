@@ -8,16 +8,22 @@ import {
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
-import { ArweavePayload } from 'types';
+// import { ArweavePayload } from 'types';
 
 export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
-  const { payloadPrivateKey, payloadPublicKey, archaeologistPublicKeys, setSarcophagusPayloadTxId } =
-    useContext(CreateSarcophagusContext);
+  const {
+    payloadPrivateKey,
+    payloadPublicKey,
+    archaeologistPublicKeys,
+    setSarcophagusPayloadTxId,
+  } = useContext(CreateSarcophagusContext);
 
   const uploadAndSetArweavePayload = useCallback(async () => {
+    console.log('upload step');
+
     try {
       const data = await readFileDataAsBase64(file!);
       const payload = {
@@ -29,11 +35,18 @@ export function useUploadFileAndKeyShares() {
        * File upload data
        */
       // Step 1: Encrypt the payload with the generated keypair
+      const payloadStr = JSON.stringify(payload);
+      console.log('encrypt payload');
+      const payloadBuffer = Buffer.from(payloadStr, 'base64');
+      console.log('buffer', payloadBuffer);
+
 
       const encryptedPayload = await encrypt(
         payloadPublicKey!,
-        Buffer.from(JSON.stringify(payload))
+        payloadBuffer
       );
+      console.log(' done encrypt payload');
+
 
       /**
        * Double encrypted keyshares upload data
@@ -67,15 +80,27 @@ export function useUploadFileAndKeyShares() {
         {}
       );
 
-      const combinedPayload: ArweavePayload = {
-        file: encryptedPayload,
-        keyShares: doubleEncryptedKeyShares,
-      };
+      // const combinedPayload: ArweavePayload = {
+      //   file: encryptedPayload,
+      //   keyShares: doubleEncryptedKeyShares,
+      // };
+
+      // stringify-ing combininedPayload here (encryptedPayload, really) crashes app
+      // const payloadTxId = await uploadToArweave(Buffer.from(JSON.stringify(combinedPayload)));
 
       // Upload file data + keyshares data to arweave
-      const payloadTxId = await uploadToArweave(Buffer.from(JSON.stringify(combinedPayload)));
+      const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares));
+      // console.log('encKeysBuffer', encKeysBuffer.length);
+      console.log('encKeysBuffer', encKeysBuffer);
+      console.log('encryptedPayload', encryptedPayload);
+
+      const arweavePayload = Buffer.concat([encKeysBuffer, Buffer.from('\n'), encryptedPayload]);
+      console.log('arweavePayload', arweavePayload);
+
+      const payloadTxId = await uploadToArweave(arweavePayload);
 
       setSarcophagusPayloadTxId(payloadTxId);
+      // throw Error('s');
     } catch (error: any) {
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }

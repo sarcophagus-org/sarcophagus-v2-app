@@ -100,7 +100,7 @@ export function removeLeadingZeroes(value: string): string {
  * @returns The encrypted payload
  */
 export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffer> {
-  return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(payload));
+  return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), payload);
 }
 
 export async function decrypt(privateKey: string, payload: Buffer): Promise<Buffer> {
