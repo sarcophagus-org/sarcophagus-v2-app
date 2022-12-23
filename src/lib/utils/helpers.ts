@@ -166,3 +166,7 @@ export function buildResurrectionDateString(
     msUntilResurrection < 0 ? `${humanizedDuration} ago` : humanizedDuration;
   return `${resurrectionDateString} (${timeUntilResurrection})`;
 }
+
+export function isBytes32(value: string): boolean {
+  return value.length === 66 && value.startsWith('0x') && /^[0-9a-fA-F]+$/.test(value.slice(2));
+}

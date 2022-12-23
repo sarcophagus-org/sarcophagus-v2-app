@@ -221,3 +221,17 @@ export const publicKeyRetrieved = (): UseToastOptions => ({
   status: 'success',
   ...defaultOptions,
 });
+
+export const accuseSuccess = (): UseToastOptions => ({
+  title: 'Accuse Successful.',
+  description: 'You successfully accused an archaeologist',
+  status: 'success',
+  ...defaultOptions,
+});
+
+export const accuseFailure = (): UseToastOptions => ({
+  title: 'Accuse Failed.',
+  description: 'The archaeologist was not accused',
+  status: 'error',
+  ...defaultOptions,
+});
