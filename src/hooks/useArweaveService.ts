@@ -1,6 +1,3 @@
-import { encrypt } from 'ecies-geth';
-import { ethers } from 'ethers';
-import { hexlify } from 'ethers/lib/utils';
 import { useArweave } from 'hooks/useArweave';
 import { useCallback, useState } from 'react';
 import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
@@ -27,14 +24,6 @@ const useArweaveService = () => {
 
   const { arweave, decryptArweaveFile, fetchArweaveFile } = useArweave();
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
-
-  const encryptShard = async (shard: string, publicKey: string): Promise<string> => {
-    const encrypted = await encrypt(
-      Buffer.from(ethers.utils.arrayify(publicKey)),
-      Buffer.from(shard)
-    );
-    return hexlify(encrypted);
-  };
 
   const isArweaveFileValid = async (
     arweaveTxId: string,
@@ -137,7 +126,6 @@ const useArweaveService = () => {
     getTransactionStatusMessage,
     getConfirmations,
     isArweaveFileValid,
-    encryptShard,
     uploadToArweave,
   };
 };
