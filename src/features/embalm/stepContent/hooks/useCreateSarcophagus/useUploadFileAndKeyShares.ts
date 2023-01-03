@@ -8,7 +8,7 @@ import {
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
-// import { ArweavePayload } from 'types';
+import { metadataDelimiter, sharesDelimiter } from 'features/resurrection/hooks/useResurrection';
 
 export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
@@ -22,26 +22,18 @@ export function useUploadFileAndKeyShares() {
   } = useContext(CreateSarcophagusContext);
 
   const uploadAndSetArweavePayload = useCallback(async () => {
-    console.log('upload step');
-
     try {
-      const data = await readFileDataAsBase64(file!);
-      const payload = {
-        fileName: file?.name,
-        data,
-      };
+      const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file!);
+      // const payload = {
+      //   fileName: file?.name,
+      //   data,
+      // };
 
       /**
        * File upload data
        */
       // Step 1: Encrypt the payload with the generated keypair
-      const payloadStr = JSON.stringify(payload);
-      console.log('encrypt payload');
-      const payloadBuffer = Buffer.from(payloadStr, 'base64');
-      console.log('buffer', payloadBuffer);
-
-      const encryptedPayload = await encrypt(payloadPublicKey!, payloadBuffer);
-      console.log(' done encrypt payload');
+      const encryptedPayload = await encrypt(payloadPublicKey!, payload.data);
 
       /**
        * Double encrypted keyshares upload data
@@ -75,27 +67,24 @@ export function useUploadFileAndKeyShares() {
         {}
       );
 
-      // const combinedPayload: ArweavePayload = {
-      //   file: encryptedPayload,
-      //   keyShares: doubleEncryptedKeyShares,
-      // };
-
-      // stringify-ing combininedPayload here (encryptedPayload, really) crashes app
-      // const payloadTxId = await uploadToArweave(Buffer.from(JSON.stringify(combinedPayload)));
-
       // Upload file data + keyshares data to arweave
-      const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares));
-      // console.log('encKeysBuffer', encKeysBuffer.length);
-      console.log('encKeysBuffer', encKeysBuffer);
-      console.log('encryptedPayload', encryptedPayload);
+      const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares), 'binary');
+      const metadata = Buffer.from(
+        JSON.stringify({ fileName: file!.name, type: payload.type }),
+        'binary'
+      );
 
-      const arweavePayload = Buffer.concat([encKeysBuffer, Buffer.from('\n'), encryptedPayload]);
-      console.log('arweavePayload', arweavePayload);
+      const arweavePayload = Buffer.concat([
+        metadata,
+        metadataDelimiter,
+        encKeysBuffer,
+        sharesDelimiter,
+        encryptedPayload,
+      ]);
 
       const payloadTxId = await uploadToArweave(arweavePayload);
 
       setSarcophagusPayloadTxId(payloadTxId);
-      // throw Error('s');
     } catch (error: any) {
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }

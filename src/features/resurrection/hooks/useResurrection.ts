@@ -5,7 +5,9 @@ import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
-import { ArweavePayload } from 'types';
+
+export const metadataDelimiter = Buffer.from('|', 'binary');
+export const sharesDelimiter = Buffer.from('~', 'binary');
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -60,16 +62,19 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       console.log('get arweave file');
 
       const arweaveFile = await fetchArweaveFileFallback(payloadTxId);
-      // const payloadBuffer = await fetchArweaveFileFallback(payloadTxId);
-      // const payload: ArweavePayload = JSON.parse(Buffer.from(payloadBuffer).toString());
 
       const payloadBuffer = Buffer.from(arweaveFile);
-      const splitIndex = payloadBuffer.findIndex(char => char === 10);
 
-      if (splitIndex === -1) throw Error('Bad data');
-      const sharesBuffer = payloadBuffer.slice(0, splitIndex);
+      const metadataSplitIndex = payloadBuffer.findIndex(char => char === metadataDelimiter[0]);
+      const sharesSplitIndex = payloadBuffer.findIndex(char => char === sharesDelimiter[0]);
 
-      const payloadFile = payloadBuffer.slice(splitIndex + 1, payloadBuffer.length);
+      if (metadataSplitIndex === -1 || sharesSplitIndex === -1) throw Error('Bad data');
+
+      const metadataBuffer = payloadBuffer.slice(0, metadataSplitIndex);
+      const sharesBuffer = payloadBuffer.slice(metadataSplitIndex + 1, sharesSplitIndex);
+
+      const payloadFile = payloadBuffer.slice(sharesSplitIndex + 1);
+      const metadata = JSON.parse(metadataBuffer.toString());
 
       const payloadKeyShares = JSON.parse(sharesBuffer.toString());
 
@@ -96,17 +101,17 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
 
       // Decrypt the payload with the recombined key
       const decryptedPayload = await decrypt(payloadDecryptionKey, payloadFile);
-      console.log('decryptedPayload', decryptedPayload);
-      console.log('decryptedPayload', decryptedPayload.toString());
-      console.log('decryptedPayload', JSON.parse(decryptedPayload.toString()));
 
-      const { fileName, data } = JSON.parse(decryptedPayload.toString());
+      const decryptedResult = {
+        fileName: metadata.fileName,
+        data: `${metadata.type},${decryptedPayload.toString('base64')}`,
+      };
 
-      if (!fileName || !data) {
-        return { fileName, data, error: 'The payload is missing the fileName or data' };
+      if (!decryptedResult.fileName || !decryptedResult.data) {
+        return { error: 'The payload is missing the fileName or data', fileName: '', data: '' };
       }
 
-      return { fileName, data };
+      return decryptedResult;
     } catch (error) {
       console.error(`Error resurrecting sarcophagus: ${error}`);
       return {
