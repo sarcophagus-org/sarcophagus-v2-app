@@ -9,6 +9,9 @@ import {
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
 import { metadataDelimiter, sharesDelimiter } from 'hooks/useArweave';
+import { useNetworkConfig } from 'lib/config';
+import { mainnet } from 'wagmi';
+import { hardhat } from '@wagmi/chains';
 
 export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
@@ -20,6 +23,8 @@ export function useUploadFileAndKeyShares() {
     archaeologistPublicKeys,
     setSarcophagusPayloadTxId,
   } = useContext(CreateSarcophagusContext);
+
+  const networkConfig = useNetworkConfig();
 
   const uploadAndSetArweavePayload = useCallback(async () => {
     try {
@@ -69,7 +74,15 @@ export function useUploadFileAndKeyShares() {
 
       // Upload file data + keyshares data to arweave
       const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares), 'binary');
-      const metadata = { fileName: file!.name, type: payload.type };
+
+      // NOTE: metadata is intentionally stripped away on mainnet and hardhat - this data can be retrieved from the tx tags
+      // In the future, if Bundlr ever is able to forward data to arweave quickly enough on testnets,
+      // we may want to update this code to not concat metadata at all.
+      const canUseGetData =
+        networkConfig.chainId === mainnet.id || networkConfig.chainId === hardhat.id;
+      const fileName = canUseGetData ? '' : file!.name;
+      const fileType = canUseGetData ? '' : payload.type;
+      const metadata = { fileName, type: fileType };
       const metadataBuffer = Buffer.from(JSON.stringify(metadata), 'binary');
 
       const arweavePayload = Buffer.concat([
@@ -88,12 +101,13 @@ export function useUploadFileAndKeyShares() {
     }
   }, [
     file,
-    requiredArchaeologists,
-    selectedArchaeologists,
-    archaeologistPublicKeys,
     payloadPublicKey,
     payloadPrivateKey,
+    selectedArchaeologists.length,
+    requiredArchaeologists,
     recipientState.publicKey,
+    archaeologistPublicKeys,
+    networkConfig.chainId,
     uploadToArweave,
     setSarcophagusPayloadTxId,
   ]);

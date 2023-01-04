@@ -6,7 +6,7 @@ import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
 import { useNetworkConfig } from 'lib/config';
-import { hardhatChainId } from 'lib/config/hardhat';
+import { hardhat } from '@wagmi/chains';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -63,7 +63,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       console.log('get arweave file');
 
       const arweaveFile =
-        networkConfig.chainId === hardhatChainId
+        networkConfig.chainId === hardhat.id
           ? await fetchArweaveFile(payloadTxId)
           : await fetchArweaveFileFallback(payloadTxId);
 

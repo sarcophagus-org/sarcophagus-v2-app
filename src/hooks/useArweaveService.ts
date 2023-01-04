@@ -1,8 +1,8 @@
+import { hardhat } from '@wagmi/chains';
 import { useArweave } from 'hooks/useArweave';
 import { useCallback, useState } from 'react';
 import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
 import { useNetworkConfig } from '../lib/config';
-import { hardhatChainId } from '../lib/config/hardhat';
 
 export enum ArweaveTxStatus {
   PENDING,
@@ -99,7 +99,7 @@ const useArweaveService = () => {
   const uploadToArweave = useCallback(
     async (data: Buffer, metadata: Record<string, string>): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
-      return networkConfig.chainId === hardhatChainId
+      return networkConfig.chainId === hardhat.id
         ? uploadArLocalFile(data, metadata)
         : uploadFile(data);
     },
