@@ -10,6 +10,11 @@ export enum ArweaveTxStatus {
   FAIL,
 }
 
+export interface ArweaveFileMetadata {
+  fileName: string;
+  type: string;
+}
+
 const useArweaveService = () => {
   const [transactionStatus, setTransactionStatus] = useState<{
     status: ArweaveTxStatus | null;
@@ -26,7 +31,7 @@ const useArweaveService = () => {
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 
   const uploadArLocalFile = useCallback(
-    async (file: string | Buffer, metadata: Record<string, string>): Promise<string> => {
+    async (file: string | Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
       if (!arweave) return '';
 
       const key = {
@@ -97,7 +102,7 @@ const useArweaveService = () => {
   const getConfirmations = (): number => transactionStatus.confirmations;
 
   const uploadToArweave = useCallback(
-    async (data: Buffer, metadata: Record<string, string>): Promise<string> => {
+    async (data: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
       return networkConfig.chainId === hardhat.id
         ? uploadArLocalFile(data, metadata)

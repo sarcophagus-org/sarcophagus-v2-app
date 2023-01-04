@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
+import { ArweaveFileMetadata } from 'hooks/useArweaveService';
 import { chunkedUploaderFileSize } from 'lib/constants';
 import {
   fundStart,
@@ -86,7 +87,7 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (fileBuffer: Buffer, metadata: Record<string, string>): Promise<string> => {
+    async (fileBuffer: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
       if (!bundlr) {
         throw new Error('Bundlr not connected');
       }

@@ -90,9 +90,18 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // Decrypt the payload with the recombined key
       const decryptedPayload = await decrypt(payloadDecryptionKey, arweaveFile.fileBuffer);
 
+      const decryptedfileName = await decrypt(
+        recipientPrivateKey,
+        Buffer.from(arweaveFile.metadata.fileName, 'binary')
+      );
+      const decryptedfileType = await decrypt(
+        recipientPrivateKey,
+        Buffer.from(arweaveFile.metadata.type, 'binary')
+      );
+
       const decryptedResult = {
-        fileName: arweaveFile!.metadata.fileName,
-        data: `${arweaveFile!.metadata.type},${decryptedPayload.toString('base64')}`,
+        fileName: decryptedfileName.toString('binary'),
+        data: `${decryptedfileType.toString('binary')},${decryptedPayload.toString('base64')}`,
       };
 
       if (!decryptedResult.fileName || !decryptedResult.data) {

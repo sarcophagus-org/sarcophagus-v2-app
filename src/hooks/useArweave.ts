@@ -1,13 +1,14 @@
 import Arweave from 'arweave';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
+import { ArweaveFileMetadata } from './useArweaveService';
 
 export const metadataDelimiter = Buffer.from('|', 'binary');
 export const sharesDelimiter = Buffer.from('~', 'binary');
 
 export interface ArweaveResponse {
   data: Uint8Array;
-  metadata: Record<string, any>;
+  metadata: ArweaveFileMetadata;
   keyShares: Record<string, string>;
   fileBuffer: Buffer;
 }
@@ -30,7 +31,7 @@ function splitPackedDataBuffer(data: Buffer) {
   return { keyShares, fileBuffer, metadata };
 }
 
-function getArweaveFileMetadata(tx: any): Record<string, string> {
+function getArweaveFileMetadata(tx: any): ArweaveFileMetadata {
   // @ts-ignore
   const metadataTag = tx.get('tags').find(tag => {
     let key = tag.get('name', { decode: true, string: true });

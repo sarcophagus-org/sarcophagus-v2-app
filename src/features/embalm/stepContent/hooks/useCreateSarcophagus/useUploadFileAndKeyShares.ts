@@ -4,6 +4,7 @@ import useArweaveService from '../../../../../hooks/useArweaveService';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import {
+  encryptMetadataFields,
   encryptShardsWithArchaeologistPublicKeys,
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
@@ -80,8 +81,16 @@ export function useUploadFileAndKeyShares() {
       // we may want to update this code to not concat metadata at all.
       const canUseGetData =
         networkConfig.chainId === mainnet.id || networkConfig.chainId === hardhat.id;
-      const metadata = { fileName: file!.name, type: payload.type };
-      const metadataBuffer = Buffer.from(canUseGetData ? '' : JSON.stringify(metadata), 'binary');
+
+      const encryptedMetadata = await encryptMetadataFields(recipientState.publicKey, {
+        fileName: file!.name,
+        type: payload.type,
+      });
+
+      const metadataBuffer = Buffer.from(
+        canUseGetData ? '' : JSON.stringify(encryptedMetadata),
+        'binary'
+      );
 
       const arweavePayload = Buffer.concat([
         metadataBuffer,
@@ -91,7 +100,7 @@ export function useUploadFileAndKeyShares() {
         encryptedPayload,
       ]);
 
-      const payloadTxId = await uploadToArweave(arweavePayload, metadata);
+      const payloadTxId = await uploadToArweave(arweavePayload, encryptedMetadata);
 
       setSarcophagusPayloadTxId(payloadTxId);
     } catch (error: any) {
