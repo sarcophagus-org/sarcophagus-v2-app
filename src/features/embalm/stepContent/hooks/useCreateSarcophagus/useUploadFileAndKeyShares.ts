@@ -8,7 +8,7 @@ import {
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
-import { metadataDelimiter, sharesDelimiter } from 'features/resurrection/hooks/useResurrection';
+import { metadataDelimiter, sharesDelimiter } from 'hooks/useArweave';
 
 export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
@@ -69,20 +69,18 @@ export function useUploadFileAndKeyShares() {
 
       // Upload file data + keyshares data to arweave
       const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares), 'binary');
-      const metadata = Buffer.from(
-        JSON.stringify({ fileName: file!.name, type: payload.type }),
-        'binary'
-      );
+      const metadata = { fileName: file!.name, type: payload.type };
+      const metadataBuffer = Buffer.from(JSON.stringify(metadata), 'binary');
 
       const arweavePayload = Buffer.concat([
-        metadata,
+        metadataBuffer,
         metadataDelimiter,
         encKeysBuffer,
         sharesDelimiter,
         encryptedPayload,
       ]);
 
-      const payloadTxId = await uploadToArweave(arweavePayload);
+      const payloadTxId = await uploadToArweave(arweavePayload, metadata);
 
       setSarcophagusPayloadTxId(payloadTxId);
     } catch (error: any) {

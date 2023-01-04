@@ -21,6 +21,6 @@ export const hardhatNetworkConfig: NetworkConfig = {
     port: 1984,
     protocol: 'http',
     timeout: 60000 * 30,
-    logging: true,
+    logging: false,
   },
 };

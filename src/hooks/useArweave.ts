@@ -1,8 +1,44 @@
 import Arweave from 'arweave';
-import { decrypt } from 'ecies-geth';
-import { utils } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
+
+export const metadataDelimiter = Buffer.from('|', 'binary');
+export const sharesDelimiter = Buffer.from('~', 'binary');
+
+export interface ArweaveResponse {
+  data: Uint8Array;
+  metadata: Record<string, any>;
+  keyShares: Record<string, string>;
+  fileBuffer: Buffer;
+}
+
+function splitPackedDataBuffer(data: Buffer) {
+  const payloadBuffer = data as Buffer;
+  const metadataSplitIndex = payloadBuffer.findIndex(char => char === metadataDelimiter[0]);
+  const sharesSplitIndex = payloadBuffer.findIndex(char => char === sharesDelimiter[0]);
+
+  if (metadataSplitIndex === -1) throw Error('Bad data');
+
+  const metadataBuffer = payloadBuffer.slice(0, metadataSplitIndex);
+  const metadata = JSON.parse(metadataBuffer.toString());
+
+  const sharesBuffer = payloadBuffer.slice(metadataSplitIndex + 1, sharesSplitIndex);
+
+  const fileBuffer = payloadBuffer.slice(sharesSplitIndex + 1);
+  const keyShares = JSON.parse(sharesBuffer.toString());
+
+  return { keyShares, fileBuffer, metadata };
+}
+
+function getArweaveFileMetadata(tx: any): Record<string, string> {
+  // @ts-ignore
+  const metadataTag = tx.get('tags').find(tag => {
+    let key = tag.get('name', { decode: true, string: true });
+    return key === 'metadata';
+  });
+
+  return JSON.parse(metadataTag.get('value', { decode: true, string: true }));
+}
 
 export function useArweave() {
   const { arweaveConfig } = useNetworkConfig();
@@ -19,7 +55,7 @@ export function useArweave() {
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 
   const fetchArweaveFileFallback = useCallback(
-    async (arweaveTxId: string): Promise<any> => {
+    async (arweaveTxId: string): Promise<ArweaveResponse | undefined> => {
       if (!arweave) {
         console.error(arweaveNotReadyMsg);
         return;
@@ -32,7 +68,15 @@ export function useArweave() {
           responseType: 'arraybuffer',
         });
         console.log('api call done');
-        return res.data;
+
+        const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
+
+        return {
+          data: res.data,
+          fileBuffer,
+          keyShares,
+          metadata,
+        };
       } catch (error) {
         console.log('error', error);
 
@@ -43,16 +87,18 @@ export function useArweave() {
   );
 
   const fetchArweaveFile = useCallback(
-    async (arweaveTxId: string): Promise<Uint8Array | undefined> => {
+    async (arweaveTxId: string): Promise<ArweaveResponse | undefined> => {
       if (!arweave) {
         console.error(arweaveNotReadyMsg);
         return;
       }
 
       try {
-        const data = await arweave.transactions.getData(arweaveTxId);
+        const tx = await arweave.transactions.get(arweaveTxId);
+        let metadata = getArweaveFileMetadata(tx);
+        const { keyShares, fileBuffer } = splitPackedDataBuffer(tx.data as Buffer);
 
-        return data as Uint8Array;
+        return { data: tx.data, metadata, keyShares, fileBuffer };
       } catch (error) {
         throw new Error(`Error fetching arweave file: ${error}`);
       }
@@ -60,24 +106,9 @@ export function useArweave() {
     [arweave]
   );
 
-  const decryptArweaveFile = async (data: Uint8Array, privateKey: string): Promise<Buffer> => {
-    const privateKeyAsBytes = Buffer.from(utils.arrayify(privateKey));
-
-    const outerDecrypt = await decrypt(privateKeyAsBytes, Buffer.from(data));
-
-    const innerDecrypt = await decrypt(
-      Buffer.from(
-        utils.arrayify('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') // TODO: innerDecrypt using default address and private key for testing instead of real recipient
-      ),
-      outerDecrypt
-    );
-    return innerDecrypt;
-  };
-
   return {
     arweave,
     fetchArweaveFileFallback,
     fetchArweaveFile,
-    decryptArweaveFile,
   };
 }

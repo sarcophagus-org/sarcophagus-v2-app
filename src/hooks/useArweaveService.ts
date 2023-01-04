@@ -22,29 +22,11 @@ const useArweaveService = () => {
   const { uploadFile } = useBundlr();
   const networkConfig = useNetworkConfig();
 
-  const { arweave, decryptArweaveFile, fetchArweaveFile } = useArweave();
+  const { arweave } = useArweave();
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 
-  const isArweaveFileValid = async (
-    arweaveTxId: string,
-    privateKey: string,
-    originalFile: ArrayBuffer
-  ): Promise<boolean> => {
-    const arweaveFile = await fetchArweaveFile(arweaveTxId);
-
-    if (!arweaveFile) {
-      console.error(arweaveNotReadyMsg);
-      return false;
-    }
-
-    const decryptedFile = await decryptArweaveFile(arweaveFile, privateKey);
-    const fileBytes = Buffer.from(new Uint8Array(originalFile));
-
-    return decryptedFile.toString() === fileBytes.toString();
-  };
-
   const uploadArLocalFile = useCallback(
-    async (file: string | Buffer): Promise<string> => {
+    async (file: string | Buffer, metadata: Record<string, string>): Promise<string> => {
       if (!arweave) return '';
 
       const key = {
@@ -62,6 +44,7 @@ const useArweaveService = () => {
 
       const tx = await arweave.createTransaction({ data: file }, key);
       tx.addTag('Content-Type', 'plain/text');
+      tx.addTag('metadata', JSON.stringify(metadata));
       await arweave.transactions.sign(tx, key);
 
       let uploader = await arweave.transactions.getUploader(tx);
@@ -114,9 +97,11 @@ const useArweaveService = () => {
   const getConfirmations = (): number => transactionStatus.confirmations;
 
   const uploadToArweave = useCallback(
-    async (data: Buffer): Promise<string> => {
+    async (data: Buffer, metadata: Record<string, string>): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
-      return networkConfig.chainId === hardhatChainId ? uploadArLocalFile(data) : uploadFile(data);
+      return networkConfig.chainId === hardhatChainId
+        ? uploadArLocalFile(data, metadata)
+        : uploadFile(data);
     },
     [uploadArLocalFile, uploadFile, networkConfig.chainId, arweave]
   );
@@ -125,7 +110,6 @@ const useArweaveService = () => {
     updateStatus,
     getTransactionStatusMessage,
     getConfirmations,
-    isArweaveFileValid,
     uploadToArweave,
   };
 };
