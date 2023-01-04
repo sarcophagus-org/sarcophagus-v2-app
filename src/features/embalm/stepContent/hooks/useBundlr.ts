@@ -86,7 +86,7 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (fileBuffer: Buffer): Promise<string> => {
+    async (fileBuffer: Buffer, metadata: Record<string, string>): Promise<string> => {
       if (!bundlr) {
         throw new Error('Bundlr not connected');
       }
@@ -95,18 +95,15 @@ export function useBundlr() {
       try {
         let res;
 
+        const opts = {
+          tags: [{ name: 'metadata', value: JSON.stringify(metadata) }],
+        };
+
         if (Buffer.byteLength(fileBuffer) < chunkedUploaderFileSize) {
-          console.log('n upld');
-
-          res = await bundlr?.upload(fileBuffer);
+          res = await bundlr?.upload(fileBuffer, opts);
         } else {
-          console.log('chunked upload');
-
           const uploader = bundlr?.uploader.chunkedUploader;
-          console.log(uploader);
-
-          res = await uploader?.uploadData(fileBuffer);
-          console.log('res', res.statusText);
+          res = await uploader?.uploadData(fileBuffer, opts);
         }
 
         toast(uploadSuccess());

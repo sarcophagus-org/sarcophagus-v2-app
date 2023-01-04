@@ -101,7 +101,7 @@ const useArweaveService = () => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
       return networkConfig.chainId === hardhat.id
         ? uploadArLocalFile(data, metadata)
-        : uploadFile(data);
+        : uploadFile(data, metadata);
     },
     [uploadArLocalFile, uploadFile, networkConfig.chainId, arweave]
   );
