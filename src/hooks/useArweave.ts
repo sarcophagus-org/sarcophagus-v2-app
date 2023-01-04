@@ -13,19 +13,19 @@ export interface ArweaveResponse {
 }
 
 function splitPackedDataBuffer(data: Buffer) {
-  const payloadBuffer = data as Buffer;
+  const payloadBuffer = Buffer.from(data);
   const metadataSplitIndex = payloadBuffer.findIndex(char => char === metadataDelimiter[0]);
   const sharesSplitIndex = payloadBuffer.findIndex(char => char === sharesDelimiter[0]);
 
   if (metadataSplitIndex === -1) throw Error('Bad data');
 
-  const metadataBuffer = payloadBuffer.slice(0, metadataSplitIndex);
-  const metadata = JSON.parse(metadataBuffer.toString());
+  const metadataStr = payloadBuffer.slice(0, metadataSplitIndex).toString();
+  const metadata = !!metadataStr.trim() ? JSON.parse(metadataStr) : undefined;
 
   const sharesBuffer = payloadBuffer.slice(metadataSplitIndex + 1, sharesSplitIndex);
+  const keyShares = JSON.parse(sharesBuffer.toString());
 
   const fileBuffer = payloadBuffer.slice(sharesSplitIndex + 1);
-  const keyShares = JSON.parse(sharesBuffer.toString());
 
   return { keyShares, fileBuffer, metadata };
 }

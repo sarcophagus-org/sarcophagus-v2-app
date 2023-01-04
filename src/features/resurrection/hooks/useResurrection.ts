@@ -6,7 +6,7 @@ import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
 import { useNetworkConfig } from 'lib/config';
-import { hardhat } from '@wagmi/chains';
+import { hardhat, mainnet } from '@wagmi/chains';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -58,18 +58,13 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
         throw new Error(`The Arwevae tx id for the payload is missing on sarcophagus ${sarcoId}`);
       }
 
-      // Load the payload from arweave using the txId, and retrieve the double-encrypted key shares
-      // Uses the fallback function by default which makes a direct api call for the payload
-      console.log('get arweave file');
-
+      // Load the payload from arweave using the txId
       const arweaveFile =
-        networkConfig.chainId === hardhat.id
+        networkConfig.chainId === hardhat.id || networkConfig.chainId === mainnet.id
           ? await fetchArweaveFile(payloadTxId)
           : await fetchArweaveFileFallback(payloadTxId);
 
       if (!arweaveFile) throw Error('Failed to download file from arweave');
-
-      console.log(arweaveFile);
 
       // Decrypt the key shares. Each share is double-encrypted with an inner layer of encryption
       // with the recipient's key, and an outer layer of encryption with the archaeologist's key.

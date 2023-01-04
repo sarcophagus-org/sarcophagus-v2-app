@@ -80,10 +80,8 @@ export function useUploadFileAndKeyShares() {
       // we may want to update this code to not concat metadata at all.
       const canUseGetData =
         networkConfig.chainId === mainnet.id || networkConfig.chainId === hardhat.id;
-      const fileName = canUseGetData ? '' : file!.name;
-      const fileType = canUseGetData ? '' : payload.type;
-      const metadata = { fileName, type: fileType };
-      const metadataBuffer = Buffer.from(JSON.stringify(metadata), 'binary');
+      const metadata = { fileName: file!.name, type: payload.type };
+      const metadataBuffer = Buffer.from(canUseGetData ? '' : JSON.stringify(metadata), 'binary');
 
       const arweavePayload = Buffer.concat([
         metadataBuffer,
