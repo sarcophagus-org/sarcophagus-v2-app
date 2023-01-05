@@ -1,13 +1,12 @@
 import Arweave from 'arweave';
+import { METADATA_SIZE_CHAR_COUNT } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useUploadFileAndKeyShares';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { ArweaveFileMetadata } from './useArweaveService';
 
-export const metadataDelimiter = Buffer.from('|', 'binary');
-export const sharesDelimiter = Buffer.from('~', 'binary');
+export const sharesDelimiter = Buffer.from('~|~', 'binary');
 
 export interface ArweaveResponse {
-  data: Uint8Array;
   metadata: ArweaveFileMetadata;
   keyShares: Record<string, string>;
   fileBuffer: Buffer;
@@ -15,20 +14,23 @@ export interface ArweaveResponse {
 
 function splitPackedDataBuffer(data: Buffer) {
   const payloadBuffer = Buffer.from(data);
-  const metadataSplitIndex = payloadBuffer.findIndex(char => char === metadataDelimiter[0]);
-  const sharesSplitIndex = payloadBuffer.findIndex(char => char === sharesDelimiter[0]);
 
-  if (metadataSplitIndex === -1) throw Error('Bad data');
+  const metadataSizeBuffer = payloadBuffer.slice(0, METADATA_SIZE_CHAR_COUNT);
+  const metadataSize = Number.parseInt(metadataSizeBuffer.toString());
+  const metadataEnd = metadataSize + METADATA_SIZE_CHAR_COUNT;
 
-  const metadataStr = payloadBuffer.slice(0, metadataSplitIndex).toString();
+  const sharesSplitIndex = payloadBuffer.lastIndexOf(sharesDelimiter);
+  if (sharesSplitIndex === -1) throw Error('Bad data');
+
+  const metadataStr = payloadBuffer.slice(METADATA_SIZE_CHAR_COUNT, metadataEnd).toString();
   const metadata = !!metadataStr.trim() ? JSON.parse(metadataStr) : undefined;
 
-  const sharesBuffer = payloadBuffer.slice(metadataSplitIndex + 1, sharesSplitIndex);
+  const sharesBuffer = payloadBuffer.slice(metadataEnd, sharesSplitIndex);
   const keyShares = JSON.parse(sharesBuffer.toString());
 
-  const fileBuffer = payloadBuffer.slice(sharesSplitIndex + 1);
+  const fileBuffer = payloadBuffer.slice(sharesSplitIndex + sharesDelimiter.length);
 
-  return { keyShares, fileBuffer, metadata };
+  return { metadata, keyShares, fileBuffer };
 }
 
 function getArweaveFileMetadata(tx: any): ArweaveFileMetadata {
@@ -73,7 +75,6 @@ export function useArweave() {
         const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
 
         return {
-          data: res.data,
           fileBuffer,
           keyShares,
           metadata,
@@ -99,7 +100,7 @@ export function useArweave() {
         let metadata = getArweaveFileMetadata(tx);
         const { keyShares, fileBuffer } = splitPackedDataBuffer(tx.data as Buffer);
 
-        return { data: tx.data, metadata, keyShares, fileBuffer };
+        return { metadata, keyShares, fileBuffer };
       } catch (error) {
         throw new Error(`Error fetching arweave file: ${error}`);
       }
