@@ -23,15 +23,32 @@ export function useCreateSarcophagus(
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
   const [stageExecuting, setStageExecuting] = useState(false);
   const [stageError, setStageError] = useState<string>();
+  const [stageInfo, setStageInfo] = useState<string>();
   const [isStageRetry, setIsStageRetry] = useState(false);
 
   // Each hook represents a stage in the create sarcophagus process
   const { dialSelectedArchaeologists } = useDialArchaeologists();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
-  const { uploadAndSetArweavePayload } = useUploadFileAndKeyShares();
+  const { uploadAndSetArweavePayload, uploadStep } = useUploadFileAndKeyShares();
   const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
   const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
   const { clearSarcophagusState, successData } = useClearSarcophagusState();
+
+  const stageInfoMap = useMemo(() => {
+    return new Map<CreateSarcophagusStage, string>([
+      [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, ''],
+      [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, ''],
+      [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadStep],
+      [CreateSarcophagusStage.APPROVE, ''],
+      [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, 'Waiting for transaction'],
+      [CreateSarcophagusStage.CLEAR_STATE, ''],
+      [CreateSarcophagusStage.COMPLETED, ''],
+    ]);
+  }, [uploadStep]);
+
+  useEffect(() => {
+    setStageInfo(stageInfoMap.get(currentStage));
+  }, [currentStage, stageInfoMap]);
 
   const stagesMap = useMemo(() => {
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
@@ -133,6 +150,7 @@ export function useCreateSarcophagus(
     currentStage,
     handleCreate,
     stageError,
+    stageInfo,
     retryStage,
     successData,
     clearSarcophagusState,

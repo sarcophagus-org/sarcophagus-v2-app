@@ -1,7 +1,7 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { encrypt, readFileDataAsBase64 } from '../../../../../lib/utils/helpers';
 import useArweaveService from '../../../../../hooks/useArweaveService';
-import { useSelector } from '../../../../../store';
+import { useDispatch, useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import {
   encryptMetadataFields,
@@ -13,6 +13,7 @@ import { sharesDelimiter } from 'hooks/useArweave';
 import { useNetworkConfig } from 'lib/config';
 import { mainnet } from 'wagmi';
 import { hardhat } from '@wagmi/chains';
+import { setIsUploading } from 'store/bundlr/actions';
 
 /** The number of digits the metadata size will ALWAYS have */
 export const METADATA_SIZE_CHAR_COUNT = 3;
@@ -42,27 +43,32 @@ export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
-  const {
-    payloadPrivateKey,
-    payloadPublicKey,
-    archaeologistPublicKeys,
-    setSarcophagusPayloadTxId,
-  } = useContext(CreateSarcophagusContext);
+  const { payloadPrivateKey, payloadPublicKey, archaeologistPublicKeys } =
+    useContext(CreateSarcophagusContext);
 
   const networkConfig = useNetworkConfig();
 
+  const [uploadStep, setUploadStep] = useState('');
+  const { uploadProgress, isUploading } = useSelector(s => s.bundlrState);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setUploadStep(`Uploading to Arweave... ${(uploadProgress * 100).toFixed(0)}%`);
+  }, [uploadProgress]);
+
   const uploadAndSetArweavePayload = useCallback(async () => {
     try {
+      dispatch(setIsUploading(true));
+
+      setUploadStep('Reading file...');
       const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file!);
-      // const payload = {
-      //   fileName: file?.name,
-      //   data,
-      // };
 
       /**
        * File upload data
        */
       // Step 1: Encrypt the payload with the generated keypair
+      setUploadStep('Encrypting...');
       const encryptedPayload = await encrypt(payloadPublicKey!, payload.data);
 
       /**
@@ -129,13 +135,12 @@ export function useUploadFileAndKeyShares() {
         encryptedPayload,
       ]);
 
-      const payloadTxId = await uploadToArweave(arweavePayload, encryptedMetadata);
-
-      setSarcophagusPayloadTxId(payloadTxId);
+      await uploadToArweave(arweavePayload, encryptedMetadata);
     } catch (error: any) {
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }
   }, [
+    dispatch,
     file,
     payloadPublicKey,
     payloadPrivateKey,
@@ -145,10 +150,11 @@ export function useUploadFileAndKeyShares() {
     archaeologistPublicKeys,
     networkConfig.chainId,
     uploadToArweave,
-    setSarcophagusPayloadTxId,
   ]);
 
   return {
-    uploadAndSetArweavePayload: uploadAndSetArweavePayload,
+    uploadAndSetArweavePayload,
+    uploadStep,
+    isUploading,
   };
 }
