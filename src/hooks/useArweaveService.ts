@@ -106,7 +106,7 @@ const useArweaveService = () => {
   const getConfirmations = (): number => transactionStatus.confirmations;
 
   const uploadToArweave = useCallback(
-    async (data: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
+    (data: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
       return networkConfig.chainId === hardhat.id
         ? uploadArLocalFile(data, metadata)

@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { ArweaveFileMetadata } from 'hooks/useArweaveService';
 import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/utils/toast';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   fund as fundAction,
   setIsFunding,
@@ -20,7 +20,7 @@ export function useBundlr() {
   const toast = useToast();
 
   // Pull some bundlr data from store
-  const { bundlr, isFunding, txId } = useSelector(x => x.bundlrState);
+  const { bundlr, isFunding } = useSelector(x => x.bundlrState);
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -29,7 +29,6 @@ export function useBundlr() {
   const [fileBuffer, setFileBuffer] = useState<Buffer>();
   const [metadata, setMetadata] = useState<ArweaveFileMetadata>();
   const [readyToUpload, setReadyToUpload] = useState(false);
-  const [uploadError, setUploadError] = useState('');
 
   const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
@@ -90,22 +89,23 @@ export function useBundlr() {
     [bundlr, dispatch, toast]
   );
 
-  useEffect(() => {
-    if (!chunkedUploader || !fileBuffer) return;
+  let rejectUploadPromise = useRef<any>();
+  let resolveUploadPromise = useRef<any>();
 
-    chunkedUploader.setChunkSize(1_000_000);
+  useEffect(() => {
+    if (!chunkedUploader || !fileBuffer || !rejectUploadPromise) return;
+
+    chunkedUploader.setChunkSize(5_000_000);
 
     chunkedUploader?.on('chunkUpload', chunkInfo => {
       const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
-      console.log(chunkedUploadProgress);
-
       dispatch(setUploadProgress(chunkedUploadProgress));
     });
 
     chunkedUploader?.on('chunkError', e => {
       const errorMsg = `Error uploading chunk number ${e.id} - ${e.res.statusText}`;
       console.error(errorMsg);
-      setUploadError(errorMsg);
+      rejectUploadPromise.current(errorMsg);
       dispatch(setIsUploading(false));
     });
 
@@ -113,7 +113,7 @@ export function useBundlr() {
       console.log(`Upload completed with ID ${finishRes.id}`);
       dispatch(setIsUploading(false));
     });
-  }, [chunkedUploader, dispatch, fileBuffer]);
+  }, [chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
 
   useEffect(() => {
     if (!bundlr) {
@@ -125,10 +125,17 @@ export function useBundlr() {
   }, [bundlr]);
 
   const prepareToUpload = useCallback(
-    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata): Promise<any> => {
+    async (
+      payloadBuffer: Buffer,
+      fileMetadata: ArweaveFileMetadata,
+      resolve?: any,
+      reject?: any
+    ): Promise<any> => {
       setFileBuffer(payloadBuffer);
       setMetadata(fileMetadata);
       setReadyToUpload(true);
+      resolveUploadPromise.current = resolve;
+      rejectUploadPromise.current = reject;
     },
     []
   );
@@ -149,13 +156,22 @@ export function useBundlr() {
         res = await chunkedUploader?.uploadData(fileBuffer, opts);
 
         setSarcophagusPayloadTxId(res.data.id);
+        resolveUploadPromise.current(res.data.id);
       } catch (error: any) {
         console.log('err', error);
-
-        setUploadError(error);
+        rejectUploadPromise.current(error);
       }
     })();
-  }, [readyToUpload, fileBuffer, metadata, setSarcophagusPayloadTxId, toast, chunkedUploader]);
+  }, [
+    readyToUpload,
+    fileBuffer,
+    metadata,
+    setSarcophagusPayloadTxId,
+    toast,
+    chunkedUploader,
+    rejectUploadPromise,
+    resolveUploadPromise,
+  ]);
 
   /**
    * Uploads a file given the data buffer
@@ -163,26 +179,15 @@ export function useBundlr() {
    */
   const uploadFile = useCallback(
     async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata): Promise<string> => {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<string>(async (resolve, reject) => {
         if (!bundlr || !chunkedUploader) {
           reject('Bundlr not connected');
         }
 
-        prepareToUpload(payloadBuffer, fileMetadata);
-
-        const interval = setInterval(() => {
-          console.log('checking status');
-
-          if (txId) {
-            clearInterval(interval);
-            resolve(txId);
-          } else if (uploadError) {
-            reject(uploadError);
-          }
-        }, 1000);
+        prepareToUpload(payloadBuffer, fileMetadata, resolve, reject);
       });
     },
-    [bundlr, chunkedUploader, prepareToUpload, txId, uploadError]
+    [bundlr, chunkedUploader, prepareToUpload]
   );
 
   return {
