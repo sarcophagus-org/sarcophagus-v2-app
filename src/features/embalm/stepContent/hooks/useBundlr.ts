@@ -3,12 +3,9 @@ import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { ArweaveFileMetadata } from 'hooks/useArweaveService';
-import { chunkedUploaderFileSize } from 'lib/constants';
 import {
   fundStart,
   fundSuccess,
-  uploadStart,
-  uploadSuccess,
   withdrawStart,
   withdrawSuccess,
 } from 'lib/utils/toast';
@@ -102,6 +99,8 @@ export function useBundlr() {
 
     chunkedUploader?.on('chunkUpload', chunkInfo => {
       const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
+      console.log(chunkedUploadProgress);
+
       dispatch(setUploadProgress(chunkedUploadProgress));
     });
 
@@ -143,7 +142,6 @@ export function useBundlr() {
         return;
       }
 
-      toast(uploadStart());
       try {
         let res: any;
 
@@ -154,7 +152,6 @@ export function useBundlr() {
         res = await chunkedUploader?.uploadData(fileBuffer, opts);
 
         setSarcophagusPayloadTxId(res.data.id);
-        toast(uploadSuccess());
       } catch (_error) {
         throw _error;
       }
