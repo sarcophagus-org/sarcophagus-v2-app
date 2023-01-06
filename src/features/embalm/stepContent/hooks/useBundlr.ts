@@ -3,12 +3,7 @@ import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { ArweaveFileMetadata } from 'hooks/useArweaveService';
-import {
-  fundStart,
-  fundSuccess,
-  withdrawStart,
-  withdrawSuccess,
-} from 'lib/utils/toast';
+import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/utils/toast';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   fund as fundAction,
@@ -25,7 +20,7 @@ export function useBundlr() {
   const toast = useToast();
 
   // Pull some bundlr data from store
-  const { bundlr, isFunding } = useSelector(x => x.bundlrState);
+  const { bundlr, isFunding, txId } = useSelector(x => x.bundlrState);
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -34,6 +29,9 @@ export function useBundlr() {
   const [fileBuffer, setFileBuffer] = useState<Buffer>();
   const [metadata, setMetadata] = useState<ArweaveFileMetadata>();
   const [readyToUpload, setReadyToUpload] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
   /**
    * Funds the bundlr node
@@ -105,13 +103,14 @@ export function useBundlr() {
     });
 
     chunkedUploader?.on('chunkError', e => {
-      console.error(`Error uploading chunk number ${e.id} - ${e.res.statusText}`);
+      const errorMsg = `Error uploading chunk number ${e.id} - ${e.res.statusText}`;
+      console.error(errorMsg);
+      setUploadError(errorMsg);
       dispatch(setIsUploading(false));
     });
 
     chunkedUploader?.on('done', finishRes => {
       console.log(`Upload completed with ID ${finishRes.id}`);
-      // setUploadProgress(0);
       dispatch(setIsUploading(false));
     });
   }, [chunkedUploader, dispatch, fileBuffer]);
@@ -134,8 +133,6 @@ export function useBundlr() {
     []
   );
 
-  const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
-
   useEffect(() => {
     (async () => {
       if (!readyToUpload || !fileBuffer) {
@@ -152,8 +149,10 @@ export function useBundlr() {
         res = await chunkedUploader?.uploadData(fileBuffer, opts);
 
         setSarcophagusPayloadTxId(res.data.id);
-      } catch (_error) {
-        throw _error;
+      } catch (error: any) {
+        console.log('err', error);
+
+        setUploadError(error);
       }
     })();
   }, [readyToUpload, fileBuffer, metadata, setSarcophagusPayloadTxId, toast, chunkedUploader]);
@@ -163,14 +162,27 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata): Promise<void> => {
-      if (!bundlr || !chunkedUploader) {
-        throw new Error('Bundlr not connected');
-      }
+    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata): Promise<string> => {
+      return new Promise<string>((resolve, reject) => {
+        if (!bundlr || !chunkedUploader) {
+          reject('Bundlr not connected');
+        }
 
-      prepareToUpload(payloadBuffer, fileMetadata);
+        prepareToUpload(payloadBuffer, fileMetadata);
+
+        const interval = setInterval(() => {
+          console.log('checking status');
+
+          if (txId) {
+            clearInterval(interval);
+            resolve(txId);
+          } else if (uploadError) {
+            reject(uploadError);
+          }
+        }, 1000);
+      });
     },
-    [bundlr, chunkedUploader, prepareToUpload]
+    [bundlr, chunkedUploader, prepareToUpload, txId, uploadError]
   );
 
   return {
