@@ -91,6 +91,45 @@ export function useArweave() {
     [arweave, onDownloadProgress]
   );
 
+  const customGetTx = useCallback(
+    async (id: string): Promise<Transaction> => {
+      if (!arweave) {
+        console.error(arweaveNotReadyMsg);
+        throw Error(arweaveNotReadyMsg);
+      }
+
+      const response = await arweave.api.get(`tx/${id}`, {
+        onDownloadProgress,
+      });
+      console.log('response', response);
+
+      if (response.status == 200) {
+        const dataSize = parseInt(response.data.data_size);
+
+        if (response.data.format >= 2 && dataSize > 0 && dataSize <= 1024 * 1024 * 12) {
+          const data = await arweave.transactions.getData(id);
+          return new Transaction({
+            ...response.data,
+            data,
+          });
+        }
+
+        return new Transaction({
+          ...response.data,
+          format: response.data.format || 1,
+        });
+      }
+      if (response.status == 404) {
+        throw Error('TX_NOT_FOUND' /* ArweaveErrorType.TX_NOT_FOUND */);
+      }
+      if (response.status == 410) {
+        throw Error('TX_FAILED' /* ArweaveErrorType.TX_FAILED */);
+      }
+      throw Error('TX_INVALID' /* ArweaveErrorType.TX_INVALID */);
+    },
+    [arweave, onDownloadProgress]
+  );
+
   const fetchArweaveFile = useCallback(
     async (arweaveTxId: string): Promise<ArweaveResponse | undefined> => {
       if (!arweave) {
@@ -99,7 +138,10 @@ export function useArweave() {
       }
 
       try {
-        const tx = await arweave.transactions.get(arweaveTxId);
+        // const tx = await arweave.transactions.get(arweaveTxId);
+        const tx = await customGetTx(arweaveTxId);
+        console.log('tx', tx);
+
         let metadata = getArweaveFileMetadata(tx);
         const { keyShares, fileBuffer } = splitPackedDataBuffer(tx.data as Buffer);
 
@@ -108,7 +150,7 @@ export function useArweave() {
         throw new Error(`Error fetching arweave file: ${error}`);
       }
     },
-    [arweave]
+    [arweave, customGetTx]
   );
 
   return {
