@@ -1,5 +1,5 @@
 import { Signature, Wallet } from 'ethers';
-import { defaultAbiCoder, isAddress, splitSignature } from 'ethers/lib/utils';
+import { defaultAbiCoder, splitSignature } from 'ethers/lib/utils';
 import { isBytes32 } from 'lib/utils/helpers';
 import { useEffect, useState } from 'react';
 

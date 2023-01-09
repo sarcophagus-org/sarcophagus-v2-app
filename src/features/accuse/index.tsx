@@ -1,5 +1,4 @@
 import { Button, Flex, FormControl, FormLabel, Input, Text } from '@chakra-ui/react';
-import { hexlify, randomBytes } from 'ethers/lib/utils';
 import { useAccuse } from 'hooks/thirdPartyFacet/useAccuse';
 import React, { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
