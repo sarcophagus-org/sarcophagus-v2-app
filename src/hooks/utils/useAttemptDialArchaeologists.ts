@@ -14,7 +14,11 @@ export function useAttemptDialArchaeologists(
   // Dials the archaeologist and hangs up after an interval
   // sets dial status for use in the UX
   const testDialArchaeologist = useCallback(
-    async (arch: Archaeologist, showToast: boolean = false, hangUpInterval: number = 200): Promise<boolean> => {
+    async (
+      arch: Archaeologist,
+      showToast: boolean = false,
+      hangUpInterval: number = 200
+    ): Promise<boolean> => {
       if (!libp2pNode) {
         return false;
       }

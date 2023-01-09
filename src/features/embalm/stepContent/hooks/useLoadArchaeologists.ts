@@ -54,17 +54,14 @@ export function useLoadArchaeologists() {
         accusals: stats[i].accusals,
         failures: stats[i].failures,
       },
-      // TODO - temporarily list all archs that have domains as online
-      // until discovery for archs using websockets is updated
       isOnline: false,
     }));
 
     for (let arch of discoveredArchaeologists) {
-      console.log('inside');
+      // if arch profile has the delimiter, it has a domain
+      // attempt to dial this archaeologist to confirm it is online
       if (arch.profile.peerId.includes(':')) {
-        console.log('dialing arch');
         arch.isOnline = await testDialArchaeologist(arch);
-        console.log(arch.isOnline);
       }
     }
 
