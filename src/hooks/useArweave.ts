@@ -22,7 +22,7 @@ function splitPackedDataBuffer(data: Buffer) {
   const sharesSplitIndex = payloadBuffer.lastIndexOf(sharesDelimiter);
   if (sharesSplitIndex === -1) throw Error('Bad data');
 
-  const metadataStr = payloadBuffer.slice(METADATA_SIZE_CHAR_COUNT, metadataEnd).toString();
+  const metadataStr = payloadBuffer.slice(METADATA_SIZE_CHAR_COUNT, metadataEnd).toString('binary');
   const metadata = !!metadataStr.trim() ? JSON.parse(metadataStr) : undefined;
 
   const sharesBuffer = payloadBuffer.slice(metadataEnd, sharesSplitIndex);
@@ -77,7 +77,10 @@ export function useArweave() {
           onDownloadProgress,
         });
 
+        console.log('done fetch');
         setDownloadProgress(0);
+
+        console.log('splitting');
 
         const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
         console.log('done split');
