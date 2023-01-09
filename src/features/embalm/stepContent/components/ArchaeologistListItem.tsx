@@ -123,7 +123,7 @@ export function ArchaeologistListItem({
         <Td>
           <Button
             disabled={isDialing || !!archaeologist.connection}
-            onClick={() => testDialArchaeologist(archaeologist.fullPeerId!)}
+            onClick={() => testDialArchaeologist(archaeologist, true)}
           >
             {archaeologist.connection ? 'Connected' : 'Dial'}
           </Button>

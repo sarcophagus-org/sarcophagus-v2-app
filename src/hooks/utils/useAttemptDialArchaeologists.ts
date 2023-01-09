@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 import { useSelector } from '../../store';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
-import { PeerId } from '@libp2p/interface-peer-id';
 import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
+import { Archaeologist } from '../../types';
 
 export function useAttemptDialArchaeologists(
-  setIsDialing: React.Dispatch<React.SetStateAction<boolean>>
+  setIsDialing?: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
   const toast = useToast();
@@ -14,36 +14,53 @@ export function useAttemptDialArchaeologists(
   // Dials the archaeologist and hangs up after an interval
   // sets dial status for use in the UX
   const testDialArchaeologist = useCallback(
-    async (peerId: PeerId, hangUpInterval: number = 2000) => {
+    async (
+      arch: Archaeologist,
+      showToast: boolean = false,
+      hangUpInterval: number = 200
+    ): Promise<boolean> => {
       if (!libp2pNode) {
-        return;
+        return false;
       }
 
       try {
         let ma: Multiaddr;
-        setIsDialing(true);
-        // TODO -- this ma code can be removed/updated once testing on this single arch is complete.
-        if (!peerId) {
-          ma = multiaddr(
-            '/dns4/wss.encryptafile.com/tcp/443/wss/p2p/12D3KooWPLcrUEMREHW3eT6EWTTbgaKFeay8Ywqck7dyVSERfJZd'
-          );
-          console.log(ma.getPeerId());
+
+        if (!!setIsDialing) {
+          setIsDialing(true);
+        }
+
+        const peerIdParsed = arch.profile.peerId.split(':');
+        if (peerIdParsed.length === 2) {
+          ma = multiaddr(`/dns4/${peerIdParsed[0]}/tcp/443/wss/p2p/${peerIdParsed[1]}`);
           // @ts-ignore
           await libp2pNode.dial(ma);
         } else {
-          console.log(peerId.multihash);
-          await libp2pNode.dial(peerId);
+          await libp2pNode.dial(arch.fullPeerId!);
         }
-        toast(dialArchaeologistSuccess());
+
+        if (showToast) {
+          toast(dialArchaeologistSuccess());
+        }
+
         setTimeout(async () => {
           // @ts-ignore
           await libp2pNode?.hangUp(ma || peerId);
         }, hangUpInterval);
+
+        return true;
       } catch (error) {
         console.log(error);
-        toast(dialArchaeologistFailure());
+
+        if (showToast) {
+          toast(dialArchaeologistFailure());
+        }
+
+        return false;
       } finally {
-        setIsDialing(false);
+        if (!!setIsDialing) {
+          setIsDialing(false);
+        }
       }
     },
     [libp2pNode, setIsDialing, toast]
