@@ -1,19 +1,29 @@
 import { Button, Flex, FormControl, FormLabel, Input, Text } from '@chakra-ui/react';
+import { hexlify, randomBytes } from 'ethers/lib/utils';
 import { useAccuse } from 'hooks/thirdPartyFacet/useAccuse';
 import React, { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 import { PrivateKeyInput } from './PrivateKeyInput';
-import { useSignatures } from './useSignatures';
+import { useAccusedWallets } from './useAccusedWallets';
 
+// 0x7a034a19af32e657f4462dd1f1cd61205f2ba21a8ffcaafa6fb968defb4e4be8
 export function Accuse() {
   const [sarcophagusId, setSarcophagusId] = useState('');
   const [archaeologistPrivateKeys, setArchaeologistPrivateKeys] = useState<string[]>(['']);
-  const [paymentAddress, setPaymentAddress] = useState('');
+  const [paymentAddressOverride, setPaymentAddressOverride] = useState('');
+
+  const { address: paymentAddress } = useAccount();
 
   // Sign the messages using the private keys whenever the form is provided valid values
-  const signatures = useSignatures(sarcophagusId, archaeologistPrivateKeys, paymentAddress);
-
-  const { accuse, isError, isAccusing, isLoading, isSuccess } = useAccuse(
+  const { signatures, publicKeys } = useAccusedWallets(
     sarcophagusId,
+    archaeologistPrivateKeys,
+    paymentAddress
+  );
+
+  const { accuse, isError, isAccusing, isLoading, isSuccess, isEnabled } = useAccuse(
+    sarcophagusId,
+    publicKeys,
     signatures,
     paymentAddress
   );
@@ -45,7 +55,7 @@ export function Accuse() {
   }
 
   function handleChangePaymentAddress(e: React.ChangeEvent<HTMLInputElement>) {
-    setPaymentAddress(e.target.value);
+    setPaymentAddressOverride(e.target.value);
   }
 
   function handleAccuse() {
@@ -57,7 +67,7 @@ export function Accuse() {
     if (isSuccess) {
       setSarcophagusId('');
       setArchaeologistPrivateKeys(['']);
-      setPaymentAddress('');
+      setPaymentAddressOverride('');
     }
   }, [isSuccess, setArchaeologistPrivateKeys]);
 
@@ -114,14 +124,14 @@ export function Accuse() {
           placeholder="Wallet address or ENS name"
           mt={1}
           p={6}
-          value={paymentAddress}
+          value={paymentAddressOverride}
           onChange={handleChangePaymentAddress}
         />
         <Text mt={2}>Leave this blank if you want funds send to the connected wallet.</Text>
         <Button
           mt={12}
           px={6}
-          disabled={isError}
+          disabled={isError || !isEnabled}
           onClick={handleAccuse}
           isLoading={isLoading || isAccusing}
         >

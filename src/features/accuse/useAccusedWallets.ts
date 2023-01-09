@@ -11,24 +11,26 @@ import { useEffect, useState } from 'react';
  * @param paymentAddress the address to pay the sarcophagus to
  * @returns an array of signatures
  */
-export function useSignatures(
+export function useAccusedWallets(
   sarcophagusId: string,
   archaeologistPrivateKeys: string[],
-  paymentAddress: string
-): Signature[] {
+  paymentAddress: string | undefined
+): { signatures: Signature[]; publicKeys: string[] } {
   const [signatures, setSignatures] = useState<Signature[]>([]);
+  const [publicKeys, setPublicKeys] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
         const newSignatures: Signature[] = [];
+        const newPublicKeys: string[] = [];
 
         for (let i = 0; i < archaeologistPrivateKeys.length; i++) {
           const untrimmedPrivateKey = archaeologistPrivateKeys[i];
           const privateKey = untrimmedPrivateKey.trim();
 
           // Only sign the messages if the values are valid
-          if (!isBytes32(privateKey) || !isBytes32(sarcophagusId) || !isAddress(paymentAddress)) {
+          if (!isBytes32(privateKey) || !isBytes32(sarcophagusId)) {
             return;
           }
 
@@ -41,14 +43,16 @@ export function useSignatures(
             )
           );
           newSignatures[i] = signature;
+          newPublicKeys[i] = wallet.publicKey;
         }
 
         setSignatures(newSignatures);
+        setPublicKeys(newPublicKeys);
       } catch (error) {
         console.error(error);
       }
     })();
   }, [archaeologistPrivateKeys, paymentAddress, sarcophagusId]);
 
-  return signatures;
+  return { signatures, publicKeys };
 }
