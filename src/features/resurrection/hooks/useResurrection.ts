@@ -22,7 +22,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const [canResurrect, setCanResurrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isResurrecting, setIsResurrecting] = useState(false);
-  const { fetchArweaveFileFallback, fetchArweaveFile } = useArweave();
+  const { fetchArweaveFileFallback, fetchArweaveFile, downloadProgress } = useArweave();
 
   const networkConfig = useNetworkConfig();
 
@@ -130,5 +130,5 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
     recipientPrivateKey,
   ]);
 
-  return { canResurrect, resurrect, isResurrecting, isLoading };
+  return { canResurrect, resurrect, isResurrecting, isLoading, downloadProgress };
 }

@@ -1,5 +1,4 @@
 import Arweave from 'arweave';
-import Transaction from 'arweave/node/lib/transaction';
 import { METADATA_SIZE_CHAR_COUNT } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useUploadFileAndKeyShares';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
@@ -34,7 +33,7 @@ function splitPackedDataBuffer(data: Buffer) {
   return { metadata, keyShares, fileBuffer };
 }
 
-function getArweaveFileMetadata(tx: Transaction): ArweaveFileMetadata {
+function getArweaveFileMetadata(tx: any): ArweaveFileMetadata {
   // @ts-ignore
   const metadataTag = tx.get('tags').find(tag => {
     let key = tag.get('name', { decode: true, string: true });
@@ -58,9 +57,11 @@ export function useArweave() {
 
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 
+  const [downloadProgress, setDownloadProgress] = useState(0);
+
   const onDownloadProgress = useCallback((e: any) => {
-    const progress = `${((e.loaded / e.total) * 100).toFixed(0)}`;
-    console.log(progress);
+    const progress = Math.trunc((e.loaded / e.total) * 100);
+    setDownloadProgress(progress);
   }, []);
 
   const fetchArweaveFileFallback = useCallback(
@@ -76,7 +77,10 @@ export function useArweave() {
           onDownloadProgress,
         });
 
+        setDownloadProgress(0);
+
         const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
+        console.log('done split');
 
         return {
           fileBuffer,
@@ -92,7 +96,7 @@ export function useArweave() {
   );
 
   const customGetTx = useCallback(
-    async (id: string): Promise<Transaction> => {
+    async (id: string): Promise<any> => {
       if (!arweave) {
         console.error(arweaveNotReadyMsg);
         throw Error(arweaveNotReadyMsg);
@@ -108,16 +112,16 @@ export function useArweave() {
 
         if (response.data.format >= 2 && dataSize > 0 && dataSize <= 1024 * 1024 * 12) {
           const data = await arweave.transactions.getData(id);
-          return new Transaction({
+          return {
             ...response.data,
             data,
-          });
+          };
         }
 
-        return new Transaction({
+        return {
           ...response.data,
           format: response.data.format || 1,
-        });
+        };
       }
       if (response.status == 404) {
         throw Error('TX_NOT_FOUND' /* ArweaveErrorType.TX_NOT_FOUND */);
@@ -142,6 +146,8 @@ export function useArweave() {
         const tx = await customGetTx(arweaveTxId);
         console.log('tx', tx);
 
+        setDownloadProgress(0);
+
         let metadata = getArweaveFileMetadata(tx);
         const { keyShares, fileBuffer } = splitPackedDataBuffer(tx.data as Buffer);
 
@@ -157,5 +163,6 @@ export function useArweave() {
     arweave,
     fetchArweaveFileFallback,
     fetchArweaveFile,
+    downloadProgress,
   };
 }
