@@ -1,4 +1,5 @@
 import Arweave from 'arweave';
+import Transaction from 'arweave/node/lib/transaction';
 import { METADATA_SIZE_CHAR_COUNT } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useUploadFileAndKeyShares';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
@@ -33,7 +34,7 @@ function splitPackedDataBuffer(data: Buffer) {
   return { metadata, keyShares, fileBuffer };
 }
 
-function getArweaveFileMetadata(tx: any): ArweaveFileMetadata {
+function getArweaveFileMetadata(tx: Transaction): ArweaveFileMetadata {
   // @ts-ignore
   const metadataTag = tx.get('tags').find(tag => {
     let key = tag.get('name', { decode: true, string: true });
@@ -57,6 +58,11 @@ export function useArweave() {
 
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
 
+  const onDownloadProgress = useCallback((e: any) => {
+    const progress = `${((e.loaded / e.total) * 100).toFixed(0)}`;
+    console.log(progress);
+  }, []);
+
   const fetchArweaveFileFallback = useCallback(
     async (arweaveTxId: string): Promise<ArweaveResponse | undefined> => {
       if (!arweave) {
@@ -67,6 +73,7 @@ export function useArweave() {
       try {
         const res = await arweave.api.get(`/${arweaveTxId}`, {
           responseType: 'arraybuffer',
+          onDownloadProgress,
         });
 
         const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
@@ -81,7 +88,7 @@ export function useArweave() {
         throw new Error(`Error fetching arweave file: ${error}`);
       }
     },
-    [arweave]
+    [arweave, onDownloadProgress]
   );
 
   const fetchArweaveFile = useCallback(
