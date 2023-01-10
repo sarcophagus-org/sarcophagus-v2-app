@@ -6,6 +6,7 @@ import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { readContract } from 'wagmi/actions';
+import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -15,6 +16,7 @@ export function useLoadArchaeologists() {
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
   const { chain } = useNetwork();
+  const { testDialArchaeologist } = useAttemptDialArchaeologists();
 
   const getProfiles = useCallback(async () => {
     if (!networkConfig.diamondDeployAddress) {
@@ -43,7 +45,7 @@ export function useLoadArchaeologists() {
       args: [addresses],
     })) as any[];
 
-    return profiles.map((p, i) => ({
+    const discoveredArchaeologists = profiles.map((p, i) => ({
       profile: {
         ...p,
         archAddress: addresses[i],
@@ -52,11 +54,19 @@ export function useLoadArchaeologists() {
         accusals: stats[i].accusals,
         failures: stats[i].failures,
       },
-      // TODO - temporarily list all archs that have domains as online
-      // until discovery for archs using websockets is updated
-      isOnline: p.peerId.includes(':'),
+      isOnline: false,
     }));
-  }, [networkConfig.diamondDeployAddress]);
+
+    for (let arch of discoveredArchaeologists) {
+      // if arch profile has the delimiter, it has a domain
+      // attempt to dial this archaeologist to confirm it is online
+      if (arch.profile.peerId.includes(':')) {
+        arch.isOnline = await testDialArchaeologist(arch);
+      }
+    }
+
+    return discoveredArchaeologists;
+  }, [networkConfig.diamondDeployAddress, testDialArchaeologist]);
 
   useEffect(() => {
     (async () => {

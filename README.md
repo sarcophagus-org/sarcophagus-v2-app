@@ -24,7 +24,7 @@ cp .env.example .env
 
 You’ll need an address on Goerli funded with ETH and SARCO to run through the full create sarcophagus flow.
 
-1. Install metamask
+1. Install metamask or other supported wallet
 2. On the network dropdown at the top of the MetaMask popup, select show/hide test networks and toggle on test networks
 3. Change your network to Goerli
 4. Import the private key for an account funded with Goerli Ether and SARCO
