@@ -1,6 +1,7 @@
 import { hardhat } from '@wagmi/chains';
+import { CreateSarcophagusContext } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
 import { useArweave } from 'hooks/useArweave';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
 import { useNetworkConfig } from '../lib/config';
 
@@ -29,6 +30,7 @@ const useArweaveService = () => {
 
   const { arweave } = useArweave();
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
+  const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
   const uploadArLocalFile = useCallback(
     async (file: string | Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
@@ -60,9 +62,11 @@ const useArweaveService = () => {
           `${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`
         );
       }
+
+      setSarcophagusPayloadTxId(tx.id);
       return tx.id;
     },
-    [arweave]
+    [arweave, setSarcophagusPayloadTxId]
   );
 
   const updateStatus = useCallback(
@@ -102,13 +106,13 @@ const useArweaveService = () => {
   const getConfirmations = (): number => transactionStatus.confirmations;
 
   const uploadToArweave = useCallback(
-    async (data: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
+    (data: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
       return networkConfig.chainId === hardhat.id
         ? uploadArLocalFile(data, metadata)
         : uploadFile(data, metadata);
     },
-    [uploadArLocalFile, uploadFile, networkConfig.chainId, arweave]
+    [arweave, networkConfig.chainId, uploadArLocalFile, uploadFile]
   );
 
   return {

@@ -23,6 +23,7 @@ export function Claim() {
     resurrect,
     isResurrecting,
     isLoading: isLoadingResurrection,
+    downloadProgress,
   } = useResurrection(id || ethers.constants.HashZero, privateKey);
 
   const privateKeyPad = (privKey: string): string => {
@@ -89,12 +90,15 @@ export function Claim() {
                 >
                   {resurrectError}
                 </Text>
+              ) : downloadProgress ? (
+                <Text mt={2}> {`Downloading... ${downloadProgress}%`} </Text>
               ) : (
                 <Text mt={2}>Please enter the Private Key to decrypt the Sarcophagus</Text>
               )}
+
               <Button
                 w="fit-content"
-                disabled={!canResurrect || !privateKey}
+                disabled={!canResurrect || !privateKey || isResurrecting}
                 mt={6}
                 onClick={handleResurrect}
                 isLoading={isResurrecting}
