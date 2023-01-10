@@ -77,13 +77,9 @@ export function useArweave() {
           onDownloadProgress,
         });
 
-        console.log('done fetch');
         setDownloadProgress(0);
 
-        console.log('splitting');
-
         const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
-        console.log('done split');
 
         return {
           fileBuffer,
