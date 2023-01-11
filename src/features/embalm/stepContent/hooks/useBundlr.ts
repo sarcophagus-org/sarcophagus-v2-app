@@ -14,6 +14,7 @@ import {
 } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { CreateSarcophagusContext } from '../context/CreateSarcophagusContext';
+import { CancelCreateToken } from './useCreateSarcophagus/useCreateSarcophagus';
 
 export function useBundlr() {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ export function useBundlr() {
 
   const [chunkedUploader, setChunkedUploader] = useState<ChunkingUploader>();
   const [fileBuffer, setFileBuffer] = useState<Buffer>();
+  const [cancelUploadToken, setCancelUploadToken] = useState<CancelCreateToken>();
   const [metadata, setMetadata] = useState<ArweaveFileMetadata>();
   const [readyToUpload, setReadyToUpload] = useState(false);
 
@@ -124,18 +126,34 @@ export function useBundlr() {
     setChunkedUploader(bundlr.uploader.chunkedUploader);
   }, [bundlr]);
 
+  // STOP UPLOAD ON CANCEL
+  useEffect(() => {
+    console.log(cancelUploadToken);
+
+    if (cancelUploadToken?.cancelled) {
+      console.log('throw, pause');
+      chunkedUploader?.pause();
+      console.log('reject');
+
+      rejectUploadPromise.current('Cancelled upload');
+    }
+  }, [cancelUploadToken, cancelUploadToken?.cancelled, chunkedUploader]);
+
   const prepareToUpload = useCallback(
     async (
       payloadBuffer: Buffer,
       fileMetadata: ArweaveFileMetadata,
+      cancelToken: CancelCreateToken,
       resolve?: any,
       reject?: any
     ): Promise<any> => {
       setFileBuffer(payloadBuffer);
       setMetadata(fileMetadata);
-      setReadyToUpload(true);
+      setCancelUploadToken(cancelToken);
       resolveUploadPromise.current = resolve;
       rejectUploadPromise.current = reject;
+
+      setReadyToUpload(true);
     },
     []
   );
@@ -146,21 +164,19 @@ export function useBundlr() {
         return;
       }
 
-      try {
-        let res: any;
+      const opts = {
+        tags: [{ name: 'metadata', value: JSON.stringify(metadata) }],
+      };
 
-        const opts = {
-          tags: [{ name: 'metadata', value: JSON.stringify(metadata) }],
-        };
-
-        res = await chunkedUploader?.uploadData(fileBuffer, opts);
-
+      const uploadPromise = chunkedUploader?.uploadData(fileBuffer, opts).then(res => {
         setSarcophagusPayloadTxId(res.data.id);
         resolveUploadPromise.current(res.data.id);
-      } catch (error: any) {
-        console.log('err', error);
-        rejectUploadPromise.current(error);
-      }
+      }).catch(err => {
+        console.log('err', err);
+        rejectUploadPromise.current(err);
+      });
+
+      await uploadPromise;
     })();
   }, [
     readyToUpload,
@@ -178,13 +194,13 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata): Promise<string> => {
+    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata, cancelToken: CancelCreateToken): Promise<string> => {
       return new Promise<string>(async (resolve, reject) => {
         if (!bundlr || !chunkedUploader) {
           reject('Bundlr not connected');
         }
 
-        prepareToUpload(payloadBuffer, fileMetadata, resolve, reject);
+        prepareToUpload(payloadBuffer, fileMetadata, cancelToken, resolve, reject);
       });
     },
     [bundlr, chunkedUploader, prepareToUpload]

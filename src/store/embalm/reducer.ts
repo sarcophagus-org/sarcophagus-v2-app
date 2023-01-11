@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
+import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { removeFromArray } from 'lib/utils/helpers';
 import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
@@ -38,6 +39,7 @@ export interface EmbalmState {
   uploadPrice: BigNumber;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
+  cancelCreateToken: CancelCreateToken;
   currentChainId: number | undefined;
 }
 
@@ -63,6 +65,7 @@ export const embalmInitialState: EmbalmState = {
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
   currentChainId: undefined,
+  cancelCreateToken: new CancelCreateToken(),
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -238,10 +241,17 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return { ...state, currentChainId: action.payload.chainId };
 
     case ActionType.DisableSteps:
-      return { ...state, areStepsDisabled: true };
+      return {
+        ...state,
+        areStepsDisabled: true,
+        cancelCreateToken: new CancelCreateToken(),
+      };
 
     case ActionType.EnableSteps:
       return { ...state, areStepsDisabled: false };
+
+    case ActionType.SetCancelToken:
+      return { ...state, cancelCreateToken: action.payload.token };
 
     case ActionType.ResetEmbalmState:
       let initialState = { ...embalmInitialState };

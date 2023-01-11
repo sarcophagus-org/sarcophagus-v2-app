@@ -14,6 +14,7 @@ import { useNetworkConfig } from 'lib/config';
 import { mainnet } from 'wagmi';
 import { hardhat } from '@wagmi/chains';
 import { setIsUploading } from 'store/bundlr/actions';
+import { CancelCreateToken } from './useCreateSarcophagus';
 
 /** The number of digits the metadata size will ALWAYS have */
 export const METADATA_SIZE_CHAR_COUNT = 3;
@@ -57,12 +58,16 @@ export function useUploadFileAndKeyShares() {
     setUploadStep(`Uploading to Arweave... ${(uploadProgress * 100).toFixed(0)}%`);
   }, [uploadProgress]);
 
-  const uploadAndSetArweavePayload = useCallback(async () => {
+  const uploadAndSetArweavePayload = useCallback(async (isRetry: boolean, cancelToken: CancelCreateToken) => {
     try {
+      if (!file) {
+        return;
+      }
+
       dispatch(setIsUploading(true));
 
       setUploadStep('Reading file...');
-      const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file!);
+      const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file);
 
       /**
        * File upload data
@@ -135,8 +140,9 @@ export function useUploadFileAndKeyShares() {
         encryptedPayload,
       ]);
 
-      await uploadToArweave(arweavePayload, encryptedMetadata);
+      await uploadToArweave(arweavePayload, encryptedMetadata, cancelToken);
     } catch (error: any) {
+      console.log(error);
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }
   }, [

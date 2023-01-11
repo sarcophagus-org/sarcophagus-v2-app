@@ -4,6 +4,7 @@ import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 import { BigNumber } from 'ethers';
+import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -11,6 +12,7 @@ export enum ActionType {
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   DisableSteps = 'EMBALM_DISABLE_STEPS',
   EnableSteps = 'EMBALM_ENABLE_STEPS',
+  SetCancelToken = 'EMBALM_SET_CANCEL_TOKEN',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
@@ -68,6 +70,7 @@ type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.DisableSteps]: {};
   [ActionType.EnableSteps]: {};
+  [ActionType.SetCancelToken]: { token: CancelCreateToken };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
@@ -326,6 +329,13 @@ export function enableSteps(): EmbalmActions {
   return {
     type: ActionType.EnableSteps,
     payload: {},
+  };
+}
+
+export function setCancelToken(token: CancelCreateToken): EmbalmActions {
+  return {
+    type: ActionType.SetCancelToken,
+    payload: { token },
   };
 }
 

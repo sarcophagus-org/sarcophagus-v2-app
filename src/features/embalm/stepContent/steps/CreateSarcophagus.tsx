@@ -12,7 +12,7 @@ import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import { goToStep, setArchaeologists } from '../../../../store/embalm/actions';
+import { setCancelToken, goToStep, setArchaeologists } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -20,7 +20,7 @@ import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { StageInfoIcon } from '../components/StageInfoIcon';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
-import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
+import { CancelCreateToken, useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
@@ -29,6 +29,7 @@ export function CreateSarcophagus() {
   const { getProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
+  const cancelCreateToken = useSelector(s => s.embalmState.cancelCreateToken);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -71,12 +72,13 @@ export function CreateSarcophagus() {
     return currentStage === CreateSarcophagusStage.COMPLETED;
   }, [currentStage]);
 
-  const cancelCreate = useCallback(async () => {
+  const cancelCreation = useCallback(async () => {
     // TODO add alert to user before cancelling
-    clearSarcophagusState();
+    await clearSarcophagusState();
     dispatch(goToStep(Step.NameSarcophagus));
-    navigate('/');
-  }, [clearSarcophagusState, dispatch, navigate]);
+    cancelCreateToken.cancel();
+    dispatch(setCancelToken(new CancelCreateToken()));
+  }, [cancelCreateToken, clearSarcophagusState, dispatch]);
 
   useEffect(() => {
     // remove approval step if user has allowance on sarco token
@@ -195,7 +197,7 @@ export function CreateSarcophagus() {
             variant="outline"
             w="150px"
             mt="20px"
-            onClick={cancelCreate}
+            onClick={cancelCreation}
           >
             Cancel Sarcophagus
           </Button>

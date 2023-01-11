@@ -11,13 +11,25 @@ import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 import { useClearSarcophagusState } from './useClearSarcophagusState';
 
+export class CancelCreateToken {
+  cancelled: boolean;
+
+  constructor() {
+    this.cancelled = false;
+  }
+
+  cancel() {
+    this.cancelled = true;
+  }
+}
+
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
   embalmerFacet: ethers.Contract,
   sarcoToken: ethers.Contract
 ) {
   const dispatch = useDispatch();
-  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists, cancelCreateToken } = useSelector(x => x.embalmState);
 
   // State variables to track sarcophagus creation flow across all stages
   const [currentStage, setCurrentStage] = useState(CreateSarcophagusStage.NOT_STARTED);
@@ -82,13 +94,13 @@ export function useCreateSarcophagus(
       };
 
       const executeStage = async (
-        stageToExecute: (_: boolean) => Promise<any>,
-        isRetry: boolean
+        stageToExecute: (_: boolean, __: CancelCreateToken) => Promise<any>,
+        isRetry: boolean,
+        cancelToken: CancelCreateToken,
       ): Promise<any> =>
         new Promise((resolve, reject) => {
           setStageExecuting(true);
-
-          stageToExecute(isRetry)
+          stageToExecute(isRetry, cancelToken)
             .then((result: any) => {
               // Add a slight delay before next step
               // to account for any global dispatch delay
@@ -110,7 +122,7 @@ export function useCreateSarcophagus(
         try {
           const currentStageFunction = stagesMap.get(currentStage);
           if (currentStageFunction) {
-            await executeStage(currentStageFunction, isStageRetry);
+            await executeStage(currentStageFunction, isStageRetry, cancelCreateToken);
           }
         } catch (error: any) {
           console.error(error);
@@ -124,6 +136,7 @@ export function useCreateSarcophagus(
       }
     })();
   }, [
+    cancelCreateToken,
     currentStage,
     stageExecuting,
     stagesMap,
