@@ -10,7 +10,6 @@ import {
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
 import { arweaveDataDelimiter } from 'hooks/useArweave';
-import { useNetworkConfig } from 'lib/config';
 import { setIsUploading } from 'store/bundlr/actions';
 
 export function useUploadFileAndKeyShares() {
@@ -19,8 +18,6 @@ export function useUploadFileAndKeyShares() {
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
   const { payloadPrivateKey, payloadPublicKey, archaeologistPublicKeys } =
     useContext(CreateSarcophagusContext);
-
-  const networkConfig = useNetworkConfig();
 
   const [uploadStep, setUploadStep] = useState('');
   const { uploadProgress, isUploading } = useSelector(s => s.bundlrState);
@@ -85,10 +82,7 @@ export function useUploadFileAndKeyShares() {
         type: payload.type,
       });
 
-      const metadataBuffer = Buffer.from(
-        JSON.stringify(encryptedMetadata),
-        'binary'
-      );
+      const metadataBuffer = Buffer.from(JSON.stringify(encryptedMetadata), 'binary');
 
       // <meta_buf_size><delimiter><keyshare_buf_size><delimiter><metatadata><keyshares><payload>
 
@@ -115,7 +109,6 @@ export function useUploadFileAndKeyShares() {
     requiredArchaeologists,
     recipientState.publicKey,
     archaeologistPublicKeys,
-    networkConfig.chainId,
     uploadToArweave,
   ]);
 

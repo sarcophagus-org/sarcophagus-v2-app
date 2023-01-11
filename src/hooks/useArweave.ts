@@ -12,41 +12,55 @@ export interface ArweaveResponse {
 }
 
 function splitPackedDataBuffer(concatenatedBuffer: Buffer): ArweaveResponse {
-  // Data is formatted as:
-  // <meta_buf_length><delimiter><keyshare_buf_length><delimiter><metatadata><keyshares><payload>
+  // Concatenated buffer is formatted as:
+  // <meta_buffer_length>
+  //   <delimiter>
+  // <keyshare_buffer_length>
+  //   <delimiter>
+  // <metatadata>
+  // <keyshares>
+  // <payload>
 
   concatenatedBuffer = Buffer.from(concatenatedBuffer);
 
   // Delimiter after metatdata length
   const firstDelimiterIndex = concatenatedBuffer.indexOf(arweaveDataDelimiter);
-  const metadataLength = Number.parseInt(concatenatedBuffer.slice(0, firstDelimiterIndex).toString('binary'));
+  const metadataLength = Number.parseInt(
+    concatenatedBuffer.slice(0, firstDelimiterIndex).toString('binary')
+  );
 
   // Delimiter after keyshare length
-  const secondDelimiterIndex = concatenatedBuffer.indexOf(arweaveDataDelimiter, firstDelimiterIndex + 1);
-  const keyshareLength = Number.parseInt(concatenatedBuffer.slice(firstDelimiterIndex + 1, secondDelimiterIndex).toString('binary'));
+  const secondDelimiterIndex = concatenatedBuffer.indexOf(
+    arweaveDataDelimiter,
+    firstDelimiterIndex + 1
+  );
+  const keyshareLength = Number.parseInt(
+    concatenatedBuffer.slice(firstDelimiterIndex + 1, secondDelimiterIndex).toString('binary')
+  );
 
   // metatdata
-  const metadataStr = concatenatedBuffer.slice(secondDelimiterIndex + 1, secondDelimiterIndex + 1 + metadataLength).toString('binary');
+  const metadataStr = concatenatedBuffer
+    .slice(secondDelimiterIndex + 1, secondDelimiterIndex + 1 + metadataLength)
+    .toString('binary');
+
   const metadata = JSON.parse(metadataStr);
 
   // keyshares
-  const sharesBuffer = concatenatedBuffer.slice(secondDelimiterIndex + 1 + metadataLength + 1, secondDelimiterIndex + 1 + metadataLength + 1 + keyshareLength).toString('binary');
+  const sharesBuffer = concatenatedBuffer
+    .slice(
+      secondDelimiterIndex + metadataLength + 1,
+      secondDelimiterIndex + 1 + metadataLength + keyshareLength
+    )
+    .toString('binary');
+
   const keyShares = JSON.parse(sharesBuffer.toString());
 
   // payload
-  const fileBuffer = concatenatedBuffer.slice(secondDelimiterIndex + 1 + metadataLength + 1 + keyshareLength + 1);
+  const fileBuffer = concatenatedBuffer.slice(
+    secondDelimiterIndex + 1 + metadataLength + keyshareLength
+  );
 
   return { metadata, keyShares, fileBuffer };
-}
-
-function getArweaveFileMetadata(tx: any): ArweaveFileMetadata {
-  // @ts-ignore
-  const metadataTag = tx.get('tags').find(tag => {
-    let key = tag.get('name', { decode: true, string: true });
-    return key === 'metadata';
-  });
-
-  return JSON.parse(metadataTag.get('value', { decode: true, string: true }));
 }
 
 export function useArweave() {
