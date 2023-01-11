@@ -11,6 +11,8 @@ export enum ActionType {
   SetBalance = 'BUNDLR_SET_BALANCE',
   SetBundlr = 'BUNDLR_SET',
   SetIsFunding = 'BUNDLR_SET_IS_FUNDING',
+  SetIsUploading = 'BUNDLR_SET_IS_UPLOADING',
+  SetUploadProgress = 'BUNDLR_SET_UPLOAD_PROGRESS',
   SetTxId = 'BUNDLR_SET_TX_ID',
   Withdraw = 'BUNDLR_WITHDRAW',
   ResetBalanceOffset = 'BUNDLR_RESET_BALANCE_OFFSET',
@@ -23,6 +25,8 @@ type BundlrPayload = {
   [ActionType.SetBalance]: { balance: BigNumber };
   [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
   [ActionType.SetIsFunding]: { isFunding: boolean };
+  [ActionType.SetIsUploading]: { isUploading: boolean };
+  [ActionType.SetUploadProgress]: { uploadProgress: number };
   [ActionType.SetTxId]: { txId: string };
   [ActionType.Withdraw]: { amount: string };
   [ActionType.ResetBalanceOffset]: {};
@@ -65,6 +69,22 @@ export function setIsFunding(isFunding: boolean): BundlrActions {
     type: ActionType.SetIsFunding,
     payload: {
       isFunding,
+    },
+  };
+}
+export function setIsUploading(isUploading: boolean): BundlrActions {
+  return {
+    type: ActionType.SetIsUploading,
+    payload: {
+      isUploading,
+    },
+  };
+}
+export function setUploadProgress(uploadProgress: number): BundlrActions {
+  return {
+    type: ActionType.SetUploadProgress,
+    payload: {
+      uploadProgress,
     },
   };
 }

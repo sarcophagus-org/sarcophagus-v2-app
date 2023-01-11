@@ -1,16 +1,19 @@
-import { encrypt } from 'ecies-geth';
-import { ethers } from 'ethers';
-import { hexlify } from 'ethers/lib/utils';
+import { hardhat } from '@wagmi/chains';
+import { CreateSarcophagusContext } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
 import { useArweave } from 'hooks/useArweave';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
 import { useNetworkConfig } from '../lib/config';
-import { hardhatChainId } from '../lib/config/hardhat';
 
 export enum ArweaveTxStatus {
   PENDING,
   SUCCESS,
   FAIL,
+}
+
+export interface ArweaveFileMetadata {
+  fileName: string;
+  type: string;
 }
 
 const useArweaveService = () => {
@@ -25,34 +28,9 @@ const useArweaveService = () => {
   const { uploadFile } = useBundlr();
   const networkConfig = useNetworkConfig();
 
-  const { arweave, decryptArweaveFile, fetchArweaveFile } = useArweave();
+  const { arweave } = useArweave();
   const arweaveNotReadyMsg = 'Arweave instance not ready!';
-
-  const encryptShard = async (shard: string, publicKey: string): Promise<string> => {
-    const encrypted = await encrypt(
-      Buffer.from(ethers.utils.arrayify(publicKey)),
-      Buffer.from(shard)
-    );
-    return hexlify(encrypted);
-  };
-
-  const isArweaveFileValid = async (
-    arweaveTxId: string,
-    privateKey: string,
-    originalFile: ArrayBuffer
-  ): Promise<boolean> => {
-    const arweaveFile = await fetchArweaveFile(arweaveTxId);
-
-    if (!arweaveFile) {
-      console.error(arweaveNotReadyMsg);
-      return false;
-    }
-
-    const decryptedFile = await decryptArweaveFile(arweaveFile, privateKey);
-    const fileBytes = Buffer.from(new Uint8Array(originalFile));
-
-    return decryptedFile.toString() === fileBytes.toString();
-  };
+  const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
   const uploadArLocalFile = useCallback(
     async (file: string | Buffer): Promise<string> => {
@@ -72,7 +50,6 @@ const useArweaveService = () => {
       // address: Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4
 
       const tx = await arweave.createTransaction({ data: file }, key);
-      tx.addTag('Content-Type', 'plain/text');
       await arweave.transactions.sign(tx, key);
 
       let uploader = await arweave.transactions.getUploader(tx);
@@ -83,9 +60,11 @@ const useArweaveService = () => {
           `${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`
         );
       }
+
+      setSarcophagusPayloadTxId(tx.id);
       return tx.id;
     },
-    [arweave]
+    [arweave, setSarcophagusPayloadTxId]
   );
 
   const updateStatus = useCallback(
@@ -125,19 +104,17 @@ const useArweaveService = () => {
   const getConfirmations = (): number => transactionStatus.confirmations;
 
   const uploadToArweave = useCallback(
-    async (data: Buffer): Promise<string> => {
+    (data: Buffer): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
-      return networkConfig.chainId === hardhatChainId ? uploadArLocalFile(data) : uploadFile(data);
+      return networkConfig.chainId === hardhat.id ? uploadArLocalFile(data) : uploadFile(data);
     },
-    [uploadArLocalFile, uploadFile, networkConfig.chainId, arweave]
+    [arweave, networkConfig.chainId, uploadArLocalFile, uploadFile]
   );
 
   return {
     updateStatus,
     getTransactionStatusMessage,
     getConfirmations,
-    isArweaveFileValid,
-    encryptShard,
     uploadToArweave,
   };
 };

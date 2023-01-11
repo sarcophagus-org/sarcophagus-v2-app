@@ -34,14 +34,26 @@ export function formatToastMessage(message: string, length: number = 125): strin
 /**
  * Returns base64 data of a given File object
  * @param file The File object
- * @returns Base64 data as a buffer
+ * @returns Object with params:
+ *
+ *  - `type` - file type descriptor string formatted as `"data:<file-type>/<file-ext>;base64"`
+ *
+ *  - `data` - file data formatted as a base64 string
  */
-export function readFileDataAsBase64(file: File): Promise<Buffer> {
+export function readFileDataAsBase64(file: File): Promise<{ type: string; data: Buffer }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onload = event => {
-      resolve(event.target?.result as Buffer);
+      // format of `res` is:
+      // "data:image/png;base64,iVBORw0KGg..."
+      const res = event.target?.result as string;
+      const i = res.indexOf(',');
+
+      resolve({
+        type: res.slice(0, i),
+        data: Buffer.from(res.slice(i + 1), 'base64'),
+      });
     };
 
     reader.onerror = err => {
@@ -100,7 +112,7 @@ export function removeLeadingZeroes(value: string): string {
  * @returns The encrypted payload
  */
 export async function encrypt(publicKey: string, payload: Buffer): Promise<Buffer> {
-  return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), Buffer.from(payload));
+  return eciesEncrypt(Buffer.from(ethers.utils.arrayify(publicKey)), payload);
 }
 
 export async function decrypt(privateKey: string, payload: Buffer): Promise<Buffer> {

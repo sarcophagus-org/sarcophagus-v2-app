@@ -1,6 +1,7 @@
 import { ArchaeologistEncryptedShard } from '../../../../types';
 import { ethers } from 'ethers';
 import { encrypt } from '../../../../lib/utils/helpers';
+import { ArweaveFileMetadata } from 'hooks/useArweaveService';
 
 export async function encryptShardsWithArchaeologistPublicKeys(
   publicKeys: string[],
@@ -23,6 +24,19 @@ export async function encryptShardsWithRecipientPublicKey(
       return encrypt(publicKey, Buffer.from(keyShares[i]));
     })
   );
+}
+
+export async function encryptMetadataFields(
+  publicKey: string,
+  metadata: ArweaveFileMetadata
+): Promise<ArweaveFileMetadata> {
+  const encryptedFilename = await encrypt(publicKey, Buffer.from(metadata.fileName));
+  const encryptedFileType = await encrypt(publicKey, Buffer.from(metadata.type));
+
+  return {
+    fileName: encryptedFilename.toString('binary'),
+    type: encryptedFileType.toString('binary'),
+  };
 }
 
 // Note: ORDER MATTERS HERE

@@ -5,7 +5,8 @@ import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
-import { ArweavePayload } from 'types';
+import { useNetworkConfig } from 'lib/config';
+import { hardhat, mainnet } from '@wagmi/chains';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -21,7 +22,9 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const [canResurrect, setCanResurrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isResurrecting, setIsResurrecting] = useState(false);
-  const { fetchArweaveFileFallback } = useArweave();
+  const { fetchArweaveFileFallback, fetchArweaveFile, downloadProgress } = useArweave();
+
+  const networkConfig = useNetworkConfig();
 
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
   useEffect(() => {
@@ -55,16 +58,19 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
         throw new Error(`The Arwevae tx id for the payload is missing on sarcophagus ${sarcoId}`);
       }
 
-      // Load the payload from arweave using the txId, and retrieve the double-encrypted key shares
-      // Uses the fallback function by default which makes a direct api call for the payload
-      const payloadBuffer = await fetchArweaveFileFallback(payloadTxId);
-      const payload: ArweavePayload = JSON.parse(Buffer.from(payloadBuffer).toString());
+      // Load the payload from arweave using the txId
+      const arweaveFile =
+        networkConfig.chainId === hardhat.id || networkConfig.chainId === mainnet.id
+          ? await fetchArweaveFile(payloadTxId)
+          : await fetchArweaveFileFallback(payloadTxId);
+
+      if (!arweaveFile) throw Error('Failed to download file from arweave');
 
       // Decrypt the key shares. Each share is double-encrypted with an inner layer of encryption
       // with the recipient's key, and an outer layer of encryption with the archaeologist's key.
       const decryptedKeyShares: Buffer[] = [];
       for await (const arch of archaeologists) {
-        const archDoubleEncryptedKeyShare = payload.keyShares[arch.publicKey];
+        const archDoubleEncryptedKeyShare = arweaveFile.keyShares[arch.publicKey];
 
         // Decrypt outer layer with arch private key
         const recipientEncryptedKeyShare = await decrypt(
@@ -78,18 +84,31 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
         decryptedKeyShares.push(decryptedKeyShare);
       }
 
-      // Apply SSS with the decrypted shards to derive the payload file's decryption key
+      // Apply SSS with the decrypted shares to derive the payload file's decryption key
       const payloadDecryptionKey = combine(decryptedKeyShares).toString();
 
       // Decrypt the payload with the recombined key
-      const decryptedPayload = await decrypt(payloadDecryptionKey, Buffer.from(payload.file));
-      const { fileName, data } = JSON.parse(decryptedPayload.toString());
+      const decryptedPayload = await decrypt(payloadDecryptionKey, arweaveFile.fileBuffer);
 
-      if (!fileName || !data) {
-        return { fileName, data, error: 'The payload is missing the fileName or data' };
+      const decryptedfileName = await decrypt(
+        recipientPrivateKey,
+        Buffer.from(arweaveFile.metadata.fileName, 'binary')
+      );
+      const decryptedfileType = await decrypt(
+        recipientPrivateKey,
+        Buffer.from(arweaveFile.metadata.type, 'binary')
+      );
+
+      const decryptedResult = {
+        fileName: decryptedfileName.toString('binary'),
+        data: `${decryptedfileType.toString('binary')},${decryptedPayload.toString('base64')}`,
+      };
+
+      if (!decryptedResult.fileName || !decryptedResult.data) {
+        return { error: 'The payload is missing the fileName or data', fileName: '', data: '' };
       }
 
-      return { fileName, data };
+      return decryptedResult;
     } catch (error) {
       console.error(`Error resurrecting sarcophagus: ${error}`);
       return {
@@ -101,13 +120,15 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       setIsResurrecting(false);
     }
   }, [
-    archaeologists,
     canResurrect,
-    recipientPrivateKey,
-    sarcoId,
-    sarcophagus,
+    sarcophagus?.arweaveTxId,
+    networkConfig.chainId,
+    fetchArweaveFile,
     fetchArweaveFileFallback,
+    sarcoId,
+    archaeologists,
+    recipientPrivateKey,
   ]);
 
-  return { canResurrect, resurrect, isResurrecting, isLoading };
+  return { canResurrect, resurrect, isResurrecting, isLoading, downloadProgress };
 }

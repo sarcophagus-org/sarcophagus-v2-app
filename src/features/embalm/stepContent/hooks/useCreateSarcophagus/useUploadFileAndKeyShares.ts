@@ -1,45 +1,52 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { encrypt, readFileDataAsBase64 } from '../../../../../lib/utils/helpers';
 import useArweaveService from '../../../../../hooks/useArweaveService';
-import { useSelector } from '../../../../../store';
+import { useDispatch, useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import {
+  encryptMetadataFields,
   encryptShardsWithArchaeologistPublicKeys,
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
-import { ArweavePayload } from 'types';
+import { arweaveDataDelimiter } from 'hooks/useArweave';
+import { setIsUploading } from 'store/bundlr/actions';
 
 export function useUploadFileAndKeyShares() {
   const { uploadToArweave } = useArweaveService();
   const { file, recipientState } = useSelector(x => x.embalmState);
   const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
-  const { outerPrivateKey, outerPublicKey, archaeologistPublicKeys, setSarcophagusPayloadTxId } =
+  const { payloadPrivateKey, payloadPublicKey, archaeologistPublicKeys } =
     useContext(CreateSarcophagusContext);
+
+  const [uploadStep, setUploadStep] = useState('');
+  const { uploadProgress, isUploading } = useSelector(s => s.bundlrState);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setUploadStep(`Uploading to Arweave... ${(uploadProgress * 100).toFixed(0)}%`);
+  }, [uploadProgress]);
 
   const uploadAndSetArweavePayload = useCallback(async () => {
     try {
-      const data = await readFileDataAsBase64(file!);
-      const payload = {
-        fileName: file?.name,
-        data,
-      };
+      dispatch(setIsUploading(true));
+
+      setUploadStep('Reading file...');
+      const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file!);
 
       /**
        * File upload data
        */
       // Step 1: Encrypt the payload with the generated keypair
-
-      const encryptedOuterLayer = await encrypt(
-        outerPublicKey!,
-        Buffer.from(JSON.stringify(payload))
-      );
+      setUploadStep('Encrypting...');
+      const encryptedPayload = await encrypt(payloadPublicKey!, payload.data);
 
       /**
        * Double encrypted keyshares upload data
        */
       // Step 1: Split the outer layer private key using shamirs secret sharing
-      const keyShares: Uint8Array[] = split(outerPrivateKey, {
+      const keyShares: Uint8Array[] = split(payloadPrivateKey, {
         shares: selectedArchaeologists.length,
         threshold: requiredArchaeologists,
       });
@@ -67,31 +74,47 @@ export function useUploadFileAndKeyShares() {
         {}
       );
 
-      const combinedPayload: ArweavePayload = {
-        file: encryptedOuterLayer,
-        keyShares: doubleEncryptedKeyShares,
-      };
-
       // Upload file data + keyshares data to arweave
-      const payloadTxId = await uploadToArweave(Buffer.from(JSON.stringify(combinedPayload)));
+      const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares), 'binary');
 
-      setSarcophagusPayloadTxId(payloadTxId);
+      const encryptedMetadata = await encryptMetadataFields(recipientState.publicKey, {
+        fileName: file!.name,
+        type: payload.type,
+      });
+
+      const metadataBuffer = Buffer.from(JSON.stringify(encryptedMetadata), 'binary');
+
+      // <meta_buf_size><delimiter><keyshare_buf_size><delimiter><metatadata><keyshares><payload>
+
+      const arweavePayload = Buffer.concat([
+        Buffer.from(metadataBuffer.length.toString(), 'binary'),
+        arweaveDataDelimiter,
+        Buffer.from(encKeysBuffer.length.toString()),
+        arweaveDataDelimiter,
+        metadataBuffer,
+        encKeysBuffer,
+        encryptedPayload,
+      ]);
+
+      await uploadToArweave(arweavePayload);
     } catch (error: any) {
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }
   }, [
+    dispatch,
     file,
+    payloadPublicKey,
+    payloadPrivateKey,
+    selectedArchaeologists.length,
     requiredArchaeologists,
-    selectedArchaeologists,
-    archaeologistPublicKeys,
-    outerPublicKey,
-    outerPrivateKey,
     recipientState.publicKey,
+    archaeologistPublicKeys,
     uploadToArweave,
-    setSarcophagusPayloadTxId,
   ]);
 
   return {
-    uploadAndSetArweavePayload: uploadAndSetArweavePayload,
+    uploadAndSetArweavePayload,
+    uploadStep,
+    isUploading,
   };
 }

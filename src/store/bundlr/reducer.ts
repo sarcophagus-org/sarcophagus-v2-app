@@ -9,6 +9,7 @@ export interface BundlrState {
   isConnected: boolean;
   isFunding: boolean;
   isUploading: boolean;
+  uploadProgress: number;
   txId: string | null;
   balanceOffset: BigNumber;
 }
@@ -19,6 +20,7 @@ export const bundlrInitialState: BundlrState = {
   isConnected: false,
   isFunding: false,
   isUploading: false,
+  uploadProgress: 0,
   txId: null,
   balanceOffset: ethers.constants.Zero,
 };
@@ -40,6 +42,12 @@ export function bundlrReducer(state: BundlrState, action: Actions): BundlrState 
 
     case ActionType.SetIsFunding:
       return { ...state, isFunding: action.payload.isFunding };
+
+    case ActionType.SetIsUploading:
+      return { ...state, isUploading: action.payload.isUploading };
+
+    case ActionType.SetUploadProgress:
+      return { ...state, uploadProgress: action.payload.uploadProgress };
 
     case ActionType.SetTxId:
       const txId = action.payload.txId;

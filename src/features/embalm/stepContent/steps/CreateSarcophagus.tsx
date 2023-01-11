@@ -18,6 +18,7 @@ import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
+import { StageInfoIcon } from '../components/StageInfoIcon';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
@@ -50,8 +51,15 @@ export function CreateSarcophagus() {
     signerOrProvider: signer,
   });
 
-  const { currentStage, handleCreate, stageError, retryStage, successData, clearSarcophagusState } =
-    useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
+  const {
+    currentStage,
+    handleCreate,
+    stageError,
+    stageInfo,
+    retryStage,
+    successData,
+    clearSarcophagusState,
+  } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
   const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
 
@@ -154,6 +162,20 @@ export function CreateSarcophagus() {
                 <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
               ))}
           </ProgressTracker>
+          {stageInfo && (
+            <Flex
+              mt={3}
+              alignItems="center"
+            >
+              <StageInfoIcon />
+              <Text
+                ml={2}
+                variant="secondary"
+              >
+                {stageInfo}
+              </Text>
+            </Flex>
+          )}
           {stageError && (
             <Flex
               mt={3}
