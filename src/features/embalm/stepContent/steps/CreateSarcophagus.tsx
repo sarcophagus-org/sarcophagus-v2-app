@@ -78,10 +78,11 @@ export function CreateSarcophagus() {
   const cancelCreation = useCallback(async () => {
     // TODO add alert to user before cancelling
     await clearSarcophagusState();
-    dispatch(goToStep(Step.NameSarcophagus));
     cancelCreateToken.cancel();
+    dispatch(goToStep(Step.NameSarcophagus));
+    navigate('/');
     dispatch(setCancelToken(new CancelCreateToken()));
-  }, [cancelCreateToken, clearSarcophagusState, dispatch]);
+  }, [cancelCreateToken, clearSarcophagusState, dispatch, navigate]);
 
   useEffect(() => {
     // remove approval step if user has allowance on sarco token

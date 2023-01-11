@@ -101,6 +101,12 @@ export function useBundlr() {
     chunkedUploader.setChunkSize(5_000_000);
 
     chunkedUploader?.on('chunkUpload', chunkInfo => {
+      if (cancelUploadToken?.cancelled) {
+        chunkedUploader?.pause();
+        rejectUploadPromise.current('Cancelled upload');
+        return;
+      }
+
       const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
       dispatch(setUploadProgress(chunkedUploadProgress));
     });
@@ -116,7 +122,7 @@ export function useBundlr() {
       console.log(`Upload completed with ID ${finishRes.id}`);
       dispatch(setIsUploading(false));
     });
-  }, [chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
+  }, [cancelUploadToken, chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
 
   //  SET UP CHUNKED UPLOADER WHEN BUNDLR CONNECTS
   useEffect(() => {
@@ -130,13 +136,8 @@ export function useBundlr() {
 
   // STOP UPLOAD ON CANCEL
   useEffect(() => {
-    console.log(cancelUploadToken);
-
     if (cancelUploadToken?.cancelled) {
-      console.log('throw, pause');
       chunkedUploader?.pause();
-      console.log('reject');
-
       rejectUploadPromise.current('Cancelled upload');
     }
   }, [cancelUploadToken, cancelUploadToken?.cancelled, chunkedUploader]);
@@ -147,13 +148,13 @@ export function useBundlr() {
    * and raise readyToUpload flag.
    * */
   const prepareToUpload = useCallback(
-    async (
+    (
       payloadBuffer: Buffer,
       fileMetadata: ArweaveFileMetadata,
       cancelToken: CancelCreateToken,
       resolve?: any,
       reject?: any
-    ): Promise<any> => {
+    ) => {
       setFileBuffer(payloadBuffer);
       setMetadata(fileMetadata);
       setCancelUploadToken(cancelToken);

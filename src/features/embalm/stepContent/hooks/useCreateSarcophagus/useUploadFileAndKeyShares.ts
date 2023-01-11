@@ -61,14 +61,10 @@ export function useUploadFileAndKeyShares() {
   const uploadAndSetArweavePayload = useCallback(
     async (isRetry: boolean, cancelToken: CancelCreateToken) => {
       try {
-        if (!file) {
-          return;
-        }
-
         dispatch(setIsUploading(true));
 
         setUploadStep('Reading file...');
-        const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file);
+        const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file!);
 
         /**
          * File upload data
