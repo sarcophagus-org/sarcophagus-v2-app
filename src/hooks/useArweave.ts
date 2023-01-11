@@ -1,10 +1,9 @@
 import Arweave from 'arweave';
-import { METADATA_SIZE_CHAR_COUNT } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useUploadFileAndKeyShares';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { ArweaveFileMetadata } from './useArweaveService';
 
-export const sharesDelimiter = Buffer.from('~|~', 'binary');
+export const arweaveDataDelimiter = Buffer.from('|', 'binary');
 
 export interface ArweaveResponse {
   metadata: ArweaveFileMetadata;
@@ -12,23 +11,30 @@ export interface ArweaveResponse {
   fileBuffer: Buffer;
 }
 
-function splitPackedDataBuffer(data: Buffer) {
-  const payloadBuffer = Buffer.from(data);
+function splitPackedDataBuffer(concatenatedBuffer: Buffer): ArweaveResponse {
+  // Data is formatted as:
+  // <meta_buf_length><delimiter><keyshare_buf_length><delimiter><metatadata><keyshares><payload>
 
-  const metadataSizeBuffer = payloadBuffer.slice(0, METADATA_SIZE_CHAR_COUNT);
-  const metadataSize = Number.parseInt(metadataSizeBuffer.toString());
-  const metadataEnd = metadataSize + METADATA_SIZE_CHAR_COUNT;
+  concatenatedBuffer = Buffer.from(concatenatedBuffer);
 
-  const sharesSplitIndex = payloadBuffer.lastIndexOf(sharesDelimiter);
-  if (sharesSplitIndex === -1) throw Error('Bad data');
+  // Delimiter after metatdata length
+  const firstDelimiterIndex = concatenatedBuffer.indexOf(arweaveDataDelimiter);
+  const metadataLength = Number.parseInt(concatenatedBuffer.slice(0, firstDelimiterIndex).toString('binary'));
 
-  const metadataStr = payloadBuffer.slice(METADATA_SIZE_CHAR_COUNT, metadataEnd).toString('binary');
-  const metadata = !!metadataStr.trim() ? JSON.parse(metadataStr) : undefined;
+  // Delimiter after keyshare length
+  const secondDelimiterIndex = concatenatedBuffer.indexOf(arweaveDataDelimiter, firstDelimiterIndex + 1);
+  const keyshareLength = Number.parseInt(concatenatedBuffer.slice(firstDelimiterIndex + 1, secondDelimiterIndex).toString('binary'));
 
-  const sharesBuffer = payloadBuffer.slice(metadataEnd, sharesSplitIndex);
+  // metatdata
+  const metadataStr = concatenatedBuffer.slice(secondDelimiterIndex + 1, secondDelimiterIndex + 1 + metadataLength).toString('binary');
+  const metadata = JSON.parse(metadataStr);
+
+  // keyshares
+  const sharesBuffer = concatenatedBuffer.slice(secondDelimiterIndex + 1 + metadataLength + 1, secondDelimiterIndex + 1 + metadataLength + 1 + keyshareLength).toString('binary');
   const keyShares = JSON.parse(sharesBuffer.toString());
 
-  const fileBuffer = payloadBuffer.slice(sharesSplitIndex + sharesDelimiter.length);
+  // payload
+  const fileBuffer = concatenatedBuffer.slice(secondDelimiterIndex + 1 + metadataLength + 1 + keyshareLength + 1);
 
   return { metadata, keyShares, fileBuffer };
 }
@@ -79,7 +85,7 @@ export function useArweave() {
 
         setDownloadProgress(0);
 
-        const { keyShares, metadata, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
+        const { metadata, keyShares, fileBuffer } = splitPackedDataBuffer(res.data as Buffer);
 
         return {
           fileBuffer,
@@ -147,8 +153,7 @@ export function useArweave() {
 
         setDownloadProgress(0);
 
-        let metadata = getArweaveFileMetadata(tx);
-        const { keyShares, fileBuffer } = splitPackedDataBuffer(tx.data as Buffer);
+        const { metadata, keyShares, fileBuffer } = splitPackedDataBuffer(tx.data as Buffer);
 
         return { metadata, keyShares, fileBuffer };
       } catch (error) {

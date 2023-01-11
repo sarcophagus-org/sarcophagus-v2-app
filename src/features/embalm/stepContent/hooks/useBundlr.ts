@@ -127,12 +127,10 @@ export function useBundlr() {
   const prepareToUpload = useCallback(
     async (
       payloadBuffer: Buffer,
-      fileMetadata: ArweaveFileMetadata,
       resolve?: any,
       reject?: any
     ): Promise<any> => {
       setFileBuffer(payloadBuffer);
-      setMetadata(fileMetadata);
       setReadyToUpload(true);
       resolveUploadPromise.current = resolve;
       rejectUploadPromise.current = reject;
@@ -149,11 +147,7 @@ export function useBundlr() {
       try {
         let res: any;
 
-        const opts = {
-          tags: [{ name: 'metadata', value: JSON.stringify(metadata) }],
-        };
-
-        res = await chunkedUploader?.uploadData(fileBuffer, opts);
+        res = await chunkedUploader?.uploadData(fileBuffer);
 
         setSarcophagusPayloadTxId(res.data.id);
         resolveUploadPromise.current(res.data.id);
@@ -165,7 +159,6 @@ export function useBundlr() {
   }, [
     readyToUpload,
     fileBuffer,
-    metadata,
     setSarcophagusPayloadTxId,
     toast,
     chunkedUploader,
@@ -178,13 +171,13 @@ export function useBundlr() {
    * @param fileBuffer The data buffer
    */
   const uploadFile = useCallback(
-    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata): Promise<string> => {
+    async (payloadBuffer: Buffer): Promise<string> => {
       return new Promise<string>(async (resolve, reject) => {
         if (!bundlr || !chunkedUploader) {
           reject('Bundlr not connected');
         }
 
-        prepareToUpload(payloadBuffer, fileMetadata, resolve, reject);
+        prepareToUpload(payloadBuffer, resolve, reject);
       });
     },
     [bundlr, chunkedUploader, prepareToUpload]

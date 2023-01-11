@@ -33,7 +33,7 @@ const useArweaveService = () => {
   const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
   const uploadArLocalFile = useCallback(
-    async (file: string | Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
+    async (file: string | Buffer): Promise<string> => {
       if (!arweave) return '';
 
       const key = {
@@ -50,8 +50,6 @@ const useArweaveService = () => {
       // address: Xm17-cZJjcx-jc_UL5me1o5nfqC2T1mF-yu03gmKeK4
 
       const tx = await arweave.createTransaction({ data: file }, key);
-      tx.addTag('Content-Type', 'plain/text');
-      tx.addTag('metadata', JSON.stringify(metadata));
       await arweave.transactions.sign(tx, key);
 
       let uploader = await arweave.transactions.getUploader(tx);
@@ -109,8 +107,8 @@ const useArweaveService = () => {
     (data: Buffer, metadata: ArweaveFileMetadata): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
       return networkConfig.chainId === hardhat.id
-        ? uploadArLocalFile(data, metadata)
-        : uploadFile(data, metadata);
+        ? uploadArLocalFile(data)
+        : uploadFile(data);
     },
     [arweave, networkConfig.chainId, uploadArLocalFile, uploadFile]
   );
