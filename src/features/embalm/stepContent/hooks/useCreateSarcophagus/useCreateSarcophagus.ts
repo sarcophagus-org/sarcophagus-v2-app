@@ -96,7 +96,7 @@ export function useCreateSarcophagus(
       const executeStage = async (
         stageToExecute: (_: boolean, __: CancelCreateToken) => Promise<any>,
         isRetry: boolean,
-        cancelToken: CancelCreateToken,
+        cancelToken: CancelCreateToken
       ): Promise<any> =>
         new Promise((resolve, reject) => {
           setStageExecuting(true);

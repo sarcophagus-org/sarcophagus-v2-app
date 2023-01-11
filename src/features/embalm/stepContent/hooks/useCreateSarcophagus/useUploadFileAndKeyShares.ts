@@ -58,105 +58,108 @@ export function useUploadFileAndKeyShares() {
     setUploadStep(`Uploading to Arweave... ${(uploadProgress * 100).toFixed(0)}%`);
   }, [uploadProgress]);
 
-  const uploadAndSetArweavePayload = useCallback(async (isRetry: boolean, cancelToken: CancelCreateToken) => {
-    try {
-      if (!file) {
-        return;
+  const uploadAndSetArweavePayload = useCallback(
+    async (isRetry: boolean, cancelToken: CancelCreateToken) => {
+      try {
+        if (!file) {
+          return;
+        }
+
+        dispatch(setIsUploading(true));
+
+        setUploadStep('Reading file...');
+        const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file);
+
+        /**
+         * File upload data
+         */
+        // Step 1: Encrypt the payload with the generated keypair
+        setUploadStep('Encrypting...');
+        const encryptedPayload = await encrypt(payloadPublicKey!, payload.data);
+
+        /**
+         * Double encrypted keyshares upload data
+         */
+        // Step 1: Split the outer layer private key using shamirs secret sharing
+        const keyShares: Uint8Array[] = split(payloadPrivateKey, {
+          shares: selectedArchaeologists.length,
+          threshold: requiredArchaeologists,
+        });
+
+        // Step 2: Encrypt each shard with the recipient public key
+        const keySharesEncryptedInner = await encryptShardsWithRecipientPublicKey(
+          recipientState.publicKey,
+          keyShares
+        );
+
+        // Step 3: Encrypt each shard again with the arch public keys
+        const keySharesEncryptedOuter = await encryptShardsWithArchaeologistPublicKeys(
+          Array.from(archaeologistPublicKeys.values()),
+          keySharesEncryptedInner
+        );
+
+        /**
+         * Format data for upload
+         */
+        const doubleEncryptedKeyShares: Record<string, string> = keySharesEncryptedOuter.reduce(
+          (acc, keyShare) => ({
+            ...acc,
+            [keyShare.publicKey]: keyShare.encryptedShard,
+          }),
+          {}
+        );
+
+        // Upload file data + keyshares data to arweave
+        const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares), 'binary');
+
+        // NOTE: metadata is intentionally stripped away on mainnet and hardhat - this data can be retrieved from the tx tags
+        // In the future, if Bundlr ever is able to forward data to arweave quickly enough on testnets,
+        // we may want to update this code to not concat metadata at all.
+        const dontUseMetadataBuffer =
+          networkConfig.chainId === mainnet.id || networkConfig.chainId === hardhat.id;
+
+        const encryptedMetadata = await encryptMetadataFields(recipientState.publicKey, {
+          fileName: file!.name,
+          type: payload.type,
+        });
+
+        const metadataBuffer = Buffer.from(
+          dontUseMetadataBuffer ? '' : JSON.stringify(encryptedMetadata),
+          'binary'
+        );
+
+        // Have this buffer be of zero-size if on network where we're NOT using the metadata buffer prefix
+        const metadataSizeBuffer = dontUseMetadataBuffer
+          ? Buffer.from('')
+          : getMetadataSizeBuffer(metadataBuffer);
+
+        const arweavePayload = Buffer.concat([
+          metadataSizeBuffer,
+          metadataBuffer,
+          encKeysBuffer,
+          sharesDelimiter,
+          encryptedPayload,
+        ]);
+
+        await uploadToArweave(arweavePayload, encryptedMetadata, cancelToken);
+      } catch (error: any) {
+        console.log(error);
+        throw new Error(error.message || 'Error uploading file payload to Bundlr');
       }
-
-      dispatch(setIsUploading(true));
-
-      setUploadStep('Reading file...');
-      const payload: { type: string; data: Buffer } = await readFileDataAsBase64(file);
-
-      /**
-       * File upload data
-       */
-      // Step 1: Encrypt the payload with the generated keypair
-      setUploadStep('Encrypting...');
-      const encryptedPayload = await encrypt(payloadPublicKey!, payload.data);
-
-      /**
-       * Double encrypted keyshares upload data
-       */
-      // Step 1: Split the outer layer private key using shamirs secret sharing
-      const keyShares: Uint8Array[] = split(payloadPrivateKey, {
-        shares: selectedArchaeologists.length,
-        threshold: requiredArchaeologists,
-      });
-
-      // Step 2: Encrypt each shard with the recipient public key
-      const keySharesEncryptedInner = await encryptShardsWithRecipientPublicKey(
-        recipientState.publicKey,
-        keyShares
-      );
-
-      // Step 3: Encrypt each shard again with the arch public keys
-      const keySharesEncryptedOuter = await encryptShardsWithArchaeologistPublicKeys(
-        Array.from(archaeologistPublicKeys.values()),
-        keySharesEncryptedInner
-      );
-
-      /**
-       * Format data for upload
-       */
-      const doubleEncryptedKeyShares: Record<string, string> = keySharesEncryptedOuter.reduce(
-        (acc, keyShare) => ({
-          ...acc,
-          [keyShare.publicKey]: keyShare.encryptedShard,
-        }),
-        {}
-      );
-
-      // Upload file data + keyshares data to arweave
-      const encKeysBuffer = Buffer.from(JSON.stringify(doubleEncryptedKeyShares), 'binary');
-
-      // NOTE: metadata is intentionally stripped away on mainnet and hardhat - this data can be retrieved from the tx tags
-      // In the future, if Bundlr ever is able to forward data to arweave quickly enough on testnets,
-      // we may want to update this code to not concat metadata at all.
-      const dontUseMetadataBuffer =
-        networkConfig.chainId === mainnet.id || networkConfig.chainId === hardhat.id;
-
-      const encryptedMetadata = await encryptMetadataFields(recipientState.publicKey, {
-        fileName: file!.name,
-        type: payload.type,
-      });
-
-      const metadataBuffer = Buffer.from(
-        dontUseMetadataBuffer ? '' : JSON.stringify(encryptedMetadata),
-        'binary'
-      );
-
-      // Have this buffer be of zero-size if on network where we're NOT using the metadata buffer prefix
-      const metadataSizeBuffer = dontUseMetadataBuffer
-        ? Buffer.from('')
-        : getMetadataSizeBuffer(metadataBuffer);
-
-      const arweavePayload = Buffer.concat([
-        metadataSizeBuffer,
-        metadataBuffer,
-        encKeysBuffer,
-        sharesDelimiter,
-        encryptedPayload,
-      ]);
-
-      await uploadToArweave(arweavePayload, encryptedMetadata, cancelToken);
-    } catch (error: any) {
-      console.log(error);
-      throw new Error(error.message || 'Error uploading file payload to Bundlr');
-    }
-  }, [
-    dispatch,
-    file,
-    payloadPublicKey,
-    payloadPrivateKey,
-    selectedArchaeologists.length,
-    requiredArchaeologists,
-    recipientState.publicKey,
-    archaeologistPublicKeys,
-    networkConfig.chainId,
-    uploadToArweave,
-  ]);
+    },
+    [
+      dispatch,
+      file,
+      payloadPublicKey,
+      payloadPrivateKey,
+      selectedArchaeologists.length,
+      requiredArchaeologists,
+      recipientState.publicKey,
+      archaeologistPublicKeys,
+      networkConfig.chainId,
+      uploadToArweave,
+    ]
+  );
 
   return {
     uploadAndSetArweavePayload,

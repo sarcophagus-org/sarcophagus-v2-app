@@ -94,6 +94,7 @@ export function useBundlr() {
   let rejectUploadPromise = useRef<any>();
   let resolveUploadPromise = useRef<any>();
 
+  // SET UP UPLOAD EVENT LISTENERS
   useEffect(() => {
     if (!chunkedUploader || !fileBuffer || !rejectUploadPromise) return;
 
@@ -117,6 +118,7 @@ export function useBundlr() {
     });
   }, [chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
 
+  //  SET UP CHUNKED UPLOADER WHEN BUNDLR CONNECTS
   useEffect(() => {
     if (!bundlr) {
       setChunkedUploader(undefined);
@@ -139,6 +141,11 @@ export function useBundlr() {
     }
   }, [cancelUploadToken, cancelUploadToken?.cancelled, chunkedUploader]);
 
+  /**
+   *
+   * Set up all needed, yet decoupled, components for uploading
+   * and raise readyToUpload flag.
+   * */
   const prepareToUpload = useCallback(
     async (
       payloadBuffer: Buffer,
@@ -158,6 +165,10 @@ export function useBundlr() {
     []
   );
 
+  //
+  // ACTUALLY BEGIN THE UPLOAD.
+  //
+  // Starts as soons `readyToUpload` is true.
   useEffect(() => {
     (async () => {
       if (!readyToUpload || !fileBuffer) {
@@ -168,13 +179,16 @@ export function useBundlr() {
         tags: [{ name: 'metadata', value: JSON.stringify(metadata) }],
       };
 
-      const uploadPromise = chunkedUploader?.uploadData(fileBuffer, opts).then(res => {
-        setSarcophagusPayloadTxId(res.data.id);
-        resolveUploadPromise.current(res.data.id);
-      }).catch(err => {
-        console.log('err', err);
-        rejectUploadPromise.current(err);
-      });
+      const uploadPromise = chunkedUploader
+        ?.uploadData(fileBuffer, opts)
+        .then(res => {
+          setSarcophagusPayloadTxId(res.data.id);
+          resolveUploadPromise.current(res.data.id);
+        })
+        .catch(err => {
+          console.log('err', err);
+          rejectUploadPromise.current(err);
+        });
 
       await uploadPromise;
     })();
@@ -190,11 +204,18 @@ export function useBundlr() {
   ]);
 
   /**
+   * Consumable entry point to initiate upload to arweave.
    * Uploads a file given the data buffer
-   * @param fileBuffer The data buffer
+   * @param payloadBuffer The data buffer
+   * @param fileMetadata Metadata with descriptive info about the file. Preferably with encrypted fields.
+   * @param cancelToken CancelCreateToken from global `embalmState`
    */
   const uploadFile = useCallback(
-    async (payloadBuffer: Buffer, fileMetadata: ArweaveFileMetadata, cancelToken: CancelCreateToken): Promise<string> => {
+    async (
+      payloadBuffer: Buffer,
+      fileMetadata: ArweaveFileMetadata,
+      cancelToken: CancelCreateToken
+    ): Promise<string> => {
       return new Promise<string>(async (resolve, reject) => {
         if (!bundlr || !chunkedUploader) {
           reject('Bundlr not connected');

@@ -20,7 +20,10 @@ import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { StageInfoIcon } from '../components/StageInfoIcon';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
-import { CancelCreateToken, useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
+import {
+  CancelCreateToken,
+  useCreateSarcophagus,
+} from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
