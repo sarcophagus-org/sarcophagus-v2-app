@@ -2,6 +2,7 @@ import { ChunkingUploader } from '@bundlr-network/client/build/common/chunkingUp
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
+import { chunkedUploaderFileSize } from 'lib/constants';
 import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/utils/toast';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
@@ -96,7 +97,7 @@ export function useBundlr() {
   useEffect(() => {
     if (!chunkedUploader || !fileBuffer || !rejectUploadPromise) return;
 
-    chunkedUploader.setChunkSize(5_000_000);
+    chunkedUploader.setChunkSize(chunkedUploaderFileSize);
 
     chunkedUploader?.on('chunkUpload', chunkInfo => {
       if (cancelUploadToken?.cancelled) {
