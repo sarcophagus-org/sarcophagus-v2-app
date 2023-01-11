@@ -125,11 +125,7 @@ export function useBundlr() {
   }, [bundlr]);
 
   const prepareToUpload = useCallback(
-    async (
-      payloadBuffer: Buffer,
-      resolve?: any,
-      reject?: any
-    ): Promise<any> => {
+    async (payloadBuffer: Buffer, resolve?: any, reject?: any): Promise<any> => {
       setFileBuffer(payloadBuffer);
       setReadyToUpload(true);
       resolveUploadPromise.current = resolve;

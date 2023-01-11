@@ -85,10 +85,7 @@ export function useUploadFileAndKeyShares() {
         type: payload.type,
       });
 
-      const metadataBuffer = Buffer.from(
-        JSON.stringify(encryptedMetadata),
-        'binary'
-      );
+      const metadataBuffer = Buffer.from(JSON.stringify(encryptedMetadata), 'binary');
 
       // <meta_buf_size><delimiter><keyshare_buf_size><delimiter><metatadata><keyshares><payload>
 

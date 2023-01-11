@@ -19,22 +19,41 @@ function splitPackedDataBuffer(concatenatedBuffer: Buffer): ArweaveResponse {
 
   // Delimiter after metatdata length
   const firstDelimiterIndex = concatenatedBuffer.indexOf(arweaveDataDelimiter);
-  const metadataLength = Number.parseInt(concatenatedBuffer.slice(0, firstDelimiterIndex).toString('binary'));
+  const metadataLength = Number.parseInt(
+    concatenatedBuffer.slice(0, firstDelimiterIndex).toString('binary')
+  );
 
   // Delimiter after keyshare length
-  const secondDelimiterIndex = concatenatedBuffer.indexOf(arweaveDataDelimiter, firstDelimiterIndex + 1);
-  const keyshareLength = Number.parseInt(concatenatedBuffer.slice(firstDelimiterIndex + 1, secondDelimiterIndex).toString('binary'));
+  const secondDelimiterIndex = concatenatedBuffer.indexOf(
+    arweaveDataDelimiter,
+    firstDelimiterIndex + 1
+  );
+
+  const keyshareLength = Number.parseInt(
+    concatenatedBuffer.slice(firstDelimiterIndex + 1, secondDelimiterIndex).toString('binary')
+  );
 
   // metatdata
-  const metadataStr = concatenatedBuffer.slice(secondDelimiterIndex + 1, secondDelimiterIndex + 1 + metadataLength).toString('binary');
+  const metadataStr = concatenatedBuffer
+    .slice(secondDelimiterIndex + 1, secondDelimiterIndex + 1 + metadataLength)
+    .toString('binary');
+
   const metadata = JSON.parse(metadataStr);
 
   // keyshares
-  const sharesBuffer = concatenatedBuffer.slice(secondDelimiterIndex + 1 + metadataLength + 1, secondDelimiterIndex + 1 + metadataLength + 1 + keyshareLength).toString('binary');
-  const keyShares = JSON.parse(sharesBuffer.toString());
+  const sharesBuffer = concatenatedBuffer
+    .slice(
+      secondDelimiterIndex + 1 + metadataLength,
+      secondDelimiterIndex + 1 + metadataLength + keyshareLength
+    )
+    .toString('binary');
+
+  const keyShares = JSON.parse(sharesBuffer.toString().trim());
 
   // payload
-  const fileBuffer = concatenatedBuffer.slice(secondDelimiterIndex + 1 + metadataLength + 1 + keyshareLength + 1);
+  const fileBuffer = concatenatedBuffer.slice(
+    secondDelimiterIndex + 1 + metadataLength + keyshareLength
+  );
 
   return { metadata, keyShares, fileBuffer };
 }
