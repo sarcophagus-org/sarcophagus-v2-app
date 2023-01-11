@@ -14,7 +14,7 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
 
   const timeInSeconds = resurrectionTime ? Math.trunc(resurrectionTime.getTime() / 1000) : 0;
 
-  const { config, isError } = usePrepareContractWrite({
+  const { config, isError: mayFail } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: EmbalmerFacet__factory.abi as Abi,
     functionName: 'rewrapSarcophagus',
@@ -36,7 +36,7 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     setIsRewrapping(true);
   }
 
-  const { isSuccess, isLoading } = useWaitForTransaction({
+  const { isSuccess, isLoading, isError } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess() {
       toast(rewrapSuccess());
@@ -50,5 +50,5 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     },
   });
 
-  return { rewrap, isRewrapping, isLoading, isSuccess, isError };
+  return { rewrap, isRewrapping, isLoading, isSuccess, mayFail, isError };
 }
