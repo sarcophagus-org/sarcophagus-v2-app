@@ -96,7 +96,7 @@ export function useUploadFileAndKeyShares() {
         encryptedPayload,
       ]);
 
-      await uploadToArweave(arweavePayload, encryptedMetadata);
+      await uploadToArweave(arweavePayload);
     } catch (error: any) {
       throw new Error(error.message || 'Error uploading file payload to Bundlr');
     }

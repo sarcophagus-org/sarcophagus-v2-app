@@ -2,7 +2,6 @@ import { ChunkingUploader } from '@bundlr-network/client/build/common/chunkingUp
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
-import { ArweaveFileMetadata } from 'hooks/useArweaveService';
 import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/utils/toast';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
@@ -27,7 +26,6 @@ export function useBundlr() {
 
   const [chunkedUploader, setChunkedUploader] = useState<ChunkingUploader>();
   const [fileBuffer, setFileBuffer] = useState<Buffer>();
-  const [metadata, setMetadata] = useState<ArweaveFileMetadata>();
   const [readyToUpload, setReadyToUpload] = useState(false);
 
   const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
