@@ -53,7 +53,7 @@ function splitPackedDataBuffer(concatenatedBuffer: Buffer): ArweaveResponse {
     )
     .toString('binary');
 
-  const keyShares = JSON.parse(sharesBuffer.toString());
+  const keyShares = JSON.parse(sharesBuffer.toString().trim());
 
   // payload
   const fileBuffer = concatenatedBuffer.slice(
