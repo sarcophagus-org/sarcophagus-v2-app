@@ -128,13 +128,17 @@ export function Pages() {
 
   return (
     <Router>
-      {
-        currentCommitHash && (
-          <Text position={'fixed'} right={3} bottom={3} variant='secondary' fontSize='xs'>
-            {currentCommitHash}
-          </Text>
-        )
-      }
+      {currentCommitHash && (
+        <Text
+          position={'fixed'}
+          right={3}
+          bottom={3}
+          variant="secondary"
+          fontSize="xs"
+        >
+          {currentCommitHash}
+        </Text>
+      )}
       <Flex
         direction="column"
         height="100vh"
