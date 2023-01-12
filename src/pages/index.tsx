@@ -124,9 +124,21 @@ export function Pages() {
   useBundlrSession();
 
   const { isSupportedChain } = useSupportedNetwork();
+  const currentCommitHash = process.env.REACT_APP_COMMIT_REF;
 
   return (
     <Router>
+      {currentCommitHash && (
+        <Text
+          position={'fixed'}
+          right={3}
+          bottom={3}
+          variant="secondary"
+          fontSize="xs"
+        >
+          {currentCommitHash}
+        </Text>
+      )}
       <Flex
         direction="column"
         height="100vh"
