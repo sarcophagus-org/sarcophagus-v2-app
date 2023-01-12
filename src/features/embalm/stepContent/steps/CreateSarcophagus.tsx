@@ -162,7 +162,7 @@ export function CreateSarcophagus() {
                 <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
               ))}
           </ProgressTracker>
-          {stageInfo && (
+          {stageInfo && !stageError && (
             <Flex
               mt={3}
               alignItems="center"
