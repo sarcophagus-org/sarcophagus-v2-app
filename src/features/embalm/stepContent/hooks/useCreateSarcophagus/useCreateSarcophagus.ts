@@ -39,7 +39,7 @@ export function useCreateSarcophagus(
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, ''],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, ''],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadStep],
-      [CreateSarcophagusStage.APPROVE, ''],
+      [CreateSarcophagusStage.APPROVE, 'Waiting for transaction'],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, 'Waiting for transaction'],
       [CreateSarcophagusStage.CLEAR_STATE, ''],
       [CreateSarcophagusStage.COMPLETED, ''],
