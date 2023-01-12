@@ -12,7 +12,7 @@ export const mainnetNetworkConfig: NetworkConfig = {
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',
-    providerUrl: 'https://rpc.ankr.com/eth',
+    providerUrl: process.env.REACT_APP_BUNDLR_MAINNET_PROVIDER ?? 'https://rpc.ankr.com/eth',
   },
   arweaveConfig: {
     host: 'arweave.net',
