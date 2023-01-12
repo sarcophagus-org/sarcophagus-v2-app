@@ -131,7 +131,10 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
-  const { totalDiggingFees } = getTotalFeesInSarco(selectedArchaeologists, protocolFeeBasePercentage);
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    selectedArchaeologists,
+    protocolFeeBasePercentage
+  );
 
   return (
     <Flex
@@ -149,7 +152,9 @@ export function CreateSarcophagus() {
               p={6}
               mt={9}
               onClick={handleCreate}
-              disabled={balance?.lte(totalDiggingFees) || !isSarcophagusFormDataComplete()}
+              disabled={
+                balance?.lte(totalDiggingFees.add(protocolFee)) || !isSarcophagusFormDataComplete()
+              }
             >
               Create Sarcophagus
             </Button>

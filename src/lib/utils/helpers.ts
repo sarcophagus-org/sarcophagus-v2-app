@@ -138,7 +138,10 @@ export function formatFee(value: number | string, fixed = 2): string {
 /**
  * Given a list of archaeologists, sums up their digging fees
  */
-export function getTotalFeesInSarco(archaeologists: Archaeologist[], protocolFeeBasePercentage?: number) {
+export function getTotalFeesInSarco(
+  archaeologists: Archaeologist[],
+  protocolFeeBasePercentage?: number
+) {
   const totalDiggingFees = archaeologists.reduce(
     (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
     ethers.constants.Zero
