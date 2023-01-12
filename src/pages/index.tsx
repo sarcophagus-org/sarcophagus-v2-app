@@ -124,7 +124,7 @@ export function Pages() {
   useBundlrSession();
 
   const { isSupportedChain } = useSupportedNetwork();
-  const currentCommitHash = process.env.COMMIT_REF;
+  const currentCommitHash = process.env.REACT_APP_COMMIT_REF;
 
   return (
     <Router>
