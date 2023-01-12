@@ -1,5 +1,5 @@
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, Signature, Signer } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import { Archaeologist } from 'types';
@@ -172,5 +172,25 @@ export function buildResurrectionDateString(
 }
 
 export function isBytes32(value: string): boolean {
-  return value.length === 66 && value.startsWith('0x') && /^[0-9a-fA-F]+$/.test(value.slice(2));
+  if (value.startsWith('0x')) {
+    return value.length === 66 && /^[0-9a-fA-F]+$/.test(value.slice(2));
+  } else {
+    return value.length === 64 && /^[0-9a-fA-F]+$/.test(value);
+  }
+}
+
+export const flat = (data: string | string[]): string[] => {
+  return data instanceof Array ? data : [data];
+};
+
+export async function sign(
+  signer: Signer,
+  message: string | string[],
+  type: string | string[]
+): Promise<Signature> {
+  const dataHex = ethers.utils.defaultAbiCoder.encode(flat(type), flat(message));
+  const dataHash = ethers.utils.keccak256(dataHex);
+  const dataHashBytes = ethers.utils.arrayify(dataHash);
+  const signature = await signer.signMessage(dataHashBytes);
+  return ethers.utils.splitSignature(signature);
 }

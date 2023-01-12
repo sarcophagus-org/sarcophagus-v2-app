@@ -31,6 +31,7 @@ export function PrivateKeyInput({
         h={125}
         p={6}
         resize="none"
+        spellCheck={false}
       />
       <Flex
         position="absolute"

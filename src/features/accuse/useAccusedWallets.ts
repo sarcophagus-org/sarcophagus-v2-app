@@ -1,6 +1,6 @@
 import { Signature, Wallet } from 'ethers';
-import { defaultAbiCoder, splitSignature } from 'ethers/lib/utils';
-import { isBytes32 } from 'lib/utils/helpers';
+import { splitSignature } from 'ethers/lib/utils';
+import { isBytes32, sign } from 'lib/utils/helpers';
 import { useEffect, useState } from 'react';
 
 /**
@@ -38,8 +38,10 @@ export function useAccusedWallets(
 
           // TODO: Update message to implement EIP-712 standard
           const signature = splitSignature(
-            await wallet.signMessage(
-              defaultAbiCoder.encode(['string', 'string'], [sarcophagusId, paymentAddress])
+            await sign(
+              wallet,
+              [sarcophagusId.toString(), paymentAddress || '0x'],
+              ['bytes32', 'address']
             )
           );
           newSignatures[i] = signature;

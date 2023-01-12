@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi';
 import { PrivateKeyInput } from './PrivateKeyInput';
 import { useAccusedWallets } from './useAccusedWallets';
 
-// 0x7a034a19af32e657f4462dd1f1cd61205f2ba21a8ffcaafa6fb968defb4e4be8
 export function Accuse() {
   const [sarcophagusId, setSarcophagusId] = useState('');
   const [archaeologistPrivateKeys, setArchaeologistPrivateKeys] = useState<string[]>(['']);
@@ -49,7 +48,7 @@ export function Accuse() {
 
   function handleChangePrivateKey(e: React.ChangeEvent<HTMLTextAreaElement>, index: number) {
     const newArchaeologistPrivateKeys = [...archaeologistPrivateKeys];
-    newArchaeologistPrivateKeys[index] = e.target.value;
+    newArchaeologistPrivateKeys[index] = e.target.value.trim();
     setArchaeologistPrivateKeys(newArchaeologistPrivateKeys);
   }
 
@@ -81,8 +80,8 @@ export function Accuse() {
         mt={3}
         variant="secondary"
       >
-        If you found a keyshare an archaeologist has leaked, you can accuse them on this page.
-        Please enter the Sarcophagus ID and the Archaeologogist keyshare as evidence.
+        If you found a private key an archaeologist has leaked, you can accuse them on this page.
+        Please enter the Sarcophagus ID and the archaeologist private key as evidence.
       </Text>
       <FormControl>
         <FormLabel mt={12}>Sarcophagus ID</FormLabel>
@@ -109,14 +108,13 @@ export function Accuse() {
               onClickRemoveButton={() => handleRemovePrivateKey(index)}
               showAddButton={index === archaeologistPrivateKeys.length - 1}
               hideRemoveButton={
-                archaeologistPrivateKeys.length === 1 && archaeologistPrivateKeys[0].trim() === ''
+                archaeologistPrivateKeys.length === 1 && archaeologistPrivateKeys[0] === ''
               }
             />
           ))}
         </>
         <Text mt={3}>
-          To accuse multiple achaeologists, click the plus sign to the right of the field. You must
-          accuse all together if you plan to accuse multiple.
+          To accuse multiple achaeologists, click the plus sign to the right of the field.
         </Text>
         <FormLabel mt={12}>Send payment to a different wallet</FormLabel>
         <Input
