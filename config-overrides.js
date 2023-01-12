@@ -12,7 +12,7 @@ module.exports = function override(config) {
     url: require.resolve('url'),
     zlib: require.resolve('browserify-zlib'),
     process: require.resolve('process'),
-    path: require.resolve('path-browserify')
+    path: require.resolve('path-browserify'),
   };
   config.plugins.push(
     new webpack.ProvidePlugin({
