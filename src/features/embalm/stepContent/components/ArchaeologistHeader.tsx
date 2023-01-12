@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { sumDiggingFeesFormatted } from 'lib/utils/helpers';
+import { getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useDispatch, useSelector } from 'store/index';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 
@@ -74,7 +74,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
               variant="bold"
               as="u"
             >
-              {sumDiggingFeesFormatted(selectedArchaeologists)} SARCO
+              {getTotalFeesInSarco(selectedArchaeologists).formattedTotalDiggingFees} SARCO
             </Text>
           </Text>
           <Text

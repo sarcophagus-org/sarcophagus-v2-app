@@ -34,10 +34,11 @@ export function UploadPayload() {
   const formattedFilename = !file
     ? ''
     : file.name.length > maxSarcophagusNameLength * 2
-      ? `${file.name.slice(0, maxSarcophagusNameLength * 2 - 4)}...`
-      : file.name;
+    ? `${file.name.slice(0, maxSarcophagusNameLength * 2 - 4)}...`
+    : file.name;
 
-  const filenameTooltip = !!file && file.name.length > maxSarcophagusNameLength * 2 ? file.name : '';
+  const filenameTooltip =
+    !!file && file.name.length > maxSarcophagusNameLength * 2 ? file.name : '';
 
   return (
     <VStack
