@@ -1,6 +1,6 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -15,9 +15,10 @@ export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
-  const { isLoading, libp2pNode } = useSelector(s => s.appState);
+  const { libp2pNode } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const { testDialArchaeologist } = useAttemptDialArchaeologists();
+  const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
   const getProfiles = useCallback(async () => {
     if (!networkConfig.diamondDeployAddress) {
@@ -69,17 +70,33 @@ export function useLoadArchaeologists() {
     return discoveredArchaeologists;
   }, [networkConfig.diamondDeployAddress, testDialArchaeologist]);
 
+  // This useEffect is used to trigger the other useEffect below once
+  // the dependencies are ready
   useEffect(() => {
+    if (!!chain?.id && !!dispatch && !!getProfiles && !!libp2pNode) {
+      setIsProfileLoading(false);
+    }
+  }, [chain?.id, dispatch, getProfiles, libp2pNode]);
+
+  useEffect(() => {
+    if (isProfileLoading === undefined) return;
+
+    // Only load the archaeologists once when the component mounts. The only reason the
+    // archaeologists would need to be loaded from the contract again is when a new
+    // archaeologist registers.
+    //
+    // Additionally we will reload the archaeologist on network switch.
+    if (
+      !libp2pNode ||
+      isProfileLoading ||
+      (archaeologists.length > 0 && currentChainId === chain?.id)
+    )
+      return;
+
+    setIsProfileLoading(true);
+
     (async () => {
       try {
-        // Only load the archaeologists once when the component mounts. The only reason the
-        // archaeologists would need to be loaded from the contract again is when a new
-        // archaeologist registers.
-        //
-        // Additionally we will reload the archaeologist on network switch.
-        if (!libp2pNode || isLoading || (archaeologists.length > 0 && currentChainId === chain?.id))
-          return;
-
         dispatch(startLoad());
         dispatch(setCurrentChainId(chain?.id));
 
@@ -90,6 +107,7 @@ export function useLoadArchaeologists() {
       } catch (error) {
         console.error(error);
       } finally {
+        setIsProfileLoading(false);
         dispatch(stopLoad());
       }
     })();
@@ -100,7 +118,7 @@ export function useLoadArchaeologists() {
     dispatch,
     getProfiles,
     libp2pNode,
-    isLoading,
+    isProfileLoading,
   ]);
 
   return { getProfiles };
