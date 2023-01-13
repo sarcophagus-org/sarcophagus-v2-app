@@ -19,7 +19,7 @@ export function Accuse() {
     paymentAddress
   );
 
-  const { accuse, isError, isAccusing, isLoading, isSuccess, isEnabled } = useAccuse(
+  const { accuse, mayFail, isError, isAccusing, isLoading, isSuccess, isEnabled } = useAccuse(
     sarcophagusId,
     publicKeys,
     signatures,
@@ -41,9 +41,10 @@ export function Accuse() {
     // if there are no archaeologist private keys left, add an empty one
     if (newArchaeologistPrivateKeys.length === 0) {
       newArchaeologistPrivateKeys.push('');
+      setArchaeologistPrivateKeys(['']);
+    } else {
+      setArchaeologistPrivateKeys(newArchaeologistPrivateKeys);
     }
-
-    setArchaeologistPrivateKeys(newArchaeologistPrivateKeys);
   }
 
   function handleChangePrivateKey(e: React.ChangeEvent<HTMLTextAreaElement>, index: number) {
@@ -128,9 +129,9 @@ export function Accuse() {
         <Button
           mt={12}
           px={6}
-          disabled={isError || !isEnabled}
+          disabled={!isEnabled || mayFail || signatures.length !== archaeologistPrivateKeys.length}
           onClick={handleAccuse}
-          isLoading={isLoading || isAccusing}
+          isLoading={!isError && (isLoading || isAccusing)}
         >
           Accuse
         </Button>

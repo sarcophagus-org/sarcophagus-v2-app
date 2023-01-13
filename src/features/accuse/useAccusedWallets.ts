@@ -31,7 +31,7 @@ export function useAccusedWallets(
 
           // Only sign the messages if the values are valid
           if (!isBytes32(privateKey) || !isBytes32(sarcophagusId)) {
-            return;
+            continue;
           }
 
           const wallet = new Wallet(privateKey);
