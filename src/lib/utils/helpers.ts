@@ -138,13 +138,25 @@ export function formatFee(value: number | string, fixed = 2): string {
 /**
  * Given a list of archaeologists, sums up their digging fees
  */
-export function sumDiggingFeesFormatted(archaeologists: Archaeologist[]): string {
+export function getTotalFeesInSarco(
+  archaeologists: Archaeologist[],
+  protocolFeeBasePercentage?: number
+) {
   const totalDiggingFees = archaeologists.reduce(
     (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
     ethers.constants.Zero
   );
 
-  return formatEther(totalDiggingFees);
+  // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
+  const protocolFee = protocolFeeBasePercentage
+    ? totalDiggingFees.div(BigNumber.from(100 * protocolFeeBasePercentage))
+    : ethers.constants.Zero;
+
+  return {
+    totalDiggingFees,
+    formattedTotalDiggingFees: formatEther(totalDiggingFees),
+    protocolFee,
+  };
 }
 
 /**

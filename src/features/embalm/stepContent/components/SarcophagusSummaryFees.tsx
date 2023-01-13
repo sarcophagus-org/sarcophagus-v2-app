@@ -1,21 +1,22 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
-import { formatFee, sumDiggingFeesFormatted } from 'lib/utils/helpers';
+import { formatFee, getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
-import { formatEther, parseEther } from 'ethers/lib/utils';
-import { BigNumber, ethers } from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
+import { ethers } from 'ethers';
+import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
+import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
+  const { balance } = useSarcoBalance();
 
-  const diggingFees = sumDiggingFeesFormatted(selectedArchaeologists);
-
-  // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
-  const protocolFee = protocolFeeBasePercentage
-    ? parseEther(diggingFees).div(BigNumber.from(100 * protocolFeeBasePercentage))
-    : BigNumber.from(0);
+  const { formattedTotalDiggingFees, totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    selectedArchaeologists,
+    protocolFeeBasePercentage
+  );
 
   return (
     <Box
@@ -27,12 +28,16 @@ export function SarcophagusSummaryFees() {
         px={6}
       >
         <Flex alignItems="center">
-          <Tooltip
-            label="Fee to be paid on each rewrap, and a one time upload fee"
-            placement="top"
-          >
-            <InfoOutlineIcon fontSize="md" />
-          </Tooltip>
+          {balance?.lt(totalDiggingFees.add(protocolFee)) ? (
+            <SummaryErrorIcon error={"You don't have enough SARCO to cover creation fees!"} />
+          ) : (
+            <Tooltip
+              label="Fee to be paid on each rewrap, and a one time upload fee"
+              placement="top"
+            >
+              <InfoOutlineIcon fontSize="md" />
+            </Tooltip>
+          )}
           <Text
             ml={2}
             fontSize="sm"
@@ -49,7 +54,7 @@ export function SarcophagusSummaryFees() {
             justifyContent="space-between"
           >
             <Text as="i">Digging Fee</Text>
-            <Text as="i">{diggingFees} SARCO</Text>
+            <Text as="i">{formattedTotalDiggingFees} SARCO</Text>
           </Flex>
           <Flex
             w="100%"

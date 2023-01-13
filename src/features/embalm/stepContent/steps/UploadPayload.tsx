@@ -1,6 +1,7 @@
-import { Input, Link, Text, VStack } from '@chakra-ui/react';
+import { Input, Link, Text, Tooltip, VStack } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
+import { maxSarcophagusNameLength } from 'lib/constants';
 import prettyBytes from 'pretty-bytes';
 import { useSelector } from 'store/index';
 import { FileDragAndDrop } from '../components/FileDragAndDrop';
@@ -30,6 +31,15 @@ export function UploadPayload() {
     handleSetFile(newFile);
   }
 
+  const formattedFilename = !file
+    ? ''
+    : file.name.length > maxSarcophagusNameLength * 2
+    ? `${file.name.slice(0, maxSarcophagusNameLength * 2 - 4)}...`
+    : file.name;
+
+  const filenameTooltip =
+    !!file && file.name.length > maxSarcophagusNameLength * 2 ? file.name : '';
+
   return (
     <VStack
       w="100%"
@@ -55,12 +65,16 @@ export function UploadPayload() {
       >
         {file ? (
           <VStack spacing={3}>
-            <Text
-              px={2}
-              align="center"
-            >
-              {file.name}
-            </Text>
+            <Tooltip label={filenameTooltip}>
+              <Text
+                px={2}
+                maxW={600}
+                align="center"
+                flexWrap={'wrap'}
+              >
+                {formattedFilename}
+              </Text>
+            </Tooltip>
             <Text>Size: {prettyBytes(file.size)}</Text>
             <Text>
               {"Bundlr's upload price: "}

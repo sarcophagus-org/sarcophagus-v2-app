@@ -5,6 +5,9 @@ import {
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
+import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
+import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
+import { getTotalFeesInSarco } from 'lib/utils/helpers';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -66,6 +69,10 @@ export function CreateSarcophagus() {
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
   const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
+  const { balance } = useSarcoBalance();
+
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
@@ -131,6 +138,11 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    selectedArchaeologists,
+    protocolFeeBasePercentage
+  );
+
   return (
     <Flex
       direction="column"
@@ -147,7 +159,9 @@ export function CreateSarcophagus() {
               p={6}
               mt={9}
               onClick={handleCreate}
-              disabled={!isSarcophagusFormDataComplete()}
+              disabled={
+                balance?.lte(totalDiggingFees.add(protocolFee)) || !isSarcophagusFormDataComplete()
+              }
             >
               Create Sarcophagus
             </Button>
@@ -169,7 +183,7 @@ export function CreateSarcophagus() {
                 <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
               ))}
           </ProgressTracker>
-          {stageInfo && (
+          {stageInfo && !stageError && (
             <Flex
               mt={3}
               alignItems="center"
