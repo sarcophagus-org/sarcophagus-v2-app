@@ -7,6 +7,7 @@ import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import { getLowestRewrapInterval } from '../../../../../lib/utils/helpers';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useDialArchaeologists } from './useDialArchaeologists';
+import { CancelCreateToken } from './useCreateSarcophagus';
 
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
@@ -48,7 +49,7 @@ export function useArchaeologistSignatureNegotiation() {
   }
 
   const initiateSarcophagusNegotiation = useCallback(
-    async (isRetry: boolean): Promise<void> => {
+    async (isRetry: boolean, cancelToken: CancelCreateToken): Promise<void> => {
       console.log('starting the negotiation');
       const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
 
@@ -60,6 +61,8 @@ export function useArchaeologistSignatureNegotiation() {
 
       await Promise.all(
         selectedArchaeologists.map(async arch => {
+          if (cancelToken.cancelled) return;
+
           if (!arch.connection) {
             console.log(`${arch.profile.peerId} connection is undefined`);
             setArchaeologistException(arch.profile.peerId, {

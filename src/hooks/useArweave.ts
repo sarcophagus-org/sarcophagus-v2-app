@@ -38,7 +38,7 @@ function splitPackedDataBuffer(concatenatedBuffer: Buffer): ArweaveResponse {
     concatenatedBuffer.slice(firstDelimiterIndex + 1, secondDelimiterIndex).toString('binary')
   );
 
-  // metatdata
+  // metadata
   const metadataStr = concatenatedBuffer
     .slice(secondDelimiterIndex + 1, secondDelimiterIndex + 1 + metadataLength)
     .toString('binary');
