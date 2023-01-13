@@ -3,7 +3,7 @@ import { ThirdPartyFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contra
 import { Abi } from 'abitype';
 import { useNetworkConfig } from 'lib/config';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 
 export function useCleanSarcophagus(sarcoId: string) {
   const networkConfig = useNetworkConfig();
@@ -16,21 +16,25 @@ export function useCleanSarcophagus(sarcoId: string) {
     args: [sarcoId],
   });
 
-  const {
-    write,
-    isLoading: isCleaning,
-    isSuccess,
-    isError,
-  } = useContractWrite({
-    onSuccess() {
-      toast(cleanSuccess());
-    },
+  const { write, isError, data } = useContractWrite({
+    onError: () => toast(cleanFailure()),
+    ...config,
+  });
+
+  const { isSuccess, isLoading } = useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess: () => toast(cleanSuccess()),
     onError(e) {
       console.error(e);
       toast(cleanFailure());
     },
-    ...config,
   });
 
-  return { clean: write, isCleaning, isSuccess, isError, mayFail };
+  return {
+    clean: write,
+    isCleaning: isLoading,
+    isSuccess,
+    isError,
+    mayFail,
+  };
 }

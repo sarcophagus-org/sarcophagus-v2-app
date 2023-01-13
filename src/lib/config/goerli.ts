@@ -12,7 +12,7 @@ export const goerliNetworkConfig: NetworkConfig = {
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://devnet.bundlr.network',
-    providerUrl: 'https://rpc.ankr.com/eth_goerli',
+    providerUrl: process.env.REACT_APP_BUNDLR_GOERLI_PROVIDER ?? 'https://rpc.ankr.com/eth_goerli',
   },
   arweaveConfig: {
     host: 'arweave.net',
