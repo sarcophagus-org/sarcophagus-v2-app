@@ -15,6 +15,7 @@ export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
+  const { isLoading, libp2pNode } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const { testDialArchaeologist } = useAttemptDialArchaeologists();
 
@@ -76,7 +77,8 @@ export function useLoadArchaeologists() {
         // archaeologist registers.
         //
         // Additionally we will reload the archaeologist on network switch.
-        if (archaeologists.length > 0 && currentChainId === chain?.id) return;
+        if (!libp2pNode || isLoading || (archaeologists.length > 0 && currentChainId === chain?.id))
+          return;
 
         dispatch(startLoad());
         dispatch(setCurrentChainId(chain?.id));
@@ -91,7 +93,15 @@ export function useLoadArchaeologists() {
         dispatch(stopLoad());
       }
     })();
-  }, [archaeologists.length, chain?.id, currentChainId, dispatch, getProfiles]);
+  }, [
+    archaeologists.length,
+    chain?.id,
+    currentChainId,
+    dispatch,
+    getProfiles,
+    libp2pNode,
+    isLoading,
+  ]);
 
   return { getProfiles };
 }

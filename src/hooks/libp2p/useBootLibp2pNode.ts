@@ -20,7 +20,7 @@ import { useLibp2p } from './useLibp2p';
 export function useBootLibp2pNode(discoveryPeriod?: number) {
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { onPeerDisconnect, onPeerDiscovery } = useLibp2p();
+  const { onPeerDiscovery } = useLibp2p();
 
   const addPeerDiscoveryEventListener = useCallback(
     (libp2pNode: Libp2p): void => {
@@ -39,24 +39,25 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
     [onPeerDiscovery, discoveryPeriod]
   );
 
-  const addPeerDisconnectEventListener = useCallback(
-    (libp2pNode: Libp2p): void => {
-      libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-    },
-    [onPeerDisconnect]
-  );
+  // const addPeerDisconnectEventListener = useCallback(
+  //   (libp2pNode: Libp2p): void => {
+  //     libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
+  //   },
+  //   [onPeerDisconnect]
+  // );
 
   const createAndStartNode = useCallback(async (): Promise<void> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
     await newLibp2pNode.start();
     log(`Browser node starting with peerID: ${newLibp2pNode.peerId.toString()}`);
 
-    addPeerDiscoveryEventListener(newLibp2pNode);
-    addPeerDisconnectEventListener(newLibp2pNode);
+    // TODO: re-add once peer discovery is re-added
+    // addPeerDiscoveryEventListener(newLibp2pNode);
+    // addPeerDisconnectEventListener(newLibp2pNode);
 
     // set global libp2p node for later use
     dispatch(setLibp2p(newLibp2pNode));
-  }, [addPeerDiscoveryEventListener, addPeerDisconnectEventListener, dispatch]);
+  }, [dispatch]);
 
   useEffect(() => {
     (async () => {
