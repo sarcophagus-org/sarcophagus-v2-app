@@ -25,11 +25,7 @@ export function useAccuse(
   // Include only v, r, and s in the signature elements
   const signaturesVrs = signatures.map(sig => ({ v: sig.v, r: sig.r, s: sig.s }));
 
-  const {
-    config,
-    isError: mayFail,
-    error,
-  } = usePrepareContractWrite({
+  const { config, isError: mayFail } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: ThirdPartyFacet__factory.abi as Abi,
     functionName: 'accuse',
