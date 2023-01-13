@@ -108,7 +108,8 @@ export function CreateSarcophagus() {
         }
 
         // restart the peer discovery process
-        await addPeerDiscoveryEventListener(globalLibp2pNode!);
+        // TODO -- re-enable once peer discovery is added
+        // await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
   }, [addPeerDiscoveryEventListener, globalLibp2pNode, dispatch, getProfiles, isCreateCompleted]);
