@@ -19,6 +19,7 @@ import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icon
 import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
+import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 
 export function SelectArchaeologists({
   hideHeader = false,
@@ -29,6 +30,10 @@ export function SelectArchaeologists({
 }) {
   const outerLimit = 1;
   const innerLimit = 1;
+
+  // Load the archaeologists' data
+  useLoadArchaeologists();
+
   const { sortedFilteredArchaeologist, showSelectedArchaeologists, hiddenArchaeologists } =
     useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);

@@ -3,14 +3,11 @@ import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
-import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers, BigNumber } from 'ethers';
 import { filterSplit } from 'lib/utils/helpers';
 
 export function useArchaeologistList() {
-  useLoadArchaeologists();
-
   const dispatch = useDispatch();
 
   const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
