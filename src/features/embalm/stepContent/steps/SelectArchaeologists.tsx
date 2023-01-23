@@ -19,7 +19,7 @@ import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icon
 import { SetResurrection } from '../components/SetResurrection';
 import { useSelector } from 'store/index';
 import moment from 'moment';
-import { useLoadArchaeologists } from "../hooks/useLoadArchaeologists";
+import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 
 export function SelectArchaeologists({
   hideHeader = false,
