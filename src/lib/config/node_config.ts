@@ -43,6 +43,6 @@ export const nodeConfig: any = {
   dht,
   connectionManager: {
     autoDial: false,
-    dialTimeout: 5000,
+    dialTimeout: 2000,
   },
 };

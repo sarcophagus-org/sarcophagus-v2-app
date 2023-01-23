@@ -9,8 +9,6 @@ import { constants, ethers, BigNumber } from 'ethers';
 import { filterSplit } from 'lib/utils/helpers';
 
 export function useArchaeologistList() {
-  useLoadArchaeologists();
-
   const dispatch = useDispatch();
 
   const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
