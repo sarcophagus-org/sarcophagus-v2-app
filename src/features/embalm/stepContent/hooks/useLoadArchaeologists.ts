@@ -91,7 +91,7 @@ export function useLoadArchaeologists() {
           }
         }
 
-        // Dial all the archs and cache them if they are online
+        // Dial all the offline archs and cache them if they are online
         if (!arch.isOnline) {
           arch.isOnline = await testDialArchaeologist(arch);
           if (arch.isOnline) {
