@@ -14,10 +14,10 @@ import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttempt
 export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
-  const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
-  const { libp2pNode } = useSelector(s => s.appState);
-  const { chain } = useNetwork();
-  const { testDialArchaeologist } = useAttemptDialArchaeologists();
+  const {archaeologists, currentChainId} = useSelector(s => s.embalmState);
+  const {libp2pNode} = useSelector(s => s.appState);
+  const {chain} = useNetwork();
+  const {testDialArchaeologist} = useAttemptDialArchaeologists();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
   const getProfiles = useCallback(async () => {
@@ -59,13 +59,58 @@ export function useLoadArchaeologists() {
       isOnline: false,
     }));
 
+    // Temp localstorage for caching
+    // If arch address is in storage, then arch is online
+    interface archCache {
+      address: string;
+      timestamp: number;
+    }
+
+    const archCacheLocalStorageKey = 'archCache';
+
+    const archCache: string | null = window.localStorage.getItem(archCacheLocalStorageKey);
+    let archCacheArray: archCache[];
+    if (archCache) {
+      archCacheArray = JSON.parse(archCache);
+    } else {
+      archCacheArray = [];
+    }
+
+    const cacheTimestamp = Date.now();
+    const ONE_HOUR = 3_600_000
+
     for (let arch of discoveredArchaeologists) {
       // if arch profile has the delimiter, it has a domain
       // attempt to dial this archaeologist to confirm it is online
       if (arch.profile.peerId.includes(':')) {
-        arch.isOnline = await testDialArchaeologist(arch);
+        const cachedArch = archCacheArray.find(a => a.address === arch.profile.archAddress)
+        if (cachedArch) {
+          // If this arch has been loaded within the last hour, we will say it is online
+          if (cachedArch.timestamp > (Date.now() - ONE_HOUR)) {
+            arch.isOnline = true;
+          }
+        }
+
+        // Dial all the archs and cache them if they are online
+        if (!arch.isOnline) {
+          arch.isOnline = await testDialArchaeologist(arch);
+          if (arch.isOnline) {
+            if (cachedArch) {
+              cachedArch.timestamp = cacheTimestamp;
+            } else {
+              archCacheArray.push(
+                {
+                  address: arch.profile.archAddress,
+                  timestamp: cacheTimestamp
+                }
+              )
+            }
+          }
+        }
       }
     }
+
+    window.localStorage.setItem(archCacheLocalStorageKey, JSON.stringify(archCacheArray));
 
     return discoveredArchaeologists;
   }, [networkConfig.diamondDeployAddress, testDialArchaeologist]);
@@ -121,5 +166,5 @@ export function useLoadArchaeologists() {
     isProfileLoading,
   ]);
 
-  return { getProfiles };
+  return {getProfiles};
 }
