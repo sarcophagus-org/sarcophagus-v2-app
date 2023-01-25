@@ -33,10 +33,9 @@ export function useArchaeologistList() {
     // If resurrection time has not been set, it will default to 0.
     // An archaeologist is hidden if the maximum rewrap interval not within range
     // Or their free bond is less than their digging fee
-    const archIsVisible = (
+    const archIsVisible =
       resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
-      a.profile.minimumDiggingFee.lte(a.profile.freeBond)
-    );
+      a.profile.minimumDiggingFee.lte(a.profile.freeBond);
 
     return archIsVisible;
   });
