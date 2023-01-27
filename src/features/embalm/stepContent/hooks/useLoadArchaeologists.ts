@@ -58,14 +58,65 @@ export function useLoadArchaeologists() {
       isOnline: false,
     }));
 
+<<<<<<< query-online-archs
     const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
     const onlinePeerIds = res.data;
 
     for (let arch of discoveredArchaeologists) {
       if (onlinePeerIds.includes(arch.profile.peerId)) {
         arch.isOnline = true;
+=======
+    // Temp localstorage for caching
+    // If arch address is in storage, then arch is online
+    interface ArchCache {
+      address: string;
+      timestamp: number;
+    }
+
+    const archCacheLocalStorageKey = 'archCache';
+
+    const archCache: string | null = window.localStorage.getItem(archCacheLocalStorageKey);
+    let archCacheArray: ArchCache[];
+    if (archCache) {
+      archCacheArray = JSON.parse(archCache);
+    } else {
+      archCacheArray = [];
+    }
+
+    const cacheTimestamp = Date.now();
+    const ONE_HOUR = 3_600_000;
+
+    for (let arch of discoveredArchaeologists) {
+      // if arch profile has the delimiter, it has a domain
+      // attempt to dial this archaeologist to confirm it is online
+      if (arch.profile.peerId.includes(':')) {
+        const cachedArch = archCacheArray.find(a => a.address === arch.profile.archAddress);
+        if (cachedArch) {
+          // If this arch has been loaded within the last hour, we will say it is online
+          if (cachedArch.timestamp > Date.now() - ONE_HOUR) {
+            arch.isOnline = true;
+          }
+        }
+
+        // Dial all the offline archs and cache them if they are online
+        if (!arch.isOnline) {
+          arch.isOnline = await testDialArchaeologist(arch);
+          if (arch.isOnline) {
+            if (cachedArch) {
+              cachedArch.timestamp = cacheTimestamp;
+            } else {
+              archCacheArray.push({
+                address: arch.profile.archAddress,
+                timestamp: cacheTimestamp,
+              });
+            }
+          }
+        }
+>>>>>>> develop
       }
     }
+
+    window.localStorage.setItem(archCacheLocalStorageKey, JSON.stringify(archCacheArray));
 
     return discoveredArchaeologists;
   }, [networkConfig.diamondDeployAddress]);

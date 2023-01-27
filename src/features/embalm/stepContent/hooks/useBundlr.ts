@@ -39,6 +39,11 @@ export function useBundlr() {
    */
   const fund = useCallback(
     async (amount: BigNumber) => {
+      if (!bundlr) {
+        console.log('Bundlr not connected');
+        return;
+      }
+
       dispatch(setIsFunding(true));
       toast(fundStart());
       try {
