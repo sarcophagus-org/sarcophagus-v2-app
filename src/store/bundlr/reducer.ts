@@ -5,7 +5,7 @@ import { ActionType } from './actions';
 
 export interface BundlrState {
   balance: BigNumber;
-  bundlr: WebBundlr | null;
+  bundlr: WebBundlr | null | undefined;
   isConnected: boolean;
   isFunding: boolean;
   isUploading: boolean;
