@@ -1,4 +1,5 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import axios from 'axios';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -6,7 +7,6 @@ import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { readContract } from 'wagmi/actions';
-import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -17,7 +17,6 @@ export function useLoadArchaeologists() {
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
   const { libp2pNode } = useSelector(s => s.appState);
   const { chain } = useNetwork();
-  const { testDialArchaeologist } = useAttemptDialArchaeologists();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
   const getProfiles = useCallback(async () => {
@@ -59,16 +58,17 @@ export function useLoadArchaeologists() {
       isOnline: false,
     }));
 
+    const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+    const onlinePeerIds = res.data;
+
     for (let arch of discoveredArchaeologists) {
-      // if arch profile has the delimiter, it has a domain
-      // attempt to dial this archaeologist to confirm it is online
-      if (arch.profile.peerId.includes(':')) {
-        arch.isOnline = await testDialArchaeologist(arch);
+      if (onlinePeerIds.includes(arch.profile.peerId)) {
+        arch.isOnline = true;
       }
     }
 
     return discoveredArchaeologists;
-  }, [networkConfig.diamondDeployAddress, testDialArchaeologist]);
+  }, [networkConfig.diamondDeployAddress]);
 
   // This useEffect is used to trigger the other useEffect below once
   // the dependencies are ready
