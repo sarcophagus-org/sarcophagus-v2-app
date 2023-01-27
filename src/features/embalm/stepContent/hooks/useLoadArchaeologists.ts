@@ -1,4 +1,5 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import axios from 'axios';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -6,7 +7,6 @@ import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { readContract } from 'wagmi/actions';
-import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -17,7 +17,6 @@ export function useLoadArchaeologists() {
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
   const { libp2pNode } = useSelector(s => s.appState);
   const { chain } = useNetwork();
-  const { testDialArchaeologist } = useAttemptDialArchaeologists();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
   const getProfiles = useCallback(async () => {
@@ -59,59 +58,17 @@ export function useLoadArchaeologists() {
       isOnline: false,
     }));
 
-    // Temp localstorage for caching
-    // If arch address is in storage, then arch is online
-    interface ArchCache {
-      address: string;
-      timestamp: number;
-    }
-
-    const archCacheLocalStorageKey = 'archCache';
-
-    const archCache: string | null = window.localStorage.getItem(archCacheLocalStorageKey);
-    let archCacheArray: ArchCache[];
-    if (archCache) {
-      archCacheArray = JSON.parse(archCache);
-    } else {
-      archCacheArray = [];
-    }
-
-    const cacheTimestamp = Date.now();
-    const ONE_HOUR = 3_600_000;
+    const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+    const onlinePeerIds = res.data;
 
     for (let arch of discoveredArchaeologists) {
-      // if arch profile has the delimiter, it has a domain
-      // attempt to dial this archaeologist to confirm it is online
-      if (arch.profile.peerId.includes(':')) {
-        const cachedArch = archCacheArray.find(a => a.address === arch.profile.archAddress);
-        if (cachedArch) {
-          // If this arch has been loaded within the last hour, we will say it is online
-          if (cachedArch.timestamp > Date.now() - ONE_HOUR) {
-            arch.isOnline = true;
-          }
-        }
-
-        // Dial all the offline archs and cache them if they are online
-        if (!arch.isOnline) {
-          arch.isOnline = await testDialArchaeologist(arch);
-          if (arch.isOnline) {
-            if (cachedArch) {
-              cachedArch.timestamp = cacheTimestamp;
-            } else {
-              archCacheArray.push({
-                address: arch.profile.archAddress,
-                timestamp: cacheTimestamp,
-              });
-            }
-          }
-        }
+      if (onlinePeerIds.includes(arch.profile.peerId)) {
+        arch.isOnline = true;
       }
     }
 
-    window.localStorage.setItem(archCacheLocalStorageKey, JSON.stringify(archCacheArray));
-
     return discoveredArchaeologists;
-  }, [networkConfig.diamondDeployAddress, testDialArchaeologist]);
+  }, [networkConfig.diamondDeployAddress]);
 
   // This useEffect is used to trigger the other useEffect below once
   // the dependencies are ready
