@@ -49,7 +49,10 @@ export function ArchaeologistListItem({
 
   function TableContent({ children, icon, checkbox }: TableContentProps) {
     return (
-      <Td isNumeric>
+      <Td
+        borderBottom="none"
+        isNumeric
+      >
         <Flex justify={icon || checkbox ? 'left' : 'center'}>
           {icon && <SarcoTokenIcon boxSize="18px" />}
           {checkbox && (
