@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanClean';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
@@ -21,22 +22,25 @@ export enum SarcoAction {
 export interface SarcophagusTableRowProps extends TableRowProps {
   sarco: Sarcophagus;
   isClaimTab?: boolean;
+  dateCalculationInterval?: number;
 }
 
 /**
  * Custom TableRow component to be used in place of the default Tr component. Adds a sort icon.
  */
-export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
+export function SarcoTableRow({
+  sarco,
+  isClaimTab,
+  dateCalculationInterval = 60_000,
+}: SarcophagusTableRowProps) {
   const { address } = useAccount();
   const navigate = useNavigate();
+
+  const [resurrectionString, setResurrectionString] = useState('');
 
   // Payment for clean automatically goes to the current user
   const { clean, isCleaning } = useCleanSarcophagus(sarco.id);
   const canEmbalmerClean = useGetEmbalmerCanClean(sarco);
-
-  const resurrectionString = buildResurrectionDateString(
-    sarco.resurrectionTime || BigNumber.from(0)
-  );
 
   // If we ever decide to add a dashboard for archaeologists that case will need to be considered
   // here.
@@ -96,6 +100,21 @@ export function SarcoTableRow({ sarco, isClaimTab }: SarcophagusTableRowProps) {
         break;
     }
   }
+
+  // Updates the resurrection date string on an interval
+  useEffect(() => {
+    setResurrectionString(buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0)));
+
+    const intervalId = setInterval(() => {
+      setResurrectionString(
+        buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0))
+      );
+    }, dateCalculationInterval);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dateCalculationInterval, sarco.resurrectionTime]);
 
   return (
     <Tr>
