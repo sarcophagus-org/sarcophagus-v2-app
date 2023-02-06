@@ -84,7 +84,7 @@ export function ArchaeologistList({
             <Table variant="simple">
               <Thead>
                 <Tr>
-                  <Th>
+                  <Th borderBottom="none">
                     <VStack align="left">
                       <Button
                         variant="ghost"
@@ -102,7 +102,10 @@ export function ArchaeologistList({
                       />
                     </VStack>
                   </Th>
-                  <Th isNumeric>
+                  <Th
+                    isNumeric
+                    borderBottom="none"
+                  >
                     <VStack align="left">
                       <HStack>
                         <Button
@@ -131,7 +134,10 @@ export function ArchaeologistList({
                       />
                     </VStack>
                   </Th>
-                  <Th isNumeric>
+                  <Th
+                    isNumeric
+                    borderBottom="none"
+                  >
                     <VStack align="left">
                       <Button
                         variant="ghost"
@@ -149,7 +155,10 @@ export function ArchaeologistList({
                       />
                     </VStack>
                   </Th>
-                  <Th isNumeric>
+                  <Th
+                    isNumeric
+                    borderBottom="none"
+                  >
                     <VStack align="left">
                       <Button
                         variant="ghost"

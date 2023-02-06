@@ -21,13 +21,17 @@ import { useSelector } from 'store/index';
 import moment from 'moment';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 
+interface SelectArchaeologistsProps {
+  hideHeader?: boolean;
+  showDial?: boolean;
+  defaultPageSize?: number;
+}
+
 export function SelectArchaeologists({
   hideHeader = false,
   showDial = false,
-}: {
-  hideHeader?: boolean;
-  showDial?: boolean;
-}) {
+  defaultPageSize = 10,
+}: SelectArchaeologistsProps) {
   const outerLimit = 1;
   const innerLimit = 1;
 
@@ -38,12 +42,12 @@ export function SelectArchaeologists({
     useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
-  const [paginationSize, setPaginationSize] = useState<number>(5);
+  const [paginationSize, setPaginationSize] = useState<number>(defaultPageSize);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
       total: sortedFilteredArchaeologist(showSelectedArchaeologists).length,
-      initialState: { currentPage: 1, pageSize: 5 },
+      initialState: { currentPage: 1, pageSize: defaultPageSize },
       limits: {
         outer: outerLimit,
         inner: innerLimit,
