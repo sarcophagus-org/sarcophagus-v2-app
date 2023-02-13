@@ -25,6 +25,7 @@ export function useGetSarcophagi(sarcoIds: string[], refetchInterval = 60_000): 
 
   // Refetch the sarcohpagi on a set interval to update the sarcophagus status
   useEffect(() => {
+    if (!data) return;
     setSarcohpagiResponse(data as SarcophagusResponseContract[]);
 
     const intervalId = setInterval(async () => {
