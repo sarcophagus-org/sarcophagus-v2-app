@@ -48,6 +48,7 @@ export interface ArchaeologistProfile {
   failures: BigNumber;
   freeBond: BigNumber;
   maximumRewrapInterval: BigNumber;
+  maximumResurrectionTime: BigNumber;
   minimumDiggingFee: BigNumber;
   peerId: string;
   successes: BigNumber;

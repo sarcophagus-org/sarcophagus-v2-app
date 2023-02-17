@@ -21,7 +21,8 @@ export function useArchaeologistList() {
     showSelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  const onlineArchaeologists = archaeologists.filter(a => true);
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 

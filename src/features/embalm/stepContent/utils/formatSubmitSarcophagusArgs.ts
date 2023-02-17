@@ -1,5 +1,5 @@
 import { BigNumber, ethers, utils } from 'ethers';
-import { getLowestRewrapInterval } from '../../../../lib/utils/helpers';
+import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
 import { Archaeologist } from '../../../../types';
 import { computeAddress } from 'ethers/lib/utils';
 import { RecipientState } from '../../../../store/embalm/actions';
@@ -20,6 +20,7 @@ export interface SubmitSarcophagusSettings {
   threshold: number;
   creationTime: number;
   maximumRewrapInterval: number;
+  maximumResurrectionTime: number;
 }
 
 export interface SubmitSarcophagusProps {
@@ -70,6 +71,7 @@ export function formatSubmitSarcophagusArgs({
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),
     maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
+    maximumResurrectionTime: getLowestResurrectionTime(selectedArchaeologists),
   };
 
   const contractArchaeologists = getContractArchaeologists();

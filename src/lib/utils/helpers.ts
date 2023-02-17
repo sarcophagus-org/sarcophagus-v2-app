@@ -17,6 +17,18 @@ export function getLowestRewrapInterval(archaeologists: Archaeologist[]): number
 }
 
 /**
+ * Returns the smallest maximumResurrectionTime value
+ * from the profiles of the archaeologists provided
+ */
+export function getLowestResurrectionTime(archaeologists: Archaeologist[]): number {
+  return Math.min(
+    ...archaeologists.map(arch => {
+      return Number(arch.profile.maximumResurrectionTime);
+    })
+  );
+}
+
+/**
  * Formats an address into a more readable format
  * Replaces the middle with "..." and uppercases it
  * @param address The address to format
