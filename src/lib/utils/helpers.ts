@@ -155,7 +155,7 @@ export function getTotalFeesInSarco(
   protocolFeeBasePercentage?: number
 ) {
   const totalDiggingFees = archaeologists.reduce(
-    (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
+    (acc, curr) => acc.add(curr.profile.minimumDiggingFeePerSecond),
     ethers.constants.Zero
   );
 

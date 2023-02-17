@@ -15,7 +15,7 @@ import { CancelCreateToken } from './useCreateSarcophagus';
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
   maximumResurectionTime: number;
-  diggingFee: string;
+  diggingFeePerSecond: string;
   timestamp: number;
 }
 
@@ -84,7 +84,7 @@ export function useArchaeologistSignatureNegotiation() {
           }
 
           const negotiationParams: ArchaeologistSignatureNegotiationParams = {
-            diggingFee: arch.profile.minimumDiggingFee.toString(),
+            diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond.toString(),
             maxRewrapInterval: lowestRewrapInterval,
             maximumResurectionTime: lowestResurrectionTime,
             timestamp: negotiationTimestamp,
