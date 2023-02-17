@@ -22,7 +22,7 @@ export function useArchaeologistList() {
   } = useSelector(s => s.archaeologistListState);
 
   // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
-  const onlineArchaeologists = archaeologists.filter(a => true);
+  const onlineArchaeologists = archaeologists;
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 
