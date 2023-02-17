@@ -6,7 +6,7 @@ import { RecipientState } from '../../../../store/embalm/actions';
 
 export interface ContractArchaeologist {
   archAddress: string;
-  diggingFee: BigNumber;
+  diggingFeePerSecond: BigNumber;
   publicKey: string;
   v: number;
   r: string;
@@ -53,7 +53,7 @@ export function formatSubmitSarcophagusArgs({
       );
       return {
         archAddress: arch.profile.archAddress,
-        diggingFee: arch.profile.minimumDiggingFeePerSecond,
+        diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond,
         // TODO: #multiple-key-update - we may want further validation this exsits
         publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
         v,
