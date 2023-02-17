@@ -36,7 +36,7 @@ export function useArchaeologistList() {
     // Or their free bond is less than their digging fee
     const archIsVisible =
       resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
-      a.profile.minimumDiggingFee.lte(a.profile.freeBond);
+      a.profile.minimumDiggingFeePerSecond.lte(a.profile.freeBond);
 
     return archIsVisible;
   });
