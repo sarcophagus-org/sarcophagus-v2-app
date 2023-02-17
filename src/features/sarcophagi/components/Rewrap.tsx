@@ -1,12 +1,11 @@
-import { Button, HStack, Text, VStack } from '@chakra-ui/react';
+import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
-import { buildResurrectionDateString } from 'lib/utils/helpers';
+import { buildResurrectionDateString, formatSarco } from 'lib/utils/helpers';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -30,29 +29,42 @@ export function Rewrap() {
   const rewrapIntervalSeconds = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
   const rewrapIntervalMs = rewrapIntervalSeconds * 1000;
 
-  function handleCustomDateChange(date: Date | null) {
-    setResurrectionTime(date);
+  function handleCustomDateChange(date: Date | null): void {
+    // Ensure that selected date is in the future
+    if (date && date.getTime() > Date.now()) {
+      setResurrectionTime(date);
+    }
   }
 
   const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
-  const resurectionDateMs = maximumResurectionDate.getTime();
+  const resurrectionDateMs = maximumResurectionDate.getTime();
 
   const filterInvalidTime = (time: Date) => {
     const selectedDateMs = new Date(time).getTime();
-    return resurectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
+    return resurrectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
   };
 
   const resurrectionString = buildResurrectionDateString(
-    BigNumber.from(Math.trunc(resurectionDateMs / 1000))
+    BigNumber.from(Math.trunc(resurrectionDateMs / 1000))
   );
 
   // Sum up the digging fees from the archaeologists objects
-  const totalDiggingFeeBn = useMemo(() => {
+  const totalDiggingFeesPerSecBn = useMemo(() => {
     return archaeologists?.reduce((acc, archaeologist) => {
-      return acc.add(archaeologist.diggingFee);
+      return acc.add(archaeologist.diggingFeePerSecond);
     }, BigNumber.from(0));
   }, [archaeologists]);
-  const protocolFeeBn = totalDiggingFeeBn.mul(protocolFeeAmountInt).div(100);
+
+  const totalDiggingFeesBn = useMemo(() => {
+    if (!resurrectionTime) return BigNumber.from(0);
+    const resurrectionTimeSecBn = BigNumber.from(
+      Math.floor(new Date(resurrectionTime).getTime() / 1000)
+    );
+    const currentTimeSecBn = BigNumber.from(Math.floor(new Date().getTime() / 1000));
+    return totalDiggingFeesPerSecBn.mul(resurrectionTimeSecBn.sub(currentTimeSecBn));
+  }, [resurrectionTime, totalDiggingFeesPerSecBn]);
+
+  const protocolFeeBn = totalDiggingFeesBn.mul(protocolFeeAmountInt).div(100);
 
   return (
     <VStack
@@ -99,13 +111,23 @@ export function Rewrap() {
         align="left"
         spacing={1}
       >
-        <Text>Fees</Text>
+        <Flex direction="row">
+          <Text>Fees</Text>
+          <Text
+            ml={1}
+            variant="secondary"
+          >
+            (estimated)
+          </Text>
+        </Flex>
         <HStack spacing={3}>
-          <Text variant="secondary">Digging fee : {formatEther(totalDiggingFeeBn)} SARCO</Text>
+          <Text variant="secondary">
+            Digging fee: {formatSarco(totalDiggingFeesBn.toString())} SARCO
+          </Text>
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Protocol fee ({protocolFeeAmountInt}%) : {formatEther(protocolFeeBn)} SARCO
+            Protocol fee ({protocolFeeAmountInt}%): {formatSarco(protocolFeeBn.toString())} SARCO
           </Text>
         </HStack>
       </VStack>

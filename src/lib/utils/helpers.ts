@@ -194,3 +194,18 @@ export function buildResurrectionDateString(
     msUntilResurrection < 0 ? `${humanizedDuration} ago` : humanizedDuration;
   return `${resurrectionDateString} (${timeUntilResurrection})`;
 }
+
+export function formatSarco(valueInWei: string | number, precision: number = 2): string {
+  const value = formatEther(valueInWei);
+  const numericValue: number = Number(value);
+  if (isNaN(numericValue)) {
+    return value.toString();
+  }
+  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
+
+  if (formattedValue === '0' && parseInt(value) > 0) {
+    return `< 0.${'0'.repeat(precision - 1)}1`;
+  }
+
+  return formattedValue;
+}
