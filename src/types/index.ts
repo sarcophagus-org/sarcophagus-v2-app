@@ -33,7 +33,7 @@ export interface ArchaeologistException {
 }
 
 export interface SarcophagusArchaeologist {
-  diggingFee: number;
+  diggingFeePerSecond: number;
   isAccused: boolean;
   diggingFeesPaid: number;
   publicKey: string;
@@ -48,7 +48,8 @@ export interface ArchaeologistProfile {
   failures: BigNumber;
   freeBond: BigNumber;
   maximumRewrapInterval: BigNumber;
-  minimumDiggingFee: BigNumber;
+  maximumResurrectionTime: BigNumber;
+  minimumDiggingFeePerSecond: BigNumber;
   peerId: string;
   successes: BigNumber;
 }

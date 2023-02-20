@@ -1,12 +1,12 @@
 import { BigNumber, ethers, utils } from 'ethers';
-import { getLowestRewrapInterval } from '../../../../lib/utils/helpers';
+import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
 import { Archaeologist } from '../../../../types';
 import { computeAddress } from 'ethers/lib/utils';
 import { RecipientState } from '../../../../store/embalm/actions';
 
 export interface ContractArchaeologist {
   archAddress: string;
-  diggingFee: BigNumber;
+  diggingFeePerSecond: BigNumber;
   publicKey: string;
   v: number;
   r: string;
@@ -20,6 +20,7 @@ export interface SubmitSarcophagusSettings {
   threshold: number;
   creationTime: number;
   maximumRewrapInterval: number;
+  maximumResurrectionTime: number;
 }
 
 export interface SubmitSarcophagusProps {
@@ -52,7 +53,7 @@ export function formatSubmitSarcophagusArgs({
       );
       return {
         archAddress: arch.profile.archAddress,
-        diggingFee: arch.profile.minimumDiggingFee,
+        diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond,
         // TODO: #multiple-key-update - we may want further validation this exsits
         publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
         v,
@@ -70,6 +71,7 @@ export function formatSubmitSarcophagusArgs({
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),
     maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
+    maximumResurrectionTime: getLowestResurrectionTime(selectedArchaeologists),
   };
 
   const contractArchaeologists = getContractArchaeologists();

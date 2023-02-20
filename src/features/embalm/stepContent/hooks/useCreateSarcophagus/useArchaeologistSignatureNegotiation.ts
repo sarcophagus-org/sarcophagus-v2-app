@@ -4,14 +4,18 @@ import { setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../../../../../lib/config/node_config';
 import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
-import { getLowestRewrapInterval } from '../../../../../lib/utils/helpers';
+import {
+  getLowestResurrectionTime,
+  getLowestRewrapInterval,
+} from '../../../../../lib/utils/helpers';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useDialArchaeologists } from './useDialArchaeologists';
 import { CancelCreateToken } from './useCreateSarcophagus';
 
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
-  diggingFee: string;
+  maximumResurrectionTime: number;
+  diggingFeePerSecond: string;
   timestamp: number;
 }
 
@@ -52,6 +56,7 @@ export function useArchaeologistSignatureNegotiation() {
     async (isRetry: boolean, cancelToken: CancelCreateToken): Promise<void> => {
       console.log('starting the negotiation');
       const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
+      const lowestResurrectionTime = getLowestResurrectionTime(selectedArchaeologists);
 
       const negotiationTimestamp = Date.now();
       setNegotiationTimestamp(negotiationTimestamp);
@@ -79,8 +84,9 @@ export function useArchaeologistSignatureNegotiation() {
           }
 
           const negotiationParams: ArchaeologistSignatureNegotiationParams = {
-            diggingFee: arch.profile.minimumDiggingFee.toString(),
+            diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond.toString(),
             maxRewrapInterval: lowestRewrapInterval,
+            maximumResurrectionTime: lowestResurrectionTime,
             timestamp: negotiationTimestamp,
           };
 

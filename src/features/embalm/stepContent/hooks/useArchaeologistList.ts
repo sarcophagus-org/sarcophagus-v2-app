@@ -21,7 +21,8 @@ export function useArchaeologistList() {
     showSelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  const onlineArchaeologists = archaeologists;
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 
@@ -35,7 +36,7 @@ export function useArchaeologistList() {
     // Or their free bond is less than their digging fee
     const archIsVisible =
       resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
-      a.profile.minimumDiggingFee.lte(a.profile.freeBond);
+      a.profile.minimumDiggingFeePerSecond.lte(a.profile.freeBond);
 
     return archIsVisible;
   });
@@ -87,7 +88,7 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            sortValue = arch.profile.minimumDiggingFee;
+            sortValue = arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
             sortValue = arch.profile.successes;
           } else if (archaeologistFilterSort.sortType === SortFilterType.FAILS) {
@@ -118,7 +119,7 @@ export function useArchaeologistList() {
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
         BigNumber.from(
-          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFeePerSecond)).toFixed(0)
         ).lte(diggingFeesFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&

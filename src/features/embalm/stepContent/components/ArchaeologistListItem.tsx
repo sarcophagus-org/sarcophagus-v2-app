@@ -104,7 +104,7 @@ export function ArchaeologistListItem({
         icon={true}
         checkbox={false}
       >
-        {Number(ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee))
+        {Number(ethers.utils.formatEther(archaeologist.profile.minimumDiggingFeePerSecond))
           .toFixed(2)
           .toString()
           .concat(' SARCO')}

@@ -31,7 +31,7 @@
     "@multiformats/multiaddr": "^10.0.3",
     "@rainbow-me/rainbowkit": "0.8.1",
     "@react-pdf/renderer": "^3.0.0",
-    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.13.0",
+    "@sarcophagus-org/sarcophagus-v2-contracts": "^0.14.3",
     "@sentry/react": "^7.8.1",
     "@sentry/tracing": "^7.8.1",
     "@wagmi/chains": "^0.1.5",
