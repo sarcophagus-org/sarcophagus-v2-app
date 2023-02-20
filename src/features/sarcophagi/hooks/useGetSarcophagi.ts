@@ -12,7 +12,7 @@ import { useContractReads } from 'wagmi';
 export function useGetSarcophagi(sarcoIds: string[], refetchInterval = 60_000): Sarcophagus[] {
   const networkConfig = useNetworkConfig();
   const gracePeriod = useGetGracePeriod();
-  const [sarcohpaiResponse, setSarcohpagiResponse] = useState<SarcophagusResponseContract[]>([]);
+  const [sarcophagiResponse, setSarcophagiResponse] = useState<SarcophagusResponseContract[]>([]);
 
   const { data, refetch } = useContractReads({
     contracts: sarcoIds.map(id => ({
@@ -26,11 +26,11 @@ export function useGetSarcophagi(sarcoIds: string[], refetchInterval = 60_000): 
   // Refetch the sarcohpagi on a set interval to update the sarcophagus status
   useEffect(() => {
     if (!data) return;
-    setSarcohpagiResponse(data as SarcophagusResponseContract[]);
+    setSarcophagiResponse(data as SarcophagusResponseContract[]);
 
     const intervalId = setInterval(async () => {
       const refetchedData = (await refetch?.()).data as SarcophagusResponseContract[];
-      setSarcohpagiResponse(refetchedData);
+      setSarcophagiResponse(refetchedData);
     }, refetchInterval);
 
     return () => {
@@ -39,7 +39,7 @@ export function useGetSarcophagi(sarcoIds: string[], refetchInterval = 60_000): 
   }, [refetch, data, refetchInterval]);
 
   if (!data) return [];
-  const sarcophagi = sarcohpaiResponse.map((sarcoResponse, index) => ({
+  const sarcophagi = sarcophagiResponse.map((sarcoResponse, index) => ({
     ...sarcoResponse,
     state: getSarcophagusState(sarcoResponse, gracePeriod),
     id: sarcoIds?.[index] || '',
