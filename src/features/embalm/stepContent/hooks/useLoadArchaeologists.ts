@@ -27,7 +27,7 @@ export function useLoadArchaeologists() {
     const addresses: string[] = (await readContract({
       address: networkConfig.diamondDeployAddress,
       abi: ViewStateFacet__factory.abi,
-      functionName: 'getArchaeologistProfileAddresses'
+      functionName: 'getArchaeologistProfileAddresses',
     })) as string[];
 
     if (!addresses || addresses.length === 0) return [];
@@ -36,14 +36,14 @@ export function useLoadArchaeologists() {
       address: networkConfig.diamondDeployAddress,
       abi: ViewStateFacet__factory.abi,
       functionName: 'getArchaeologistProfiles',
-      args: [addresses]
+      args: [addresses],
     })) as any[]; // TODO: Update ABI packages to export const JSON objects instead, then remove these any[]s so wagmi can infer types
 
     const stats = (await readContract({
       address: networkConfig.diamondDeployAddress,
       abi: ViewStateFacet__factory.abi,
       functionName: 'getArchaeologistsStatistics',
-      args: [addresses]
+      args: [addresses],
     })) as any[];
 
     const discoveredArchaeologists = profiles.map((p, i) => ({
@@ -53,9 +53,9 @@ export function useLoadArchaeologists() {
         successes: stats[i].successes,
         cleanups: stats[i].cleanups,
         accusals: stats[i].accusals,
-        failures: stats[i].failures
+        failures: stats[i].failures,
       },
-      isOnline: false
+      isOnline: false,
     }));
 
     const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
@@ -118,7 +118,7 @@ export function useLoadArchaeologists() {
     dispatch,
     getProfiles,
     libp2pNode,
-    isProfileLoading
+    isProfileLoading,
   ]);
 
   return { getProfiles };
