@@ -5,6 +5,9 @@ import {
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
+import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
+import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
+import { getTotalFeesInSarco } from 'lib/utils/helpers';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +15,7 @@ import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import { goToStep, setArchaeologists } from '../../../../store/embalm/actions';
+import { setCancelToken, goToStep, setArchaeologists } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -20,7 +23,10 @@ import { ProgressTrackerStage } from '../components/ProgressTrackerStage';
 import { ReviewSarcophagus } from '../components/ReviewSarcophagus';
 import { StageInfoIcon } from '../components/StageInfoIcon';
 import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
-import { useCreateSarcophagus } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
+import {
+  CancelCreateToken,
+  useCreateSarcophagus,
+} from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
@@ -29,6 +35,7 @@ export function CreateSarcophagus() {
   const { getProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
+  const cancelCreateToken = useSelector(s => s.embalmState.cancelCreateToken);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -62,6 +69,10 @@ export function CreateSarcophagus() {
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
   const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
+  const { balance } = useSarcoBalance();
+
+  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
   const isCreateProcessStarted = (): boolean => {
     return currentStage !== CreateSarcophagusStage.NOT_STARTED;
@@ -71,12 +82,14 @@ export function CreateSarcophagus() {
     return currentStage === CreateSarcophagusStage.COMPLETED;
   }, [currentStage]);
 
-  const cancelCreate = useCallback(async () => {
+  const cancelCreation = useCallback(async () => {
     // TODO add alert to user before cancelling
-    clearSarcophagusState();
+    await clearSarcophagusState();
+    cancelCreateToken.cancel();
     dispatch(goToStep(Step.NameSarcophagus));
     navigate('/');
-  }, [clearSarcophagusState, dispatch, navigate]);
+    dispatch(setCancelToken(new CancelCreateToken()));
+  }, [cancelCreateToken, clearSarcophagusState, dispatch, navigate]);
 
   useEffect(() => {
     // remove approval step if user has allowance on sarco token
@@ -108,7 +121,8 @@ export function CreateSarcophagus() {
         }
 
         // restart the peer discovery process
-        await addPeerDiscoveryEventListener(globalLibp2pNode!);
+        // TODO -- re-enable once peer discovery is added
+        // await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
   }, [addPeerDiscoveryEventListener, globalLibp2pNode, dispatch, getProfiles, isCreateCompleted]);
@@ -123,6 +137,11 @@ export function CreateSarcophagus() {
       });
     }, 10);
   }
+
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    selectedArchaeologists,
+    protocolFeeBasePercentage
+  );
 
   return (
     <Flex
@@ -140,7 +159,9 @@ export function CreateSarcophagus() {
               p={6}
               mt={9}
               onClick={handleCreate}
-              disabled={!isSarcophagusFormDataComplete()}
+              disabled={
+                balance?.lte(totalDiggingFees.add(protocolFee)) || !isSarcophagusFormDataComplete()
+              }
             >
               Create Sarcophagus
             </Button>
@@ -162,7 +183,7 @@ export function CreateSarcophagus() {
                 <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
               ))}
           </ProgressTracker>
-          {stageInfo && (
+          {stageInfo && !stageError && (
             <Flex
               mt={3}
               alignItems="center"
@@ -195,7 +216,7 @@ export function CreateSarcophagus() {
             variant="outline"
             w="150px"
             mt="20px"
-            onClick={cancelCreate}
+            onClick={cancelCreation}
           >
             Cancel Sarcophagus
           </Button>

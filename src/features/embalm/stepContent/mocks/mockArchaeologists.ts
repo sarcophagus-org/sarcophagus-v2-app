@@ -17,10 +17,13 @@ export function mochArchaeologists(numberOfArcheologists: number): Archaeologist
     let archProfile: ArchaeologistProfile = {
       archAddress: '0x00000000000000000000000000000000000' + randomNumber.toString(),
       exists: true,
-      minimumDiggingFee: BigNumber.from(
+      minimumDiggingFeePerSecond: BigNumber.from(
         ethers.utils.parseEther(getRandomIntInclusive(1, 25).toString())
       ),
       maximumRewrapInterval: BigNumber.from(
+        getRandomIntInclusive(20000000000, 60000000000).toString()
+      ),
+      maximumResurrectionTime: BigNumber.from(
         getRandomIntInclusive(20000000000, 60000000000).toString()
       ),
       freeBond: BigNumber.from('0'),

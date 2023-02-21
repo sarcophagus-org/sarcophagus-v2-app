@@ -1,12 +1,12 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import axios from 'axios';
 import { useNetworkConfig } from 'lib/config';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { readContract } from 'wagmi/actions';
-import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -15,8 +15,9 @@ export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
+  const { libp2pNode } = useSelector(s => s.appState);
   const { chain } = useNetwork();
-  const { testDialArchaeologist } = useAttemptDialArchaeologists();
+  const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
   const getProfiles = useCallback(async () => {
     if (!networkConfig.diamondDeployAddress) {
@@ -57,27 +58,45 @@ export function useLoadArchaeologists() {
       isOnline: false,
     }));
 
+    const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+    const onlinePeerIds = res.data;
+
     for (let arch of discoveredArchaeologists) {
-      // if arch profile has the delimiter, it has a domain
-      // attempt to dial this archaeologist to confirm it is online
-      if (arch.profile.peerId.includes(':')) {
-        arch.isOnline = await testDialArchaeologist(arch);
+      if (onlinePeerIds.includes(arch.profile.peerId)) {
+        arch.isOnline = true;
       }
     }
 
     return discoveredArchaeologists;
-  }, [networkConfig.diamondDeployAddress, testDialArchaeologist]);
+  }, [networkConfig.diamondDeployAddress]);
+
+  // This useEffect is used to trigger the other useEffect below once
+  // the dependencies are ready
+  useEffect(() => {
+    if (!!chain?.id && !!dispatch && !!getProfiles && !!libp2pNode) {
+      setIsProfileLoading(false);
+    }
+  }, [chain?.id, dispatch, getProfiles, libp2pNode]);
 
   useEffect(() => {
+    if (isProfileLoading === undefined) return;
+
+    // Only load the archaeologists once when the component mounts. The only reason the
+    // archaeologists would need to be loaded from the contract again is when a new
+    // archaeologist registers.
+    //
+    // Additionally we will reload the archaeologist on network switch.
+    if (
+      !libp2pNode ||
+      isProfileLoading ||
+      (archaeologists.length > 0 && currentChainId === chain?.id)
+    )
+      return;
+
+    setIsProfileLoading(true);
+
     (async () => {
       try {
-        // Only load the archaeologists once when the component mounts. The only reason the
-        // archaeologists would need to be loaded from the contract again is when a new
-        // archaeologist registers.
-        //
-        // Additionally we will reload the archaeologist on network switch.
-        if (archaeologists.length > 0 && currentChainId === chain?.id) return;
-
         dispatch(startLoad());
         dispatch(setCurrentChainId(chain?.id));
 
@@ -88,10 +107,19 @@ export function useLoadArchaeologists() {
       } catch (error) {
         console.error(error);
       } finally {
+        setIsProfileLoading(false);
         dispatch(stopLoad());
       }
     })();
-  }, [archaeologists.length, chain?.id, currentChainId, dispatch, getProfiles]);
+  }, [
+    archaeologists.length,
+    chain?.id,
+    currentChainId,
+    dispatch,
+    getProfiles,
+    libp2pNode,
+    isProfileLoading,
+  ]);
 
   return { getProfiles };
 }

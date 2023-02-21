@@ -17,6 +17,18 @@ export function getLowestRewrapInterval(archaeologists: Archaeologist[]): number
 }
 
 /**
+ * Returns the smallest maximumResurrectionTime value
+ * from the profiles of the archaeologists provided
+ */
+export function getLowestResurrectionTime(archaeologists: Archaeologist[]): number {
+  return Math.min(
+    ...archaeologists.map(arch => {
+      return Number(arch.profile.maximumResurrectionTime);
+    })
+  );
+}
+
+/**
  * Formats an address into a more readable format
  * Replaces the middle with "..." and uppercases it
  * @param address The address to format
@@ -138,13 +150,25 @@ export function formatFee(value: number | string, fixed = 2): string {
 /**
  * Given a list of archaeologists, sums up their digging fees
  */
-export function sumDiggingFeesFormatted(archaeologists: Archaeologist[]): string {
+export function getTotalFeesInSarco(
+  archaeologists: Archaeologist[],
+  protocolFeeBasePercentage?: number
+) {
   const totalDiggingFees = archaeologists.reduce(
-    (acc, curr) => acc.add(curr.profile.minimumDiggingFee),
+    (acc, curr) => acc.add(curr.profile.minimumDiggingFeePerSecond),
     ethers.constants.Zero
   );
 
-  return formatEther(totalDiggingFees);
+  // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
+  const protocolFee = protocolFeeBasePercentage
+    ? totalDiggingFees.div(BigNumber.from(100 * protocolFeeBasePercentage))
+    : ethers.constants.Zero;
+
+  return {
+    totalDiggingFees,
+    formattedTotalDiggingFees: formatEther(totalDiggingFees),
+    protocolFee,
+  };
 }
 
 /**
@@ -193,4 +217,19 @@ export async function sign(
   const dataHashBytes = ethers.utils.arrayify(dataHash);
   const signature = await signer.signMessage(dataHashBytes);
   return ethers.utils.splitSignature(signature);
+}
+
+export function formatSarco(valueInWei: string | number, precision: number = 2): string {
+  const value = formatEther(valueInWei);
+  const numericValue: number = Number(value);
+  if (isNaN(numericValue)) {
+    return value.toString();
+  }
+  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
+
+  if (formattedValue === '0' && parseInt(value) > 0) {
+    return `< 0.${'0'.repeat(precision - 1)}1`;
+  }
+
+  return formattedValue;
 }

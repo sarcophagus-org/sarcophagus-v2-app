@@ -42,7 +42,11 @@ export function useBundlrSession() {
 
   // TODO: Find a way to use the provider from wagmi
   const connector: any = window.ethereum;
-  const provider = useMemo(() => new ethers.providers.Web3Provider(connector), [connector]);
+
+  const provider = useMemo(
+    () => (!!connector ? new ethers.providers.Web3Provider(connector) : undefined),
+    [connector]
+  );
 
   const connectToBundlr = useCallback(async (): Promise<void> => {
     if (isHardhatNetwork) {
@@ -91,6 +95,10 @@ export function useBundlrSession() {
    */
   const createInjectedBundlr = useCallback(
     (publicKey: Buffer) => {
+      if (!provider) {
+        return undefined;
+      }
+
       const injectedSigner = new InjectedEthereumSigner(provider);
       injectedSigner.publicKey = publicKey;
 

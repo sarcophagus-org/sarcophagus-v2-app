@@ -1,5 +1,6 @@
 import { hardhat } from '@wagmi/chains';
 import { CreateSarcophagusContext } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
+import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useArweave } from 'hooks/useArweave';
 import { useCallback, useContext, useState } from 'react';
 import { useBundlr } from '../features/embalm/stepContent/hooks/useBundlr';
@@ -104,9 +105,11 @@ const useArweaveService = () => {
   const getConfirmations = (): number => transactionStatus.confirmations;
 
   const uploadToArweave = useCallback(
-    (data: Buffer): Promise<string> => {
+    (data: Buffer, cancelToken: CancelCreateToken): Promise<string> => {
       if (!arweave) throw new Error(arweaveNotReadyMsg);
-      return networkConfig.chainId === hardhat.id ? uploadArLocalFile(data) : uploadFile(data);
+      return networkConfig.chainId === hardhat.id
+        ? uploadArLocalFile(data)
+        : uploadFile(data, cancelToken);
     },
     [arweave, networkConfig.chainId, uploadArLocalFile, uploadFile]
   );

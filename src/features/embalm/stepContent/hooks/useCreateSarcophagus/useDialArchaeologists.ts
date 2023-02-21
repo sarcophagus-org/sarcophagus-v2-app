@@ -7,6 +7,7 @@ import { createSarcophagusErrors } from '../../utils/errors';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
+import { CancelCreateToken } from './useCreateSarcophagus';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -66,50 +67,60 @@ export function useDialArchaeologists() {
     [dispatch, dialPeerIdOrMultiAddr]
   );
 
-  const dialSelectedArchaeologists = useCallback(async () => {
-    const MAX_RETRIES = 5;
-    const WAIT_BETWEEN_RETRIES = 300;
-    const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
+  const dialSelectedArchaeologists = useCallback(
+    async (_: any, cancelToken: CancelCreateToken) => {
+      const MAX_RETRIES = 5;
+      const WAIT_BETWEEN_RETRIES = 300;
+      const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-    const dialArchaeologistWithRetry = async (dialFn: Function, depth = 0): Promise<Connection> => {
-      try {
-        const connection = await dialFn();
-        return connection;
-      } catch (e) {
-        console.log(`Dial attempt ${depth + 1} failed, retrying....`);
-        if (depth > MAX_RETRIES) {
-          throw e;
+      const dialArchaeologistWithRetry = async (
+        dialFn: Function,
+        depth = 0
+      ): Promise<Connection> => {
+        if (cancelToken.cancelled) {
+          throw new Error('Cancelled');
         }
 
-        await wait(WAIT_BETWEEN_RETRIES);
+        try {
+          const connection = await dialFn();
+          return connection;
+        } catch (e) {
+          console.log(`Dial attempt ${depth + 1} failed, retrying....`);
+          if (depth > MAX_RETRIES) {
+            throw e;
+          }
 
-        return dialArchaeologistWithRetry(dialFn, depth + 1);
+          await wait(WAIT_BETWEEN_RETRIES);
+
+          return dialArchaeologistWithRetry(dialFn, depth + 1);
+        }
+      };
+
+      const dialFailedArchaeologists = [];
+
+      for await (const arch of selectedArchaeologists) {
+        const peerIdString = arch.profile.peerId;
+        try {
+          const connection = await dialArchaeologistWithRetry(() => dialPeerIdOrMultiAddr(arch));
+          if (!connection) throw Error('No connection obtained from dial');
+          dispatch(setArchaeologistConnection(peerIdString, connection));
+        } catch (e) {
+          dispatch(
+            setArchaeologistException(peerIdString, {
+              code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
+              message: 'Could not establish a connection',
+            })
+          );
+          dialFailedArchaeologists.push(peerIdString);
+        }
       }
-    };
 
-    const dialFailedArchaeologists = [];
-
-    for await (const arch of selectedArchaeologists) {
-      const peerIdString = arch.profile.peerId;
-      try {
-        const connection = await dialArchaeologistWithRetry(() => dialPeerIdOrMultiAddr(arch));
-        if (!connection) throw Error('No connection obtained from dial');
-        dispatch(setArchaeologistConnection(peerIdString, connection));
-      } catch (e) {
-        dispatch(
-          setArchaeologistException(peerIdString, {
-            code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-            message: 'Could not establish a connection',
-          })
-        );
-        dialFailedArchaeologists.push(peerIdString);
+      if (dialFailedArchaeologists.length) {
+        throw Error(createSarcophagusErrors[CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]);
       }
-    }
-
-    if (dialFailedArchaeologists.length) {
-      throw Error(createSarcophagusErrors[CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]);
-    }
-  }, [selectedArchaeologists, dispatch, dialPeerIdOrMultiAddr]);
+    },
+    [selectedArchaeologists, dispatch, dialPeerIdOrMultiAddr]
+  );
 
   const pingArchaeologist = useCallback(
     async (arch: Archaeologist, onComplete: Function) => {

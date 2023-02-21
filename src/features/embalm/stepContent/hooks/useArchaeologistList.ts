@@ -3,14 +3,11 @@ import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
-import { useLoadArchaeologists } from './useLoadArchaeologists';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers, BigNumber } from 'ethers';
 import { filterSplit } from 'lib/utils/helpers';
 
 export function useArchaeologistList() {
-  useLoadArchaeologists();
-
   const dispatch = useDispatch();
 
   const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
@@ -26,21 +23,21 @@ export function useArchaeologistList() {
 
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
-  const resurrection = useSelector(s => s.embalmState.resurrection);
+  const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 
-  // If the difference between the ressurection time and the current time is less than an
+  // If the difference between the resurrection time and the current time is less than an
   // archaeologist's rewrap interval and if the archaeologist's free bond is greater than the
   // digging fee, that archaeologist goes in the visible list. Otherwise it goes in the hidden list.
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
     const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
-    const resurrectionTimeMs = resurrection;
-
-    // If resurrection time has not been set, it will default to 0, in which case this will return
-    // false and no archaeologists will be hidden
-    return (
+    // If resurrection time has not been set, it will default to 0.
+    // An archaeologist is hidden if the maximum rewrap interval not within range
+    // Or their free bond is less than their digging fee
+    const archIsVisible =
       resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
-      a.profile.minimumDiggingFee.lt(a.profile.freeBond)
-    );
+      a.profile.minimumDiggingFeePerSecond.lte(a.profile.freeBond);
+
+    return archIsVisible;
   });
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
@@ -90,7 +87,7 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            sortValue = arch.profile.minimumDiggingFee;
+            sortValue = arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
             sortValue = arch.profile.successes;
           } else if (archaeologistFilterSort.sortType === SortFilterType.FAILS) {
@@ -121,7 +118,7 @@ export function useArchaeologistList() {
       arch =>
         arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
         BigNumber.from(
-          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFee)).toFixed(0)
+          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFeePerSecond)).toFixed(0)
         ).lte(diggingFeesFilter || constants.MaxInt256) &&
         BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
         BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&

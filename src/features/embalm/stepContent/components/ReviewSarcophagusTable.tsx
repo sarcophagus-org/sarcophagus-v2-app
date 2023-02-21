@@ -1,5 +1,6 @@
 import { Flex, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useStepNavigator } from 'features/embalm/stepNavigator/hooks/useStepNavigator';
+import { maxSarcophagusNameLength } from 'lib/constants';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
@@ -29,6 +30,12 @@ export function ReviewSarcophagusTable() {
       </Thead>
       <Tbody>
         {sarcophagusParameters.map(({ name, value, step, error }) => {
+          const foramttedValue = !value
+            ? '----'
+            : value.length > maxSarcophagusNameLength
+            ? `${value.slice(0, maxSarcophagusNameLength - 4)}...`
+            : value;
+
           return (
             <Tr key={name}>
               <Td py={3}>
@@ -47,7 +54,10 @@ export function ReviewSarcophagusTable() {
                   {error && <SummaryErrorIcon error={error} />}
                 </Flex>
               </Td>
-              <Td py={2}>
+              <Td
+                maxW={100}
+                py={2}
+              >
                 <Text
                   as="span"
                   px={2}
@@ -55,7 +65,7 @@ export function ReviewSarcophagusTable() {
                   rounded="sm"
                   bg={error ? 'background.red' : 'grayBlue.950'}
                 >
-                  {value || '----'}
+                  {foramttedValue}
                 </Text>
               </Td>
               <Td

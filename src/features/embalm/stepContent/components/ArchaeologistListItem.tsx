@@ -49,7 +49,10 @@ export function ArchaeologistListItem({
 
   function TableContent({ children, icon, checkbox }: TableContentProps) {
     return (
-      <Td isNumeric>
+      <Td
+        borderBottom="none"
+        isNumeric
+      >
         <Flex justify={icon || checkbox ? 'left' : 'center'}>
           {icon && <SarcoTokenIcon boxSize="18px" />}
           {checkbox && (
@@ -101,10 +104,14 @@ export function ArchaeologistListItem({
         icon={true}
         checkbox={false}
       >
-        {Number(ethers.utils.formatEther(archaeologist.profile.minimumDiggingFee))
+        {/* TODO: this shows monthly values. will need to be updated to show actual digging fees based on resurrection time */}
+        {/* We may want to show the monthly values on the "archaeologists" page */}
+        {Number(
+          ethers.utils.formatEther(archaeologist.profile.minimumDiggingFeePerSecond.mul(2628288))
+        )
           .toFixed(2)
           .toString()
-          .concat(' SARCO')}
+          .concat(' SARCO/month')}
       </TableContent>
       <TableContent
         icon={false}

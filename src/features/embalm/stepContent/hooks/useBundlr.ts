@@ -2,6 +2,7 @@ import { ChunkingUploader } from '@bundlr-network/client/build/common/chunkingUp
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
+import { chunkedUploaderFileSize } from 'lib/constants';
 import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/utils/toast';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
@@ -13,6 +14,7 @@ import {
 } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { CreateSarcophagusContext } from '../context/CreateSarcophagusContext';
+import { CancelCreateToken } from './useCreateSarcophagus/useCreateSarcophagus';
 
 export function useBundlr() {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ export function useBundlr() {
 
   const [chunkedUploader, setChunkedUploader] = useState<ChunkingUploader>();
   const [fileBuffer, setFileBuffer] = useState<Buffer>();
+  const [cancelUploadToken, setCancelUploadToken] = useState<CancelCreateToken>();
   const [readyToUpload, setReadyToUpload] = useState(false);
 
   const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
@@ -36,6 +39,11 @@ export function useBundlr() {
    */
   const fund = useCallback(
     async (amount: BigNumber) => {
+      if (!bundlr) {
+        console.log('Bundlr not connected');
+        return;
+      }
+
       dispatch(setIsFunding(true));
       toast(fundStart());
       try {
@@ -90,12 +98,19 @@ export function useBundlr() {
   let rejectUploadPromise = useRef<any>();
   let resolveUploadPromise = useRef<any>();
 
+  // SET UP UPLOAD EVENT LISTENERS
   useEffect(() => {
     if (!chunkedUploader || !fileBuffer || !rejectUploadPromise) return;
 
-    chunkedUploader.setChunkSize(5_000_000);
+    chunkedUploader.setChunkSize(chunkedUploaderFileSize);
 
     chunkedUploader?.on('chunkUpload', chunkInfo => {
+      if (cancelUploadToken?.cancelled) {
+        chunkedUploader?.pause();
+        rejectUploadPromise.current('Cancelled upload');
+        return;
+      }
+
       const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
       dispatch(setUploadProgress(chunkedUploadProgress));
     });
@@ -111,8 +126,9 @@ export function useBundlr() {
       console.log(`Upload completed with ID ${finishRes.id}`);
       dispatch(setIsUploading(false));
     });
-  }, [chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
+  }, [cancelUploadToken, chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
 
+  //  SET UP CHUNKED UPLOADER WHEN BUNDLR CONNECTS
   useEffect(() => {
     if (!bundlr) {
       setChunkedUploader(undefined);
@@ -122,33 +138,53 @@ export function useBundlr() {
     setChunkedUploader(bundlr.uploader.chunkedUploader);
   }, [bundlr]);
 
+  // STOP UPLOAD ON CANCEL
+  useEffect(() => {
+    if (cancelUploadToken?.cancelled) {
+      chunkedUploader?.pause();
+      rejectUploadPromise.current('Cancelled upload');
+    }
+  }, [cancelUploadToken, cancelUploadToken?.cancelled, chunkedUploader]);
+
+  /**
+   *
+   * Set up all needed, yet decoupled, components for uploading
+   * and raise readyToUpload flag.
+   * */
   const prepareToUpload = useCallback(
-    async (payloadBuffer: Buffer, resolve?: any, reject?: any): Promise<any> => {
+    (payloadBuffer: Buffer, cancelToken: CancelCreateToken, resolve?: any, reject?: any) => {
       setFileBuffer(payloadBuffer);
-      setReadyToUpload(true);
+      setCancelUploadToken(cancelToken);
       resolveUploadPromise.current = resolve;
       rejectUploadPromise.current = reject;
+
+      setReadyToUpload(true);
     },
     []
   );
 
+  //
+  // ACTUALLY BEGIN THE UPLOAD.
+  //
+  // Starts as soons `readyToUpload` is true.
   useEffect(() => {
     (async () => {
       if (!readyToUpload || !fileBuffer) {
         return;
       }
 
-      try {
-        let res: any;
+      const uploadPromise = chunkedUploader
+        ?.uploadData(fileBuffer)
+        .then(res => {
+          setSarcophagusPayloadTxId(res.data.id);
+          resolveUploadPromise.current(res.data.id);
+        })
+        .catch(err => {
+          console.log('err', err);
+          rejectUploadPromise.current(err);
+        });
 
-        res = await chunkedUploader?.uploadData(fileBuffer);
-
-        setSarcophagusPayloadTxId(res.data.id);
-        resolveUploadPromise.current(res.data.id);
-      } catch (error: any) {
-        console.log('err', error);
-        rejectUploadPromise.current(error);
-      }
+      await uploadPromise;
     })();
   }, [
     readyToUpload,
@@ -161,17 +197,20 @@ export function useBundlr() {
   ]);
 
   /**
+   * Consumable entry point to initiate upload to arweave.
    * Uploads a file given the data buffer
-   * @param fileBuffer The data buffer
+   * @param payloadBuffer The data buffer
+   * @param fileMetadata Metadata with descriptive info about the file. Preferably with encrypted fields.
+   * @param cancelToken CancelCreateToken from global `embalmState`
    */
   const uploadFile = useCallback(
-    async (payloadBuffer: Buffer): Promise<string> => {
+    async (payloadBuffer: Buffer, cancelToken: CancelCreateToken): Promise<string> => {
       return new Promise<string>(async (resolve, reject) => {
         if (!bundlr || !chunkedUploader) {
           reject('Bundlr not connected');
         }
 
-        prepareToUpload(payloadBuffer, resolve, reject);
+        prepareToUpload(payloadBuffer, cancelToken, resolve, reject);
       });
     },
     [bundlr, chunkedUploader, prepareToUpload]
