@@ -26,17 +26,22 @@ export function useArchaeologistList() {
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 
-  // If the difference between the resurrection time and the current time is less than an
-  // archaeologist's rewrap interval and if the archaeologist's free bond is greater than the
-  // digging fee, that archaeologist goes in the visible list. Otherwise it goes in the hidden list.
+  // The arch is filtered out if:
+  //  - resurrection time has been set further than the arch's max resurrection time
+  //  - Interval between current time and set resurrection time is more than the arch's max rewrap interval
+  //  - The arch doesn't have enough free bond to match digging fee based on the set resurrection time
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
+    if (resurrectionTimeMs > a.profile.maximumResurrectionTime.toNumber() * 1000) return false;
+
     const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
-    // If resurrection time has not been set, it will default to 0.
-    // An archaeologist is hidden if the maximum rewrap interval not within range
-    // Or their free bond is less than their digging fee
+    const resurrectionIntervalMs = resurrectionTimeMs - Date.now();
+
+    const estimatedCurse = !resurrectionTimeMs
+      ? ethers.constants.Zero
+      : a.profile.minimumDiggingFeePerSecond.mul(Math.trunc(resurrectionIntervalMs / 1000));
+
     const archIsVisible =
-      resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
-      a.profile.minimumDiggingFeePerSecond.lte(a.profile.freeBond);
+      resurrectionIntervalMs < maxRewrapIntervalMs && estimatedCurse.lte(a.profile.freeBond);
 
     return archIsVisible;
   });
