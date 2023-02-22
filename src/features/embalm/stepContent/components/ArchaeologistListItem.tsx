@@ -1,4 +1,4 @@
-import { Flex, Td, Text, Tr, Button, Checkbox } from '@chakra-ui/react';
+import { Flex, Td, Text, Tr, Button, Checkbox, Tooltip } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { formatAddress } from 'lib/utils/helpers';
 import { selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
@@ -69,7 +69,7 @@ export function ArchaeologistListItem({
           )}
           <Text
             ml={3}
-            bg={'grayBlue.950'}
+            bg={archaeologist.hiddenReason ? 'transparent.red' : 'grayBlue.950'}
             color={rowTextColor}
             py={0.5}
             px={2}
@@ -87,57 +87,64 @@ export function ArchaeologistListItem({
   };
 
   return (
-    <Tr
-      background={isSelected ? (archaeologist.exception ? 'background.red' : 'brand.50') : ''}
-      onClick={() => handleClickRow()}
-      cursor="pointer"
-      _hover={isSelected ? {} : { background: 'brand.0' }}
+
+    <Tooltip
+      label={archaeologist.hiddenReason}
+      placement="top"
     >
-      <TableContent
-        icon={false}
-        checkbox={true}
+      <Tr
+        background={isSelected ? (archaeologist.exception || archaeologist.hiddenReason ? 'background.red' : 'brand.50') : ''}
+        onClick={() => handleClickRow()}
+        cursor="pointer"
+        _hover={isSelected ? {} : { background: 'brand.0' }}
       >
-        {formattedArchAddress()}
-      </TableContent>
+        <TableContent
+          icon={false}
+          checkbox={true}
+        >
+          {formattedArchAddress()}
+        </TableContent>
 
-      <TableContent
-        icon={true}
-        checkbox={false}
-      >
-        {/* TODO: this shows monthly values. will need to be updated to show actual digging fees based on resurrection time */}
-        {/* We may want to show the monthly values on the "archaeologists" page */}
-        {Number(
-          ethers.utils.formatEther(archaeologist.profile.minimumDiggingFeePerSecond.mul(2628288))
-        )
-          .toFixed(2)
-          .toString()
-          .concat(' SARCO/month')}
-      </TableContent>
-      <TableContent
-        icon={false}
-        checkbox={false}
-      >
-        {archaeologist.profile.successes.toString()}
-      </TableContent>
-      <TableContent
-        icon={false}
-        checkbox={false}
-      >
-        {archaeologist.profile.failures.toString()}
-      </TableContent>
+        <TableContent
+          icon={true}
+          checkbox={false}
+        >
+          {/* TODO: this shows monthly values. will need to be updated to show actual digging fees based on resurrection time */}
+          {/* We may want to show the monthly values on the "archaeologists" page */}
+          {Number(
+            ethers.utils.formatEther(archaeologist.profile.minimumDiggingFeePerSecond.mul(2628288))
+          )
+            .toFixed(2)
+            .toString()
+            .concat(' SARCO/month')}
+        </TableContent>
+        <TableContent
+          icon={false}
+          checkbox={false}
+        >
+          {archaeologist.profile.successes.toString()}
+        </TableContent>
+        <TableContent
+          icon={false}
+          checkbox={false}
+        >
+          {archaeologist.profile.failures.toString()}
+        </TableContent>
 
-      {includeDialButton ? (
-        <Td>
-          <Button
-            disabled={isDialing || !!archaeologist.connection}
-            onClick={() => testDialArchaeologist(archaeologist, true)}
-          >
-            {archaeologist.connection ? 'Connected' : 'Dial'}
-          </Button>
-        </Td>
-      ) : (
-        <></>
-      )}
-    </Tr>
+        {includeDialButton ? (
+          <Td>
+            <Button
+              disabled={isDialing || !!archaeologist.connection}
+              onClick={() => testDialArchaeologist(archaeologist, true)}
+            >
+              {archaeologist.connection ? 'Connected' : 'Dial'}
+            </Button>
+          </Td>
+        ) : (
+          <></>
+        )}
+      </Tr>
+
+    </Tooltip>
   );
 }
