@@ -19,6 +19,7 @@ export function useArchaeologistList() {
     failsFilter,
     archAddressSearch,
     showOnlySelectedArchaeologists,
+    showHiddenArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
   // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
@@ -111,8 +112,8 @@ export function useArchaeologistList() {
   };
 
   const getArchaeologistListToShow = (args: {
-    showOnlySelectedArchaeologists?: boolean;
-    includeHidden?: boolean;
+    showOnlySelectedArchaeologists: boolean;
+    includeHidden: boolean;
   }): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
       if (args.showOnlySelectedArchaeologists) {
@@ -129,6 +130,7 @@ export function useArchaeologistList() {
         (arch.ensName?.toLowerCase().includes(archAddressSearch.toLowerCase()) ||
           arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase())) &&
         arch.profile.minimumDiggingFeePerSecond
+          // TODO: Import and use constant here
           .mul(2628288)
           .lte(
             (diggingFeesFilter && ethers.utils.parseEther(diggingFeesFilter)) || constants.MaxInt256
@@ -153,6 +155,7 @@ export function useArchaeologistList() {
     onClickSortUnwraps,
     selectedArchaeologists,
     showOnlySelectedArchaeologists,
+    showHiddenArchaeologists,
     SortDirection,
     getArchaeologistListToShow,
     unwrapsFilter,

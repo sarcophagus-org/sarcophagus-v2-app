@@ -5,6 +5,7 @@ import { ActionMap } from '../ActionMap';
 export enum ActionType {
   SetSortDirection = 'EMBALM_SET_ARCHAEOLOGISTS_SORT_DIRECTION',
   SetShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
+  ToggleShowHiddenArchaeologists = 'EMBALM_TOGGLE_SHOW_HIDDEN_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
   SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
   SetFailsFilter = 'EMBALM_SET_FAILS_FILTER',
@@ -32,6 +33,7 @@ type ArchaeologistListPayload = {
   [ActionType.SetFailsFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
   [ActionType.SetShowSelectedArchaeologists]: { selected: boolean };
+  [ActionType.ToggleShowHiddenArchaeologists]: {};
 };
 
 export function setSortDirection(
@@ -89,6 +91,13 @@ export function setShowSelectedArchaeologists(selected: boolean): ArchaeologistL
     payload: {
       selected,
     },
+  };
+}
+
+export function toggleShowHiddenArchaeologists(): ArchaeologistListActions {
+  return {
+    type: ActionType.ToggleShowHiddenArchaeologists,
+    payload: {},
   };
 }
 

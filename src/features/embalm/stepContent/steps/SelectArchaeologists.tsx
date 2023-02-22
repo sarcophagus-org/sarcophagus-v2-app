@@ -17,9 +17,10 @@ import {
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import { SetResurrection } from '../components/SetResurrection';
-import { useSelector } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
 import moment from 'moment';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
+import { toggleShowHiddenArchaeologists } from 'store/archaeologistList/actions';
 
 interface SelectArchaeologistsProps {
   hideHeader?: boolean;
@@ -38,15 +39,24 @@ export function SelectArchaeologists({
   // Load the archaeologists' data
   useLoadArchaeologists();
 
-  const { getArchaeologistListToShow, showOnlySelectedArchaeologists, hiddenArchaeologists } =
-    useArchaeologistList();
+  const dispatch = useDispatch();
+
+  const {
+    getArchaeologistListToShow,
+    showOnlySelectedArchaeologists,
+    hiddenArchaeologists,
+    showHiddenArchaeologists,
+  } = useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
   const [paginationSize, setPaginationSize] = useState<number>(defaultPageSize);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: getArchaeologistListToShow({ showOnlySelectedArchaeologists }).length,
+      total: getArchaeologistListToShow({
+        showOnlySelectedArchaeologists,
+        includeHidden: showHiddenArchaeologists,
+      }).length,
       initialState: { currentPage: 1, pageSize: defaultPageSize },
       limits: {
         outer: outerLimit,
@@ -56,6 +66,7 @@ export function SelectArchaeologists({
 
   const paginatedArchaeologist = getArchaeologistListToShow({
     showOnlySelectedArchaeologists,
+    includeHidden: showHiddenArchaeologists,
   }).slice(offset, offset + pageSize);
   const resurrectionDate = new Date(resurrection);
 
@@ -220,7 +231,7 @@ export function SelectArchaeologists({
                     </Text>
                     <Tooltip
                       placement="top"
-                      label="These archeologists are hidden because they are not available by your resurrection time. Adjust your resurrection time to include them."
+                      label="These are archeologists that do not meet your configured criteria."
                     >
                       <Icon
                         as={QuestionIcon}
@@ -229,6 +240,19 @@ export function SelectArchaeologists({
                         h={3}
                       />
                     </Tooltip>
+                    <Text
+                      cursor="pointer"
+                      onClick={() => {
+                        returnToFirstPage();
+                        dispatch(toggleShowHiddenArchaeologists());
+                      }}
+                      variant="secondary"
+                      text-align={'bottom'}
+                      as="i"
+                      fontSize={'12'}
+                    >
+                      {showHiddenArchaeologists ? '(hide)' : '(show)'}
+                    </Text>
                   </HStack>
                 ) : (
                   <Box w="200px" />

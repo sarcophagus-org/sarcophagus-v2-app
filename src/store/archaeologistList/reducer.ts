@@ -8,6 +8,7 @@ export interface ArchaeologistListState {
   failsFilter: string;
   archAddressSearch: string;
   showOnlySelectedArchaeologists: boolean;
+  showHiddenArchaeologists: boolean;
 }
 
 export const archaeologistListInitialState: ArchaeologistListState = {
@@ -17,6 +18,7 @@ export const archaeologistListInitialState: ArchaeologistListState = {
   failsFilter: '',
   archAddressSearch: '',
   showOnlySelectedArchaeologists: false,
+  showHiddenArchaeologists: false,
 };
 
 export function archaeologistListReducer(
@@ -47,6 +49,9 @@ export function archaeologistListReducer(
 
     case ActionType.SetShowSelectedArchaeologists:
       return { ...state, showOnlySelectedArchaeologists: action.payload.selected };
+
+    case ActionType.ToggleShowHiddenArchaeologists:
+      return { ...state, showHiddenArchaeologists: !state.showHiddenArchaeologists };
 
     default:
       return state;

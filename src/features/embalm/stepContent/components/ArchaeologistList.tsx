@@ -46,6 +46,7 @@ export function ArchaeologistList({
     unwrapsFilter,
     failsFilter,
     showOnlySelectedArchaeologists,
+    showHiddenArchaeologists,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -94,7 +95,13 @@ export function ArchaeologistList({
                         p={'0.5'}
                       >
                         Archaeologists (
-                        {getArchaeologistListToShow({ showOnlySelectedArchaeologists })?.length})
+                        {
+                          getArchaeologistListToShow({
+                            showOnlySelectedArchaeologists,
+                            includeHidden: showHiddenArchaeologists,
+                          })?.length
+                        }
+                        )
                       </Button>
                       <FilterInput
                         filterName={SortFilterType.ADDRESS_SEARCH}
