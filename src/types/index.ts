@@ -9,6 +9,7 @@ export interface Archaeologist {
   isOnline: boolean;
   fullPeerId?: PeerId;
   signature?: string;
+  hiddenReason?: string;
   exception?: ArchaeologistException;
 }
 

@@ -32,7 +32,11 @@ export function useArchaeologistList() {
   //  - Interval between current time and set resurrection time is more than the arch's max rewrap interval
   //  - The arch doesn't have enough free bond to match digging fee based on the set resurrection time
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
-    if (resurrectionTimeMs > a.profile.maximumResurrectionTime.toNumber() * 1000) return false;
+    if (resurrectionTimeMs > a.profile.maximumResurrectionTime.toNumber() * 1000) {
+      a.hiddenReason =
+        'This archaeologist will not be available at the resurrection time you have set.';
+      return false;
+    }
 
     const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
     const resurrectionIntervalMs = resurrectionTimeMs - Date.now();
@@ -41,10 +45,20 @@ export function useArchaeologistList() {
       ? ethers.constants.Zero
       : a.profile.minimumDiggingFeePerSecond.mul(Math.trunc(resurrectionIntervalMs / 1000));
 
-    const archIsVisible =
-      resurrectionIntervalMs < maxRewrapIntervalMs && estimatedCurse.lte(a.profile.freeBond);
+    if (resurrectionIntervalMs > maxRewrapIntervalMs) {
+      a.hiddenReason =
+        'The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus.';
+      return false;
+    }
 
-    return archIsVisible;
+    if (estimatedCurse.gt(a.profile.freeBond)) {
+      a.hiddenReason =
+        'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
+      return false;
+    }
+
+    a.hiddenReason = undefined;
+    return true;
   });
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
