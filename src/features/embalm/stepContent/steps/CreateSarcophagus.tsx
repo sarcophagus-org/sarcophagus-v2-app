@@ -15,7 +15,7 @@ import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import { setCancelToken, goToStep, setArchaeologists } from '../../../../store/embalm/actions';
+import { goToStep, setArchaeologists, setCancelToken } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -35,7 +35,7 @@ export function CreateSarcophagus() {
   const { getProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const cancelCreateToken = useSelector(s => s.embalmState.cancelCreateToken);
+  const { cancelCreateToken } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -138,6 +138,9 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
+  // TODO: Replace the getTotalFeesInSarco with the calculateProjectedDiggingFees() function
+  // The getTotalFeesInSarco function is not up to date with the digging fees per second update. Use
+  // the calculateProjectedDiggingFees() helper function instead
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     selectedArchaeologists,
     protocolFeeBasePercentage
