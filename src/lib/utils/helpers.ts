@@ -103,7 +103,7 @@ export const filterSplit = <T>(arr: T[], predicate: (item: T) => boolean): [T[],
 };
 
 export function humanizeUnixTimestamp(unixTimestamp: number): string {
-  return new Date(unixTimestamp).toLocaleDateString('en-US');
+  return new Date(unixTimestamp).toLocaleDateString();
 }
 
 export function removeNonIntChars(value: string): string {
