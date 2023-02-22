@@ -7,7 +7,7 @@ export interface ArchaeologistListState {
   unwrapsFilter: string;
   failsFilter: string;
   archAddressSearch: string;
-  showSelectedArchaeologists: boolean;
+  showOnlySelectedArchaeologists: boolean;
 }
 
 export const archaeologistListInitialState: ArchaeologistListState = {
@@ -16,7 +16,7 @@ export const archaeologistListInitialState: ArchaeologistListState = {
   unwrapsFilter: '',
   failsFilter: '',
   archAddressSearch: '',
-  showSelectedArchaeologists: false,
+  showOnlySelectedArchaeologists: false,
 };
 
 export function archaeologistListReducer(
@@ -46,7 +46,7 @@ export function archaeologistListReducer(
       return { ...state, archAddressSearch: action.payload.search };
 
     case ActionType.SetShowSelectedArchaeologists:
-      return { ...state, showSelectedArchaeologists: action.payload.selected };
+      return { ...state, showOnlySelectedArchaeologists: action.payload.selected };
 
     default:
       return state;

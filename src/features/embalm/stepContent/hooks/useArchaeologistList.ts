@@ -18,7 +18,7 @@ export function useArchaeologistList() {
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
-    showSelectedArchaeologists,
+    showOnlySelectedArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
   // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
@@ -26,7 +26,7 @@ export function useArchaeologistList() {
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 
-  // The arch is filtered out if:
+  // The archaeologist is not hidden out if:
   //  - resurrection time has been set further than the arch's max resurrection time
   //  - Interval between current time and set resurrection time is more than the arch's max rewrap interval
   //  - The arch doesn't have enough free bond to match digging fee based on the set resurrection time
@@ -111,11 +111,11 @@ export function useArchaeologistList() {
   };
 
   const getArchaeologistListToShow = (args: {
-    onlyShowSelected?: boolean;
+    showOnlySelectedArchaeologists?: boolean;
     includeHidden?: boolean;
   }): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
-      if (args.onlyShowSelected) {
+      if (args.showOnlySelectedArchaeologists) {
         return (
           selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
         );
@@ -152,9 +152,8 @@ export function useArchaeologistList() {
     onClickSortFails,
     onClickSortUnwraps,
     selectedArchaeologists,
-    showSelectedArchaeologists,
+    showOnlySelectedArchaeologists,
     SortDirection,
-    // sortedArchaeologists,
     getArchaeologistListToShow,
     unwrapsFilter,
   };

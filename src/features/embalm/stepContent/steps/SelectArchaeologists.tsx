@@ -38,7 +38,7 @@ export function SelectArchaeologists({
   // Load the archaeologists' data
   useLoadArchaeologists();
 
-  const { sortedFilteredArchaeologist, showSelectedArchaeologists, hiddenArchaeologists } =
+  const { getArchaeologistListToShow, showOnlySelectedArchaeologists, hiddenArchaeologists } =
     useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
@@ -46,7 +46,7 @@ export function SelectArchaeologists({
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: sortedFilteredArchaeologist(showSelectedArchaeologists).length,
+      total: getArchaeologistListToShow({ showOnlySelectedArchaeologists }).length,
       initialState: { currentPage: 1, pageSize: defaultPageSize },
       limits: {
         outer: outerLimit,
@@ -54,10 +54,9 @@ export function SelectArchaeologists({
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist(showSelectedArchaeologists).slice(
-    offset,
-    offset + pageSize
-  );
+  const paginatedArchaeologist = getArchaeologistListToShow({
+    showOnlySelectedArchaeologists,
+  }).slice(offset, offset + pageSize);
   const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
