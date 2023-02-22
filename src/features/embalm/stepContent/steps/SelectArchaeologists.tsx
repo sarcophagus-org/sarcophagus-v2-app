@@ -258,27 +258,6 @@ export function SelectArchaeologists({
                   <Box w="200px" />
                 )}
               </Flex>
-
-              <HStack
-                mr={2}
-                mt={3}
-              >
-                <SummaryErrorIcon />
-                <Text
-                  ml={2}
-                  variant="secondary"
-                  textAlign={'center'}
-                >
-                  = accused archaeologists
-                </Text>
-                <Text
-                  text-align={'bottom'}
-                  as="i"
-                  fontSize={'12'}
-                >
-                  (show)
-                </Text>
-              </HStack>
             </Box>
           </VStack>
         </PaginationContainer>
