@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { orderBy, keys } from 'lodash';
 import { constants, ethers } from 'ethers';
-import { filterSplit } from 'lib/utils/helpers';
+import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
+import { monthSeconds } from 'lib/constants';
 
 export function useArchaeologistList() {
   const dispatch = useDispatch();
@@ -32,9 +33,11 @@ export function useArchaeologistList() {
   //  - Interval between current time and set resurrection time is more than the arch's max rewrap interval
   //  - The arch doesn't have enough free bond to match digging fee based on the set resurrection time
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
-    if (resurrectionTimeMs > a.profile.maximumResurrectionTime.toNumber() * 1000) {
-      a.hiddenReason =
-        'This archaeologist will not be available at the resurrection time you have set.';
+    const maxResurrectionTimeMs = a.profile.maximumResurrectionTime.toNumber() * 1000;
+    if (resurrectionTimeMs > maxResurrectionTimeMs) {
+      a.hiddenReason = `This archaeologist will not be available at the resurrection time you have set. Available until: ${humanizeUnixTimestamp(
+        maxResurrectionTimeMs
+      )}`;
       return false;
     }
 
@@ -46,8 +49,9 @@ export function useArchaeologistList() {
       : a.profile.minimumDiggingFeePerSecond.mul(Math.trunc(resurrectionIntervalMs / 1000));
 
     if (resurrectionIntervalMs > maxRewrapIntervalMs) {
-      a.hiddenReason =
-        'The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus.';
+      a.hiddenReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
+        maxRewrapIntervalMs / (monthSeconds * 1000)
+      )} months`;
       return false;
     }
 
@@ -141,8 +145,7 @@ export function useArchaeologistList() {
         (arch.ensName?.toLowerCase().includes(archAddressSearch.toLowerCase()) ||
           arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase())) &&
         arch.profile.minimumDiggingFeePerSecond
-          // TODO: Import and use constant here
-          .mul(2628288)
+          .mul(monthSeconds)
           .lte(
             (diggingFeesFilter && ethers.utils.parseEther(diggingFeesFilter)) || constants.MaxInt256
           ) &&
