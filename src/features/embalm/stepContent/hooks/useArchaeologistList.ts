@@ -4,7 +4,7 @@ import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeolo
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { orderBy, keys } from 'lodash';
-import { constants, ethers, BigNumber } from 'ethers';
+import { constants, ethers } from 'ethers';
 import { filterSplit } from 'lib/utils/helpers';
 
 export function useArchaeologistList() {
@@ -86,7 +86,7 @@ export function useArchaeologistList() {
     dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, directionValue));
   }
 
-  const sortedArchaeologist = (): Archaeologist[] => {
+  const sortedArchaeologists = (): Archaeologist[] => {
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
       return orderBy(
         visibleArchaeologists,
@@ -110,9 +110,12 @@ export function useArchaeologistList() {
     }
   };
 
-  const sortedFilteredArchaeologist = (onlyShowSelected: boolean): Archaeologist[] => {
+  const getArchaeologistListToShow = (args: {
+    onlyShowSelected?: boolean;
+    includeHidden?: boolean;
+  }): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
-      if (onlyShowSelected) {
+      if (args.onlyShowSelected) {
         return (
           selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
         );
@@ -120,16 +123,21 @@ export function useArchaeologistList() {
       return true;
     }
 
-    return sortedArchaeologist()?.filter(
+    const filteredSorted = sortedArchaeologists()?.filter(
       arch =>
-        arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(
-          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFeePerSecond)).toFixed(0)
-        ).lte(diggingFeesFilter || constants.MaxInt256) &&
-        BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
-        BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
-        shouldFilterBySelected(arch)
+        shouldFilterBySelected(arch) &&
+        (arch.ensName?.toLowerCase().includes(archAddressSearch.toLowerCase()) ||
+          arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase())) &&
+        arch.profile.minimumDiggingFeePerSecond
+          .mul(2628288)
+          .lte(
+            (diggingFeesFilter && ethers.utils.parseEther(diggingFeesFilter)) || constants.MaxInt256
+          ) &&
+        arch.profile.successes.gte(unwrapsFilter || constants.MinInt256) &&
+        arch.profile.failures.lte(failsFilter || constants.MaxInt256)
     );
+
+    return args.includeHidden ? [...filteredSorted, ...hiddenArchaeologists] : filteredSorted;
   };
 
   return {
@@ -146,8 +154,8 @@ export function useArchaeologistList() {
     selectedArchaeologists,
     showSelectedArchaeologists,
     SortDirection,
-    sortedArchaeologist,
-    sortedFilteredArchaeologist,
+    // sortedArchaeologists,
+    getArchaeologistListToShow,
     unwrapsFilter,
   };
 }

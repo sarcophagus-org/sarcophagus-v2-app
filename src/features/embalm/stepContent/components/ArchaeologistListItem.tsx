@@ -38,13 +38,13 @@ export function ArchaeologistListItem({
   const networkConfig = useNetworkConfig();
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
-  const { data } = useEnsName({
+  const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
     chainId: networkConfig.chainId,
   });
 
   const formattedArchAddress = () => {
-    return data ?? formatAddress(archaeologist.profile.archAddress);
+    return ensName ?? formatAddress(archaeologist.profile.archAddress);
   };
 
   function TableContent({ children, icon, checkbox }: TableContentProps) {

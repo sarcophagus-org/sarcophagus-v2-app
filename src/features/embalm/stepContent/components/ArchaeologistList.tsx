@@ -35,7 +35,7 @@ export function ArchaeologistList({
   const {
     handleCheckArchaeologist,
     selectedArchaeologists,
-    sortedFilteredArchaeologist,
+    getArchaeologistListToShow,
     onClickSortDiggingFees,
     onClickSortUnwraps,
     onClickSortFails,
@@ -45,7 +45,7 @@ export function ArchaeologistList({
     archAddressSearch,
     unwrapsFilter,
     failsFilter,
-    showSelectedArchaeologists,
+    showSelectedArchaeologists: onlyShowSelected,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -93,8 +93,7 @@ export function ArchaeologistList({
                         color="text.primary"
                         p={'0.5'}
                       >
-                        Archaeologists (
-                        {sortedFilteredArchaeologist(showSelectedArchaeologists)?.length})
+                        Archaeologists ({getArchaeologistListToShow({ onlyShowSelected })?.length})
                       </Button>
                       <FilterInput
                         filterName={SortFilterType.ADDRESS_SEARCH}
