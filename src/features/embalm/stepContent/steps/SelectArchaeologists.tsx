@@ -242,14 +242,17 @@ export function SelectArchaeologists({
                     </Tooltip>
                     <Text
                       cursor="pointer"
-                      onClick={() => {
-                        returnToFirstPage();
-                        dispatch(toggleShowHiddenArchaeologists());
+                      _hover={{
+                        textDecoration: 'underline',
                       }}
                       variant="secondary"
                       text-align={'bottom'}
                       as="i"
                       fontSize={'12'}
+                      onClick={() => {
+                        returnToFirstPage();
+                        dispatch(toggleShowHiddenArchaeologists());
+                      }}
                     >
                       {showHiddenArchaeologists ? '(hide)' : '(show)'}
                     </Text>
