@@ -31,7 +31,7 @@ export function ArchaeologistListItem({
   includeDialButton,
   isDialing,
   setIsDialing,
-  onClick,
+  onClick: handleClickRow,
 }: ArchaeologistListItemProps) {
   const { testDialArchaeologist } = useAttemptDialArchaeologists(setIsDialing);
   const dispatch = useDispatch();
@@ -82,18 +82,19 @@ export function ArchaeologistListItem({
     );
   }
 
-  const handleClickRow = () => {
-    onClick();
-  };
-
   return (
-
     <Tooltip
       label={archaeologist.hiddenReason}
       placement="top"
     >
       <Tr
-        background={isSelected ? (archaeologist.exception || archaeologist.hiddenReason ? 'background.red' : 'brand.50') : ''}
+        background={
+          isSelected
+            ? archaeologist.exception || archaeologist.hiddenReason
+              ? 'background.red'
+              : 'brand.50'
+            : ''
+        }
         onClick={() => handleClickRow()}
         cursor="pointer"
         _hover={isSelected ? {} : { background: 'brand.0' }}
@@ -144,7 +145,6 @@ export function ArchaeologistListItem({
           <></>
         )}
       </Tr>
-
     </Tooltip>
   );
 }

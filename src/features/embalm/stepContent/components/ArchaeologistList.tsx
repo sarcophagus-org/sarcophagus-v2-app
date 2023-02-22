@@ -35,7 +35,7 @@ export function ArchaeologistList({
   const {
     handleCheckArchaeologist,
     selectedArchaeologists,
-    getArchaeologistListToShow,
+    archaeologistListVisible,
     onClickSortDiggingFees,
     onClickSortUnwraps,
     onClickSortFails,
@@ -45,8 +45,6 @@ export function ArchaeologistList({
     archAddressSearch,
     unwrapsFilter,
     failsFilter,
-    showOnlySelectedArchaeologists,
-    showHiddenArchaeologists,
   } = useArchaeologistList();
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
@@ -94,14 +92,7 @@ export function ArchaeologistList({
                         color="text.primary"
                         p={'0.5'}
                       >
-                        Archaeologists (
-                        {
-                          getArchaeologistListToShow({
-                            showOnlySelectedArchaeologists,
-                            includeHidden: showHiddenArchaeologists,
-                          })?.length
-                        }
-                        )
+                        Archaeologists ({archaeologistListVisible()?.length})
                       </Button>
                       <FilterInput
                         filterName={SortFilterType.ADDRESS_SEARCH}
@@ -198,7 +189,7 @@ export function ArchaeologistList({
                       key={arch.profile.archAddress}
                       archaeologist={arch}
                       onClick={() => {
-                        if (showDial) return;
+                        if (showDial || arch.hiddenReason) return;
                         handleCheckArchaeologist(arch);
                       }}
                       includeDialButton={showDial!}

@@ -40,22 +40,15 @@ export function SelectArchaeologists({
 
   const dispatch = useDispatch();
 
-  const {
-    getArchaeologistListToShow,
-    showOnlySelectedArchaeologists,
-    hiddenArchaeologists,
-    showHiddenArchaeologists,
-  } = useArchaeologistList();
+  const { archaeologistListVisible, hiddenArchaeologists, showHiddenArchaeologists } =
+    useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
   const [paginationSize, setPaginationSize] = useState<number>(defaultPageSize);
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: getArchaeologistListToShow({
-        showOnlySelectedArchaeologists,
-        includeHidden: showHiddenArchaeologists,
-      }).length,
+      total: archaeologistListVisible().length,
       initialState: { currentPage: 1, pageSize: defaultPageSize },
       limits: {
         outer: outerLimit,
@@ -63,10 +56,7 @@ export function SelectArchaeologists({
       },
     });
 
-  const paginatedArchaeologist = getArchaeologistListToShow({
-    showOnlySelectedArchaeologists,
-    includeHidden: showHiddenArchaeologists,
-  }).slice(offset, offset + pageSize);
+  const paginatedArchaeologist = archaeologistListVisible().slice(offset, offset + pageSize);
   const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {

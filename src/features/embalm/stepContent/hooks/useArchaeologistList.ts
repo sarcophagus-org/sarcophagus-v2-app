@@ -125,12 +125,9 @@ export function useArchaeologistList() {
     }
   };
 
-  const getArchaeologistListToShow = (args: {
-    showOnlySelectedArchaeologists: boolean;
-    includeHidden: boolean;
-  }): Archaeologist[] => {
+  const archaeologistListVisible = (): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
-      if (args.showOnlySelectedArchaeologists) {
+      if (showOnlySelectedArchaeologists) {
         return (
           selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
         );
@@ -153,7 +150,9 @@ export function useArchaeologistList() {
         arch.profile.failures.lte(failsFilter || constants.MaxInt256)
     );
 
-    return args.includeHidden ? [...filteredSorted, ...hiddenArchaeologists] : filteredSorted;
+    return showHiddenArchaeologists && !showOnlySelectedArchaeologists
+      ? [...filteredSorted, ...hiddenArchaeologists]
+      : filteredSorted;
   };
 
   return {
@@ -171,7 +170,7 @@ export function useArchaeologistList() {
     showOnlySelectedArchaeologists,
     showHiddenArchaeologists,
     SortDirection,
-    getArchaeologistListToShow,
+    archaeologistListVisible,
     unwrapsFilter,
   };
 }
