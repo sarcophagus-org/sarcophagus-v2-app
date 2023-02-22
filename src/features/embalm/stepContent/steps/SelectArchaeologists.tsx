@@ -1,6 +1,5 @@
 import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip, chakra } from '@chakra-ui/react';
 import { useState } from 'react';
-import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { SetPaginationSize, IPageSizeSetByOption } from '../components/SetPaginationSize';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
