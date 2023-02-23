@@ -20,7 +20,7 @@ export function useArchaeologistList() {
     failsFilter,
     archAddressSearch,
     showOnlySelectedArchaeologists,
-    showHiddenArchaeologists
+    showHiddenArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
@@ -67,7 +67,7 @@ export function useArchaeologistList() {
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
     [SortDirection.NONE]: undefined,
     [SortDirection.ASC]: 'asc',
-    [SortDirection.DESC]: 'desc'
+    [SortDirection.DESC]: 'desc',
   };
 
   const handleCheckArchaeologist = useCallback(
@@ -108,7 +108,7 @@ export function useArchaeologistList() {
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
       return orderBy(
         visibleArchaeologists,
-        function(arch) {
+        function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
             sortValue = arch.profile.minimumDiggingFeePerSecond;
@@ -173,6 +173,6 @@ export function useArchaeologistList() {
     showHiddenArchaeologists,
     SortDirection,
     archaeologistListVisible,
-    unwrapsFilter
+    unwrapsFilter,
   };
 }
