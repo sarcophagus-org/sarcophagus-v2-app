@@ -84,7 +84,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
                 variant="bold"
                 as="u"
               >
-                {formatSarco(diggingFees)} SARCO
+                {formatSarco(diggingFees.toString())} SARCO
               </Text>
             </Text>
             <Text

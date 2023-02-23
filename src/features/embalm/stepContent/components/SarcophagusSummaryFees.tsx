@@ -9,11 +9,12 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function SarcophagusSummaryFees() {
-  const { uploadPrice, selectedArchaeologists } = useSelector(x => x.embalmState);
+  const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
   const { balance } = useSarcoBalance();
 
   const { formattedTotalDiggingFees, totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    resurrection,
     selectedArchaeologists,
     protocolFeeBasePercentage
   );
