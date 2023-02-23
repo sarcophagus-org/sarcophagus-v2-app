@@ -23,8 +23,8 @@ import { SortFilterType } from 'store/archaeologistList/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
+import { useDispatch, useSelector } from 'store/index';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
-import { useDispatch } from 'store/index';
 
 export function ArchaeologistList({
   showDial,
@@ -48,6 +48,8 @@ export function ArchaeologistList({
     unwrapsFilter,
     failsFilter,
   } = useArchaeologistList();
+
+  const resurrectionTime = useSelector(s => s.embalmState.resurrection);
 
   const sortIconsMap: { [key: number]: JSX.Element } = {
     [SortDirection.NONE]: <UpDownIcon />,
@@ -122,7 +124,21 @@ export function ArchaeologistList({
                           onClick={onClickSortDiggingFees}
                           p={'0.5'}
                         >
-                          <Text> Fees </Text>
+                          <Flex
+                            direction="column"
+                            alignItems="flex-start"
+                          >
+                            <Text> Fees </Text>
+                            {resurrectionTime === 0 && (
+                              <Text
+                                fontSize="xs"
+                                mt={1}
+                                variant="secondary"
+                              >
+                                <i>SARCO/month</i>
+                              </Text>
+                            )}
+                          </Flex>
                         </Button>
                         <Tooltip
                           label="Amount to be paid for each rewrap"

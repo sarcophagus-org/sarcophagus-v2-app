@@ -1,17 +1,18 @@
-import {
-  Text,
-  Box,
-  Flex,
-  useColorModeValue,
-  HStack,
-  Checkbox,
-  Icon,
-  Tooltip,
-} from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { getTotalFeesInSarco } from 'lib/utils/helpers';
-import { useDispatch, useSelector } from 'store/index';
+import {
+  Box,
+  Checkbox,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  Tooltip,
+  useColorModeValue,
+} from '@chakra-ui/react';
+import { calculateProjectedDiggingFees, formatSarco } from 'lib/utils/helpers';
+import { useMemo } from 'react';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
+import { useDispatch, useSelector } from 'store/index';
 
 interface ResetPage {
   resetPage: (value: React.SetStateAction<number>) => void;
@@ -19,13 +20,22 @@ interface ResetPage {
 
 export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const dispatch = useDispatch();
-  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const { showOnlySelectedArchaeologists } = useSelector(x => x.archaeologistListState);
 
   function toggleShowOnlySelected() {
     dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
     resetPage(1);
   }
+
+  const diggingFees = useMemo(
+    () =>
+      calculateProjectedDiggingFees(
+        selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
+        resurrection
+      ),
+    [resurrection, selectedArchaeologists]
+  );
 
   return (
     <Box mt={10}>
@@ -54,37 +64,40 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
                 >
                   {selectedArchaeologists.length === 0 ? '0' : selectedArchaeologists.length}
                 </Text>
-                selected arches.
+                selected archaeologists
               </Text>
             </HStack>
           </HStack>
         </Flex>
-
-        <HStack mr={2}>
-          <Tooltip
-            label="This is how much SARCO it will cost you each time you rewrap your Sarchophagus"
-            placement="top"
-          >
-            <Icon as={InfoOutlineIcon}></Icon>
-          </Tooltip>
-          <Text>
-            Total Fee:
-            <Text
-              ml={1.5}
-              variant="bold"
-              as="u"
+        {resurrection ? (
+          <HStack mr={2}>
+            <Tooltip
+              label="This is how much SARCO it will cost you each time you rewrap your Sarchophagus"
+              placement="top"
             >
-              {getTotalFeesInSarco(selectedArchaeologists).formattedTotalDiggingFees} SARCO
+              <Icon as={InfoOutlineIcon}></Icon>
+            </Tooltip>
+            <Text>
+              Total Fee:
+              <Text
+                ml={1.5}
+                variant="bold"
+                as="u"
+              >
+                {formatSarco(diggingFees)} SARCO
+              </Text>
             </Text>
-          </Text>
-          <Text
-            variant="secondary"
-            as="i"
-            fontSize="10"
-          >
-            +1% protocol fee
-          </Text>
-        </HStack>
+            <Text
+              variant="secondary"
+              as="i"
+              fontSize="10"
+            >
+              +1% protocol fee
+            </Text>
+          </HStack>
+        ) : (
+          <></>
+        )}
       </Flex>
     </Box>
   );

@@ -1,14 +1,13 @@
-import { Flex, Td, Text, Tr, Button, Checkbox, Tooltip, Box } from '@chakra-ui/react';
-import { Archaeologist } from '../../../../types/index';
-import { formatAddress } from 'lib/utils/helpers';
-import { selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
-import { ethers } from 'ethers';
-import { Dispatch, SetStateAction } from 'react';
-import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
+import { Box, Button, Checkbox, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { SarcoTokenIcon } from 'components/icons';
-import { useDispatch } from 'store/index';
-import { useEnsName } from 'wagmi';
 import { useNetworkConfig } from 'lib/config';
+import { convertSarcoPerSecondToPerMonth, formatAddress, formatSarco } from 'lib/utils/helpers';
+import { Dispatch, SetStateAction, useMemo } from 'react';
+import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
+import { useDispatch, useSelector } from 'store/index';
+import { useEnsName } from 'wagmi';
+import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
+import { Archaeologist } from '../../../../types/index';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -38,6 +37,16 @@ export function ArchaeologistListItem({
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
+
+  const resurrectionTime = useSelector(s => s.embalmState.resurrection);
+
+  const diggingFees = useMemo(() => {
+    const nowSec = Math.floor(Date.now() / 1000);
+    const resurrectionTimeSec = Math.floor(resurrectionTime / 1000);
+    return resurrectionTimeSec > nowSec
+      ? archaeologist.profile.minimumDiggingFeePerSecond.mul(resurrectionTimeSec - nowSec)
+      : null;
+  }, [archaeologist.profile.minimumDiggingFeePerSecond, resurrectionTime]);
 
   const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
@@ -113,14 +122,13 @@ export function ArchaeologistListItem({
           icon={true}
           checkbox={false}
         >
-          {/* TODO: this shows monthly values. will need to be updated to show actual digging fees based on resurrection time */}
-          {/* We may want to show the monthly values on the "archaeologists" page */}
-          {Number(
-            ethers.utils.formatEther(archaeologist.profile.minimumDiggingFeePerSecond.mul(2628288))
-          )
-            .toFixed(2)
-            .toString()
-            .concat(' SARCO/month')}
+          {diggingFees
+            ? formatSarco(diggingFees.toString())
+            : formatSarco(
+                convertSarcoPerSecondToPerMonth(
+                  archaeologist.profile.minimumDiggingFeePerSecond.toString()
+                )
+              )}
         </TableContent>
         <TableContent
           icon={false}
