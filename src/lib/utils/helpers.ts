@@ -269,6 +269,6 @@ export function formatSarco(valueInWei: string | number, precision: number = 2):
 // only used to display to the user, never as an argument to the smart contracts.
 export function convertSarcoPerSecondToPerMonth(value: string | number): number {
   const sarcoPerSecond = typeof value === 'string' ? parseFloat(value) : value;
-  const averageNumberOfSecondsPerMonth = 2628000;
+  const averageNumberOfSecondsPerMonth = 2628288;
   return sarcoPerSecond * averageNumberOfSecondsPerMonth;
 }
