@@ -172,6 +172,28 @@ export function getTotalFeesInSarco(
 }
 
 /**
+ *
+ * @param diggingFeeRates An array of the archaeologist's digging fees per second rates
+ * @param resurrectionTimestamp The timestamp of the resurrection in ms
+ * @returns The total projected digging fees as a string
+ */
+export function calculateProjectedDiggingFees(
+  diggingFeeRates: BigNumber[],
+  resurrectionTimestamp: number
+): string {
+  if (resurrectionTimestamp === 0) return '0';
+  const totalDiggingFeesPerSecond = diggingFeeRates.reduce(
+    (acc, curr) => acc.add(curr),
+    ethers.constants.Zero
+  );
+
+  const resurrectionSeconds = Math.floor(resurrectionTimestamp / 1000);
+  const nowSeconds = Math.floor(Date.now() / 1000);
+
+  return totalDiggingFeesPerSecond.mul(resurrectionSeconds - nowSeconds).toString();
+}
+
+/**
  * Builds a resurrection date string from a BigNumber
  * Ex: 09.22.2022 7:30pm (12 Days)
  * @param resurrectionTime
@@ -219,17 +241,34 @@ export async function sign(
   return ethers.utils.splitSignature(signature);
 }
 
+/**
+ * Reduces the number of decimals displayed for sarco value (or any float). If the value is a whole
+ * number, decimals will be hidden. If a precision of 2 is set and the value is 0.0000452, then
+ * "< 0.01" will be returned.
+ *
+ * @param valueInWei The value to be formateed
+ * @param precision The number of decimal places to show
+ * @returns A formatted value
+ */
 export function formatSarco(valueInWei: string | number, precision: number = 2): string {
-  const value = formatEther(valueInWei);
+  const value = formatEther(valueInWei.toString());
   const numericValue: number = Number(value);
   if (isNaN(numericValue)) {
     return value.toString();
   }
   const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
 
-  if (formattedValue === '0' && parseInt(value) > 0) {
+  if (formattedValue === '0' && parseFloat(value) > 0) {
     return `< 0.${'0'.repeat(precision - 1)}1`;
   }
 
   return formattedValue;
+}
+
+// This function estimates sarco per month based on average number of days per month. This value is
+// only used to display to the user, never as an argument to the smart contracts.
+export function convertSarcoPerSecondToPerMonth(value: string | number): number {
+  const sarcoPerSecond = typeof value === 'string' ? parseFloat(value) : value;
+  const averageNumberOfSecondsPerMonth = 2628288;
+  return sarcoPerSecond * averageNumberOfSecondsPerMonth;
 }
