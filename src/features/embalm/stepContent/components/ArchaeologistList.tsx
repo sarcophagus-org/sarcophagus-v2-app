@@ -18,12 +18,13 @@ import { QuestionIcon } from '@chakra-ui/icons';
 import { DownIcon, UpDownIcon, UpIcon } from 'components/icons';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import { SortDirection } from 'store/embalm/actions';
+import { deselectArchaeologist, SortDirection } from 'store/embalm/actions';
 import { SortFilterType } from 'store/archaeologistList/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
+import { useDispatch } from 'store/index';
 
 export function ArchaeologistList({
   showDial,
@@ -35,6 +36,7 @@ export function ArchaeologistList({
   const {
     handleCheckArchaeologist,
     selectedArchaeologists,
+    hiddenArchaeologists,
     archaeologistListVisible,
     onClickSortDiggingFees,
     onClickSortUnwraps,
@@ -63,6 +65,14 @@ export function ArchaeologistList({
       ? sortIconsMap[archaeologistFilterSort.sortDirection]
       : sortIconsMap[SortDirection.NONE];
   }
+
+  const dispatch = useDispatch();
+
+  hiddenArchaeologists.map(a => {
+    if (selectedArchaeologists.includes(a)) {
+      dispatch(deselectArchaeologist(a.profile.archAddress));
+    }
+  });
 
   return (
     <Flex
