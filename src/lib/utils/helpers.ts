@@ -64,7 +64,7 @@ export function readFileDataAsBase64(file: File): Promise<{ type: string; data: 
 
       resolve({
         type: res.slice(0, i),
-        data: Buffer.from(res.slice(i + 1), 'base64'),
+        data: Buffer.from(res.slice(i + 1), 'base64')
       });
     };
 
@@ -214,7 +214,7 @@ export function getTotalFeesInSarco(
   return {
     totalDiggingFees,
     formattedTotalDiggingFees: formatSarco(totalDiggingFees.toString()),
-    protocolFee,
+    protocolFee
   };
 }
 
@@ -268,8 +268,7 @@ export async function sign(
 
 // This function estimates sarco per month based on average number of days per month. This value is
 // only used to display to the user, never as an argument to the smart contracts.
-export function convertSarcoPerSecondToPerMonth(value: string | number): number {
-  const sarcoPerSecond = typeof value === 'string' ? parseFloat(value) : value;
+export function convertSarcoPerSecondToPerMonth(diggingFeePerSecond: string): string {
   const averageNumberOfSecondsPerMonth = 2628288;
-  return sarcoPerSecond * averageNumberOfSecondsPerMonth;
+  return BigNumber.from(diggingFeePerSecond).mul(averageNumberOfSecondsPerMonth).toString();
 }
