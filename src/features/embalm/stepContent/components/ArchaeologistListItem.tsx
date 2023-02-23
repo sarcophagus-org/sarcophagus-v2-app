@@ -1,4 +1,4 @@
-import { Flex, Td, Text, Tr, Button, Checkbox, Tooltip } from '@chakra-ui/react';
+import { Flex, Td, Text, Tr, Button, Checkbox, Tooltip, Box } from '@chakra-ui/react';
 import { Archaeologist } from '../../../../types/index';
 import { formatAddress } from 'lib/utils/helpers';
 import { selectArchaeologist, deselectArchaeologist } from 'store/embalm/actions';
@@ -23,6 +23,7 @@ interface TableContentProps {
   children: React.ReactNode;
   icon: boolean;
   checkbox: boolean;
+  align?: string;
 }
 
 export function ArchaeologistListItem({
@@ -47,13 +48,13 @@ export function ArchaeologistListItem({
     return ensName ?? formatAddress(archaeologist.profile.archAddress);
   };
 
-  function TableContent({ children, icon, checkbox }: TableContentProps) {
+  function TableContent({ children, icon, checkbox, align }: TableContentProps) {
     return (
       <Td
         borderBottom="none"
         isNumeric
       >
-        <Flex justify={icon || checkbox ? 'left' : 'center'}>
+        <Flex justify={align || (icon || checkbox ? 'left' : 'center')}>
           {icon && <SarcoTokenIcon boxSize="18px" />}
           {checkbox && (
             <Checkbox
@@ -65,8 +66,9 @@ export function ArchaeologistListItem({
                   dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
                 }
               }}
-            ></Checkbox>
+            />
           )}
+          <Box width={!icon && !checkbox ? '4' : '0'} />
           <Text
             ml={3}
             bg={archaeologist.hiddenReason ? 'transparent.red' : 'grayBlue.950'}
@@ -101,7 +103,8 @@ export function ArchaeologistListItem({
       >
         <TableContent
           icon={false}
-          checkbox={true}
+          checkbox={!archaeologist.hiddenReason}
+          align="left"
         >
           {formattedArchAddress()}
         </TableContent>
