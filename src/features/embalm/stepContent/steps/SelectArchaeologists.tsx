@@ -138,17 +138,16 @@ export function SelectArchaeologists({
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
                 <Flex px={3}>
-                  <HStack direction="row">
-                    <HStack>
-                      <Text variant="secondary">Items per page:</Text>
-                      <SetPaginationSize
-                        handlePageSizeChange={handlePageSizeChange}
-                        paginationSize={paginationSize}
-                      ></SetPaginationSize>
-                    </HStack>
+                  <HStack>
+                    <Text variant="secondary">Items per page:</Text>
+                    <SetPaginationSize
+                      handlePageSizeChange={handlePageSizeChange}
+                      paginationSize={paginationSize}
+                    ></SetPaginationSize>
                   </HStack>
                 </Flex>
 
+                {/* PAGINATION CONTROLS */}
                 <Flex>
                   <PaginationPrevious
                     backgroundColor={'transparent'}
@@ -164,6 +163,7 @@ export function SelectArchaeologists({
                     ></Icon>
                     Prev
                   </PaginationPrevious>
+                  <Box width="5" />
                   <PaginationPageGroup
                     isInline
                     align="center"
@@ -197,6 +197,7 @@ export function SelectArchaeologists({
                       />
                     ))}
                   </PaginationPageGroup>
+                  <Box width="5" />
                   <PaginationNext
                     backgroundColor={'transparent'}
                     color="brand.950"
@@ -213,44 +214,46 @@ export function SelectArchaeologists({
                   </PaginationNext>
                 </Flex>
 
-                {hiddenArchaeologists.length > 0 ? (
-                  <HStack mr={2}>
-                    <Text variant="secondary">
-                      {hiddenArchaeologists.length} Hidden Archaeologists
-                    </Text>
-                    <Tooltip
-                      placement="top"
-                      label="These are archeologists that do not meet your configured criteria."
-                    >
-                      <Icon
-                        as={QuestionIcon}
-                        color="brand.500"
-                        w={3}
-                        h={3}
-                      />
-                    </Tooltip>
-                    <Text
-                      cursor="pointer"
-                      _hover={{
-                        textDecoration: 'underline',
-                      }}
-                      variant="secondary"
-                      text-align={'bottom'}
-                      as="i"
-                      fontSize={'12'}
-                      onClick={() => {
-                        returnToFirstPage();
-                        dispatch(toggleShowHiddenArchaeologists());
-                      }}
-                    >
-                      {showHiddenArchaeologists ? '(hide)' : '(show)'}
-                    </Text>
-                  </HStack>
-                ) : (
-                  <Box w="200px" />
-                )}
+                <Box width="200px" />
               </Flex>
             </Box>
+
+            {hiddenArchaeologists.length > 0 ? (
+              <HStack mr={2}>
+                <Text variant="secondary">
+                  {hiddenArchaeologists.length} Ineligible Archaeologists
+                </Text>
+                <Tooltip
+                  placement="top"
+                  label="These are archeologists that do not meet your configured criteria."
+                >
+                  <Icon
+                    as={QuestionIcon}
+                    color="brand.500"
+                    w={3}
+                    h={3}
+                  />
+                </Tooltip>
+                <Text
+                  cursor="pointer"
+                  _hover={{
+                    textDecoration: 'underline',
+                  }}
+                  variant="secondary"
+                  text-align={'bottom'}
+                  as="i"
+                  fontSize={'12'}
+                  onClick={() => {
+                    returnToFirstPage();
+                    dispatch(toggleShowHiddenArchaeologists());
+                  }}
+                >
+                  {showHiddenArchaeologists ? '(hide)' : '(show)'}
+                </Text>
+              </HStack>
+            ) : (
+              <></>
+            )}
           </VStack>
         </PaginationContainer>
       </Pagination>
