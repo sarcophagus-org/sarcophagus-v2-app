@@ -17,6 +17,7 @@ import { NotFoundPage } from './NotFoundPage';
 import { CreateSarcophagusContextProvider } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
 import { WalletDisconnectPage } from './WalletDisconnectPage';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
+import { AccusePage } from './AccusePage';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -28,6 +29,7 @@ export enum RouteKey {
   TEMP_RESURRECTION_PAGE,
   SARCOPHAGUS_CREATED,
   THEME_TEST_PAGE,
+  ACCUSE_PAGE,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
@@ -40,6 +42,7 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
   [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
   [RouteKey.THEME_TEST_PAGE]: '/theme-test',
+  [RouteKey.ACCUSE_PAGE]: '/accuse',
 };
 
 export function Pages() {
@@ -83,6 +86,11 @@ export function Pages() {
       element: <ArchaeologistsPage />,
       label: 'Archaeologists',
       tooltip: 'View all registered archaeologists that are online',
+    },
+    {
+      path: RoutesPathMap[RouteKey.ACCUSE_PAGE],
+      element: <AccusePage />,
+      label: 'Accuse',
     },
     {
       path: RoutesPathMap[RouteKey.BUNDLER_PAGE],

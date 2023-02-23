@@ -8,3 +8,4 @@ export { SuccessIcon } from './SuccessIcon';
 export { InfoIcon } from './InfoIcon';
 export { ErrorIcon } from './ErrorIcon';
 export { WarningIcon } from './WarningIcon';
+export { AddIcon } from './AddIcon';
