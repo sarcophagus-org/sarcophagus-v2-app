@@ -1,9 +1,8 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
-import { formatFee, getTotalFeesInSarco } from 'lib/utils/helpers';
+import { formatFee, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
-import { formatEther } from 'ethers/lib/utils';
 import { ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
@@ -73,7 +72,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              {formatEther(protocolFee)} SARCO
+              {formatSarco(protocolFee.toString())} SARCO
             </Text>
           </Flex>
           <Divider

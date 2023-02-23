@@ -169,6 +169,30 @@ export function calculateProjectedDiggingFees(
 }
 
 /**
+ * Reduces the number of decimals displayed for sarco value (or any float). If the value is a whole
+ * number, decimals will be hidden. If a precision of 2 is set and the value is 0.0000452, then
+ * "< 0.01" will be returned.
+ *
+ * @param valueInWei The value to be formateed
+ * @param precision The number of decimal places to show
+ * @returns A formatted value
+ */
+export function formatSarco(valueInWei: string | number, precision: number = 2): string {
+  const value = formatEther(valueInWei.toString());
+  const numericValue: number = Number(value);
+  if (isNaN(numericValue)) {
+    return value.toString();
+  }
+  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
+
+  if (formattedValue === '0' && parseFloat(value) > 0) {
+    return `< 0.${'0'.repeat(precision - 1)}1`;
+  }
+
+  return formattedValue;
+}
+
+/**
  * Returns the estimated total digging fees, and protocol fee,
  * that the embalmer will be due to pay.
  */
@@ -189,7 +213,7 @@ export function getTotalFeesInSarco(
 
   return {
     totalDiggingFees,
-    formattedTotalDiggingFees: formatEther(totalDiggingFees),
+    formattedTotalDiggingFees: formatSarco(totalDiggingFees.toString()),
     protocolFee,
   };
 }
@@ -240,30 +264,6 @@ export async function sign(
   const dataHashBytes = ethers.utils.arrayify(dataHash);
   const signature = await signer.signMessage(dataHashBytes);
   return ethers.utils.splitSignature(signature);
-}
-
-/**
- * Reduces the number of decimals displayed for sarco value (or any float). If the value is a whole
- * number, decimals will be hidden. If a precision of 2 is set and the value is 0.0000452, then
- * "< 0.01" will be returned.
- *
- * @param valueInWei The value to be formateed
- * @param precision The number of decimal places to show
- * @returns A formatted value
- */
-export function formatSarco(valueInWei: string | number, precision: number = 2): string {
-  const value = formatEther(valueInWei.toString());
-  const numericValue: number = Number(value);
-  if (isNaN(numericValue)) {
-    return value.toString();
-  }
-  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
-
-  if (formattedValue === '0' && parseFloat(value) > 0) {
-    return `< 0.${'0'.repeat(precision - 1)}1`;
-  }
-
-  return formattedValue;
 }
 
 // This function estimates sarco per month based on average number of days per month. This value is
