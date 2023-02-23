@@ -1,6 +1,5 @@
 import { Flex, Heading, Text, VStack, HStack, Icon, Box, Tooltip, chakra } from '@chakra-ui/react';
 import { useState } from 'react';
-import { SummaryErrorIcon } from '../components/SummaryErrorIcon';
 import { ArchaeologistList } from '../components/ArchaeologistList';
 import { SetPaginationSize, IPageSizeSetByOption } from '../components/SetPaginationSize';
 import { ArchaeologistHeader } from '../components/ArchaeologistHeader';
@@ -17,9 +16,10 @@ import {
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
 import { ChevronLeftIcon, ChevronRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import { SetResurrection } from '../components/SetResurrection';
-import { useSelector } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
 import moment from 'moment';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
+import { toggleShowHiddenArchaeologists } from 'store/archaeologistList/actions';
 
 interface SelectArchaeologistsProps {
   hideHeader?: boolean;
@@ -38,7 +38,9 @@ export function SelectArchaeologists({
   // Load the archaeologists' data
   useLoadArchaeologists();
 
-  const { sortedFilteredArchaeologist, showSelectedArchaeologists, hiddenArchaeologists } =
+  const dispatch = useDispatch();
+
+  const { archaeologistListVisible, hiddenArchaeologists, showHiddenArchaeologists } =
     useArchaeologistList();
   const { resurrection } = useSelector(x => x.embalmState);
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
@@ -46,7 +48,7 @@ export function SelectArchaeologists({
 
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: sortedFilteredArchaeologist(showSelectedArchaeologists).length,
+      total: archaeologistListVisible().length,
       initialState: { currentPage: 1, pageSize: defaultPageSize },
       limits: {
         outer: outerLimit,
@@ -54,10 +56,7 @@ export function SelectArchaeologists({
       },
     });
 
-  const paginatedArchaeologist = sortedFilteredArchaeologist(showSelectedArchaeologists).slice(
-    offset,
-    offset + pageSize
-  );
+  const paginatedArchaeologist = archaeologistListVisible().slice(offset, offset + pageSize);
   const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
@@ -139,17 +138,16 @@ export function SelectArchaeologists({
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
                 <Flex px={3}>
-                  <HStack direction="row">
-                    <HStack>
-                      <Text variant="secondary">Items per page:</Text>
-                      <SetPaginationSize
-                        handlePageSizeChange={handlePageSizeChange}
-                        paginationSize={paginationSize}
-                      ></SetPaginationSize>
-                    </HStack>
+                  <HStack>
+                    <Text variant="secondary">Items per page:</Text>
+                    <SetPaginationSize
+                      handlePageSizeChange={handlePageSizeChange}
+                      paginationSize={paginationSize}
+                    ></SetPaginationSize>
                   </HStack>
                 </Flex>
 
+                {/* PAGINATION CONTROLS */}
                 <Flex>
                   <PaginationPrevious
                     backgroundColor={'transparent'}
@@ -165,6 +163,7 @@ export function SelectArchaeologists({
                     ></Icon>
                     Prev
                   </PaginationPrevious>
+                  <Box width="5" />
                   <PaginationPageGroup
                     isInline
                     align="center"
@@ -198,6 +197,7 @@ export function SelectArchaeologists({
                       />
                     ))}
                   </PaginationPageGroup>
+                  <Box width="5" />
                   <PaginationNext
                     backgroundColor={'transparent'}
                     color="brand.950"
@@ -214,49 +214,46 @@ export function SelectArchaeologists({
                   </PaginationNext>
                 </Flex>
 
-                {hiddenArchaeologists.length > 0 ? (
-                  <HStack mr={2}>
-                    <Text variant="secondary">
-                      {hiddenArchaeologists.length} Hidden Archaeologists
-                    </Text>
-                    <Tooltip
-                      placement="top"
-                      label="These archeologists are hidden because they are not available by your resurrection time. Adjust your resurrection time to include them."
-                    >
-                      <Icon
-                        as={QuestionIcon}
-                        color="brand.500"
-                        w={3}
-                        h={3}
-                      />
-                    </Tooltip>
-                  </HStack>
-                ) : (
-                  <Box w="200px" />
-                )}
+                <Box width="200px" />
               </Flex>
+            </Box>
 
-              <HStack
-                mr={2}
-                mt={3}
-              >
-                <SummaryErrorIcon />
-                <Text
-                  ml={2}
-                  variant="secondary"
-                  textAlign={'center'}
-                >
-                  = accused archaeologists
+            {hiddenArchaeologists.length > 0 ? (
+              <HStack mr={2}>
+                <Text variant="secondary">
+                  {hiddenArchaeologists.length} Ineligible Archaeologists
                 </Text>
+                <Tooltip
+                  placement="top"
+                  label="These are archeologists that do not meet your configured criteria."
+                >
+                  <Icon
+                    as={QuestionIcon}
+                    color="brand.500"
+                    w={3}
+                    h={3}
+                  />
+                </Tooltip>
                 <Text
+                  cursor="pointer"
+                  _hover={{
+                    textDecoration: 'underline',
+                  }}
+                  variant="secondary"
                   text-align={'bottom'}
                   as="i"
                   fontSize={'12'}
+                  onClick={() => {
+                    returnToFirstPage();
+                    dispatch(toggleShowHiddenArchaeologists());
+                  }}
                 >
-                  (show)
+                  {showHiddenArchaeologists ? '(hide)' : '(show)'}
                 </Text>
               </HStack>
-            </Box>
+            ) : (
+              <></>
+            )}
           </VStack>
         </PaginationContainer>
       </Pagination>

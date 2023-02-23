@@ -18,13 +18,13 @@ import { QuestionIcon } from '@chakra-ui/icons';
 import { DownIcon, UpDownIcon, UpIcon } from 'components/icons';
 import { Loading } from 'components/Loading';
 import { useArchaeologistList } from '../hooks/useArchaeologistList';
-import { SortDirection } from 'store/embalm/actions';
+import { deselectArchaeologist, SortDirection } from 'store/embalm/actions';
 import { SortFilterType } from 'store/archaeologistList/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
+import { useDispatch, useSelector } from 'store/index';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
-import { useSelector } from 'store/index';
 
 export function ArchaeologistList({
   showDial,
@@ -36,7 +36,8 @@ export function ArchaeologistList({
   const {
     handleCheckArchaeologist,
     selectedArchaeologists,
-    sortedFilteredArchaeologist,
+    hiddenArchaeologists,
+    archaeologistListVisible,
     onClickSortDiggingFees,
     onClickSortUnwraps,
     onClickSortFails,
@@ -46,7 +47,6 @@ export function ArchaeologistList({
     archAddressSearch,
     unwrapsFilter,
     failsFilter,
-    showSelectedArchaeologists,
   } = useArchaeologistList();
 
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
@@ -67,6 +67,14 @@ export function ArchaeologistList({
       ? sortIconsMap[archaeologistFilterSort.sortDirection]
       : sortIconsMap[SortDirection.NONE];
   }
+
+  const dispatch = useDispatch();
+
+  hiddenArchaeologists.map(a => {
+    if (selectedArchaeologists.includes(a)) {
+      dispatch(deselectArchaeologist(a.profile.archAddress));
+    }
+  });
 
   return (
     <Flex
@@ -96,8 +104,7 @@ export function ArchaeologistList({
                         color="text.primary"
                         p={'0.5'}
                       >
-                        Archaeologists (
-                        {sortedFilteredArchaeologist(showSelectedArchaeologists)?.length})
+                        Archaeologists ({archaeologistListVisible()?.length})
                       </Button>
                       <FilterInput
                         filterName={SortFilterType.ADDRESS_SEARCH}
@@ -208,7 +215,7 @@ export function ArchaeologistList({
                       key={arch.profile.archAddress}
                       archaeologist={arch}
                       onClick={() => {
-                        if (showDial) return;
+                        if (showDial || arch.hiddenReason) return;
                         handleCheckArchaeologist(arch);
                       }}
                       includeDialButton={showDial!}

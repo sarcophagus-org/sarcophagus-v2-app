@@ -71,7 +71,7 @@ export function CreateSarcophagus() {
   const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
-  const { selectedArchaeologists } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
   const isCreateProcessStarted = (): boolean => {
@@ -138,10 +138,8 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
-  // TODO: Replace the getTotalFeesInSarco with the calculateProjectedDiggingFees() function
-  // The getTotalFeesInSarco function is not up to date with the digging fees per second update. Use
-  // the calculateProjectedDiggingFees() helper function instead
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    resurrection,
     selectedArchaeologists,
     protocolFeeBasePercentage
   );

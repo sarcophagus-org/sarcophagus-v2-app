@@ -4,8 +4,9 @@ import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeolo
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
 import { orderBy, keys } from 'lodash';
-import { constants, ethers, BigNumber } from 'ethers';
-import { filterSplit } from 'lib/utils/helpers';
+import { constants, ethers } from 'ethers';
+import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
+import { monthSeconds } from 'lib/constants';
 
 export function useArchaeologistList() {
   const dispatch = useDispatch();
@@ -18,26 +19,50 @@ export function useArchaeologistList() {
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
-    showSelectedArchaeologists,
+    showOnlySelectedArchaeologists,
+    showHiddenArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  const onlineArchaeologists = archaeologists;
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
 
-  // If the difference between the resurrection time and the current time is less than an
-  // archaeologist's rewrap interval and if the archaeologist's free bond is greater than the
-  // digging fee, that archaeologist goes in the visible list. Otherwise it goes in the hidden list.
+  // The archaeologist is not hidden out if:
+  //  - resurrection time has been set further than the arch's max resurrection time
+  //  - Interval between current time and set resurrection time is more than the arch's max rewrap interval
+  //  - The arch doesn't have enough free bond to match digging fee based on the set resurrection time
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
-    const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
-    // If resurrection time has not been set, it will default to 0.
-    // An archaeologist is hidden if the maximum rewrap interval not within range
-    // Or their free bond is less than their digging fee
-    const archIsVisible =
-      resurrectionTimeMs - Date.now() < maxRewrapIntervalMs &&
-      a.profile.minimumDiggingFeePerSecond.lte(a.profile.freeBond);
+    const maxResurrectionTimeMs = a.profile.maximumResurrectionTime.toNumber() * 1000;
+    if (resurrectionTimeMs > maxResurrectionTimeMs) {
+      a.hiddenReason = `This archaeologist will not be available at the resurrection time you have set. Available until: ${humanizeUnixTimestamp(
+        maxResurrectionTimeMs
+      )}`;
+      return false;
+    }
 
-    return archIsVisible;
+    const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
+    const resurrectionIntervalMs = resurrectionTimeMs - Date.now();
+
+    const estimatedCurse = !resurrectionTimeMs
+      ? ethers.constants.Zero
+      : a.profile.minimumDiggingFeePerSecond.mul(Math.trunc(resurrectionIntervalMs / 1000));
+
+    if (resurrectionIntervalMs > maxRewrapIntervalMs) {
+      a.hiddenReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
+        maxRewrapIntervalMs / (monthSeconds * 1000)
+      )} months`;
+      return false;
+    }
+
+    if (estimatedCurse.gt(a.profile.freeBond)) {
+      a.hiddenReason =
+        'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
+      return false;
+    }
+
+    a.hiddenReason = undefined;
+    return true;
   });
 
   const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
@@ -80,7 +105,7 @@ export function useArchaeologistList() {
     dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, directionValue));
   }
 
-  const sortedArchaeologist = (): Archaeologist[] => {
+  const sortedArchaeologists = (): Archaeologist[] => {
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
       return orderBy(
         visibleArchaeologists,
@@ -104,9 +129,9 @@ export function useArchaeologistList() {
     }
   };
 
-  const sortedFilteredArchaeologist = (onlyShowSelected: boolean): Archaeologist[] => {
+  const archaeologistListVisible = (): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
-      if (onlyShowSelected) {
+      if (showOnlySelectedArchaeologists) {
         return (
           selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
         );
@@ -114,16 +139,23 @@ export function useArchaeologistList() {
       return true;
     }
 
-    return sortedArchaeologist()?.filter(
+    const filteredSorted = sortedArchaeologists()?.filter(
       arch =>
-        arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase()) &&
-        BigNumber.from(
-          Number(ethers.utils.formatEther(arch.profile.minimumDiggingFeePerSecond)).toFixed(0)
-        ).lte(diggingFeesFilter || constants.MaxInt256) &&
-        BigNumber.from(Number(arch.profile.successes)).gte(unwrapsFilter || constants.MinInt256) &&
-        BigNumber.from(Number(arch.profile.cleanups)).lte(failsFilter || constants.MaxInt256) &&
-        shouldFilterBySelected(arch)
+        shouldFilterBySelected(arch) &&
+        (arch.ensName?.toLowerCase().includes(archAddressSearch.toLowerCase()) ||
+          arch.profile.archAddress.toLowerCase().includes(archAddressSearch.toLowerCase())) &&
+        arch.profile.minimumDiggingFeePerSecond
+          .mul(monthSeconds)
+          .lte(
+            (diggingFeesFilter && ethers.utils.parseEther(diggingFeesFilter)) || constants.MaxInt256
+          ) &&
+        arch.profile.successes.gte(unwrapsFilter || constants.MinInt256) &&
+        arch.profile.failures.lte(failsFilter || constants.MaxInt256)
     );
+
+    return showHiddenArchaeologists && !showOnlySelectedArchaeologists
+      ? [...filteredSorted, ...hiddenArchaeologists]
+      : filteredSorted;
   };
 
   return {
@@ -138,10 +170,10 @@ export function useArchaeologistList() {
     onClickSortFails,
     onClickSortUnwraps,
     selectedArchaeologists,
-    showSelectedArchaeologists,
+    showOnlySelectedArchaeologists,
+    showHiddenArchaeologists,
     SortDirection,
-    sortedArchaeologist,
-    sortedFilteredArchaeologist,
+    archaeologistListVisible,
     unwrapsFilter,
   };
 }

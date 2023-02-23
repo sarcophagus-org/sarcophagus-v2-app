@@ -103,7 +103,7 @@ export const filterSplit = <T>(arr: T[], predicate: (item: T) => boolean): [T[],
 };
 
 export function humanizeUnixTimestamp(unixTimestamp: number): string {
-  return new Date(unixTimestamp).toLocaleDateString('en-US');
+  return new Date(unixTimestamp).toLocaleDateString();
 }
 
 export function removeNonIntChars(value: string): string {
@@ -148,15 +148,62 @@ export function formatFee(value: number | string, fixed = 2): string {
 }
 
 /**
- * Given a list of archaeologists, sums up their digging fees
+ * @param diggingFeeRates An array of the archaeologist's digging fees per second rates
+ * @param resurrectionTimestamp The timestamp of the resurrection in ms
+ * @returns The total projected digging fees as a string
+ */
+export function calculateProjectedDiggingFees(
+  diggingFeeRates: BigNumber[],
+  resurrectionTimestamp: number
+): BigNumber {
+  if (resurrectionTimestamp === 0) return ethers.constants.Zero;
+  const totalDiggingFeesPerSecond = diggingFeeRates.reduce(
+    (acc, curr) => acc.add(curr),
+    ethers.constants.Zero
+  );
+
+  const resurrectionSeconds = Math.floor(resurrectionTimestamp / 1000);
+  const nowSeconds = Math.floor(Date.now() / 1000);
+
+  return totalDiggingFeesPerSecond.mul(resurrectionSeconds - nowSeconds);
+}
+
+/**
+ * Reduces the number of decimals displayed for sarco value (or any float). If the value is a whole
+ * number, decimals will be hidden. If a precision of 2 is set and the value is 0.0000452, then
+ * "< 0.01" will be returned.
+ *
+ * @param valueInWei The value to be formateed
+ * @param precision The number of decimal places to show
+ * @returns A formatted value
+ */
+export function formatSarco(valueInWei: string | number, precision: number = 2): string {
+  const value = formatEther(valueInWei.toString());
+  const numericValue: number = Number(value);
+  if (isNaN(numericValue)) {
+    return value.toString();
+  }
+  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
+
+  if (formattedValue === '0' && parseFloat(value) > 0) {
+    return `< 0.${'0'.repeat(precision - 1)}1`;
+  }
+
+  return formattedValue;
+}
+
+/**
+ * Returns the estimated total digging fees, and protocol fee,
+ * that the embalmer will be due to pay.
  */
 export function getTotalFeesInSarco(
+  resurrectionTimestamp: number,
   archaeologists: Archaeologist[],
   protocolFeeBasePercentage?: number
 ) {
-  const totalDiggingFees = archaeologists.reduce(
-    (acc, curr) => acc.add(curr.profile.minimumDiggingFeePerSecond),
-    ethers.constants.Zero
+  const totalDiggingFees = calculateProjectedDiggingFees(
+    archaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
+    resurrectionTimestamp
   );
 
   // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
@@ -166,31 +213,9 @@ export function getTotalFeesInSarco(
 
   return {
     totalDiggingFees,
-    formattedTotalDiggingFees: formatEther(totalDiggingFees),
+    formattedTotalDiggingFees: formatSarco(totalDiggingFees.toString()),
     protocolFee,
   };
-}
-
-/**
- *
- * @param diggingFeeRates An array of the archaeologist's digging fees per second rates
- * @param resurrectionTimestamp The timestamp of the resurrection in ms
- * @returns The total projected digging fees as a string
- */
-export function calculateProjectedDiggingFees(
-  diggingFeeRates: BigNumber[],
-  resurrectionTimestamp: number
-): string {
-  if (resurrectionTimestamp === 0) return '0';
-  const totalDiggingFeesPerSecond = diggingFeeRates.reduce(
-    (acc, curr) => acc.add(curr),
-    ethers.constants.Zero
-  );
-
-  const resurrectionSeconds = Math.floor(resurrectionTimestamp / 1000);
-  const nowSeconds = Math.floor(Date.now() / 1000);
-
-  return totalDiggingFeesPerSecond.mul(resurrectionSeconds - nowSeconds).toString();
 }
 
 /**
@@ -239,30 +264,6 @@ export async function sign(
   const dataHashBytes = ethers.utils.arrayify(dataHash);
   const signature = await signer.signMessage(dataHashBytes);
   return ethers.utils.splitSignature(signature);
-}
-
-/**
- * Reduces the number of decimals displayed for sarco value (or any float). If the value is a whole
- * number, decimals will be hidden. If a precision of 2 is set and the value is 0.0000452, then
- * "< 0.01" will be returned.
- *
- * @param valueInWei The value to be formateed
- * @param precision The number of decimal places to show
- * @returns A formatted value
- */
-export function formatSarco(valueInWei: string | number, precision: number = 2): string {
-  const value = formatEther(valueInWei.toString());
-  const numericValue: number = Number(value);
-  if (isNaN(numericValue)) {
-    return value.toString();
-  }
-  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
-
-  if (formattedValue === '0' && parseFloat(value) > 0) {
-    return `< 0.${'0'.repeat(precision - 1)}1`;
-  }
-
-  return formattedValue;
 }
 
 // This function estimates sarco per month based on average number of days per month. This value is

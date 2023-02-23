@@ -5,6 +5,7 @@ import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/hardhat';
 import {
   formatAddress,
+  getLowestResurrectionTime,
   getLowestRewrapInterval,
   humanizeUnixTimestamp,
 } from '../../../../lib/utils/helpers';
@@ -41,6 +42,7 @@ export const useSarcophagusParameters = () => {
 
   const isHardhatNetwork = chainId === hardhatChainId;
   const maxRewrapIntervalMs = getLowestRewrapInterval(selectedArchaeologists) * 1000;
+  const maxResurrectionTimeMs = getLowestResurrectionTime(selectedArchaeologists) * 1000; // TODO: will be combined with `getLowestRewrapInterval` above
 
   const resurrectionTimeError = !resurrection
     ? 'Please set a resurrection time'
@@ -64,6 +66,14 @@ export const useSarcophagusParameters = () => {
       value: resurrection ? humanizeUnixTimestamp(resurrection) : null,
       step: Step.NameSarcophagus,
       error: resurrectionTimeError,
+    },
+    {
+      name: 'MAXIMUM RESURRECTION TIME',
+      value: selectedArchaeologists.length
+        ? `${humanizeUnixTimestamp(maxResurrectionTimeMs)}`
+        : null,
+      step: Step.SelectArchaeologists,
+      error: !selectedArchaeologists.length ? 'You have not selected any archaeologists' : null,
     },
     {
       name: 'MAXIMUM REWRAP INTERVAL',

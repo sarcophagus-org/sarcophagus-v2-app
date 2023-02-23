@@ -21,10 +21,10 @@ interface ResetPage {
 export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const dispatch = useDispatch();
   const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
-  const { showSelectedArchaeologists } = useSelector(x => x.archaeologistListState);
+  const { showOnlySelectedArchaeologists } = useSelector(x => x.archaeologistListState);
 
-  function selectAndReset() {
-    dispatch(setShowSelectedArchaeologists(!showSelectedArchaeologists));
+  function toggleShowOnlySelected() {
+    dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
     resetPage(1);
   }
 
@@ -52,7 +52,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
           <HStack direction="row">
             <Checkbox
               variant="brand"
-              onChange={() => selectAndReset()}
+              onChange={() => toggleShowOnlySelected()}
             />
             <HStack>
               <Text>
@@ -84,7 +84,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
                 variant="bold"
                 as="u"
               >
-                {formatSarco(diggingFees)} SARCO
+                {formatSarco(diggingFees.toString())} SARCO
               </Text>
             </Text>
             <Text

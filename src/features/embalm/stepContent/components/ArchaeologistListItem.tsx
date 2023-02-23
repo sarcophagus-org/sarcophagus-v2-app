@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Td, Text, Tr } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { SarcoTokenIcon } from 'components/icons';
 import { useNetworkConfig } from 'lib/config';
 import { convertSarcoPerSecondToPerMonth, formatAddress, formatSarco } from 'lib/utils/helpers';
@@ -22,6 +22,7 @@ interface TableContentProps {
   children: React.ReactNode;
   icon: boolean;
   checkbox: boolean;
+  align?: string;
 }
 
 export function ArchaeologistListItem({
@@ -30,7 +31,7 @@ export function ArchaeologistListItem({
   includeDialButton,
   isDialing,
   setIsDialing,
-  onClick,
+  onClick: handleClickRow,
 }: ArchaeologistListItemProps) {
   const { testDialArchaeologist } = useAttemptDialArchaeologists(setIsDialing);
   const dispatch = useDispatch();
@@ -47,22 +48,22 @@ export function ArchaeologistListItem({
       : null;
   }, [archaeologist.profile.minimumDiggingFeePerSecond, resurrectionTime]);
 
-  const { data } = useEnsName({
+  const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
     chainId: networkConfig.chainId,
   });
 
   const formattedArchAddress = () => {
-    return data ?? formatAddress(archaeologist.profile.archAddress);
+    return ensName ?? formatAddress(archaeologist.profile.archAddress);
   };
 
-  function TableContent({ children, icon, checkbox }: TableContentProps) {
+  function TableContent({ children, icon, checkbox, align }: TableContentProps) {
     return (
       <Td
         borderBottom="none"
         isNumeric
       >
-        <Flex justify={icon || checkbox ? 'left' : 'center'}>
+        <Flex justify={align || (icon || checkbox ? 'left' : 'center')}>
           {icon && <SarcoTokenIcon boxSize="18px" />}
           {checkbox && (
             <Checkbox
@@ -74,11 +75,12 @@ export function ArchaeologistListItem({
                   dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
                 }
               }}
-            ></Checkbox>
+            />
           )}
+          <Box width={!icon && !checkbox ? '4' : '0'} />
           <Text
             ml={3}
-            bg={'grayBlue.950'}
+            bg={archaeologist.hiddenReason ? 'transparent.red' : 'grayBlue.950'}
             color={rowTextColor}
             py={0.5}
             px={2}
@@ -91,63 +93,69 @@ export function ArchaeologistListItem({
     );
   }
 
-  const handleClickRow = () => {
-    onClick();
-  };
-
   return (
-    <Tr
-      background={isSelected ? (archaeologist.exception ? 'background.red' : 'brand.50') : ''}
-      onClick={() => handleClickRow()}
-      cursor="pointer"
-      _hover={isSelected ? {} : { background: 'brand.0' }}
+    <Tooltip
+      label={archaeologist.hiddenReason}
+      placement="top"
     >
-      <TableContent
-        icon={false}
-        checkbox={true}
+      <Tr
+        background={
+          isSelected
+            ? archaeologist.exception || archaeologist.hiddenReason
+              ? 'background.red'
+              : 'brand.50'
+            : ''
+        }
+        onClick={() => handleClickRow()}
+        cursor="pointer"
+        _hover={isSelected ? {} : { background: 'brand.0' }}
       >
-        {formattedArchAddress()}
-      </TableContent>
+        <TableContent
+          icon={false}
+          checkbox={!archaeologist.hiddenReason}
+          align="left"
+        >
+          {formattedArchAddress()}
+        </TableContent>
 
-      <TableContent
-        icon={true}
-        checkbox={false}
-      >
-        {/* TODO: this shows monthly values. will need to be updated to show actual digging fees based on resurrection time */}
-        {/* We may want to show the monthly values on the "archaeologists" page */}
-        {diggingFees
-          ? formatSarco(diggingFees.toString())
-          : formatSarco(
-              convertSarcoPerSecondToPerMonth(
-                archaeologist.profile.minimumDiggingFeePerSecond.toString()
-              )
-            )}
-      </TableContent>
-      <TableContent
-        icon={false}
-        checkbox={false}
-      >
-        {archaeologist.profile.successes.toString()}
-      </TableContent>
-      <TableContent
-        icon={false}
-        checkbox={false}
-      >
-        {archaeologist.profile.failures.toString()}
-      </TableContent>
+        <TableContent
+          icon={true}
+          checkbox={false}
+        >
+          {diggingFees
+            ? formatSarco(diggingFees.toString())
+            : formatSarco(
+                convertSarcoPerSecondToPerMonth(
+                  archaeologist.profile.minimumDiggingFeePerSecond.toString()
+                )
+              )}
+        </TableContent>
+        <TableContent
+          icon={false}
+          checkbox={false}
+        >
+          {archaeologist.profile.successes.toString()}
+        </TableContent>
+        <TableContent
+          icon={false}
+          checkbox={false}
+        >
+          {archaeologist.profile.failures.toString()}
+        </TableContent>
 
-      {includeDialButton ? (
-        <Td>
-          <Button
-            disabled={isDialing || !!archaeologist.connection}
-            onClick={() => testDialArchaeologist(archaeologist, true)}
-          >
-            {archaeologist.connection ? 'Connected' : 'Dial'}
-          </Button>
-        </Td>
-      ) : (
-        <></>
-      )}
-    </Tr>
+        {includeDialButton ? (
+          <Td>
+            <Button
+              disabled={isDialing || !!archaeologist.connection}
+              onClick={() => testDialArchaeologist(archaeologist, true)}
+            >
+              {archaeologist.connection ? 'Connected' : 'Dial'}
+            </Button>
+          </Td>
+        ) : (
+          <></>
+        )}
+      </Tr>
+    </Tooltip>
   );
 }
