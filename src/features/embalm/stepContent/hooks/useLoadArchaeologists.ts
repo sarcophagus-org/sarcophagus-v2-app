@@ -1,4 +1,5 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import axios from 'axios';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -54,17 +55,17 @@ export function useLoadArchaeologists() {
         accusals: stats[i].accusals,
         failures: stats[i].failures,
       },
-      isOnline: true,
+      isOnline: false,
     }));
 
-    // const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-    // const onlinePeerIds = res.data;
+    const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+    const onlinePeerIds = res.data;
 
-    // for (let arch of discoveredArchaeologists) {
-    //   if (onlinePeerIds.includes(arch.profile.peerId)) {
-    //     arch.isOnline = true;
-    //   }
-    // }
+    for (let arch of discoveredArchaeologists) {
+      if (onlinePeerIds.includes(arch.profile.peerId)) {
+        arch.isOnline = true;
+      }
+    }
 
     return discoveredArchaeologists;
   }, [networkConfig.diamondDeployAddress]);
