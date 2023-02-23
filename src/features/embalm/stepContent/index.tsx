@@ -68,6 +68,7 @@ export function StepContent() {
       <HStack
         justify="space-between"
         spacing={0}
+        pb={16}
       >
         {showPrev() ? (
           <Button
