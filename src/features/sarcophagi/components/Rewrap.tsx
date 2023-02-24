@@ -1,12 +1,13 @@
-import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { Alert, AlertIcon, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
+import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
-import { buildResurrectionDateString, formatSarco } from 'lib/utils/helpers';
-import { useMemo, useState } from 'react';
+import { buildResurrectionDateString, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export function Rewrap() {
@@ -23,6 +24,7 @@ export function Rewrap() {
     id || ethers.constants.HashZero,
     resurrectionTime
   );
+  const { balance } = useSarcoBalance();
 
   const nowMs = Date.now();
 
@@ -48,23 +50,13 @@ export function Rewrap() {
     BigNumber.from(Math.trunc(resurrectionDateMs / 1000))
   );
 
-  // Sum up the digging fees from the archaeologists objects
-  const totalDiggingFeesPerSecBn = useMemo(() => {
-    return archaeologists?.reduce((acc, archaeologist) => {
-      return acc.add(archaeologist.diggingFeePerSecond);
-    }, BigNumber.from(0));
-  }, [archaeologists]);
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    resurrectionTime?.getTime() || 0,
+    archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
+    protocolFeeAmountInt
+  );
 
-  const totalDiggingFeesBn = useMemo(() => {
-    if (!resurrectionTime) return BigNumber.from(0);
-    const resurrectionTimeSecBn = BigNumber.from(
-      Math.floor(new Date(resurrectionTime).getTime() / 1000)
-    );
-    const currentTimeSecBn = BigNumber.from(Math.floor(new Date().getTime() / 1000));
-    return totalDiggingFeesPerSecBn.mul(resurrectionTimeSecBn.sub(currentTimeSecBn));
-  }, [resurrectionTime, totalDiggingFeesPerSecBn]);
-
-  const protocolFeeBn = totalDiggingFeesBn.mul(protocolFeeAmountInt).div(100);
+  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
 
   return (
     <VStack
@@ -122,15 +114,21 @@ export function Rewrap() {
         </Flex>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Digging fee: {formatSarco(totalDiggingFeesBn.toString())} SARCO
+            Digging fee: {formatSarco(totalDiggingFees.toString())} SARCO
           </Text>
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Protocol fee ({protocolFeeAmountInt}%): {formatSarco(protocolFeeBn.toString())} SARCO
+            Protocol fee ({protocolFeeAmountInt}%): {formatSarco(protocolFee.toString())} SARCO
           </Text>
         </HStack>
       </VStack>
+      {balance && balance < diggingPlusProtocolFees && (
+        <Alert status="error">
+          <AlertIcon color="red" />
+          <Text>Insufficient SARCO balance</Text>
+        </Alert>
+      )}
       <HStack>
         <Button
           variant="outline"
@@ -140,7 +138,14 @@ export function Rewrap() {
         </Button>
         <Button
           onClick={() => rewrap?.()}
-          isDisabled={!!!resurrectionTime || !rewrap || isRewrapping || isError || mayFail}
+          isDisabled={
+            !!!resurrectionTime ||
+            !rewrap ||
+            isRewrapping ||
+            isError ||
+            mayFail ||
+            (balance && balance < diggingPlusProtocolFees)
+          }
           isLoading={isRewrapping}
           loadingText="Rewrapping..."
         >
