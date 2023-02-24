@@ -60,6 +60,10 @@ export function readFileDataAsBase64(file: File): Promise<{ type: string; data: 
       // format of `res` is:
       // "data:image/png;base64,iVBORw0KGg..."
       const res = event.target?.result as string;
+      if (!res.startsWith('data:')) {
+        reject('There was a problem reading the file');
+      }
+
       const i = res.indexOf(',');
 
       resolve({
