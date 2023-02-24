@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
 import { useNetworkConfig } from 'lib/config';
 import { hardhat, mainnet } from '@wagmi/chains';
+import { ethers } from 'ethers';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -30,7 +31,8 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   useEffect(() => {
     setIsLoading(true);
     if (!sarcophagus || !sarcophagus.threshold) return;
-    const archsWithShards = archaeologists.filter(a => a.privateKey);
+    const archsWithShards = archaeologists.filter(a => a.privateKey !== ethers.constants.HashZero);
+
     setCanResurrect(archsWithShards.length >= sarcophagus.threshold);
     setIsLoading(false);
   }, [archaeologists, sarcophagus]);
