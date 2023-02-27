@@ -226,9 +226,16 @@ export function getTotalFeesInSarco(
  * @returns The resurrection string
  */
 export function buildResurrectionDateString(
-  resurrectionTime: BigNumber,
-  format = 'MM.DD.YYYY h:mmA'
+  resurrectionTime: BigNumber | undefined,
+  options?: { format?: string; hideDuration?: boolean }
 ): string {
+  const { format = 'MM.DD.YYYY h:mmA', hideDuration = false } = options || {};
+
+  // In the case where sarcophagus resurrection time is not defined for whatever reason
+  if (!resurrectionTime) {
+    return '--';
+  }
+
   // In the case where the sarcophagus is buried, the resurrection time will be set to the max
   // uint256 value. It's not possible to display this number as a date.
   if (resurrectionTime.toString() === ethers.constants.MaxUint256.toString()) {
@@ -240,7 +247,9 @@ export function buildResurrectionDateString(
   const humanizedDuration = moment.duration(msUntilResurrection).humanize();
   const timeUntilResurrection =
     msUntilResurrection < 0 ? `${humanizedDuration} ago` : humanizedDuration;
-  return `${resurrectionDateString} (${timeUntilResurrection})`;
+  return hideDuration
+    ? resurrectionDateString
+    : `${resurrectionDateString} (${timeUntilResurrection})`;
 }
 
 export function isBytes32(value: string): boolean {
