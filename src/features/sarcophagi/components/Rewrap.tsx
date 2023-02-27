@@ -48,6 +48,16 @@ export function Rewrap() {
     }
   }
 
+  function handleSetToPreviousInterval() {
+    if (sarcophagus) {
+      const newResurrectionTimeSec = sarcophagus.resurrectionTime
+        .mul(2)
+        .sub(sarcophagus.previousRewrapTime);
+
+      setResurrectionTime(new Date(newResurrectionTimeSec.mul(1000).toNumber()));
+    }
+  }
+
   const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
   const resurrectionDateMs = maximumResurectionDate.getTime();
 
@@ -106,19 +116,13 @@ export function Rewrap() {
             alignSelf="end"
             justifySelf="center"
           >
-            <Text variant="secondary">Current Resurrection</Text>
+            <Text variant="secondary">New Resurrection</Text>
           </GridItem>
           <GridItem
             alignSelf="end"
             justifySelf="center"
           >
-            <Text variant="secondary">New Resurrection</Text>
-          </GridItem>
-          <GridItem
-            alignSelf="center"
-            justifySelf="center"
-          >
-            <Text fontSize="md">{currentResurrectionString}</Text>
+            <Text variant="secondary">Current Resurrection</Text>
           </GridItem>
           <GridItem
             alignSelf="center"
@@ -143,14 +147,18 @@ export function Rewrap() {
           <GridItem
             alignSelf="center"
             justifySelf="center"
-          ></GridItem>
+          >
+            <Text fontSize="md">{currentResurrectionString}</Text>
+          </GridItem>
           <GridItem
             alignSelf="center"
             justifySelf="center"
           >
+            <GridItem></GridItem>
             <Button
               size="sm"
               variant="outline"
+              onClick={handleSetToPreviousInterval}
             >
               <Text
                 fontSize="xs"
