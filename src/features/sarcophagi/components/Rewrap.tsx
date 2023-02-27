@@ -98,7 +98,7 @@ export function Rewrap() {
       >
         <Grid
           h="100px"
-          templateRows="repeat(2, 1fr)"
+          templateRows="repeat(3, 1fr)"
           templateColumns="repeat(2, 1fr)"
           gap={4}
         >
@@ -140,9 +140,29 @@ export function Rewrap() {
               customInput={<DatePickerButton />}
             />
           </GridItem>
+          <GridItem
+            alignSelf="center"
+            justifySelf="center"
+          ></GridItem>
+          <GridItem
+            alignSelf="center"
+            justifySelf="center"
+          >
+            <Button
+              size="sm"
+              variant="outline"
+            >
+              <Text
+                fontSize="xs"
+                variant="secondary"
+              >
+                Use Previous Interval
+              </Text>
+            </Button>
+          </GridItem>
         </Grid>
         <Text
-          mt={9}
+          mt="64px"
           variant="secondary"
           textAlign="center"
         >
