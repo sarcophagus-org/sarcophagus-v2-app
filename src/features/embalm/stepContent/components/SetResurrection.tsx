@@ -4,9 +4,9 @@ import { Radio } from 'components/Radio';
 import { useSetResurrection } from '../hooks/useSetResurrection';
 
 export enum ResurrectionRadioValue {
-  OneMonth = '1 month',
-  TwoMonth = '2 months',
-  ThreeMonths = '3 months',
+  ThirtyDays = '30 days',
+  SixtyDays = '60 days',
+  NinetyDays = '90 days',
 }
 
 export function SetResurrection({ ...rest }: FlexProps) {

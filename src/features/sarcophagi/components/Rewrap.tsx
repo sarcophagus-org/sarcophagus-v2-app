@@ -202,11 +202,13 @@ export function Rewrap() {
           </Text>
         </HStack>
       </VStack>
-      {balance && balance < diggingPlusProtocolFees && (
+      {balance && balance.lt(diggingPlusProtocolFees) ? (
         <Alert status="error">
           <AlertIcon color="red" />
           <Text>Insufficient SARCO balance</Text>
         </Alert>
+      ) : (
+        <></>
       )}
       <HStack>
         <Button
