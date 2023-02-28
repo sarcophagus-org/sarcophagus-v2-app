@@ -14,7 +14,7 @@ export function SarcophagusSummaryFees() {
 
   const { formattedTotalDiggingFees, totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     resurrection,
-    selectedArchaeologists,
+    selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
     protocolFeeBasePercentage
   );
 

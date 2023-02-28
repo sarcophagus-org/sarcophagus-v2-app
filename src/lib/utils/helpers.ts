@@ -202,13 +202,10 @@ export function formatSarco(valueInWei: string | number, precision: number = 2):
  */
 export function getTotalFeesInSarco(
   resurrectionTimestamp: number,
-  archaeologists: Archaeologist[],
+  diggingFeeRates: BigNumber[],
   protocolFeeBasePercentage?: number
 ) {
-  const totalDiggingFees = calculateProjectedDiggingFees(
-    archaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
-    resurrectionTimestamp
-  );
+  const totalDiggingFees = calculateProjectedDiggingFees(diggingFeeRates, resurrectionTimestamp);
 
   // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
   const protocolFee = protocolFeeBasePercentage
