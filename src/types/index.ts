@@ -89,6 +89,7 @@ export interface SarcophagusResponseContract {
   archaeologistAddresses: string[];
   publishedPrivateKeyCount: number;
   hasLockedBond: boolean;
+  previousRewrapTime: BigNumber;
 }
 
 export interface ArweavePayload {

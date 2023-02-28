@@ -10,7 +10,7 @@ export const DatePickerButton = forwardRef<HTMLButtonElement, ButtonProps>(
         variant="solid"
       >
         {/* this value is an empty string, so this logic evalutate true on null | undefinded | '' */}
-        {value ? value : 'Custom Date'}
+        {value ? value : 'Select Custom Date'}
       </Button>
     </Flex>
   )

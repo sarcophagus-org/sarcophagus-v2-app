@@ -1,4 +1,14 @@
-import { Alert, AlertIcon, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
@@ -38,6 +48,16 @@ export function Rewrap() {
     }
   }
 
+  function handleSetToPreviousInterval() {
+    if (sarcophagus) {
+      const newResurrectionTimeSec = sarcophagus.resurrectionTime
+        .mul(2)
+        .sub(sarcophagus.previousRewrapTime);
+
+      setResurrectionTime(new Date(newResurrectionTimeSec.mul(1000).toNumber()));
+    }
+  }
+
   const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
   const resurrectionDateMs = maximumResurectionDate.getTime();
 
@@ -46,9 +66,13 @@ export function Rewrap() {
     return resurrectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
   };
 
-  const resurrectionString = buildResurrectionDateString(
+  const newResurrectionString = buildResurrectionDateString(
     BigNumber.from(Math.trunc(resurrectionDateMs / 1000))
   );
+
+  const currentResurrectionString = buildResurrectionDateString(sarcophagus?.resurrectionTime, {
+    hideDuration: true,
+  });
 
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     resurrectionTime?.getTime() || 0,
@@ -74,30 +98,85 @@ export function Rewrap() {
         </Text>
       </VStack>
 
-      <VStack
+      <Flex
+        direction="column"
         border="1px solid "
         borderColor="grayBlue.700"
         p={6}
         align="left"
-        maxW="640px"
+        maxW="600px"
       >
-        <DatePicker
-          selected={resurrectionTime}
-          onChange={handleCustomDateChange}
-          showTimeSelect
-          minDate={new Date()}
-          maxDate={maximumResurectionDate}
-          filterTime={filterInvalidTime}
-          showPopperArrow={false}
-          timeIntervals={30}
-          timeCaption="Time"
-          timeFormat="hh:mma"
-          dateFormat="MM.dd.yyyy hh:mma"
-          fixedHeight
-          customInput={<DatePickerButton />}
-        />
-        <Text variant="secondary">Furthest allowed rewrap time: {resurrectionString}</Text>
-      </VStack>
+        <Grid
+          h="100px"
+          templateRows="repeat(3, 1fr)"
+          templateColumns="repeat(2, 1fr)"
+          gap={4}
+        >
+          <GridItem
+            alignSelf="end"
+            justifySelf="center"
+          >
+            <Text variant="secondary">New Resurrection</Text>
+          </GridItem>
+          <GridItem
+            alignSelf="end"
+            justifySelf="center"
+          >
+            <Text variant="secondary">Current Resurrection</Text>
+          </GridItem>
+          <GridItem
+            alignSelf="center"
+            justifySelf="center"
+          >
+            <DatePicker
+              selected={resurrectionTime}
+              onChange={handleCustomDateChange}
+              showTimeSelect
+              minDate={new Date()}
+              maxDate={maximumResurectionDate}
+              filterTime={filterInvalidTime}
+              showPopperArrow={false}
+              timeIntervals={30}
+              timeCaption="Time"
+              timeFormat="hh:mma"
+              dateFormat="MM.dd.yyyy hh:mma"
+              fixedHeight
+              customInput={<DatePickerButton />}
+            />
+          </GridItem>
+          <GridItem
+            alignSelf="center"
+            justifySelf="center"
+          >
+            <Text fontSize="md">{currentResurrectionString}</Text>
+          </GridItem>
+          <GridItem
+            alignSelf="center"
+            justifySelf="center"
+          >
+            <GridItem></GridItem>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSetToPreviousInterval}
+            >
+              <Text
+                fontSize="xs"
+                variant="secondary"
+              >
+                Use Previous Interval
+              </Text>
+            </Button>
+          </GridItem>
+        </Grid>
+        <Text
+          mt="64px"
+          variant="secondary"
+          textAlign="center"
+        >
+          Furthest allowed rewrap time: {newResurrectionString}
+        </Text>
+      </Flex>
 
       <VStack
         align="left"
@@ -123,11 +202,13 @@ export function Rewrap() {
           </Text>
         </HStack>
       </VStack>
-      {balance && balance < diggingPlusProtocolFees && (
+      {balance && balance.lt(diggingPlusProtocolFees) ? (
         <Alert status="error">
           <AlertIcon color="red" />
           <Text>Insufficient SARCO balance</Text>
         </Alert>
+      ) : (
+        <></>
       )}
       <HStack>
         <Button

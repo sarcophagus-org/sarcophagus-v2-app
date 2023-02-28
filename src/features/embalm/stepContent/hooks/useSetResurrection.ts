@@ -52,10 +52,9 @@ export function useSetResurrection() {
       if (radioValue === '') {
         dispatch(setResurrection(0));
       } else {
-        const [months] = radioValue === '' ? '0' : radioValue.split(' ');
-        const newResurrection = new Date();
-        newResurrection.setMonth(newResurrection.getMonth() + parseInt(months));
-        dispatch(setResurrection(newResurrection.getTime()));
+        const [days] = radioValue === '' ? '0' : radioValue.split(' ');
+        const intervalMs = parseInt(days) * 24 * 60 * 60 * 1000;
+        dispatch(setResurrection(Date.now() + intervalMs));
       }
     } else {
       if (customResurrectionDate) {
