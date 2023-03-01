@@ -3,6 +3,7 @@ import { useRecoverPublicKey, ErrorStatus } from '../hooks/useRecoverPublicKey';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { SarcoAlert } from 'components/SarcoAlert';
+import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
 
 interface IErrorStatusMap {
   alertMessage: string;
@@ -33,6 +34,8 @@ export function RecoverPublicKey() {
   const { recipientState } = useSelector(x => x.embalmState);
 
   const { recoverPublicKey, isLoading, errorStatus, clearErrorStatus } = useRecoverPublicKey();
+
+  useEnterKeyCallback(() => recoverPublicKey(recipientState.address));
 
   async function handleOnClick(): Promise<void> {
     if (recipientState.address !== '') await recoverPublicKey(recipientState.address);
