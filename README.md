@@ -37,7 +37,7 @@ You may deploy the contracts on a local hardhat node and simulate an Arweave con
 development. Note that you will not be able to connect to Bundlr when connecting the app to a local hardhat network.
 Step 3 (Fund Bundlr) will not be required.
 
-1. Run ArLocal and mint tokens
+1. Run ArLocal and mint tokens -
 
 ```
 npx arlocal
