@@ -7,11 +7,13 @@ import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQuery } from '../../../hooks/useQuery';
 
 export function Claim() {
   const toast = useToast();
   const { id } = useParams();
-  const [privateKey, setPrivateKey] = useState('');
+  const query = useQuery();
+  const [privateKey, setPrivateKey] = useState(query.get('pk') || '');
   const [resurrectError, setResurrectError] = useState('');
   const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagus(id);
   const resurrectionString = buildResurrectionDateString(
@@ -23,7 +25,7 @@ export function Claim() {
     resurrect,
     isResurrecting,
     isLoading: isLoadingResurrection,
-    downloadProgress,
+    downloadProgress
   } = useResurrection(id || ethers.constants.HashZero, privateKey);
 
   const privateKeyPad = (privKey: string): string => {
@@ -36,6 +38,7 @@ export function Claim() {
 
   // linkRef is used to automatically trigger a download
   const linkRef = useRef<HTMLAnchorElement>(null);
+
   async function handleResurrect() {
     setResurrectError('');
 
@@ -55,7 +58,7 @@ export function Claim() {
         description: 'Your payload has been downloaded',
         status: 'success',
         isClosable: true,
-        position: 'bottom-right',
+        position: 'bottom-right'
       });
     }
   }
@@ -64,12 +67,12 @@ export function Claim() {
 
   return (
     <Flex
-      direction="column"
-      align="left"
+      direction='column'
+      align='left'
     >
       <Link ref={linkRef} />
       <Text>Resurrection Date</Text>
-      <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
+      <Text variant='secondary'>{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
       {!isLoadingResurrection && !isLoadingSarcophagus ? (
         <>
           {canResurrect ? (
@@ -77,16 +80,16 @@ export function Claim() {
               <Text mt={12}>Sarcophagus Private Key</Text>
               <Textarea
                 mt={2}
-                w="100%"
-                h="100px"
+                w='100%'
+                h='100px'
                 value={privateKey}
                 onChange={handleChangePrivateKey}
-                placeholder="0x0000..."
+                placeholder='0x0000...'
               />
               {resurrectError ? (
                 <Text
                   mt={2}
-                  textColor="red"
+                  textColor='red'
                 >
                   {resurrectError}
                 </Text>
@@ -97,7 +100,7 @@ export function Claim() {
               )}
 
               <Button
-                w="fit-content"
+                w='fit-content'
                 disabled={!canResurrect || !privateKey || isResurrecting}
                 mt={6}
                 onClick={handleResurrect}
@@ -108,13 +111,13 @@ export function Claim() {
             </>
           ) : (
             <Flex mt={12}>
-              <SarcoAlert status="warning">This Sarcophagus cannot be claimed yet.</SarcoAlert>
+              <SarcoAlert status='warning'>This Sarcophagus cannot be claimed yet.</SarcoAlert>
             </Flex>
           )}
         </>
       ) : (
         <Center mt={12}>
-          <Spinner size="lg" />
+          <Spinner size='lg' />
         </Center>
       )}
     </Flex>
