@@ -7,11 +7,13 @@ import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQuery } from '../../../hooks/useQuery';
 
 export function Claim() {
   const toast = useToast();
   const { id } = useParams();
-  const [privateKey, setPrivateKey] = useState('');
+  const query = useQuery();
+  const [privateKey, setPrivateKey] = useState(query.get('pk') || '');
   const [resurrectError, setResurrectError] = useState('');
   const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagus(id);
   const resurrectionString = buildResurrectionDateString(
@@ -36,6 +38,7 @@ export function Claim() {
 
   // linkRef is used to automatically trigger a download
   const linkRef = useRef<HTMLAnchorElement>(null);
+
   async function handleResurrect() {
     setResurrectError('');
 
