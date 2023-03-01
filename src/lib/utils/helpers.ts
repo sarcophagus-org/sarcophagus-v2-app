@@ -282,3 +282,5 @@ export function convertSarcoPerSecondToPerMonth(diggingFeePerSecond: string): st
   const averageNumberOfSecondsPerMonth = 2628288;
   return BigNumber.from(diggingFeePerSecond).mul(averageNumberOfSecondsPerMonth).toString();
 }
+
+export const wait = (ms: number) => new Promise(res => setTimeout(res, ms));

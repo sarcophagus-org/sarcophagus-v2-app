@@ -1,13 +1,14 @@
 import { ethers, UnsignedTransaction } from 'ethers';
 import { TransactionResponse } from '@ethersproject/providers';
 import { useState, useCallback } from 'react';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { useNetwork, useProvider } from 'wagmi';
 import { useDispatch } from 'store/index';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useNetworkConfig } from '../../../../lib/config';
 import { log } from '../../../../lib/utils/logger';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
+import { wait } from 'lib/utils/helpers';
 
 /**
  * returns a public key from a transaction
@@ -91,6 +92,38 @@ export function useRecoverPublicKey() {
   const { chain } = useNetwork();
   const provider = useProvider();
 
+  const recoverPublicKeyWithRetry = useCallback(
+    async (address: string, depth = 0): Promise<AxiosResponse> => {
+      try {
+        const response = await axios.get(
+          `${networkConfig.etherscanApiUrl}?${getParameters}&address=${address}&apikey=${networkConfig.etherscanApiKey}`
+        );
+
+        if (response.status !== 200) {
+          setErrorStatus(ErrorStatus.ERROR);
+          log('recoverPublicKey error:', response.data.message);
+          throw response.data.message;
+        }
+
+        if (typeof response.data.result === 'string') {
+          throw response.data.result;
+        }
+
+        return response;
+      } catch (e) {
+        console.log(`Recover attempt ${depth + 1} failed, retrying....`);
+        if (depth > 0) {
+          throw e;
+        }
+
+        await wait(3000);
+
+        return recoverPublicKeyWithRetry(address, depth + 1);
+      }
+    },
+    [networkConfig.etherscanApiKey, networkConfig.etherscanApiUrl]
+  );
+
   const recoverPublicKey = useCallback(
     async (address: string) => {
       try {
@@ -104,10 +137,8 @@ export function useRecoverPublicKey() {
           setErrorStatus(ErrorStatus.ERROR);
           return;
         }
-        log(`retrieving public key for address ${address}`);
-        const response = await axios.get(
-          `${networkConfig.etherscanApiUrl}?${getParameters}&address=${address}&apikey=${networkConfig.etherscanApiKey}`
-        );
+
+        const response = await recoverPublicKeyWithRetry(address);
 
         if (response.status !== 200) {
           setErrorStatus(ErrorStatus.ERROR);
@@ -132,7 +163,6 @@ export function useRecoverPublicKey() {
                 })
               );
 
-              log('recovered public key', recoveredPublicKey);
               setErrorStatus(ErrorStatus.SUCCESS);
 
               return;
@@ -148,7 +178,7 @@ export function useRecoverPublicKey() {
         setIsLoading(false);
       }
     },
-    [dispatch, provider, networkConfig.etherscanApiKey, networkConfig.etherscanApiUrl, chain?.id]
+    [chain?.id, recoverPublicKeyWithRetry, provider, dispatch]
   );
 
   return { recoverPublicKey, isLoading, errorStatus, clearErrorStatus: () => setErrorStatus(null) };
