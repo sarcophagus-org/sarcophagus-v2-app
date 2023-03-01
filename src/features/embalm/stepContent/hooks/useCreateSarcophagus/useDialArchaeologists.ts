@@ -8,6 +8,7 @@ import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
 import { CancelCreateToken } from './useCreateSarcophagus';
+import { wait } from 'lib/utils/helpers';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -71,7 +72,6 @@ export function useDialArchaeologists() {
     async (_: any, cancelToken: CancelCreateToken) => {
       const MAX_RETRIES = 5;
       const WAIT_BETWEEN_RETRIES = 300;
-      const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
 
       const dialArchaeologistWithRetry = async (
         dialFn: Function,
