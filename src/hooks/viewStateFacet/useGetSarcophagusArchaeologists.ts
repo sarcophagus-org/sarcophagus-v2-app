@@ -18,5 +18,5 @@ export function useGetSarcophagusArchaeologists(
     })),
   });
 
-  return (data as SarcophagusArchaeologist[]) || [];
+  return (data?.filter(d => d) as SarcophagusArchaeologist[]) || [];
 }

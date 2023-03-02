@@ -38,8 +38,22 @@ export function Rewrap() {
 
   const nowMs = Date.now();
 
-  const rewrapIntervalSeconds = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
-  const rewrapIntervalMs = rewrapIntervalSeconds * 1000;
+  const maxRewrapIntervalFromSarcophagusSec = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
+
+  // The calculated max rewrap interval is
+  // ( new resurrection time - previous resurrection time ) * (200 / cursed bond percentage)
+  // Defaults to max possible number
+  const maxRewrapIntervalCalculatedSec = sarcophagus
+    ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
+      (200 / sarcophagus.cursedBondPercentage)
+    : Number.MAX_SAFE_INTEGER;
+
+  // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and
+  // the calculated max rewrap interval
+  const maxRewrapIntervalMs =
+    (maxRewrapIntervalFromSarcophagusSec < maxRewrapIntervalCalculatedSec
+      ? maxRewrapIntervalFromSarcophagusSec
+      : maxRewrapIntervalCalculatedSec) * 1000;
 
   function handleCustomDateChange(date: Date | null): void {
     // Ensure that selected date is in the future
@@ -58,16 +72,16 @@ export function Rewrap() {
     }
   }
 
-  const maximumResurectionDate = new Date(nowMs + rewrapIntervalMs);
-  const resurrectionDateMs = maximumResurectionDate.getTime();
+  const maxResurrectionDate = new Date(nowMs + Number(maxRewrapIntervalMs));
+  const maxResurrectionDateMs = maxResurrectionDate.getTime();
 
   const filterInvalidTime = (time: Date) => {
     const selectedDateMs = new Date(time).getTime();
-    return resurrectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
+    return maxResurrectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
   };
 
   const newResurrectionString = buildResurrectionDateString(
-    BigNumber.from(Math.trunc(resurrectionDateMs / 1000))
+    BigNumber.from(Math.trunc(maxResurrectionDateMs / 1000))
   );
 
   const currentResurrectionString = buildResurrectionDateString(sarcophagus?.resurrectionTime, {
@@ -81,6 +95,14 @@ export function Rewrap() {
   );
 
   const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
+
+  const isRewrapButtonDisabled =
+    !resurrectionTime ||
+    !rewrap ||
+    isRewrapping ||
+    isError ||
+    mayFail ||
+    (balance && balance.lt(diggingPlusProtocolFees));
 
   return (
     <VStack
@@ -133,7 +155,7 @@ export function Rewrap() {
               onChange={handleCustomDateChange}
               showTimeSelect
               minDate={new Date()}
-              maxDate={maximumResurectionDate}
+              maxDate={maxResurrectionDate}
               filterTime={filterInvalidTime}
               showPopperArrow={false}
               timeIntervals={30}
@@ -219,14 +241,7 @@ export function Rewrap() {
         </Button>
         <Button
           onClick={() => rewrap?.()}
-          isDisabled={
-            !!!resurrectionTime ||
-            !rewrap ||
-            isRewrapping ||
-            isError ||
-            mayFail ||
-            (balance && balance < diggingPlusProtocolFees)
-          }
+          isDisabled={isRewrapButtonDisabled}
           isLoading={isRewrapping}
           loadingText="Rewrapping..."
         >
