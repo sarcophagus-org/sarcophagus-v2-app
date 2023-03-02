@@ -38,25 +38,22 @@ export function Rewrap() {
 
   const nowMs = Date.now();
 
-  const maxRewrapIntervalFromSarcophagusSec = BigNumber.from(
-    sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0
-  );
+  const maxRewrapIntervalFromSarcophagusSec = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
 
-  // The calculated max rewrap interval is the ( new resurrection time - previous resurrection time ) * 2
+  // The calculated max rewrap interval is
+  // ( new resurrection time - previous resurrection time ) * (200 / cursed bond percentage)
   // Defaults to max possible number
-  // TODO: Update this equation to handle a modifiable multiplier
   const maxRewrapIntervalCalculatedSec = sarcophagus
-    ? sarcophagus.resurrectionTime.sub(sarcophagus.previousRewrapTime).mul(2)
-    : ethers.constants.MaxUint256;
-  // }
+    ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
+      (200 / sarcophagus.cursedBondPercentage)
+    : Number.MAX_SAFE_INTEGER;
 
   // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and
   // the calculated max rewrap interval
-  const maxRewrapIntervalMs = (
-    maxRewrapIntervalFromSarcophagusSec.lt(maxRewrapIntervalCalculatedSec)
+  const maxRewrapIntervalMs =
+    (maxRewrapIntervalFromSarcophagusSec < maxRewrapIntervalCalculatedSec
       ? maxRewrapIntervalFromSarcophagusSec
-      : maxRewrapIntervalCalculatedSec
-  ).mul(1000);
+      : maxRewrapIntervalCalculatedSec) * 1000;
 
   function handleCustomDateChange(date: Date | null): void {
     // Ensure that selected date is in the future

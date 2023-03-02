@@ -82,6 +82,7 @@ export interface SarcophagusResponseContract {
   isCleaned: boolean;
   name: string;
   threshold: number;
+  cursedBondPercentage: number;
   maximumRewrapInterval: BigNumber;
   arweaveTxId: string;
   embalmerAddress: string;
