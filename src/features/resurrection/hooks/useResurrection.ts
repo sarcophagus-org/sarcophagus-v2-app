@@ -72,6 +72,11 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       // with the recipient's key, and an outer layer of encryption with the archaeologist's key.
       const decryptedKeyShares: Buffer[] = [];
       for await (const arch of archaeologists) {
+        // If arch failed to publish private key, continue to next key
+        if (arch.privateKey === ethers.constants.HashZero) {
+          continue;
+        }
+
         const archDoubleEncryptedKeyShare = arweaveFile.keyShares[arch.publicKey];
 
         // Decrypt outer layer with arch private key
