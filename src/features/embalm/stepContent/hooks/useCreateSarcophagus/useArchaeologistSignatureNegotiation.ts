@@ -11,6 +11,7 @@ import {
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useDialArchaeologists } from './useDialArchaeologists';
 import { CancelCreateToken } from './useCreateSarcophagus';
+import * as Sentry from '@sentry/react';
 
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
@@ -105,6 +106,7 @@ export function useArchaeologistSignatureNegotiation() {
                 // maxRewrapInterval, diggingFee, timestamp, publicKey
 
                 if (response.error) {
+                  Sentry.captureException(response);
                   console.log(`error response from arch: \n${response.error.message}`);
                   dispatch(
                     setArchaeologistException(arch.profile.peerId, {
