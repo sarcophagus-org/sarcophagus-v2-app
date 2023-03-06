@@ -246,6 +246,15 @@ export function deselectArchaeologist(address: string): EmbalmActions {
   };
 }
 
+export function setSelectedArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
+  return {
+    type: ActionType.SetSelectedArchaeologists,
+    payload: {
+      selectedArchaeologists: archaeologists,
+    },
+  };
+}
+
 export function setArchaeologistFullPeerId(peerId: PeerId): EmbalmActions {
   return {
     type: ActionType.SetArchaeologistFullPeerId,

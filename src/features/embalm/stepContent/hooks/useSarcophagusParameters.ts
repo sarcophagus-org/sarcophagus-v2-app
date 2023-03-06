@@ -141,8 +141,11 @@ export const useSarcophagusParameters = () => {
       .every(step => getStatus(step) === StepStatus.Complete);
   };
 
+  const isError = Object.values(sarcophagusParameters).some(p => p.error);
+
   return {
     sarcophagusParameters,
     isSarcophagusFormDataComplete,
+    isError,
   };
 };

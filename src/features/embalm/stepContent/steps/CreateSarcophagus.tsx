@@ -68,7 +68,7 @@ export function CreateSarcophagus() {
     clearSarcophagusState,
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
-  const { isSarcophagusFormDataComplete } = useSarcophagusParameters();
+  const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
   const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
@@ -161,7 +161,9 @@ export function CreateSarcophagus() {
               mt={9}
               onClick={handleCreate}
               disabled={
-                balance?.lte(totalDiggingFees.add(protocolFee)) || !isSarcophagusFormDataComplete()
+                balance?.lte(totalDiggingFees.add(protocolFee)) ||
+                !isSarcophagusFormDataComplete() ||
+                isError
               }
             >
               Create Sarcophagus
