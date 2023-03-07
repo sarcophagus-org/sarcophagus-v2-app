@@ -4,9 +4,8 @@ import { BigNumber, ethers } from 'ethers';
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
-import { useState } from 'react';
 import { useSelector } from 'store/index';
-import { BundlrInput } from './BundlrInput';
+import { useBundlrInput } from './BundlrInput';
 import { formatEther } from 'ethers/lib/utils';
 
 export enum BundlrAction {
@@ -23,7 +22,6 @@ interface BundlrProfileProps {
 }
 
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
-  const [inputAmount, setInputAmount] = useState('');
   const { balanceOffset } = useSelector(s => s.bundlrState);
   const bundlrBalanceData = useGetBalance();
   const bundlrBalanceInEth = !bundlrBalanceData?.balance
@@ -47,18 +45,15 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
     [BundlrAction.Connect]: 'Connect to Bundlr',
   };
 
-  function handleChangeAmount(valueAsString: string) {
-    if (valueAsString.length > 20) return;
-    setInputAmount(valueAsString);
-  }
+  const { BundlrInput, inputAmountBN } = useBundlrInput();
 
   function handleClickButton() {
     switch (action) {
       case BundlrAction.Deposit:
-        onDeposit?.(ethers.utils.parseUnits(inputAmount));
+        onDeposit?.(inputAmountBN!);
         break;
       case BundlrAction.Withdraw:
-        onWithdraw?.(ethers.utils.parseUnits(inputAmount));
+        onWithdraw?.(inputAmountBN!);
         break;
       case BundlrAction.Connect:
         onConnect?.();
@@ -88,10 +83,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         </Text>
       )}
       <Text mt={6}>Enter Amount</Text>
-      <BundlrInput
-        value={inputAmount}
-        onChange={handleChangeAmount}
-      />
+      {BundlrInput}
       <Text mt={3}>
         Wallet Balance: {formattedEthBalance} ETH{' '}
         {!isNaN(ethUsdValue) && `($${ethers.utils.commify(ethUsdValue)})`}
@@ -99,6 +91,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       <Button
         mt={6}
         onClick={handleClickButton}
+        disabled={!inputAmountBN}
       >
         {buttonText[action]}
       </Button>
