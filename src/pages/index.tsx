@@ -18,6 +18,7 @@ import { CreateSarcophagusContextProvider } from 'features/embalm/stepContent/co
 import { WalletDisconnectPage } from './WalletDisconnectPage';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { AccusePage } from './AccusePage';
+import { AdminDashBoardPage } from './AdminDashboardPage';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -30,6 +31,7 @@ export enum RouteKey {
   SARCOPHAGUS_CREATED,
   THEME_TEST_PAGE,
   ACCUSE_PAGE,
+  ADMIN_DASHBOARD_PAGE,
 }
 
 export const RoutesPathMap: { [key: number]: string } = {
@@ -43,6 +45,7 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
   [RouteKey.THEME_TEST_PAGE]: '/theme-test',
   [RouteKey.ACCUSE_PAGE]: '/accuse',
+  [RouteKey.ADMIN_DASHBOARD_PAGE]: '/admin-dashboard',
 };
 
 export function Pages() {
@@ -119,6 +122,12 @@ export function Pages() {
     {
       path: RoutesPathMap[RouteKey.THEME_TEST_PAGE],
       element: <ThemeTestPage />,
+      label: '',
+      hidden: true,
+    },
+    {
+      path: RoutesPathMap[RouteKey.ADMIN_DASHBOARD_PAGE],
+      element: <AdminDashBoardPage />,
       label: '',
       hidden: true,
     },
