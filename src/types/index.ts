@@ -37,7 +37,6 @@ export interface ArchaeologistException {
 export interface SarcophagusArchaeologist {
   diggingFeePerSecond: number;
   isAccused: boolean;
-  diggingFeesPaid: number;
   publicKey: string;
   privateKey: string;
 }

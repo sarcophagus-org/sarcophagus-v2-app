@@ -9,4 +9,5 @@ export { useGetFreeBond } from './useGetFreeBond';
 export { useGetProtocolFeeAmount } from './useGetProtocolFeeAmount';
 export { useGetRecipientSarcophagi } from './useGetRecipientSarcophagi';
 export { useGetSarcophagusArchaeologist } from './useGetSarcophagusArchaeologist';
+export { useGetSarcophagusArchaeologists } from './useGetSarcophagusArchaeologists';
 export { useGetSarcophagus } from './useGetSarcophagus';
