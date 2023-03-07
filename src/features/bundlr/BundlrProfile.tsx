@@ -23,16 +23,18 @@ interface BundlrProfileProps {
 
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
   const { balanceOffset } = useSelector(s => s.bundlrState);
+
   const bundlrBalanceData = useGetBalance();
+
   const bundlrBalanceInEth = !bundlrBalanceData?.balance
     ? '--'
     : formatEther(bundlrBalanceData.balance.toString());
-  const bundlrBalance = !bundlrBalanceData?.balance
-    ? '--'
-    : Number(bundlrBalanceData?.balance).toFixed(2);
 
   const ethPrice = useEthPrice();
-  const bundlrUsdValue = Math.round(parseFloat(bundlrBalance) * parseFloat(ethPrice));
+
+  const bundlrUsdValue = bundlrBalanceData?.balance
+    ? Math.round(parseFloat(bundlrBalanceInEth) * parseFloat(ethPrice))
+    : undefined;
 
   const { balance: ethBalance } = useEthBalance();
   const formattedEthBalance = Number(ethBalance).toFixed(4);
@@ -73,7 +75,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         <EthereumIcon boxSize="30px" />
         <Text fontSize="3xl">{`${bundlrBalanceInEth}`}</Text>
       </Flex>
-      <Text mt={1}>{isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}</Text>
+      <Text mt={1}>{!bundlrUsdValue ? '--' : `$${bundlrUsdValue}`}</Text>
       {!balanceOffset.eq(ethers.constants.Zero) && (
         <Text
           mt={3}
@@ -82,7 +84,12 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
           You have a pending balance update. Your balance should be updated in a few minutes.
         </Text>
       )}
-      <Text mt={6}>Enter Amount</Text>
+      <Text
+        mt={6}
+        mb={3}
+      >
+        Enter Amount
+      </Text>
       {BundlrInput}
       <Text mt={3}>
         Wallet Balance: {formattedEthBalance} ETH{' '}
