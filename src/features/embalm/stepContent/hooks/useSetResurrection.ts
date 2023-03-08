@@ -3,9 +3,10 @@ import { minimumResurrection } from 'lib/constants';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
+  setCustomResurrectionDate,
   setResurrection,
   setResurrectionRadioValue,
-  setCustomResurrectionDate,
+  setSelectedArchaeologists,
 } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
@@ -28,14 +29,17 @@ export function useSetResurrection() {
 
   function handleRadioChange(nextValue: string) {
     dispatch(setResurrectionRadioValue(nextValue));
+    dispatch(setSelectedArchaeologists([]));
   }
 
   function handleCustomDateChange(date: Date | null) {
     dispatch(setCustomResurrectionDate(date));
+    dispatch(setSelectedArchaeologists([]));
   }
 
   function handleCustomDateClick() {
     dispatch(setResurrectionRadioValue('Other'));
+    dispatch(setSelectedArchaeologists([]));
   }
 
   // value and onChange are passed in to this hook instead of into a RadioGroup component.
