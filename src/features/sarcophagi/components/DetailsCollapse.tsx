@@ -1,7 +1,9 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet';
 import { Sarcophagus } from 'types';
+import { ArchaeologistsDetailsCollapse } from './ArchaeologistDetailsCollapse';
 
 interface DetailsCollapseProps {
   id?: string;
@@ -13,6 +15,16 @@ export function DetailsCollapse({
   sarcophagus,
 }: DetailsCollapseProps) {
   const { isOpen, onToggle } = useDisclosure();
+
+  const archaeologists = useGetSarcophagusArchaeologists(
+    sarcophagus.id,
+    sarcophagus.archaeologistAddresses
+  );
+
+  const archaeologistsWithAddresses = archaeologists.map((a, i) => ({
+    ...a,
+    address: sarcophagus.archaeologistAddresses[i] as `0x${string}`,
+  }));
 
   return (
     <>
@@ -52,7 +64,7 @@ export function DetailsCollapse({
           <Text>Embalmer Address: {sarcophagus?.embalmerAddress}</Text>
           <Text>Recipient Address: {sarcophagus?.recipientAddress}</Text>
           <Text>Minimum Archaeologists: {sarcophagus?.threshold}</Text>
-          <Text>Total Archaeologists: {sarcophagus?.archaeologistAddresses?.length}</Text>
+          <ArchaeologistsDetailsCollapse archaeologists={archaeologistsWithAddresses} />
         </VStack>
       </Collapse>
     </>

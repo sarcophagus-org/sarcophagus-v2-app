@@ -31,7 +31,10 @@ export function Details() {
   const canEmbalmerClean = useGetEmbalmerCanClean(sarcophagus);
 
   return (
-    <Flex direction="column">
+    <Flex
+      pb={100}
+      direction="column"
+    >
       {sarcophagus && (
         <DetailsCollapse
           id={id}
