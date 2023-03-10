@@ -38,12 +38,15 @@ export function useClearSarcophagusState() {
     setSuccessSarcophagusTxId(sarcophagusTxId);
 
     // reset state local to create sarcophagus
-    setPayloadPrivateKey(initialCreateSarcophagusState.payloadPrivateKey);
-    setPayloadPublicKey(initialCreateSarcophagusState.payloadPublicKey);
-    setNegotiationTimestamp(initialCreateSarcophagusState.negotiationTimestamp);
-    setArchaeologistSignatures(initialCreateSarcophagusState.archaeologistSignatures);
-    setSarcophagusPayloadTxId(initialCreateSarcophagusState.sarcophagusPayloadTxId);
-    setSarcophagusTxId(initialCreateSarcophagusState.sarcophagusTxId);
+    if (setPayloadPrivateKey) setPayloadPrivateKey(initialCreateSarcophagusState.payloadPrivateKey);
+    if (setPayloadPublicKey) setPayloadPublicKey(initialCreateSarcophagusState.payloadPublicKey);
+    if (setNegotiationTimestamp)
+      setNegotiationTimestamp(initialCreateSarcophagusState.negotiationTimestamp);
+    if (setArchaeologistSignatures)
+      setArchaeologistSignatures(initialCreateSarcophagusState.archaeologistSignatures);
+    if (setSarcophagusPayloadTxId)
+      setSarcophagusPayloadTxId(initialCreateSarcophagusState.sarcophagusPayloadTxId);
+    if (setSarcophagusTxId) setSarcophagusTxId(initialCreateSarcophagusState.sarcophagusTxId);
 
     // reset global embalm state
     dispatch(resetEmbalmState(Step.CreateSarcophagus));
