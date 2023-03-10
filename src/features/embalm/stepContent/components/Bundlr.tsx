@@ -1,6 +1,6 @@
 import { Button, FormControl, FormLabel, HStack, Text, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-import { useBundlrInput } from 'features/bundlr/BundlrInput';
+import { useBundlrInput } from 'features/bundlr/useBundlrInput';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { useCallback } from 'react';

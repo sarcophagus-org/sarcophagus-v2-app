@@ -5,7 +5,7 @@ import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
 import { useSelector } from 'store/index';
-import { useBundlrInput } from './BundlrInput';
+import { useBundlrInput } from './useBundlrInput';
 import { formatEther } from 'ethers/lib/utils';
 
 export enum BundlrAction {
