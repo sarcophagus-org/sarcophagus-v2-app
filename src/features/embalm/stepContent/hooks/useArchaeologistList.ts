@@ -128,7 +128,7 @@ export function useArchaeologistList() {
     }
   };
 
-  const archaeologistListVisible = (): Archaeologist[] => {
+  const archaeologistListVisible = (arg: { forceShowHidden: boolean }): Archaeologist[] => {
     function shouldFilterBySelected(arch: Archaeologist): boolean {
       if (showOnlySelectedArchaeologists) {
         return (
@@ -152,7 +152,7 @@ export function useArchaeologistList() {
         arch.profile.failures.lte(failsFilter || constants.MaxInt256)
     );
 
-    return showHiddenArchaeologists && !showOnlySelectedArchaeologists
+    return (arg.forceShowHidden || showHiddenArchaeologists) && !showOnlySelectedArchaeologists
       ? [...filteredSorted, ...hiddenArchaeologists]
       : filteredSorted;
   };
