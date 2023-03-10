@@ -7,45 +7,62 @@ import {
   InputGroup,
   InputRightElement,
 } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { uploadPriceDecimals } from 'lib/constants';
 import { useState } from 'react';
 
 const inputLimit = 46;
 
-export function useBundlrInput(args: { initialAmount?: number; inputHeight?: string } = {}) {
-  const { initialAmount, inputHeight: heightArg } = args;
+interface BundlrInputProps {
+  initialAmount?: BigNumber;
+  inputHeight?: string;
+  onInputChange: Function;
+}
 
-  const [inputAmount, setInputAmount] = useState(
-    `${initialAmount?.toFixed(uploadPriceDecimals) ?? ''}`
-  );
-  const [isValidInput, setIsValidInput] = useState(false);
+export const BundlrInput = ({
+  initialAmount,
+  inputHeight = '48px',
+  onInputChange,
+}: BundlrInputProps) => {
+  const initialInputStr = `${
+    initialAmount
+      ? Number(ethers.utils.formatEther(initialAmount)).toFixed(uploadPriceDecimals)
+      : ''
+  }`;
+  const [inputAmount, setInputAmount] = useState(initialInputStr);
+  const [initialised, setInitialised] = useState(false);
+
+  if (!initialised && !!initialInputStr) {
+    // prevent render loop
+    onInputChange(ethers.utils.parseUnits(initialInputStr));
+    setInitialised(true);
+  }
 
   const handleInputChange = (valueAsString: string) => {
-    setIsValidInput(false);
+    let isValidInput = false;
 
     if (!valueAsString) {
       setInputAmount('');
+      onInputChange(undefined);
       return;
     }
 
     valueAsString = valueAsString.slice(0, inputLimit);
     const valueAsFloat = Number.parseFloat(valueAsString);
 
-    setIsValidInput(!Number.isNaN(valueAsFloat) && valueAsFloat > 0);
+    isValidInput = !Number.isNaN(valueAsFloat) && valueAsFloat > 0;
 
     try {
       ethers.utils.parseEther(valueAsString);
     } catch (_) {
-      setIsValidInput(false);
+      isValidInput = false;
     }
 
     setInputAmount(valueAsString);
+    onInputChange(isValidInput ? ethers.utils.parseUnits(valueAsString) : undefined);
   };
 
-  const inputHeight = heightArg ?? '48px';
-
-  const BundlrInput = (
+  return (
     <InputGroup flex={1}>
       <NumberInput
         step={0.01}
@@ -84,9 +101,4 @@ export function useBundlrInput(args: { initialAmount?: number; inputHeight?: str
       </NumberInput>
     </InputGroup>
   );
-
-  return {
-    BundlrInput,
-    inputAmountBN: isValidInput ? ethers.utils.parseUnits(inputAmount) : undefined,
-  };
-}
+};

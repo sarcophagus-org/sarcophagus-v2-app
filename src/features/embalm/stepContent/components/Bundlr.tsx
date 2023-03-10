@@ -1,9 +1,9 @@
 import { Button, FormControl, FormLabel, HStack, Text, VStack } from '@chakra-ui/react';
-import { ethers } from 'ethers';
-import { useBundlrInput } from 'features/bundlr/useBundlrInput';
+import { BigNumber, ethers } from 'ethers';
+import { BundlrInput } from 'features/bundlr/BundlrInput';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
@@ -22,18 +22,13 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
     disconnectFromBundlr();
   }
 
-  const { BundlrInput, inputAmountBN } = useBundlrInput({
-    initialAmount:
-      uploadPrice && !uploadPrice.eq(ethers.constants.Zero)
-        ? parseFloat(ethers.utils.formatUnits(uploadPrice))
-        : undefined,
-    inputHeight: '40px',
-  });
+  const [inputAmountBN, setInputAmountBN] = useState<BigNumber>();
 
   const handleFund = useCallback(async () => {
     if (!inputAmountBN) return;
+    console.log('fund', inputAmountBN.toString());
     await fund(inputAmountBN);
-  }, [inputAmountBN, fund]);
+  }, [fund, inputAmountBN]);
 
   return (
     <VStack
@@ -56,7 +51,15 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           <FormControl>
             <FormLabel>Amount</FormLabel>
             <HStack>
-              {BundlrInput}
+              <BundlrInput
+                initialAmount={
+                  uploadPrice && !uploadPrice.eq(ethers.constants.Zero) ? uploadPrice : undefined
+                }
+                inputHeight="40px"
+                onInputChange={(input: BigNumber | undefined) => {
+                  setInputAmountBN(input);
+                }}
+              />
               <Button
                 float="right"
                 disabled={!inputAmountBN || isFunding}

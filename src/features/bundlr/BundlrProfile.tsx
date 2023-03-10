@@ -5,8 +5,9 @@ import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
 import { useSelector } from 'store/index';
-import { useBundlrInput } from './useBundlrInput';
+import { BundlrInput } from './BundlrInput';
 import { formatEther } from 'ethers/lib/utils';
+import { useState } from 'react';
 
 export enum BundlrAction {
   Deposit,
@@ -47,15 +48,15 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
     [BundlrAction.Connect]: 'Connect to Bundlr',
   };
 
-  const { BundlrInput, inputAmountBN } = useBundlrInput();
+  const [bundlrInputBN, setBundlrAmountBN] = useState<BigNumber>();
 
   function handleClickButton() {
     switch (action) {
       case BundlrAction.Deposit:
-        onDeposit?.(inputAmountBN!);
+        onDeposit?.(bundlrInputBN!);
         break;
       case BundlrAction.Withdraw:
-        onWithdraw?.(inputAmountBN!);
+        onWithdraw?.(bundlrInputBN!);
         break;
       case BundlrAction.Connect:
         onConnect?.();
@@ -90,7 +91,11 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       >
         Enter Amount
       </Text>
-      {BundlrInput}
+      <BundlrInput
+        onInputChange={(input: BigNumber | undefined) => {
+          setBundlrAmountBN(input);
+        }}
+      />
       <Text mt={3}>
         Wallet Balance: {formattedEthBalance} ETH{' '}
         {!isNaN(ethUsdValue) && `($${ethers.utils.commify(ethUsdValue)})`}
@@ -98,7 +103,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       <Button
         mt={6}
         onClick={handleClickButton}
-        disabled={!inputAmountBN}
+        disabled={!bundlrInputBN}
       >
         {buttonText[action]}
       </Button>
