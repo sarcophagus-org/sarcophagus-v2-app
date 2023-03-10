@@ -4,10 +4,10 @@ import { BigNumber, ethers } from 'ethers';
 import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
-import { useState } from 'react';
 import { useSelector } from 'store/index';
 import { BundlrInput } from './BundlrInput';
 import { formatEther } from 'ethers/lib/utils';
+import { useState } from 'react';
 
 export enum BundlrAction {
   Deposit,
@@ -23,18 +23,19 @@ interface BundlrProfileProps {
 }
 
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
-  const [inputAmount, setInputAmount] = useState('');
   const { balanceOffset } = useSelector(s => s.bundlrState);
+
   const bundlrBalanceData = useGetBalance();
+
   const bundlrBalanceInEth = !bundlrBalanceData?.balance
     ? '--'
     : formatEther(bundlrBalanceData.balance.toString());
-  const bundlrBalance = !bundlrBalanceData?.balance
-    ? '--'
-    : Number(bundlrBalanceData?.balance).toFixed(2);
 
   const ethPrice = useEthPrice();
-  const bundlrUsdValue = Math.round(parseFloat(bundlrBalance) * parseFloat(ethPrice));
+
+  const bundlrUsdValue = bundlrBalanceData?.balance
+    ? Math.round(parseFloat(bundlrBalanceInEth) * parseFloat(ethPrice))
+    : undefined;
 
   const { balance: ethBalance } = useEthBalance();
   const formattedEthBalance = Number(ethBalance).toFixed(4);
@@ -47,18 +48,15 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
     [BundlrAction.Connect]: 'Connect to Bundlr',
   };
 
-  function handleChangeAmount(valueAsString: string) {
-    if (valueAsString.length > 20) return;
-    setInputAmount(valueAsString);
-  }
+  const [bundlrInputBN, setBundlrAmountBN] = useState<BigNumber>();
 
   function handleClickButton() {
     switch (action) {
       case BundlrAction.Deposit:
-        onDeposit?.(ethers.utils.parseUnits(inputAmount));
+        onDeposit?.(bundlrInputBN!);
         break;
       case BundlrAction.Withdraw:
-        onWithdraw?.(ethers.utils.parseUnits(inputAmount));
+        onWithdraw?.(bundlrInputBN!);
         break;
       case BundlrAction.Connect:
         onConnect?.();
@@ -78,7 +76,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
         <EthereumIcon boxSize="30px" />
         <Text fontSize="3xl">{`${bundlrBalanceInEth}`}</Text>
       </Flex>
-      <Text mt={1}>{isNaN(bundlrUsdValue) ? '--' : `$${bundlrUsdValue}`}</Text>
+      <Text mt={1}>{!bundlrUsdValue ? '--' : `$${bundlrUsdValue}`}</Text>
       {!balanceOffset.eq(ethers.constants.Zero) && (
         <Text
           mt={3}
@@ -87,10 +85,16 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
           You have a pending balance update. Your balance should be updated in a few minutes.
         </Text>
       )}
-      <Text mt={6}>Enter Amount</Text>
+      <Text
+        mt={6}
+        mb={3}
+      >
+        Enter Amount
+      </Text>
       <BundlrInput
-        value={inputAmount}
-        onChange={handleChangeAmount}
+        onInputChange={(input: BigNumber | undefined) => {
+          setBundlrAmountBN(input);
+        }}
       />
       <Text mt={3}>
         Wallet Balance: {formattedEthBalance} ETH{' '}
@@ -99,6 +103,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
       <Button
         mt={6}
         onClick={handleClickButton}
+        disabled={!bundlrInputBN}
       >
         {buttonText[action]}
       </Button>

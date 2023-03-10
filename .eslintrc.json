@@ -34,13 +34,6 @@
   "rules": {
     // ignores need for "react" import
     "react/react-in-jsx-scope": "off",
-    // rule for function component to be framed as function
-    "react/function-component-definition": [
-      2,
-      {
-        "namedComponents": "function-declaration"
-      }
-    ],
     "comma-dangle": "off",
     "@typescript-eslint/comma-dangle": "off",
     "indent": "off",

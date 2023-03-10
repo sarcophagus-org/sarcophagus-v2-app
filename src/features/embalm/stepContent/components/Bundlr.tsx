@@ -1,18 +1,8 @@
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { Button, FormControl, FormLabel, HStack, Text, VStack } from '@chakra-ui/react';
+import { BigNumber, ethers } from 'ethers';
+import { BundlrInput } from 'features/bundlr/BundlrInput';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
-import { uploadPriceDecimals } from 'lib/constants';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
@@ -24,31 +14,21 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { connectToBundlr, disconnectFromBundlr, isConnected } = useBundlrSession();
   const { formattedBalance } = useGetBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
-  const [inputAmount, setInputAmount] = useState(
-    uploadPrice.eq(ethers.constants.Zero)
-      ? undefined
-      : parseFloat(ethers.utils.formatUnits(uploadPrice)).toFixed(uploadPriceDecimals)
-  );
+
   const { balanceOffset } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
-
-  const isInputAmountValid = !!inputAmount && parseFloat(inputAmount) > 0;
-
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { value } = event.target;
-    if (Number(value) < 0 || !ethers.utils.parseEther(value)) return;
-    const inputLimit = 46;
-    setInputAmount(value.slice(0, inputLimit));
-  }
 
   function handleDisconnect() {
     disconnectFromBundlr();
   }
 
+  const [inputAmountBN, setInputAmountBN] = useState<BigNumber>();
+
   const handleFund = useCallback(async () => {
-    if (!isInputAmountValid) return;
-    await fund(ethers.utils.parseUnits(inputAmount));
-  }, [inputAmount, fund, isInputAmountValid]);
+    if (!inputAmountBN) return;
+    console.log('fund', inputAmountBN.toString());
+    await fund(inputAmountBN);
+  }, [fund, inputAmountBN]);
 
   return (
     <VStack
@@ -71,19 +51,18 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
           <FormControl>
             <FormLabel>Amount</FormLabel>
             <HStack>
-              <InputGroup flex={1}>
-                <Input
-                  onChange={handleInputChange}
-                  value={inputAmount}
-                  isDisabled={isFunding}
-                  type="text"
-                  placeholder="0.000"
-                />
-                <InputRightElement fontWeight={700}>ETH</InputRightElement>
-              </InputGroup>
+              <BundlrInput
+                initialAmount={
+                  uploadPrice && !uploadPrice.eq(ethers.constants.Zero) ? uploadPrice : undefined
+                }
+                inputHeight="40px"
+                onInputChange={(input: BigNumber | undefined) => {
+                  setInputAmountBN(input);
+                }}
+              />
               <Button
                 float="right"
-                disabled={!isInputAmountValid || isFunding}
+                disabled={!inputAmountBN || isFunding}
                 isLoading={isFunding}
                 onClick={handleFund}
               >
