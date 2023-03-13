@@ -29,7 +29,9 @@ import { ArchaeologistListItem } from './ArchaeologistListItem';
 export function ArchaeologistList({
   showDial,
   paginatedArchaeologist,
+  totalCount,
 }: {
+  totalCount: number;
   showDial?: boolean;
   paginatedArchaeologist: Archaeologist[];
 }) {
@@ -37,7 +39,6 @@ export function ArchaeologistList({
     handleCheckArchaeologist,
     selectedArchaeologists,
     hiddenArchaeologists,
-    archaeologistListVisible,
     onClickSortDiggingFees,
     onClickSortUnwraps,
     onClickSortFails,
@@ -104,7 +105,7 @@ export function ArchaeologistList({
                         color="text.primary"
                         p={'0.5'}
                       >
-                        Archaeologists ({archaeologistListVisible()?.length})
+                        Archaeologists ({totalCount})
                       </Button>
                       <FilterInput
                         filterName={SortFilterType.ADDRESS_SEARCH}

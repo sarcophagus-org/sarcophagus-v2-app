@@ -22,14 +22,12 @@ import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { toggleShowHiddenArchaeologists } from 'store/archaeologistList/actions';
 
 interface SelectArchaeologistsProps {
-  hideHeader?: boolean;
-  showDial?: boolean;
+  isArchaeologistsDashboard?: boolean;
   defaultPageSize?: number;
 }
 
 export function SelectArchaeologists({
-  hideHeader = false,
-  showDial = false,
+  isArchaeologistsDashboard = false,
   defaultPageSize = 10,
 }: SelectArchaeologistsProps) {
   const outerLimit = 1;
@@ -46,9 +44,13 @@ export function SelectArchaeologists({
   const [resurrectionTimeEdit, setResurrectionTimeEdit] = useState<boolean>(false);
   const [paginationSize, setPaginationSize] = useState<number>(defaultPageSize);
 
+  const visibleArchaeologists = archaeologistListVisible({
+    forceShowHidden: isArchaeologistsDashboard,
+  });
+
   const { currentPage, setCurrentPage, pagesCount, pages, pageSize, setPageSize, offset } =
     usePagination({
-      total: archaeologistListVisible().length,
+      total: visibleArchaeologists.length,
       initialState: { currentPage: 1, pageSize: defaultPageSize },
       limits: {
         outer: outerLimit,
@@ -56,7 +58,7 @@ export function SelectArchaeologists({
       },
     });
 
-  const paginatedArchaeologist = archaeologistListVisible().slice(offset, offset + pageSize);
+  const paginatedArchaeologists = visibleArchaeologists.slice(offset, offset + pageSize);
   const resurrectionDate = new Date(resurrection);
 
   const handlePageChange = (nextPage: number): void => {
@@ -78,7 +80,7 @@ export function SelectArchaeologists({
       direction="column"
       width="100%"
     >
-      {!hideHeader ?? <Heading>Archaeologists</Heading>}
+      {!isArchaeologistsDashboard ?? <Heading>Archaeologists</Heading>}
       <Text
         mt="4"
         fontSize="lg"
@@ -132,8 +134,9 @@ export function SelectArchaeologists({
         >
           <VStack>
             <ArchaeologistList
-              paginatedArchaeologist={paginatedArchaeologist}
-              showDial={showDial}
+              paginatedArchaeologist={paginatedArchaeologists}
+              totalCount={visibleArchaeologists.length}
+              showDial={isArchaeologistsDashboard}
             />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>
@@ -248,7 +251,7 @@ export function SelectArchaeologists({
                     dispatch(toggleShowHiddenArchaeologists());
                   }}
                 >
-                  {showHiddenArchaeologists ? '(hide)' : '(show)'}
+                  {isArchaeologistsDashboard ? '' : showHiddenArchaeologists ? '(hide)' : '(show)'}
                 </Text>
               </HStack>
             ) : (

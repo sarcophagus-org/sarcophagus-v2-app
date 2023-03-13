@@ -24,10 +24,7 @@ export function ArchaeologistsPage() {
       >
         Archaeologists
       </Heading>
-      <SelectArchaeologists
-        hideHeader
-        showDial
-      />
+      <SelectArchaeologists isArchaeologistsDashboard />
     </Flex>
   );
 }
