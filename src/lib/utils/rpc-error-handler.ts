@@ -22,18 +22,14 @@ const invalidSignature = (e: string) => e.includes('InvalidSignature');
 /**
  * Parses the text in RPC errors' `.reason` field and returns a more readable error message
  * */
-export function handleRpcError(
-  e: any,
-  opts: { skipConsoleLog?: boolean; callback?: Function } = {}
-): string {
+export function handleRpcError(e: any, opts: { skipConsoleLog?: boolean } = {}): string {
   const { reason, errorArgs, errorName } = e;
-  const { skipConsoleLog, callback } = opts;
+  const { skipConsoleLog } = opts;
 
   const errorString: string = reason || errorName || '';
 
   const handleErrorMsg = (errorMsg: string) => {
     if (!skipConsoleLog) console.log(errorMsg);
-    if (callback) callback(errorMsg);
   };
 
   if (alreadyUnwrapped(errorString)) {

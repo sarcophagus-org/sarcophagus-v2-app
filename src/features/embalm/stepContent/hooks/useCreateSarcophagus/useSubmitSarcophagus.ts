@@ -4,6 +4,7 @@ import { useCallback, useContext } from 'react';
 import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagusArgs';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { handleRpcError } from 'lib/utils/rpc-error-handler';
+import * as Sentry from '@sentry/react';
 
 export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
   const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
@@ -34,6 +35,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
       await embalmerFacet.callStatic.createSarcophagus(...submitSarcophagusArgs);
     } catch (e) {
       const errorMsg = handleRpcError(e);
+      Sentry.captureException(errorMsg, { fingerprint: ['CREATE_SARCOPHAGUS_FAILURE'] });
       throw new Error(errorMsg);
     }
 
