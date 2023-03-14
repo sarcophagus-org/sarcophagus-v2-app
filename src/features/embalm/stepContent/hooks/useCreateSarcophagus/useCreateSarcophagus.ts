@@ -125,7 +125,7 @@ export function useCreateSarcophagus(
             await executeStage(currentStageFunction, isStageRetry, cancelCreateToken);
           }
         } catch (error: any) {
-          console.error(error);
+          console.log(error);
           const stageErrorMessage = formatCreateSarcophagusError(
             currentStage,
             error,
