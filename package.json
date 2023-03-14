@@ -21,7 +21,6 @@
     "@chakra-ui/styled-system": "^2.3.5",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@ethersproject/experimental": "5.7.0",
     "@ethersproject/providers": "^5.7.0",
     "@fontsource/roboto-mono": "^4.5.8",
     "@libp2p/interface-connection": "^3.0.2",
