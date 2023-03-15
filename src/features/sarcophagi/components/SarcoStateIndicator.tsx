@@ -10,7 +10,8 @@ export const sarcoStateMap = {
   [SarcophagusState.Cleaned]: 'Cleaned',
   [SarcophagusState.Accused]: 'Accused',
   [SarcophagusState.Failed]: 'Failed',
-  // TODO: Will need a way to convey this info more appropriately
+  // All cleanable sarco will have a bright icon next to it indicating such.
+  // Cleaned sarco (or sarco that were never cleanable) will not.
   [SarcophagusState.CleanedFailed]: 'Failed',
   [SarcophagusState.CleanedResurrected]: 'Resurrected',
 };
@@ -50,9 +51,9 @@ export function SarcoStateIndicator({
       tooltip: failedTooltip,
     },
     [SarcophagusState.CleanedFailed]: {
-      text: 'red',
-      bg: 'transparent.red',
-      tooltip: failedTooltip,
+      text: 'grey',
+      bg: 'brand.100',
+      tooltip: '',
     },
     [SarcophagusState.Resurrecting]: {
       text: 'orange',
