@@ -2,6 +2,7 @@ import { WebBundlr } from '@bundlr-network/client';
 import { useToast } from '@chakra-ui/react';
 import { InjectedEthereumSigner } from 'arbundles/src/signing';
 import { ethers } from 'ethers';
+import { useNetworkConfig } from 'lib/config';
 import {
   connectFailure,
   connectStart,
@@ -12,7 +13,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { connect, disconnect as disconnectBundlr, setBundlr } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useAccount } from 'wagmi';
-import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
 
 export function useBundlrSession() {

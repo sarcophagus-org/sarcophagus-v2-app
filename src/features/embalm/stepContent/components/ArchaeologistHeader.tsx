@@ -22,6 +22,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const dispatch = useDispatch();
   const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const { showOnlySelectedArchaeologists } = useSelector(x => x.archaeologistListState);
+  const { timestampMs } = useSelector(x => x.appState);
 
   function toggleShowOnlySelected() {
     dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
@@ -32,9 +33,10 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
     () =>
       calculateProjectedDiggingFees(
         selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
-        resurrection
+        resurrection,
+        timestampMs
       ),
-    [resurrection, selectedArchaeologists]
+    [resurrection, selectedArchaeologists, timestampMs]
   );
 
   return (

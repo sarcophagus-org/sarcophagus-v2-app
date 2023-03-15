@@ -20,6 +20,7 @@ export function useSetResurrection() {
     resurrectionRadioValue: radioValue,
     customResurrectionDate,
   } = useSelector(x => x.embalmState);
+  const { timestampMs } = useSelector(x => x.appState);
 
   // Although resurrection in ms is already stored in global state, we need another state to make it
   // easier to display the value in the DatePicker. Resurrection and CustomResurrectionDate will often be
@@ -58,18 +59,18 @@ export function useSetResurrection() {
       } else {
         const [days] = radioValue === '' ? '0' : radioValue.split(' ');
         const intervalMs = parseInt(days) * 24 * 60 * 60 * 1000;
-        dispatch(setResurrection(Date.now() + intervalMs));
+        dispatch(setResurrection(timestampMs + intervalMs));
       }
     } else {
       if (customResurrectionDate) {
         dispatch(setResurrection(customResurrectionDate.getTime()));
       }
     }
-  }, [dispatch, radioValue, customResurrectionDate]);
+  }, [customResurrectionDate, dispatch, radioValue, timestampMs]);
 
   // Updates the error if the resurrection time is invalid
   useEffect(() => {
-    if (resurrection - minimumResurrection < Date.now() && resurrection !== 0) {
+    if (resurrection - minimumResurrection < timestampMs && resurrection !== 0) {
       setError(
         `Resurrection must be ${moment
           .duration(minimumResurrection)
@@ -78,7 +79,7 @@ export function useSetResurrection() {
     } else {
       setError(null);
     }
-  }, [resurrection]);
+  }, [resurrection, timestampMs]);
 
   return {
     error,

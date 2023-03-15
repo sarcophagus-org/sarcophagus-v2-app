@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from '../../../../../store';
 import { NEGOTIATION_SIGNATURE_STREAM } from '../../../../../lib/config/node_config';
 import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import {
+  getCurrentTimeSec,
   getLowestResurrectionTime,
   getLowestRewrapInterval,
 } from '../../../../../lib/utils/helpers';
@@ -12,6 +13,7 @@ import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext
 import { useDialArchaeologists } from './useDialArchaeologists';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import * as Sentry from '@sentry/react';
+import { useProvider } from 'wagmi';
 
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
@@ -34,6 +36,8 @@ export function useArchaeologistSignatureNegotiation() {
     useContext(CreateSarcophagusContext);
 
   const { dialArchaeologist } = useDialArchaeologists();
+
+  const provider = useProvider();
 
   function processDeclinedSignatureCode(
     code: SarcophagusValidationError,
@@ -59,7 +63,7 @@ export function useArchaeologistSignatureNegotiation() {
       const lowestRewrapInterval = getLowestRewrapInterval(selectedArchaeologists);
       const lowestResurrectionTime = getLowestResurrectionTime(selectedArchaeologists);
 
-      const negotiationTimestamp = Date.now();
+      const negotiationTimestamp = (await getCurrentTimeSec(provider)) * 1000;
       setNegotiationTimestamp(negotiationTimestamp);
 
       const archaeologistSignatures = new Map<string, string>([]);
@@ -156,9 +160,10 @@ export function useArchaeologistSignatureNegotiation() {
       setArchaeologistSignatures(archaeologistSignatures);
     },
     [
-      dispatch,
-      selectedArchaeologists,
       dialArchaeologist,
+      dispatch,
+      provider,
+      selectedArchaeologists,
       setArchaeologistPublicKeys,
       setArchaeologistSignatures,
       setNegotiationTimestamp,

@@ -26,6 +26,7 @@ export function useArchaeologistList() {
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
+  const { timestampMs } = useSelector(s => s.appState);
 
   // The archaeologist is not hidden out if:
   //  - resurrection time has been set further than the arch's max resurrection time
@@ -41,7 +42,7 @@ export function useArchaeologistList() {
     }
 
     const maxRewrapIntervalMs = a.profile.maximumRewrapInterval.toNumber() * 1000;
-    const resurrectionIntervalMs = resurrectionTimeMs - Date.now();
+    const resurrectionIntervalMs = resurrectionTimeMs - timestampMs;
 
     const estimatedCurse = !resurrectionTimeMs
       ? ethers.constants.Zero

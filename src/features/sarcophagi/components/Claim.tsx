@@ -7,6 +7,7 @@ import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'store/index';
 import { useQuery } from '../../../hooks/useQuery';
 
 export function Claim() {
@@ -16,8 +17,10 @@ export function Claim() {
   const [privateKey, setPrivateKey] = useState(query.get('pk') || '');
   const [resurrectError, setResurrectError] = useState('');
   const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagus(id);
+  const { timestampMs } = useSelector(x => x.appState);
   const resurrectionString = buildResurrectionDateString(
-    sarcophagus?.resurrectionTime || BigNumber.from(0)
+    sarcophagus?.resurrectionTime || BigNumber.from(0),
+    timestampMs
   );
 
   const {
