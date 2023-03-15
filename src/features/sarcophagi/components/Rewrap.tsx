@@ -19,6 +19,7 @@ import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarc
 import { buildResurrectionDateString, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'store/index';
 
 export function Rewrap() {
   const { id } = useParams();
@@ -36,7 +37,7 @@ export function Rewrap() {
   );
   const { balance } = useSarcoBalance();
 
-  const nowMs = Date.now();
+  const { timestampMs } = useSelector(x => x.appState);
 
   const maxRewrapIntervalFromSarcophagusSec = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
 
@@ -57,7 +58,7 @@ export function Rewrap() {
 
   function handleCustomDateChange(date: Date | null): void {
     // Ensure that selected date is in the future
-    if (date && date.getTime() > Date.now()) {
+    if (date && date.getTime() > timestampMs) {
       setResurrectionTime(date);
     }
   }
@@ -72,25 +73,31 @@ export function Rewrap() {
     }
   }
 
-  const maxResurrectionDate = new Date(nowMs + Number(maxRewrapIntervalMs));
+  const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
   const maxResurrectionDateMs = maxResurrectionDate.getTime();
 
   const filterInvalidTime = (time: Date) => {
     const selectedDateMs = new Date(time).getTime();
-    return maxResurrectionDateMs >= selectedDateMs && nowMs < selectedDateMs;
+    return maxResurrectionDateMs >= selectedDateMs && timestampMs < selectedDateMs;
   };
 
   const newResurrectionString = buildResurrectionDateString(
-    BigNumber.from(Math.trunc(maxResurrectionDateMs / 1000))
+    BigNumber.from(Math.trunc(maxResurrectionDateMs / 1000)),
+    timestampMs
   );
 
-  const currentResurrectionString = buildResurrectionDateString(sarcophagus?.resurrectionTime, {
-    hideDuration: true,
-  });
+  const currentResurrectionString = buildResurrectionDateString(
+    sarcophagus?.resurrectionTime,
+    timestampMs,
+    {
+      hideDuration: true,
+    }
+  );
 
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     resurrectionTime?.getTime() || 0,
     archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
+    timestampMs,
     protocolFeeAmountInt
   );
 
@@ -154,7 +161,7 @@ export function Rewrap() {
               selected={resurrectionTime}
               onChange={handleCustomDateChange}
               showTimeSelect
-              minDate={new Date()}
+              minDate={new Date(timestampMs)}
               maxDate={maxResurrectionDate}
               filterTime={filterInvalidTime}
               showPopperArrow={false}

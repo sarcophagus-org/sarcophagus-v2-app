@@ -36,6 +36,7 @@ export const useSarcophagusParameters = () => {
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
   const { balance } = useSelector(x => x.bundlrState);
+  const { timestampMs } = useSelector(x => x.appState);
 
   const { getStatus } = useStepNavigator();
   const { chainId } = useNetworkConfig();
@@ -46,9 +47,9 @@ export const useSarcophagusParameters = () => {
 
   const resurrectionTimeError = !resurrection
     ? 'Please set a resurrection time'
-    : resurrection > maxRewrapIntervalMs + Date.now()
+    : resurrection > maxRewrapIntervalMs + timestampMs
     ? 'The resurrection time you have selected is beyond the maximum rewrap interval of your selected archaeologists'
-    : resurrection - minimumResurrection < Date.now() && resurrection !== 0
+    : resurrection - minimumResurrection < timestampMs && resurrection !== 0
     ? `Resurrection must be ${moment
         .duration(minimumResurrection)
         .humanize()} or more in the future.`

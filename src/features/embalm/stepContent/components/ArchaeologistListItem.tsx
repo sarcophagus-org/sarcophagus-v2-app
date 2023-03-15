@@ -39,14 +39,15 @@ export function ArchaeologistListItem({
   const rowTextColor = isSelected ? (archaeologist.exception ? '' : 'brand.950') : '';
 
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
+  const { timestampMs } = useSelector(s => s.appState);
 
   const diggingFees = useMemo(() => {
-    const nowSec = Math.floor(Date.now() / 1000);
+    const nowSec = Math.floor(timestampMs / 1000);
     const resurrectionTimeSec = Math.floor(resurrectionTime / 1000);
     return resurrectionTimeSec > nowSec
       ? archaeologist.profile.minimumDiggingFeePerSecond.mul(resurrectionTimeSec - nowSec)
       : null;
-  }, [archaeologist.profile.minimumDiggingFeePerSecond, resurrectionTime]);
+  }, [archaeologist.profile.minimumDiggingFeePerSecond, resurrectionTime, timestampMs]);
 
   const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,

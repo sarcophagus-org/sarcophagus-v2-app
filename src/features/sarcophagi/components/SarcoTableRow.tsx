@@ -7,6 +7,7 @@ import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanCl
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector } from 'store/index';
 import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { cleanTooltip } from './CleanButton';
@@ -35,6 +36,7 @@ export function SarcoTableRow({
 }: SarcophagusTableRowProps) {
   const { address } = useAccount();
   const navigate = useNavigate();
+  const { timestampMs } = useSelector(x => x.appState);
 
   const [resurrectionString, setResurrectionString] = useState('');
 
@@ -103,18 +105,20 @@ export function SarcoTableRow({
 
   // Updates the resurrection date string on an interval
   useEffect(() => {
-    setResurrectionString(buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0)));
+    setResurrectionString(
+      buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0), timestampMs)
+    );
 
     const intervalId = setInterval(() => {
       setResurrectionString(
-        buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0))
+        buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0), timestampMs)
       );
     }, dateCalculationInterval);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [dateCalculationInterval, sarco.resurrectionTime]);
+  }, [dateCalculationInterval, sarco.resurrectionTime, timestampMs]);
 
   return (
     <Tr>

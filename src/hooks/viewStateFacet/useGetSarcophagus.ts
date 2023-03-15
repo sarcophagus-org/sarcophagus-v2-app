@@ -2,6 +2,7 @@ import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contrac
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { getSarcophagusState } from 'lib/utils/getSarcophagusState';
+import { useSelector } from 'store/index';
 import { Sarcophagus, SarcophagusResponseContract } from 'types';
 import { useContractRead } from 'wagmi';
 import { useGetGracePeriod } from './useGetGracePeriod';
@@ -9,6 +10,7 @@ import { useGetGracePeriod } from './useGetGracePeriod';
 export function useGetSarcophagus(sarcoId: string | undefined) {
   const networkConfig = useNetworkConfig();
   const gracePeriod = useGetGracePeriod();
+  const { timestampMs } = useSelector(x => x.appState);
 
   const { data, refetch, isLoading } = useContractRead({
     address: networkConfig.diamondDeployAddress,
@@ -23,7 +25,7 @@ export function useGetSarcophagus(sarcoId: string | undefined) {
     ? undefined
     : {
         ...sarcophagusResponse,
-        state: getSarcophagusState(sarcophagusResponse, gracePeriod),
+        state: getSarcophagusState(sarcophagusResponse, gracePeriod, timestampMs),
         id: sarcoId || '',
       };
 

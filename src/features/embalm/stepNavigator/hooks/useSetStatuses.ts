@@ -50,13 +50,13 @@ export function useSetStatuses() {
     stepStatuses,
   } = useSelector(x => x.embalmState);
   const { isConnected: isBundlrConnected } = useSelector(x => x.bundlrState);
+  const { timestampMs } = useSelector(x => x.appState);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useGetBalance();
   const { isConnected: isWalletConnected } = useAccount();
   const { chain } = useNetwork();
 
   // Need to declare this here to prevent infinite effect loop
-  const nameSarcophagusStatus = stepStatuses[Step.NameSarcophagus];
   const fundBundlrStatus = stepStatuses[Step.FundBundlr];
   const requiredArchaeologistsStatus = stepStatuses[Step.RequiredArchaeologists];
   const selectedArchaeologistsStatus = stepStatuses[Step.SelectArchaeologists];
@@ -64,7 +64,7 @@ export function useSetStatuses() {
   function nameSarcophagusEffect() {
     // Change status to started if any input element has been completed
     const validName = name.trim().length > 0;
-    const validResurrection = resurrection - minimumResurrection > Date.now();
+    const validResurrection = resurrection - minimumResurrection > timestampMs;
 
     if (validName && validResurrection) {
       dispatch(updateStepStatus(Step.NameSarcophagus, StepStatus.Complete));
@@ -127,7 +127,7 @@ export function useSetStatuses() {
     }
   }
 
-  useEffect(nameSarcophagusEffect, [dispatch, name, nameSarcophagusStatus, resurrection]);
+  useEffect(nameSarcophagusEffect, [dispatch, name, resurrection, timestampMs]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
   useEffect(fundBundlrEffect, [
     balance,
