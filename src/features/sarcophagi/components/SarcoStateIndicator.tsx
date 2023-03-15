@@ -51,9 +51,9 @@ export function SarcoStateIndicator({
       tooltip: failedTooltip,
     },
     [SarcophagusState.CleanedFailed]: {
-      text: 'grey',
-      bg: 'brand.100',
-      tooltip: '',
+      text: 'red',
+      bg: 'transparent.red',
+      tooltip: failedTooltip,
     },
     [SarcophagusState.Resurrecting]: {
       text: 'orange',
