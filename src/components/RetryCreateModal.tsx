@@ -1,35 +1,34 @@
-import { Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useSarcoModal } from './useSarcoModal';
 import { toggleRetryingCreate } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useState } from 'react';
 import { useLoadArchaeologists } from 'features/embalm/stepContent/hooks/useLoadArchaeologists';
 import { ethers } from 'ethers';
 import { useBundlrBalance } from 'features/embalm/stepContent/hooks/useBundlrBalance';
+import { SummaryErrorIcon } from 'features/embalm/stepContent/components/SummaryErrorIcon';
+import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 
-export function RetryCreateModal() {
+export function RetryCreateModal({ cancelCreation }: { cancelCreation: Function }) {
+
   const dispatch = useDispatch();
   const {
     retryingCreate,
     selectedArchaeologists,
     resurrection: resurrectionTimeMs,
-    uploadPrice,
   } = useSelector(s => s.embalmState);
+
+  const { uploadPrice, formattedUploadPrice } = useUploadPrice();
 
   const { refreshProfiles } = useLoadArchaeologists();
 
-  const [refreshingProfiles, setRefreshingProfiles] = useState(false);
   const { balance: bundlrBalance } = useBundlrBalance();
 
   const { SarcoModal, openModal, closeModal, isOpen } = useSarcoModal();
 
-  let hasEnoughReUploadBalance = true;
-  let archsHaveEnoughReUploadFreeBond = true;
+  let hasEnoughReUploadBalance = false;
+  let archsHaveEnoughReUploadFreeBond = false;
 
   if (retryingCreate && !isOpen) {
-    setRefreshingProfiles(true);
-    openModal();
-
     refreshProfiles(selectedArchaeologists.map(a => a.profile.archAddress)).then(
       async updatedArchs => {
         for await (const arch of updatedArchs) {
@@ -38,8 +37,8 @@ export function RetryCreateModal() {
           const estimatedCurse = !resurrectionTimeMs
             ? ethers.constants.Zero
             : arch.profile.minimumDiggingFeePerSecond.mul(
-                Math.trunc(resurrectionIntervalMs / 1000)
-              );
+              Math.trunc(resurrectionIntervalMs / 1000)
+            );
 
           // TODO: also validate with curse fee once implemented
           if (estimatedCurse.gt(arch.profile.freeBond)) {
@@ -50,34 +49,73 @@ export function RetryCreateModal() {
         }
 
         hasEnoughReUploadBalance = bundlrBalance.gte(uploadPrice);
-        setRefreshingProfiles(false);
+        // setRefreshingProfiles(false);
+        openModal();
       }
     );
   } else if (!retryingCreate && isOpen) {
     closeModal();
-    setRefreshingProfiles(false);
   }
+
+  const validationFailed = !archsHaveEnoughReUploadFreeBond || !hasEnoughReUploadBalance;
 
   return (
     <SarcoModal
       isDismissible={false}
       secondaryButton={{
         dismissesModal: true,
-        label: 'cancel',
-        onClick: () => dispatch(toggleRetryingCreate()),
+        label: validationFailed ? 'Cancel Sarcophagus' : 'Continue',
+        onClick: () => {
+          dispatch(toggleRetryingCreate());
+          if (validationFailed) cancelCreation();
+        },
       }}
       title={<Text>Retry Create Sarcophagus</Text>}
     >
-      {refreshingProfiles ? <Text>Loading...</Text> : <></>}
-      <Text>
-        Due to high volume of traffic, one or more of your selected archaeologists provided an
+      <Text variant='secondary'>
+        Due to a high traffic volume, one or more of your selected archaeologists provided an
         encryption key that has now been used up.
       </Text>
-      {archsHaveEnoughReUploadFreeBond && hasEnoughReUploadBalance ? (
-        <></>
-      ) : (
-        <Text>You will need to request new keys</Text>
-      )}
+      {validationFailed ?
+        <Flex>
+          <Flex
+            mt={3}
+            alignItems="center"
+          >
+            <SummaryErrorIcon />
+            <Text
+              variant="secondary"
+              fontSize="xs"
+              ml={2}
+              textAlign={'center'}
+            >
+              You will need to recreate your sarcophagus
+            </Text>
+          </Flex>
+
+          {archsHaveEnoughReUploadFreeBond ?
+            <Text
+              variant="secondary">One or more of your selected archaeologists no longer have enough free bond to lock up.</Text>
+            : <></>
+          }
+          {hasEnoughReUploadBalance ?
+            <Text
+              variant="secondary">You do not have enough Bundlr balance to re-upload</Text>
+            : <></>
+          }
+        </Flex>
+        :
+        <Flex>
+          <Text
+            variant="secondary">
+            To retry, your file will need to be re-uploaded.
+          </Text>
+          <Text
+            variant="secondary">
+            Upload price: {formattedUploadPrice}
+          </Text>
+        </Flex>
+      }
     </SarcoModal>
   );
 }

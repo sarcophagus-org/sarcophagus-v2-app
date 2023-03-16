@@ -26,9 +26,6 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
 
   const submitSarcophagus = useCallback(async () => {
     if (retryingCreate) {
-      console.log('validate bundlr bal againg re-upload cost');
-      // console.log('if validation fails, explain user will need to restart. show cancel sarco button');
-      // console.log('if validations pass, show re-upload cost, show retry create sarco button, if clicked, continue from here');
       throw new Error('Retry!');
     }
 

@@ -242,7 +242,7 @@ export function CreateSarcophagus() {
         </>
       )}
 
-      <RetryCreateModal />
+      <RetryCreateModal cancelCreation={cancelCreation} />
 
       {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}
     </Flex>
