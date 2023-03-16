@@ -3,6 +3,7 @@ import {
   EmbalmerFacet__factory,
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { useSarcoModal } from 'components/SarcoModal';
 import { BigNumber, ethers } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
@@ -15,7 +16,7 @@ import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import { goToStep, setArchaeologists, setCancelToken } from '../../../../store/embalm/actions';
+import { goToStep, setArchaeologists, setCancelToken, toggleRetryingCreate } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -35,7 +36,7 @@ export function CreateSarcophagus() {
   const { getProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { cancelCreateToken } = useSelector(s => s.embalmState);
+  const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -68,15 +69,21 @@ export function CreateSarcophagus() {
     clearSarcophagusState,
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
+  const { SarcoModal: RetryCreateModal, openModal: openRetryModal, closeModal: closeRetryModal, isOpen } = useSarcoModal();
+
+  if (retryingCreate && !isOpen) {
+    openRetryModal();
+  } else if (!retryingCreate && isOpen) {
+    closeRetryModal();
+  }
+
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
   const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
-  const isCreateProcessStarted = (): boolean => {
-    return currentStage !== CreateSarcophagusStage.NOT_STARTED;
-  };
+  const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
   const isCreateCompleted = useCallback(() => {
     return currentStage === CreateSarcophagusStage.COMPLETED;
@@ -225,6 +232,15 @@ export function CreateSarcophagus() {
           </Button>
         </>
       )}
+
+      <RetryCreateModal
+        isDismissible={false}
+        secondaryButton={{ dismissesModal: true, label: 'cancel', onClick: () => dispatch(toggleRetryingCreate()) }}
+        title={<Text>Retry Create Sarcophagus</Text>}
+      >
+        <Text>Due to high volume of traffic, one or more of your selected archaeologists provided an encryption key that has now been used up.</Text>
+        <Text>You will need to request new keys</Text>
+      </RetryCreateModal>
 
       {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}
     </Flex>

@@ -7,7 +7,7 @@ import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
 
 export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
-  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
+  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists, retryingCreate } =
     useSelector(x => x.embalmState);
 
   const {
@@ -19,6 +19,13 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
   } = useContext(CreateSarcophagusContext);
 
   const submitSarcophagus = useCallback(async () => {
+    if (retryingCreate) {
+      console.log('show modal, explain failure, validate bundlr bal againg re-upload cost, validate selected arch free-bonds against est. digging fee for sarco');
+      // console.log('if validation fails, explain user will need to restart. show cancel sarco button');
+      // console.log('if validations pass, show re-upload cost, show retry create sarco button, if clicked, continue from here');
+      throw new Error('Retry!');
+    }
+
     const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({
       name,
       recipientState,
@@ -54,6 +61,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     archaeologistSignatures,
     sarcophagusPayloadTxId,
     setSarcophagusTxId,
+    retryingCreate
   ]);
 
   return {

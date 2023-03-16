@@ -93,7 +93,7 @@ function useSarcoModal() {
     </Modal>
   );
 
-  return { SarcoModal: modal, openModal: onOpen, closeModal: onClose };
+  return { SarcoModal: modal, openModal: onOpen, closeModal: onClose, isOpen };
 }
 
 export { useSarcoModal };

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from '../../../../../store';
-import { disableSteps } from 'store/embalm/actions';
+import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { ethers } from 'ethers';
@@ -150,7 +150,11 @@ export function useCreateSarcophagus(
   const retryStage = useCallback(async () => {
     setStageError(undefined);
     setIsStageRetry(true);
-  }, []);
+
+    if (currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS) {
+      dispatch(toggleRetryingCreate());
+    }
+  }, [currentStage, dispatch]);
 
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
