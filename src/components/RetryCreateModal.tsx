@@ -41,6 +41,7 @@ export function RetryCreateModal() {
                 Math.trunc(resurrectionIntervalMs / 1000)
               );
 
+          // TODO: also validate with curse fee once implemented
           if (estimatedCurse.gt(arch.profile.freeBond)) {
             arch.hiddenReason =
               'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';

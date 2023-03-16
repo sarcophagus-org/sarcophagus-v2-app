@@ -54,6 +54,7 @@ export function useArchaeologistList() {
       return false;
     }
 
+    // TODO: also validate with curse fee once implemented
     if (estimatedCurse.gt(a.profile.freeBond)) {
       a.hiddenReason =
         'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
