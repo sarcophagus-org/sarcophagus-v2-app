@@ -3,7 +3,7 @@ import {
   EmbalmerFacet__factory,
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useSarcoModal } from 'components/SarcoModal';
+import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber, ethers } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
@@ -33,7 +33,6 @@ import {
   CancelCreateToken,
   useCreateSarcophagus,
 } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
-import { useBundlrBalance } from '../hooks/useGetBalance';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
@@ -42,7 +41,7 @@ export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
+  const { cancelCreateToken } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -76,54 +75,15 @@ export function CreateSarcophagus() {
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
   const {
-    SarcoModal: RetryCreateModal,
-    openModal: openRetryModal,
-    closeModal: closeRetryModal,
-    isOpen,
-  } = useSarcoModal();
-
-  const {
     archaeologists,
     selectedArchaeologists,
     resurrection: resurrectionTimeMs,
-    uploadPrice,
   } = useSelector(x => x.embalmState);
-  const { balance: bundlrBalance } = useBundlrBalance();
 
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
-
-  let hasEnoughReUploadBalance = true;
-  let archsHaveEnoughReUploadFreeBond = true;
-
-  if (retryingCreate && !isOpen) {
-    refreshProfiles(selectedArchaeologists.map(a => a.profile.archAddress)).then(
-      async updatedArchs => {
-        for await (const arch of updatedArchs) {
-          const resurrectionIntervalMs = resurrectionTimeMs - Date.now();
-
-          const estimatedCurse = !resurrectionTimeMs
-            ? ethers.constants.Zero
-            : arch.profile.minimumDiggingFeePerSecond.mul(
-              Math.trunc(resurrectionIntervalMs / 1000)
-            );
-
-          if (estimatedCurse.gt(arch.profile.freeBond)) {
-            arch.hiddenReason =
-              'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
-            archsHaveEnoughReUploadFreeBond = false;
-          }
-        }
-
-        hasEnoughReUploadBalance = bundlrBalance.gte(uploadPrice);
-        openRetryModal();
-      }
-    );
-  } else if (!retryingCreate && isOpen) {
-    closeRetryModal();
-  }
 
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
@@ -282,25 +242,7 @@ export function CreateSarcophagus() {
         </>
       )}
 
-      <RetryCreateModal
-        isDismissible={false}
-        secondaryButton={{
-          dismissesModal: true,
-          label: 'cancel',
-          onClick: () => dispatch(toggleRetryingCreate()),
-        }}
-        title={<Text>Retry Create Sarcophagus</Text>}
-      >
-        <Text>
-          Due to high volume of traffic, one or more of your selected archaeologists provided an
-          encryption key that has now been used up.
-        </Text>
-        {archsHaveEnoughReUploadFreeBond && hasEnoughReUploadBalance ? (
-          <></>
-        ) : (
-          <Text>You will need to request new keys</Text>
-        )}
-      </RetryCreateModal>
+      <RetryCreateModal />
 
       {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}
     </Flex>

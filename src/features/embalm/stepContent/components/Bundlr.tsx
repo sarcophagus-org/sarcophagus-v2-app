@@ -99,8 +99,9 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
                 color="error"
               >
                 Pending Balance:{' '}
-                {`${parseFloat(ethers.utils.formatUnits(balanceOffset)).toFixed(8)} ${chain?.nativeCurrency?.name || 'ETH'
-                  }`}
+                {`${parseFloat(ethers.utils.formatUnits(balanceOffset)).toFixed(8)} ${
+                  chain?.nativeCurrency?.name || 'ETH'
+                }`}
               </Text>
             )}
             {uploadPrice.gt(0) && <Text>Estimated payload price: {formattedUploadPrice}</Text>}
