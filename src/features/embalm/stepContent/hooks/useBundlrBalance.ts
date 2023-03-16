@@ -8,7 +8,7 @@ import { useBundlr } from './useBundlr';
 
 const fetchBalanceTimeout = 5_000;
 
-export function useGetBalance() {
+export function useBundlrBalance() {
   const dispatch = useDispatch();
   const { bundlr } = useBundlr();
   const { balance, isConnected, balanceOffset } = useSelector(x => x.bundlrState);

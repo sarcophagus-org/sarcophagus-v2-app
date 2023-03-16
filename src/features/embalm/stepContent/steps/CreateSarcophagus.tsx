@@ -16,7 +16,12 @@ import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import { goToStep, setArchaeologists, setCancelToken, toggleRetryingCreate } from '../../../../store/embalm/actions';
+import {
+  goToStep,
+  setArchaeologists,
+  setCancelToken,
+  toggleRetryingCreate,
+} from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -28,12 +33,13 @@ import {
   CancelCreateToken,
   useCreateSarcophagus,
 } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
+import { useBundlrBalance } from '../hooks/useGetBalance';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
 
 export function CreateSarcophagus() {
-  const { getProfiles } = useLoadArchaeologists();
+  const { refreshProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
@@ -69,19 +75,55 @@ export function CreateSarcophagus() {
     clearSarcophagusState,
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
-  const { SarcoModal: RetryCreateModal, openModal: openRetryModal, closeModal: closeRetryModal, isOpen } = useSarcoModal();
+  const {
+    SarcoModal: RetryCreateModal,
+    openModal: openRetryModal,
+    closeModal: closeRetryModal,
+    isOpen,
+  } = useSarcoModal();
 
-  if (retryingCreate && !isOpen) {
-    openRetryModal();
-  } else if (!retryingCreate && isOpen) {
-    closeRetryModal();
-  }
+  const {
+    archaeologists,
+    selectedArchaeologists,
+    resurrection: resurrectionTimeMs,
+    uploadPrice,
+  } = useSelector(x => x.embalmState);
+  const { balance: bundlrBalance } = useBundlrBalance();
 
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
-  const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
+
+  let hasEnoughReUploadBalance = true;
+  let archsHaveEnoughReUploadFreeBond = true;
+
+  if (retryingCreate && !isOpen) {
+    refreshProfiles(selectedArchaeologists.map(a => a.profile.archAddress)).then(
+      async updatedArchs => {
+        for await (const arch of updatedArchs) {
+          const resurrectionIntervalMs = resurrectionTimeMs - Date.now();
+
+          const estimatedCurse = !resurrectionTimeMs
+            ? ethers.constants.Zero
+            : arch.profile.minimumDiggingFeePerSecond.mul(
+              Math.trunc(resurrectionIntervalMs / 1000)
+            );
+
+          if (estimatedCurse.gt(arch.profile.freeBond)) {
+            arch.hiddenReason =
+              'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
+            archsHaveEnoughReUploadFreeBond = false;
+          }
+        }
+
+        hasEnoughReUploadBalance = bundlrBalance.gte(uploadPrice);
+        openRetryModal();
+      }
+    );
+  } else if (!retryingCreate && isOpen) {
+    closeRetryModal();
+  }
 
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
@@ -122,7 +164,7 @@ export function CreateSarcophagus() {
     (async () => {
       if (isCreateCompleted()) {
         // Get the profiles from the contract
-        const profiles = await getProfiles();
+        const profiles = await refreshProfiles(archaeologists.map(a => a.profile.archAddress));
         if (profiles) {
           dispatch(setArchaeologists(profiles));
         }
@@ -132,7 +174,14 @@ export function CreateSarcophagus() {
         // await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
-  }, [addPeerDiscoveryEventListener, globalLibp2pNode, dispatch, getProfiles, isCreateCompleted]);
+  }, [
+    addPeerDiscoveryEventListener,
+    globalLibp2pNode,
+    dispatch,
+    refreshProfiles,
+    isCreateCompleted,
+    archaeologists,
+  ]);
 
   if (isCreateCompleted()) {
     // setTimeout with delay set to 0 is an easy fix for the following error:
@@ -146,7 +195,7 @@ export function CreateSarcophagus() {
   }
 
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
-    resurrection,
+    resurrectionTimeMs,
     selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
     protocolFeeBasePercentage
   );
@@ -235,11 +284,22 @@ export function CreateSarcophagus() {
 
       <RetryCreateModal
         isDismissible={false}
-        secondaryButton={{ dismissesModal: true, label: 'cancel', onClick: () => dispatch(toggleRetryingCreate()) }}
+        secondaryButton={{
+          dismissesModal: true,
+          label: 'cancel',
+          onClick: () => dispatch(toggleRetryingCreate()),
+        }}
         title={<Text>Retry Create Sarcophagus</Text>}
       >
-        <Text>Due to high volume of traffic, one or more of your selected archaeologists provided an encryption key that has now been used up.</Text>
-        <Text>You will need to request new keys</Text>
+        <Text>
+          Due to high volume of traffic, one or more of your selected archaeologists provided an
+          encryption key that has now been used up.
+        </Text>
+        {archsHaveEnoughReUploadFreeBond && hasEnoughReUploadBalance ? (
+          <></>
+        ) : (
+          <Text>You will need to request new keys</Text>
+        )}
       </RetryCreateModal>
 
       {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}

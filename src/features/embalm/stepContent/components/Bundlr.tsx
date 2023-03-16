@@ -7,12 +7,12 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
-import { useGetBalance } from '../hooks/useGetBalance';
+import { useBundlrBalance } from '../hooks/useBundlrBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
   const { connectToBundlr, disconnectFromBundlr, isConnected } = useBundlrSession();
-  const { formattedBalance } = useGetBalance();
+  const { formattedBalance } = useBundlrBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
 
   const { balanceOffset } = useSelector(x => x.bundlrState);
@@ -99,9 +99,8 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
                 color="error"
               >
                 Pending Balance:{' '}
-                {`${parseFloat(ethers.utils.formatUnits(balanceOffset)).toFixed(8)} ${
-                  chain?.nativeCurrency?.name || 'ETH'
-                }`}
+                {`${parseFloat(ethers.utils.formatUnits(balanceOffset)).toFixed(8)} ${chain?.nativeCurrency?.name || 'ETH'
+                  }`}
               </Text>
             )}
             {uploadPrice.gt(0) && <Text>Estimated payload price: {formattedUploadPrice}</Text>}
