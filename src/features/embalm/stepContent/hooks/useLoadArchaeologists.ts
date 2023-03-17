@@ -6,8 +6,7 @@ import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types';
-import { useNetwork } from 'wagmi';
-import { readContract } from 'wagmi/actions';
+import { useContract, useNetwork, useSigner } from 'wagmi';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -20,23 +19,20 @@ export function useLoadArchaeologists() {
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
+  const { data: signer } = useSigner();
+
+  const viewStateFacet = useContract({
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
+    signerOrProvider: signer,
+  });
+
   const getFullArchProfilesFromAddresses = useCallback(
     async (addresses: string[]): Promise<Archaeologist[]> => {
-      if (addresses.length === 0) return [];
+      if (addresses.length === 0 || !viewStateFacet) return [];
 
-      const profiles = (await readContract({
-        address: networkConfig.diamondDeployAddress,
-        abi: ViewStateFacet__factory.abi,
-        functionName: 'getArchaeologistProfiles',
-        args: [addresses],
-      })) as any[];
-
-      const stats = (await readContract({
-        address: networkConfig.diamondDeployAddress,
-        abi: ViewStateFacet__factory.abi,
-        functionName: 'getArchaeologistsStatistics',
-        args: [addresses],
-      })) as any[];
+      const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
+      const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
 
       const registeredArchaeologists = profiles.map((p, i) => ({
         profile: {
@@ -61,7 +57,7 @@ export function useLoadArchaeologists() {
 
       return registeredArchaeologists;
     },
-    [networkConfig.diamondDeployAddress]
+    [viewStateFacet]
   );
 
   const refreshProfiles = useCallback(
@@ -83,20 +79,21 @@ export function useLoadArchaeologists() {
   );
 
   const getRegisteredProfiles = useCallback(async (): Promise<Archaeologist[]> => {
-    if (!networkConfig.diamondDeployAddress) {
+    if (!networkConfig.diamondDeployAddress || !viewStateFacet || !signer) {
       return [];
     }
 
-    const addresses: string[] = (await readContract({
-      address: networkConfig.diamondDeployAddress,
-      abi: ViewStateFacet__factory.abi,
-      functionName: 'getArchaeologistProfileAddresses',
-    })) as string[];
+    const addresses: string[] = await viewStateFacet.callStatic.getArchaeologistProfileAddresses();
 
     if (!addresses || addresses.length === 0) return [];
 
     return getFullArchProfilesFromAddresses(addresses);
-  }, [getFullArchProfilesFromAddresses, networkConfig.diamondDeployAddress]);
+  }, [
+    getFullArchProfilesFromAddresses,
+    networkConfig.diamondDeployAddress,
+    signer,
+    viewStateFacet,
+  ]);
 
   // This useEffect is used to trigger the other useEffect below once
   // the dependencies are ready
