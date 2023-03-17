@@ -17,10 +17,9 @@ export function RetryCreateModal({
   retryCreate: Function;
 }) {
   const dispatch = useDispatch();
-  const {
-    selectedArchaeologists,
-    resurrection: resurrectionTimeMs,
-  } = useSelector(s => s.embalmState);
+  const { selectedArchaeologists, resurrection: resurrectionTimeMs } = useSelector(
+    s => s.embalmState
+  );
 
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
 
@@ -42,8 +41,8 @@ export function RetryCreateModal({
           const estimatedCurse = !resurrectionTimeMs
             ? ethers.constants.Zero
             : arch.profile.minimumDiggingFeePerSecond.mul(
-              Math.trunc(resurrectionIntervalMs / 1000)
-            );
+                Math.trunc(resurrectionIntervalMs / 1000)
+              );
 
           // TODO: also validate with curse fee once implemented
           if (estimatedCurse.gt(arch.profile.freeBond)) {
