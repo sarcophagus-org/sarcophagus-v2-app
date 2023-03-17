@@ -100,6 +100,7 @@ export function useUploadFileAndKeyShares() {
 
         await uploadToArweave(arweavePayload, cancelToken);
       } catch (error: any) {
+        console.log(error);
         throw new Error(error.message || 'Error uploading file payload to Bundlr');
       }
     },
