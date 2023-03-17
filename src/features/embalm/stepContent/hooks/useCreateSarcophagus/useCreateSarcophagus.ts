@@ -156,6 +156,15 @@ export function useCreateSarcophagus(
     }
   }, [currentStage, dispatch]);
 
+  const retryCreateSarcophagus = useCallback(async () => {
+    setStageError(undefined);
+    setIsStageRetry(false);
+
+    if (currentStage === CreateSarcophagusStage.SUBMIT_SARCOPHAGUS) {
+      setCurrentStage(CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION);
+    }
+  }, [currentStage]);
+
   const handleCreate = useCallback(async () => {
     setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
     setStageError(undefined);
@@ -169,6 +178,7 @@ export function useCreateSarcophagus(
     stageError,
     stageInfo,
     retryStage,
+    retryCreateSarcophagus,
     successData,
     clearSarcophagusState,
   };

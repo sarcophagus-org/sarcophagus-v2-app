@@ -123,7 +123,7 @@ export function useBundlr() {
     });
 
     chunkedUploader?.on('done', finishRes => {
-      console.log(`Upload completed with ID ${finishRes.id}`);
+      console.log(`Upload completed with ID ${JSON.stringify(finishRes.data?.id ?? finishRes.id)}`);
       dispatch(setIsUploading(false));
     });
   }, [cancelUploadToken, chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
@@ -173,18 +173,28 @@ export function useBundlr() {
         return;
       }
 
-      const uploadPromise = chunkedUploader
-        ?.uploadData(fileBuffer)
-        .then(res => {
-          setSarcophagusPayloadTxId(res.data.id);
-          resolveUploadPromise.current(res.data.id);
-        })
-        .catch(err => {
-          console.log('err', err);
-          rejectUploadPromise.current(err);
-        });
+      try {
+        const uploadPromise = chunkedUploader
+          ?.uploadData(fileBuffer)
+          .then(res => {
+            if (!res) {
+              rejectUploadPromise.current('Could not upload');
+              return;
+            }
 
-      await uploadPromise;
+            setSarcophagusPayloadTxId(res.data.id);
+            resolveUploadPromise.current(res.data.id);
+          })
+          .catch(err => {
+            console.log('err', err);
+            rejectUploadPromise.current(err);
+          });
+
+        await uploadPromise;
+      } catch (err) {
+        console.log('err', err);
+        rejectUploadPromise.current(err);
+      }
     })();
   }, [
     readyToUpload,

@@ -9,12 +9,17 @@ import { SummaryErrorIcon } from 'features/embalm/stepContent/components/Summary
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { useState } from 'react';
 
-export function RetryCreateModal({ cancelCreation }: { cancelCreation: Function }) {
+export function RetryCreateModal({
+  cancelCreation,
+  retryCreate,
+}: {
+  cancelCreation: Function;
+  retryCreate: Function;
+}) {
   const dispatch = useDispatch();
   const {
     selectedArchaeologists,
     resurrection: resurrectionTimeMs,
-    retryingCreate,
   } = useSelector(s => s.embalmState);
 
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
@@ -23,12 +28,12 @@ export function RetryCreateModal({ cancelCreation }: { cancelCreation: Function 
 
   const { balance: bundlrBalance } = useBundlrBalance();
 
-  const { SarcoModal, openModal, closeModal, isOpen } = useSarcoModal();
+  const { SarcoModal, openModal, isOpen } = useSarcoModal();
 
   const hasEnoughReUploadBalance = bundlrBalance.gte(uploadPrice);
   const [archsHaveEnoughReUploadFreeBond, setArchsHaveEnoughReUploadFreeBond] = useState(true);
 
-  if (retryingCreate && !isOpen) {
+  if (!isOpen) {
     refreshProfiles(selectedArchaeologists.map(a => a.profile.archAddress)).then(
       async updatedArchs => {
         for await (const arch of updatedArchs) {
@@ -37,8 +42,8 @@ export function RetryCreateModal({ cancelCreation }: { cancelCreation: Function 
           const estimatedCurse = !resurrectionTimeMs
             ? ethers.constants.Zero
             : arch.profile.minimumDiggingFeePerSecond.mul(
-                Math.trunc(resurrectionIntervalMs / 1000)
-              );
+              Math.trunc(resurrectionIntervalMs / 1000)
+            );
 
           // TODO: also validate with curse fee once implemented
           if (estimatedCurse.gt(arch.profile.freeBond)) {
@@ -51,8 +56,6 @@ export function RetryCreateModal({ cancelCreation }: { cancelCreation: Function 
         openModal();
       }
     );
-  } else if (!retryingCreate && isOpen) {
-    closeModal();
   }
 
   const validationFailed = !archsHaveEnoughReUploadFreeBond || !hasEnoughReUploadBalance;
@@ -65,7 +68,9 @@ export function RetryCreateModal({ cancelCreation }: { cancelCreation: Function 
         label: validationFailed ? 'Cancel Sarcophagus' : 'Continue',
         onClick: () => {
           dispatch(toggleRetryingCreate());
+
           if (validationFailed) cancelCreation();
+          else retryCreate();
         },
       }}
       title={<Text>Retry Create Sarcophagus</Text>}

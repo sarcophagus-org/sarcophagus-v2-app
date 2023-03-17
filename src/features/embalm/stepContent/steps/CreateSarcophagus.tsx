@@ -16,12 +16,7 @@ import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import {
-  goToStep,
-  setArchaeologists,
-  setCancelToken,
-  toggleRetryingCreate,
-} from '../../../../store/embalm/actions';
+import { goToStep, setArchaeologists, setCancelToken } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -41,7 +36,7 @@ export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { cancelCreateToken } = useSelector(s => s.embalmState);
+  const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -70,6 +65,7 @@ export function CreateSarcophagus() {
     stageError,
     stageInfo,
     retryStage,
+    retryCreateSarcophagus,
     successData,
     clearSarcophagusState,
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
@@ -242,7 +238,10 @@ export function CreateSarcophagus() {
         </>
       )}
 
-      <RetryCreateModal cancelCreation={cancelCreation} />
+      {retryingCreate ? <RetryCreateModal
+        retryCreate={retryCreateSarcophagus}
+        cancelCreation={cancelCreation}
+      /> : <></>}
 
       {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}
     </Flex>
