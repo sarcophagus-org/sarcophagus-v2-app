@@ -116,7 +116,7 @@ export function useArchaeologistList() {
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
             sortValue = arch.profile.successes;
           } else if (archaeologistFilterSort.sortType === SortFilterType.FAILS) {
-            sortValue = arch.profile.cleanups;
+            sortValue = arch.profile.failures;
           } else if (archaeologistFilterSort.sortType === SortFilterType.ADDRESS_SEARCH) {
             sortValue = arch.profile.archAddress;
           }
