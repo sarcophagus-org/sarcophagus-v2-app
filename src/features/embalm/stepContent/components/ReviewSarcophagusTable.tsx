@@ -1,11 +1,14 @@
 import { Flex, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useStepNavigator } from 'features/embalm/stepNavigator/hooks/useStepNavigator';
 import { maxSarcophagusNameLength } from 'lib/constants';
-import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
+import { SarcophagusParameter } from '../hooks/useSarcophagusParameters';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
-export function ReviewSarcophagusTable() {
-  const { sarcophagusParameters } = useSarcophagusParameters();
+interface ReviewSarcophagusTableProps {
+  sarcophagusParameters: SarcophagusParameter[];
+}
+
+export function ReviewSarcophagusTable({ sarcophagusParameters }: ReviewSarcophagusTableProps) {
   const { selectStep } = useStepNavigator();
   return (
     <Table
