@@ -26,7 +26,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
 
   const submitSarcophagus = useCallback(async () => {
     if (retryingCreate) {
-      throw new Error('Retry!');
+      throw new Error('Retrying...');
     }
 
     const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({

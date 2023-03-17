@@ -96,60 +96,7 @@ export function useBundlr() {
   let rejectUploadPromise = useRef<any>();
   let resolveUploadPromise = useRef<any>();
 
-  // SET UP UPLOAD EVENT LISTENERS
-  // useEffect(() => {
-  //   if (!bundlr || !fileBuffer || !rejectUploadPromise) return;
-
-  //   const chunkedUploader = bundlr.uploader.chunkedUploader;
-  //   setChunkedUploader(chunkedUploader);
-
-  //   chunkedUploader.setChunkSize(chunkedUploaderFileSize);
-
-  //   chunkedUploader?.on('chunkUpload', chunkInfo => {
-  //     // STOP UPLOAD ON CANCEL
-  //     if (cancelUploadToken?.cancelled) {
-  //       chunkedUploader?.pause();
-  //       rejectUploadPromise.current('Cancelled upload');
-  //       return;
-  //     }
-
-  //     const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
-  //     dispatch(setUploadProgress(chunkedUploadProgress));
-  //   });
-
-  //   chunkedUploader?.on('chunkError', e => {
-  //     const errorMsg = `Error uploading chunk number ${e.id} - ${e.res.statusText}`;
-  //     console.error(errorMsg);
-  //     rejectUploadPromise.current(errorMsg);
-  //     dispatch(setIsUploading(false));
-  //   });
-
-  //   chunkedUploader?.on('done', finishRes => {
-  //     console.log(`Upload completed with ID ${JSON.stringify(finishRes.data?.id ?? finishRes.id)}`);
-  //     dispatch(setIsUploading(false));
-  //   });
-  // }, [bundlr, cancelUploadToken, cancelUploadToken?.cancelled, dispatch, fileBuffer, rejectUploadPromise]);
-
-  //  SET UP CHUNKED UPLOADER WHEN BUNDLR CONNECTS
-  // useEffect(() => {
-  //   if (!bundlr) {
-  //     setChunkedUploader(undefined);
-  //     return;
-  //   }
-
-  //   setChunkedUploader(bundlr.uploader.chunkedUploader);
-  // }, [bundlr]);
-
-  // STOP UPLOAD ON CANCEL
-  // useEffect(() => {
-  //   if (cancelUploadToken?.cancelled) {
-  //     chunkedUploader?.pause();
-  //     rejectUploadPromise.current('Cancelled upload');
-  //   }
-  // }, [cancelUploadToken, cancelUploadToken?.cancelled, chunkedUploader]);
-
   /**
-   *
    * Set up all needed, yet decoupled, components for uploading
    * and raise readyToUpload flag.
    * */
@@ -174,8 +121,6 @@ export function useBundlr() {
       if (!bundlr || !readyToUpload || !fileBuffer) {
         return;
       }
-
-      console.log('ready to Upload', fileBuffer.length);
 
       // SET UP UPLOAD EVENT LISTENERS
       const chunkedUploader = bundlr.uploader.chunkedUploader;
