@@ -1,9 +1,12 @@
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
 import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function ReviewSarcophagus() {
+  const { sarcophagusParameters } = useSarcophagusParameters();
+
   return (
     <VStack
       align="left"
@@ -32,22 +35,24 @@ export function ReviewSarcophagus() {
             Sarcophagus Summary
           </Text>
         </Box>
-        <ReviewSarcophagusTable />
+        <ReviewSarcophagusTable sarcophagusParameters={sarcophagusParameters} />
         <SarcophagusSummaryFees />
-        <Flex
-          mt={3}
-          alignItems="center"
-        >
-          <SummaryErrorIcon />
-          <Text
-            variant="secondary"
-            fontSize="xs"
-            ml={2}
-            textAlign={'center'}
+        {sarcophagusParameters.some(p => p.error) && (
+          <Flex
+            mt={3}
+            alignItems="center"
           >
-            = missing information
-          </Text>
-        </Flex>
+            <SummaryErrorIcon />
+            <Text
+              variant="secondary"
+              fontSize="xs"
+              ml={2}
+              textAlign={'center'}
+            >
+              = missing information
+            </Text>
+          </Flex>
+        )}
       </Flex>
     </VStack>
   );
