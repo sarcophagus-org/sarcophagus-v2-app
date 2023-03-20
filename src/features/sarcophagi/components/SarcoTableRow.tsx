@@ -50,7 +50,8 @@ export function SarcoTableRow({
   // on. If a user is both the embalmer and the recipient on a sarcohpagus, they will see both the
   // rewrap and resurrect actions on the "My Sarcophagi" tab and the "Claim Sarcophagi" tab.
   const isEmbalmer = sarco.embalmerAddress === address;
-  const isRecipient = sarco.recipientAddress === address;
+
+  const isRecipientClaimable = sarco.recipientAddress === address && isClaimTab;
 
   const claimTooltip = 'Decrypt and download the Sarcophagus payload';
 
@@ -67,16 +68,16 @@ export function SarcoTableRow({
     [SarcophagusState.Resurrected]: {
       // The embalmer isn't concerned with claiming a sarco. BUT, if they can clean a resurrected sarco,
       // that's something they care about. Otherwise we show the Claim action to the recipient.
-      action: canEmbalmerClean
-        ? SarcoAction.Clean
-        : isRecipient && isClaimTab
+      action: isRecipientClaimable
         ? SarcoAction.Claim
+        : canEmbalmerClean
+        ? SarcoAction.Clean
         : undefined,
-      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
+      tooltip: isRecipientClaimable ? claimTooltip : canEmbalmerClean ? cleanTooltip : '',
     },
     [SarcophagusState.CleanedResurrected]: {
-      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
-      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
+      action: isRecipientClaimable ? SarcoAction.Claim : undefined,
+      tooltip: isRecipientClaimable ? claimTooltip : '',
     },
     [SarcophagusState.Failed]: {
       action: canEmbalmerClean ? SarcoAction.Clean : undefined,
