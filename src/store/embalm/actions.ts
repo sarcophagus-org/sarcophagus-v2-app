@@ -12,6 +12,7 @@ export enum ActionType {
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   DisableSteps = 'EMBALM_DISABLE_STEPS',
   EnableSteps = 'EMBALM_ENABLE_STEPS',
+  ToggleRetryingCreate = 'TOGGLE_RETRYING_CREATE',
   SetCancelToken = 'EMBALM_SET_CANCEL_TOKEN',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
@@ -70,6 +71,7 @@ type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
   [ActionType.DisableSteps]: {};
   [ActionType.EnableSteps]: {};
+  [ActionType.ToggleRetryingCreate]: {};
   [ActionType.SetCancelToken]: { token: CancelCreateToken };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
@@ -337,6 +339,13 @@ export function disableSteps(): EmbalmActions {
 export function enableSteps(): EmbalmActions {
   return {
     type: ActionType.EnableSteps,
+    payload: {},
+  };
+}
+
+export function toggleRetryingCreate(): EmbalmActions {
+  return {
+    type: ActionType.ToggleRetryingCreate,
     payload: {},
   };
 }

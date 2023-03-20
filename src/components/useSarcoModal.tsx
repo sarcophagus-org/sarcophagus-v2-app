@@ -27,7 +27,7 @@ interface SarcoModalProps {
   secondaryButton?: ModalButtonProps;
 }
 
-function useSarcoModal() {
+export function useSarcoModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const modal = (props: SarcoModalProps) => (
@@ -93,7 +93,5 @@ function useSarcoModal() {
     </Modal>
   );
 
-  return { SarcoModal: modal, openModal: onOpen, closeModal: onClose };
+  return { SarcoModal: modal, openModal: onOpen, closeModal: onClose, isOpen };
 }
-
-export { useSarcoModal };

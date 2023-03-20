@@ -1,13 +1,13 @@
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useSelector } from 'store/index';
-import { useGetBalance } from '../hooks/useGetBalance';
+import { useBundlrBalance } from '../hooks/useBundlrBalance';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { useBundlr } from '../hooks/useBundlr';
 import { ethers } from 'ethers';
 
 export function BundlrAlertMessage() {
   const file = useSelector(x => x.embalmState.file);
-  const { balance } = useGetBalance();
+  const { balance } = useBundlrBalance();
   const { uploadPrice } = useUploadPrice();
   const { isFunding } = useBundlr();
   const { balanceOffset } = useSelector(x => x.bundlrState);

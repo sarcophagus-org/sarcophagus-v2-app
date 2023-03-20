@@ -3,6 +3,7 @@ import {
   EmbalmerFacet__factory,
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber, ethers } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
@@ -32,10 +33,10 @@ import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
 
 export function CreateSarcophagus() {
-  const { getProfiles } = useLoadArchaeologists();
+  const { refreshProfiles } = useLoadArchaeologists();
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { cancelCreateToken } = useSelector(s => s.embalmState);
+  const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
   const { timestampMs } = useSelector(x => x.appState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -65,19 +66,23 @@ export function CreateSarcophagus() {
     stageError,
     stageInfo,
     retryStage,
+    retryCreateSarcophagus,
     successData,
     clearSarcophagusState,
   } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
 
+  const {
+    archaeologists,
+    selectedArchaeologists,
+    resurrection: resurrectionTimeMs,
+  } = useSelector(x => x.embalmState);
+
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
-  const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
-  const isCreateProcessStarted = (): boolean => {
-    return currentStage !== CreateSarcophagusStage.NOT_STARTED;
-  };
+  const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
   const isCreateCompleted = useCallback(() => {
     return currentStage === CreateSarcophagusStage.COMPLETED;
@@ -116,7 +121,7 @@ export function CreateSarcophagus() {
     (async () => {
       if (isCreateCompleted()) {
         // Get the profiles from the contract
-        const profiles = await getProfiles();
+        const profiles = await refreshProfiles(archaeologists.map(a => a.profile.archAddress));
         if (profiles) {
           dispatch(setArchaeologists(profiles));
         }
@@ -126,7 +131,14 @@ export function CreateSarcophagus() {
         // await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
-  }, [addPeerDiscoveryEventListener, globalLibp2pNode, dispatch, getProfiles, isCreateCompleted]);
+  }, [
+    addPeerDiscoveryEventListener,
+    globalLibp2pNode,
+    dispatch,
+    refreshProfiles,
+    isCreateCompleted,
+    archaeologists,
+  ]);
 
   if (isCreateCompleted()) {
     // setTimeout with delay set to 0 is an easy fix for the following error:
@@ -140,7 +152,7 @@ export function CreateSarcophagus() {
   }
 
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
-    resurrection,
+    resurrectionTimeMs,
     selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
     timestampMs,
     protocolFeeBasePercentage
@@ -226,6 +238,15 @@ export function CreateSarcophagus() {
             Cancel Sarcophagus
           </Button>
         </>
+      )}
+
+      {retryingCreate ? (
+        <RetryCreateModal
+          retryCreate={retryCreateSarcophagus}
+          cancelCreation={cancelCreation}
+        />
+      ) : (
+        <></>
       )}
 
       {currentStage === CreateSarcophagusStage.COMPLETED ? null : <PageBlockModal />}

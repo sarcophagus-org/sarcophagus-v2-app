@@ -1,4 +1,3 @@
-import { ChunkingUploader } from '@bundlr-network/client/build/common/chunkingUploader';
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
@@ -26,7 +25,6 @@ export function useBundlr() {
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
-  const [chunkedUploader, setChunkedUploader] = useState<ChunkingUploader>();
   const [fileBuffer, setFileBuffer] = useState<Buffer>();
   const [cancelUploadToken, setCancelUploadToken] = useState<CancelCreateToken>();
   const [readyToUpload, setReadyToUpload] = useState(false);
@@ -98,56 +96,7 @@ export function useBundlr() {
   let rejectUploadPromise = useRef<any>();
   let resolveUploadPromise = useRef<any>();
 
-  // SET UP UPLOAD EVENT LISTENERS
-  useEffect(() => {
-    if (!chunkedUploader || !fileBuffer || !rejectUploadPromise) return;
-
-    chunkedUploader.setChunkSize(chunkedUploaderFileSize);
-
-    chunkedUploader?.on('chunkUpload', chunkInfo => {
-      if (cancelUploadToken?.cancelled) {
-        chunkedUploader?.pause();
-        rejectUploadPromise.current('Cancelled upload');
-        return;
-      }
-
-      const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
-      dispatch(setUploadProgress(chunkedUploadProgress));
-    });
-
-    chunkedUploader?.on('chunkError', e => {
-      const errorMsg = `Error uploading chunk number ${e.id} - ${e.res.statusText}`;
-      console.error(errorMsg);
-      rejectUploadPromise.current(errorMsg);
-      dispatch(setIsUploading(false));
-    });
-
-    chunkedUploader?.on('done', finishRes => {
-      console.log(`Upload completed with ID ${finishRes.id}`);
-      dispatch(setIsUploading(false));
-    });
-  }, [cancelUploadToken, chunkedUploader, dispatch, fileBuffer, rejectUploadPromise]);
-
-  //  SET UP CHUNKED UPLOADER WHEN BUNDLR CONNECTS
-  useEffect(() => {
-    if (!bundlr) {
-      setChunkedUploader(undefined);
-      return;
-    }
-
-    setChunkedUploader(bundlr.uploader.chunkedUploader);
-  }, [bundlr]);
-
-  // STOP UPLOAD ON CANCEL
-  useEffect(() => {
-    if (cancelUploadToken?.cancelled) {
-      chunkedUploader?.pause();
-      rejectUploadPromise.current('Cancelled upload');
-    }
-  }, [cancelUploadToken, cancelUploadToken?.cancelled, chunkedUploader]);
-
   /**
-   *
    * Set up all needed, yet decoupled, components for uploading
    * and raise readyToUpload flag.
    * */
@@ -169,13 +118,49 @@ export function useBundlr() {
   // Starts as soons `readyToUpload` is true.
   useEffect(() => {
     (async () => {
-      if (!readyToUpload || !fileBuffer) {
+      if (!bundlr || !readyToUpload || !fileBuffer) {
         return;
       }
+
+      // SET UP UPLOAD EVENT LISTENERS
+      const chunkedUploader = bundlr.uploader.chunkedUploader;
+
+      chunkedUploader.setChunkSize(chunkedUploaderFileSize);
+
+      chunkedUploader?.on('chunkUpload', chunkInfo => {
+        // STOP UPLOAD ON CANCEL
+        if (cancelUploadToken?.cancelled) {
+          chunkedUploader?.pause();
+          rejectUploadPromise.current('Cancelled upload');
+          return;
+        }
+
+        const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
+        dispatch(setUploadProgress(chunkedUploadProgress));
+      });
+
+      chunkedUploader?.on('chunkError', e => {
+        const errorMsg = `Error uploading chunk number ${e.id} - ${e.res.statusText}`;
+        console.error(errorMsg);
+        rejectUploadPromise.current(errorMsg);
+        dispatch(setIsUploading(false));
+      });
+
+      chunkedUploader?.on('done', finishRes => {
+        console.log(
+          `Upload completed with ID ${JSON.stringify(finishRes.data?.id ?? finishRes.id)}`
+        );
+        dispatch(setIsUploading(false));
+      });
 
       const uploadPromise = chunkedUploader
         ?.uploadData(fileBuffer)
         .then(res => {
+          if (!res) {
+            rejectUploadPromise.current('Could not upload');
+            return;
+          }
+
           setSarcophagusPayloadTxId(res.data.id);
           resolveUploadPromise.current(res.data.id);
         })
@@ -191,9 +176,11 @@ export function useBundlr() {
     fileBuffer,
     setSarcophagusPayloadTxId,
     toast,
-    chunkedUploader,
     rejectUploadPromise,
     resolveUploadPromise,
+    bundlr,
+    cancelUploadToken?.cancelled,
+    dispatch,
   ]);
 
   /**
@@ -206,14 +193,14 @@ export function useBundlr() {
   const uploadFile = useCallback(
     async (payloadBuffer: Buffer, cancelToken: CancelCreateToken): Promise<string> => {
       return new Promise<string>(async (resolve, reject) => {
-        if (!bundlr || !chunkedUploader) {
-          reject('Bundlr not connected');
+        if (!bundlr) {
+          reject({ message: 'Bundlr not connected' });
         }
 
         prepareToUpload(payloadBuffer, cancelToken, resolve, reject);
       });
     },
-    [bundlr, chunkedUploader, prepareToUpload]
+    [bundlr, prepareToUpload]
   );
 
   return {

@@ -5,8 +5,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useNetwork } from 'wagmi';
-import { readContract } from 'wagmi/actions';
+import { Archaeologist } from 'types';
+import { useContract, useNetwork, useSigner } from 'wagmi';
+import * as Sentry from '@sentry/react';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -19,64 +20,94 @@ export function useLoadArchaeologists() {
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
-  const getProfiles = useCallback(async () => {
-    if (!networkConfig.diamondDeployAddress) {
-      return;
+  const { data: signer } = useSigner();
+
+  const viewStateFacet = useContract({
+    address: networkConfig.diamondDeployAddress,
+    abi: ViewStateFacet__factory.abi,
+    signerOrProvider: signer,
+  });
+
+  const getFullArchProfilesFromAddresses = useCallback(
+    async (addresses: string[]): Promise<Archaeologist[]> => {
+      try {
+        if (addresses.length === 0 || !viewStateFacet) return [];
+        const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
+        const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
+
+        const registeredArchaeologists = profiles.map((p, i) => ({
+          profile: {
+            ...p,
+            archAddress: addresses[i],
+            successes: stats[i].successes,
+            cleanups: stats[i].cleanups,
+            accusals: stats[i].accusals,
+            failures: stats[i].failures,
+          },
+          isOnline: false,
+        }));
+
+        const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+        const onlinePeerIds = res.data;
+
+        for (let arch of registeredArchaeologists) {
+          if (onlinePeerIds.includes(arch.profile.peerId)) {
+            arch.isOnline = true;
+          }
+        }
+
+        return registeredArchaeologists;
+      } catch (e) {
+        console.log('error loading archs', e);
+        Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
+        return [];
+      }
+    },
+    [viewStateFacet]
+  );
+
+  const refreshProfiles = useCallback(
+    async (addresses: string[]) => {
+      if (!networkConfig.diamondDeployAddress) {
+        return [];
+      }
+
+      if (addresses.length === 0) return [];
+
+      try {
+        return await getFullArchProfilesFromAddresses(addresses);
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+    },
+    [getFullArchProfilesFromAddresses, networkConfig.diamondDeployAddress]
+  );
+
+  const getRegisteredProfiles = useCallback(async (): Promise<Archaeologist[]> => {
+    if (!networkConfig.diamondDeployAddress || !viewStateFacet || !signer) {
+      return [];
     }
 
-    const addresses: string[] = (await readContract({
-      address: networkConfig.diamondDeployAddress,
-      abi: ViewStateFacet__factory.abi,
-      functionName: 'getArchaeologistProfileAddresses',
-    })) as string[];
+    const addresses: string[] = await viewStateFacet.callStatic.getArchaeologistProfileAddresses();
 
     if (!addresses || addresses.length === 0) return [];
 
-    const profiles = (await readContract({
-      address: networkConfig.diamondDeployAddress,
-      abi: ViewStateFacet__factory.abi,
-      functionName: 'getArchaeologistProfiles',
-      args: [addresses],
-    })) as any[]; // TODO: Update ABI packages to export const JSON objects instead, then remove these any[]s so wagmi can infer types
-
-    const stats = (await readContract({
-      address: networkConfig.diamondDeployAddress,
-      abi: ViewStateFacet__factory.abi,
-      functionName: 'getArchaeologistsStatistics',
-      args: [addresses],
-    })) as any[];
-
-    const discoveredArchaeologists = profiles.map((p, i) => ({
-      profile: {
-        ...p,
-        archAddress: addresses[i],
-        successes: stats[i].successes,
-        cleanups: stats[i].cleanups,
-        accusals: stats[i].accusals,
-        failures: stats[i].failures,
-      },
-      isOnline: false,
-    }));
-
-    const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-    const onlinePeerIds = res.data;
-
-    for (let arch of discoveredArchaeologists) {
-      if (onlinePeerIds.includes(arch.profile.peerId)) {
-        arch.isOnline = true;
-      }
-    }
-
-    return discoveredArchaeologists;
-  }, [networkConfig.diamondDeployAddress]);
+    return getFullArchProfilesFromAddresses(addresses);
+  }, [
+    getFullArchProfilesFromAddresses,
+    networkConfig.diamondDeployAddress,
+    signer,
+    viewStateFacet,
+  ]);
 
   // This useEffect is used to trigger the other useEffect below once
   // the dependencies are ready
   useEffect(() => {
-    if (!!chain?.id && !!dispatch && !!getProfiles && !!libp2pNode) {
+    if (!!chain?.id && !!dispatch && !!getRegisteredProfiles && !!libp2pNode) {
       setIsProfileLoading(false);
     }
-  }, [chain?.id, dispatch, getProfiles, libp2pNode]);
+  }, [chain?.id, dispatch, getRegisteredProfiles, libp2pNode]);
 
   useEffect(() => {
     if (isProfileLoading === undefined) return;
@@ -100,7 +131,7 @@ export function useLoadArchaeologists() {
         dispatch(startLoad());
         dispatch(setCurrentChainId(chain?.id));
 
-        const newArchaeologists = await getProfiles();
+        const newArchaeologists = await getRegisteredProfiles();
         if (newArchaeologists) {
           dispatch(setArchaeologists(newArchaeologists));
         }
@@ -116,10 +147,10 @@ export function useLoadArchaeologists() {
     chain?.id,
     currentChainId,
     dispatch,
-    getProfiles,
+    getRegisteredProfiles,
     libp2pNode,
     isProfileLoading,
   ]);
 
-  return { getProfiles };
+  return { refreshProfiles };
 }

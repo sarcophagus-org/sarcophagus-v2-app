@@ -4,7 +4,11 @@ import {
   initialCreateSarcophagusState,
 } from '../../context/CreateSarcophagusContext';
 import { useDispatch, useSelector } from '../../../../../store';
-import { resetEmbalmState, setArchaeologistConnection } from '../../../../../store/embalm/actions';
+import {
+  resetEmbalmState,
+  setArchaeologistConnection,
+  setSelectedArchaeologists,
+} from '../../../../../store/embalm/actions';
 import { Step } from '../../../../../store/embalm/reducer';
 import { useDialArchaeologists } from './useDialArchaeologists';
 
@@ -58,6 +62,8 @@ export function useClearSarcophagusState() {
         dispatch(setArchaeologistConnection(arch.profile.peerId, undefined));
       }
     }
+
+    setSelectedArchaeologists([]);
   }, [
     selectedArchaeologists,
     sarcophagusPayloadTxId,

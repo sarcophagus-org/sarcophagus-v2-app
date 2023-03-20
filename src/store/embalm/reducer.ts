@@ -39,6 +39,7 @@ export interface EmbalmState {
   uploadPrice: BigNumber;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   areStepsDisabled: boolean;
+  retryingCreate: boolean;
   cancelCreateToken: CancelCreateToken;
   currentChainId: number | undefined;
 }
@@ -64,6 +65,7 @@ export const embalmInitialState: EmbalmState = {
   uploadPrice: ethers.constants.Zero,
   archaeologistEncryptedShards: [],
   areStepsDisabled: false,
+  retryingCreate: false,
   currentChainId: undefined,
   cancelCreateToken: new CancelCreateToken(),
 };
@@ -249,6 +251,9 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
 
     case ActionType.EnableSteps:
       return { ...state, areStepsDisabled: false };
+
+    case ActionType.ToggleRetryingCreate:
+      return { ...state, retryingCreate: !state.retryingCreate };
 
     case ActionType.SetCancelToken:
       return { ...state, cancelCreateToken: action.payload.token };

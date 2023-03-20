@@ -1,4 +1,4 @@
-import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
+import { useBundlrBalance } from 'features/embalm/stepContent/hooks/useBundlrBalance';
 import { maxTotalArchaeologists, minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
 import {
@@ -52,7 +52,7 @@ export function useSetStatuses() {
   const { isConnected: isBundlrConnected } = useSelector(x => x.bundlrState);
   const { timestampMs } = useSelector(x => x.appState);
   const { uploadPrice } = useUploadPrice();
-  const { balance } = useGetBalance();
+  const { balance } = useBundlrBalance();
   const { isConnected: isWalletConnected } = useAccount();
   const { chain } = useNetwork();
 

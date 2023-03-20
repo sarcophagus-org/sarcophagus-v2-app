@@ -7,8 +7,14 @@ import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
 
 export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
-  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
-    useSelector(x => x.embalmState);
+  const {
+    name,
+    recipientState,
+    resurrection,
+    selectedArchaeologists,
+    requiredArchaeologists,
+    retryingCreate,
+  } = useSelector(x => x.embalmState);
 
   const {
     negotiationTimestamp,
@@ -19,6 +25,10 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
   } = useContext(CreateSarcophagusContext);
 
   const submitSarcophagus = useCallback(async () => {
+    if (retryingCreate) {
+      throw new Error('Retrying...');
+    }
+
     const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({
       name,
       recipientState,
@@ -54,6 +64,7 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     archaeologistSignatures,
     sarcophagusPayloadTxId,
     setSarcophagusTxId,
+    retryingCreate,
   ]);
 
   return {

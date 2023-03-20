@@ -1,7 +1,7 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { EthereumIcon } from 'components/icons/EthereumIcon';
 import { BigNumber, ethers } from 'ethers';
-import { useGetBalance } from 'features/embalm/stepContent/hooks/useGetBalance';
+import { useBundlrBalance } from 'features/embalm/stepContent/hooks/useBundlrBalance';
 import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
 import { useSelector } from 'store/index';
@@ -25,7 +25,7 @@ interface BundlrProfileProps {
 export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: BundlrProfileProps) {
   const { balanceOffset } = useSelector(s => s.bundlrState);
 
-  const bundlrBalanceData = useGetBalance();
+  const bundlrBalanceData = useBundlrBalance();
 
   const bundlrBalanceInEth = !bundlrBalanceData?.balance
     ? '--'
