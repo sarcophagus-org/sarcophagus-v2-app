@@ -7,6 +7,7 @@ export enum ActionType {
   StartLoad = 'APP_START_LOAD',
   StopLoad = 'APP_STOP_LOAD',
   SetLibP2p = 'APP_SET_LIBP2P',
+  SetTimestampMs = 'APP_SET_TIMESTAMP_MS',
 }
 
 type AppPayload = {
@@ -18,6 +19,9 @@ type AppPayload = {
   };
   [ActionType.SetLibP2p]: {
     libp2pNode: Libp2p;
+  };
+  [ActionType.SetTimestampMs]: {
+    timestampMs: number;
   };
 };
 
@@ -44,6 +48,15 @@ export function setLibp2p(libp2pNode: Libp2p): AppActions {
     type: ActionType.SetLibP2p,
     payload: {
       libp2pNode,
+    },
+  };
+}
+
+export function setTimestampMs(timestampMs: number): AppActions {
+  return {
+    type: ActionType.SetTimestampMs,
+    payload: {
+      timestampMs,
     },
   };
 }

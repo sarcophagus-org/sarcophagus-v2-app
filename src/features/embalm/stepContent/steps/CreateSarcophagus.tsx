@@ -37,6 +37,7 @@ export function CreateSarcophagus() {
   const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
+  const { timestampMs } = useSelector(x => x.appState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -153,6 +154,7 @@ export function CreateSarcophagus() {
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     resurrectionTimeMs,
     selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
+    timestampMs,
     protocolFeeBasePercentage
   );
 

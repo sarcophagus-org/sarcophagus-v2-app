@@ -19,6 +19,7 @@ import { WalletDisconnectPage } from './WalletDisconnectPage';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { AccusePage } from './AccusePage';
 import { AdminDashBoardPage } from './AdminDashboardPage';
+import { useTimestampMs } from 'hooks/useTimestampMs';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -135,10 +136,11 @@ export function Pages() {
 
   const { isConnected } = useAccount();
 
-  /**
-   * Handles Bundlr connection and disconnection
-   */
+  // Handles Bundlr connection and disconnection
   useBundlrSession();
+
+  // Globally stores the timestamp from the latest block
+  useTimestampMs();
 
   const { isSupportedChain } = useSupportedNetwork();
   const currentCommitHash = process.env.REACT_APP_COMMIT_REF;

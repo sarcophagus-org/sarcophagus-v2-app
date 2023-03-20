@@ -1,6 +1,7 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
+import { useSelector } from 'store/index';
 import { Sarcophagus } from 'types';
 import { useAccount, useContractRead } from 'wagmi';
 import { useGetGracePeriod } from './useGetGracePeriod';
@@ -12,6 +13,7 @@ import { useGetGracePeriod } from './useGetGracePeriod';
 export function useGetEmbalmerCanClean(sarcophagus: Sarcophagus | undefined): boolean {
   const networkConfig = useNetworkConfig();
   const gracePeriod = useGetGracePeriod();
+  const { timestampMs } = useSelector(x => x.appState);
 
   const { data } = useContractRead({
     address: networkConfig.diamondDeployAddress,
@@ -27,7 +29,7 @@ export function useGetEmbalmerCanClean(sarcophagus: Sarcophagus | undefined): bo
 
   const sarcoResurrectionTime = Number.parseInt(sarcophagus.resurrectionTime.toString());
   const cleanWindow = Number.parseInt((data as BigNumber).toString());
-  const nowSeconds = Math.trunc(Date.now() / 1000);
+  const nowSeconds = Math.trunc(timestampMs / 1000);
 
   const sarcoGracePeriod = sarcoResurrectionTime + gracePeriod;
   const isWithinCleanWindow =

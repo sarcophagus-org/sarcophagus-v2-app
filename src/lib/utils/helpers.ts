@@ -1,3 +1,4 @@
+import { Provider, Web3Provider } from '@ethersproject/providers';
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers, Signature, Signer } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
@@ -158,7 +159,8 @@ export function formatFee(value: number | string, fixed = 2): string {
  */
 export function calculateProjectedDiggingFees(
   diggingFeeRates: BigNumber[],
-  resurrectionTimestamp: number
+  resurrectionTimestamp: number,
+  timestampMs: number
 ): BigNumber {
   if (resurrectionTimestamp === 0) return ethers.constants.Zero;
   const totalDiggingFeesPerSecond = diggingFeeRates.reduce(
@@ -167,7 +169,7 @@ export function calculateProjectedDiggingFees(
   );
 
   const resurrectionSeconds = Math.floor(resurrectionTimestamp / 1000);
-  const nowSeconds = Math.floor(Date.now() / 1000);
+  const nowSeconds = Math.floor(timestampMs / 1000);
 
   return totalDiggingFeesPerSecond.mul(resurrectionSeconds - nowSeconds);
 }
@@ -203,9 +205,14 @@ export function formatSarco(valueInWei: string | number, precision: number = 2):
 export function getTotalFeesInSarco(
   resurrectionTimestamp: number,
   diggingFeeRates: BigNumber[],
+  timestampMs: number,
   protocolFeeBasePercentage?: number
 ) {
-  const totalDiggingFees = calculateProjectedDiggingFees(diggingFeeRates, resurrectionTimestamp);
+  const totalDiggingFees = calculateProjectedDiggingFees(
+    diggingFeeRates,
+    resurrectionTimestamp,
+    timestampMs
+  );
 
   // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
   const protocolFee = protocolFeeBasePercentage
@@ -227,6 +234,7 @@ export function getTotalFeesInSarco(
  */
 export function buildResurrectionDateString(
   resurrectionTime: BigNumber | undefined,
+  timestampMs: number,
   options?: { format?: string; hideDuration?: boolean }
 ): string {
   const { format = 'MM.DD.YYYY h:mmA', hideDuration = false } = options || {};
@@ -243,7 +251,7 @@ export function buildResurrectionDateString(
   }
 
   const resurrectionDateString = moment.unix(resurrectionTime.toNumber()).format(format);
-  const msUntilResurrection = resurrectionTime.toNumber() * 1000 - Date.now();
+  const msUntilResurrection = resurrectionTime.toNumber() * 1000 - timestampMs;
   const humanizedDuration = moment.duration(msUntilResurrection).humanize();
   const timeUntilResurrection =
     msUntilResurrection < 0 ? `${humanizedDuration} ago` : humanizedDuration;
@@ -284,3 +292,9 @@ export function convertSarcoPerSecondToPerMonth(diggingFeePerSecond: string): st
 }
 
 export const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+export async function getCurrentTimeSec(provider: Provider | Web3Provider) {
+  const blockNumber = await provider.getBlockNumber();
+  const block = await provider.getBlock(blockNumber);
+  return block.timestamp;
+}

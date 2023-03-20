@@ -11,10 +11,12 @@ export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
   const { balance } = useSarcoBalance();
+  const { timestampMs } = useSelector(x => x.appState);
 
   const { formattedTotalDiggingFees, totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     resurrection,
     selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
+    timestampMs,
     protocolFeeBasePercentage
   );
 

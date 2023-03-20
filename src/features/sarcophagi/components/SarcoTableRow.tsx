@@ -7,6 +7,7 @@ import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanCl
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector } from 'store/index';
 import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { cleanTooltip } from './CleanButton';
@@ -35,6 +36,7 @@ export function SarcoTableRow({
 }: SarcophagusTableRowProps) {
   const { address } = useAccount();
   const navigate = useNavigate();
+  const { timestampMs } = useSelector(x => x.appState);
 
   const [resurrectionString, setResurrectionString] = useState('');
 
@@ -48,7 +50,8 @@ export function SarcoTableRow({
   // on. If a user is both the embalmer and the recipient on a sarcohpagus, they will see both the
   // rewrap and resurrect actions on the "My Sarcophagi" tab and the "Claim Sarcophagi" tab.
   const isEmbalmer = sarco.embalmerAddress === address;
-  const isRecipient = sarco.recipientAddress === address;
+
+  const isRecipientClaimable = sarco.recipientAddress === address && isClaimTab;
 
   const claimTooltip = 'Decrypt and download the Sarcophagus payload';
 
@@ -65,16 +68,16 @@ export function SarcoTableRow({
     [SarcophagusState.Resurrected]: {
       // The embalmer isn't concerned with claiming a sarco. BUT, if they can clean a resurrected sarco,
       // that's something they care about. Otherwise we show the Claim action to the recipient.
-      action: canEmbalmerClean
-        ? SarcoAction.Clean
-        : isRecipient && isClaimTab
+      action: isRecipientClaimable
         ? SarcoAction.Claim
+        : canEmbalmerClean
+        ? SarcoAction.Clean
         : undefined,
-      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
+      tooltip: isRecipientClaimable ? claimTooltip : canEmbalmerClean ? cleanTooltip : '',
     },
     [SarcophagusState.CleanedResurrected]: {
-      action: isRecipient && isClaimTab ? SarcoAction.Claim : undefined,
-      tooltip: isRecipient && isClaimTab ? claimTooltip : '',
+      action: isRecipientClaimable ? SarcoAction.Claim : undefined,
+      tooltip: isRecipientClaimable ? claimTooltip : '',
     },
     [SarcophagusState.Failed]: {
       action: canEmbalmerClean ? SarcoAction.Clean : undefined,
@@ -103,18 +106,20 @@ export function SarcoTableRow({
 
   // Updates the resurrection date string on an interval
   useEffect(() => {
-    setResurrectionString(buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0)));
+    setResurrectionString(
+      buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0), timestampMs)
+    );
 
     const intervalId = setInterval(() => {
       setResurrectionString(
-        buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0))
+        buildResurrectionDateString(sarco.resurrectionTime || BigNumber.from(0), timestampMs)
       );
     }, dateCalculationInterval);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [dateCalculationInterval, sarco.resurrectionTime]);
+  }, [dateCalculationInterval, sarco.resurrectionTime, timestampMs]);
 
   return (
     <Tr>

@@ -3,6 +3,7 @@ import { useGetGracePeriod } from 'hooks/viewStateFacet/useGetGracePeriod';
 import { useNetworkConfig } from 'lib/config';
 import { getSarcophagusState } from 'lib/utils/getSarcophagusState';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'store/index';
 import { Sarcophagus, SarcophagusResponseContract } from 'types';
 import { useContractReads } from 'wagmi';
 
@@ -13,6 +14,7 @@ export function useGetSarcophagi(sarcoIds: string[], refetchInterval = 60_000): 
   const networkConfig = useNetworkConfig();
   const gracePeriod = useGetGracePeriod();
   const [sarcophagiResponse, setSarcophagiResponse] = useState<SarcophagusResponseContract[]>([]);
+  const { timestampMs } = useSelector(x => x.appState);
 
   const { data, refetch } = useContractReads({
     contracts: sarcoIds.map(id => ({
@@ -41,7 +43,7 @@ export function useGetSarcophagi(sarcoIds: string[], refetchInterval = 60_000): 
   if (!data) return [];
   const sarcophagi = sarcophagiResponse.map((sarcoResponse, index) => ({
     ...sarcoResponse,
-    state: getSarcophagusState(sarcoResponse, gracePeriod),
+    state: getSarcophagusState(sarcoResponse, gracePeriod, timestampMs),
     id: sarcoIds?.[index] || '',
   }));
 
