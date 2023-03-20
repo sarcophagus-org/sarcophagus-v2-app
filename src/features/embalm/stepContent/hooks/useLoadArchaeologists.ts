@@ -35,7 +35,6 @@ export function useLoadArchaeologists() {
         const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
         const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
 
-
         const registeredArchaeologists = profiles.map((p, i) => ({
           profile: {
             ...p,
