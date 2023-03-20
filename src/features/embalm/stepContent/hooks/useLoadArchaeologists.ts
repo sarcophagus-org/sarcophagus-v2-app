@@ -7,6 +7,7 @@ import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
+import * as Sentry from '@sentry/react';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -29,33 +30,39 @@ export function useLoadArchaeologists() {
 
   const getFullArchProfilesFromAddresses = useCallback(
     async (addresses: string[]): Promise<Archaeologist[]> => {
-      if (addresses.length === 0 || !viewStateFacet) return [];
+      try {
+        if (addresses.length === 0 || !viewStateFacet) return [];
+        const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
+        const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
 
-      const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
-      const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
 
-      const registeredArchaeologists = profiles.map((p, i) => ({
-        profile: {
-          ...p,
-          archAddress: addresses[i],
-          successes: stats[i].successes,
-          cleanups: stats[i].cleanups,
-          accusals: stats[i].accusals,
-          failures: stats[i].failures,
-        },
-        isOnline: false,
-      }));
+        const registeredArchaeologists = profiles.map((p, i) => ({
+          profile: {
+            ...p,
+            archAddress: addresses[i],
+            successes: stats[i].successes,
+            cleanups: stats[i].cleanups,
+            accusals: stats[i].accusals,
+            failures: stats[i].failures,
+          },
+          isOnline: false,
+        }));
 
-      const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-      const onlinePeerIds = res.data;
+        const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+        const onlinePeerIds = res.data;
 
-      for (let arch of registeredArchaeologists) {
-        if (onlinePeerIds.includes(arch.profile.peerId)) {
-          arch.isOnline = true;
+        for (let arch of registeredArchaeologists) {
+          if (onlinePeerIds.includes(arch.profile.peerId)) {
+            arch.isOnline = true;
+          }
         }
-      }
 
-      return registeredArchaeologists;
+        return registeredArchaeologists;
+      } catch (e) {
+        console.log('error loading archs', e);
+        Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
+        return [];
+      }
     },
     [viewStateFacet]
   );
