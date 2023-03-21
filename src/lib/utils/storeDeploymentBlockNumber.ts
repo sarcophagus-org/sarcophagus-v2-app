@@ -1,6 +1,10 @@
 import { providers } from 'ethers';
 import { NetworkConfig } from 'lib/config/networkConfigType';
 
+// The contracts block number deployed on goerli as of 3/21/23
+// This is intended to be used as a fallback in case the etherscan api call fails
+const defaultBlockNumber = 8526154;
+
 async function getContractDeploymentBlockNumber(
   provider: providers.Provider,
   networkConfig: NetworkConfig
@@ -18,21 +22,28 @@ async function getContractDeploymentBlockNumber(
     networkConfig.diamondDeployAddress
   }&startblock=0&endblock=99999999&sort=asc&apikey=${networkConfig.etherscanApiKey}`;
 
-  const response = await fetch(url);
-  const data = await response.json();
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
 
-  if (data.status !== '1' || data.result.length === 0) {
-    throw new Error('Contract creation transaction not found.');
+    if (data.status !== '1' || data.result.length === 0) {
+      throw new Error('Contract creation transaction not found.');
+    }
+
+    const txHash = data.result[0].hash;
+    const receipt = await provider.getTransactionReceipt(txHash);
+
+    if (!receipt) {
+      throw new Error('Contract deployment receipt not found.');
+    }
+
+    return receipt.blockNumber;
+  } catch (error) {
+    console.error(
+      `Unable to get the block number the contract was deployed on. Defaulting to ${defaultBlockNumber}`
+    );
+    return defaultBlockNumber;
   }
-
-  const txHash = data.result[0].hash;
-  const receipt = await provider.getTransactionReceipt(txHash);
-
-  if (!receipt) {
-    throw new Error('Contract deployment receipt not found.');
-  }
-
-  return receipt.blockNumber;
 }
 
 export function getBlockNumberLocalStorageKey(networkConfig: NetworkConfig) {
