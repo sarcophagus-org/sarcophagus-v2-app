@@ -1,47 +1,61 @@
-import { Flex, Spinner, Text } from '@chakra-ui/react';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { Flex, IconButton, Text } from '@chakra-ui/react';
 import { useNetworkConfig } from 'lib/config';
-import { useCallback, useEffect, useState } from 'react';
+import { storeDeploymentBlockNumber } from 'lib/utils/storeDeploymentBlockNumber';
+import { useEffect } from 'react';
 import { useProvider } from 'wagmi';
+import useSarcophagusCount from '../hooks/useSarcophagusCount';
 
 export function AdminSarcophagi() {
   const networkConfig = useNetworkConfig();
   const provider = useProvider();
-  const [sarcophagusCount, setSarcophagusCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    fetchEvents,
+    isLoading,
+    currentBlock,
+    blockCount,
+    sarcophagusCount,
+    sarcophagusCountLocalStorageKey,
+  } = useSarcophagusCount();
 
-  const fetchEvents = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const contract = EmbalmerFacet__factory.connect(networkConfig.diamondDeployAddress, provider);
-      const events = await contract.queryFilter('CreateSarcophagus');
-      setSarcophagusCount(events.length);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [networkConfig.diamondDeployAddress, provider]);
+  async function handleRefresh() {
+    localStorage.removeItem(sarcophagusCountLocalStorageKey);
+    fetchEvents();
+  }
 
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
-
-  if (isLoading) {
-    return (
-      <Flex>
-        <Spinner />
-      </Flex>
-    );
-  }
+    (async () => {
+      await storeDeploymentBlockNumber(provider, networkConfig);
+      await fetchEvents();
+    })();
+  }, [fetchEvents, networkConfig, provider]);
 
   return (
     <Flex direction="column">
       <Text>This page is a work in progress.</Text>
-      <Text mt={3}>
-        There are currently {sarcophagusCount}{' '}
-        {sarcophagusCount === 1 ? 'sarcophagus' : 'sarocphagi'}.
-      </Text>
+      <Flex>
+        {isLoading ? (
+          <Flex direction="column">
+            <Text mt={3}>Searching for Sarcophagi...</Text>
+            <Text>
+              Progress: {currentBlock} out of {blockCount} blocks processed.
+            </Text>
+          </Flex>
+        ) : (
+          <Flex>
+            <Text mt={3}>
+              Found {sarcophagusCount} {sarcophagusCount === 1 ? 'sarcophagus' : 'sarocphagi'}.
+            </Text>
+            <IconButton
+              aria-label="refresh"
+              icon={<RepeatIcon />}
+              onClick={handleRefresh}
+              variant="ghost"
+              isLoading={isLoading}
+            />
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 }
