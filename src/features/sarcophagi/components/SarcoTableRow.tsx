@@ -41,8 +41,8 @@ export function SarcoTableRow({
   const [resurrectionString, setResurrectionString] = useState('');
 
   // Payment for clean automatically goes to the current user
-  const { clean, isCleaning } = useCleanSarcophagus(sarco.id);
   const canEmbalmerClean = useGetEmbalmerCanClean(sarco);
+  const { clean, isCleaning } = useCleanSarcophagus(sarco.id, canEmbalmerClean);
 
   // If we ever decide to add a dashboard for archaeologists that case will need to be considered
   // here.
