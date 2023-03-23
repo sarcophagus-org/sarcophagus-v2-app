@@ -15,7 +15,7 @@ export function DashboardPage() {
         mb="75px"
         maxWidth="1200px"
         minWidth="800px"
-        minHeight="400px"
+        minHeight="360px"
       >
         <Sarcophagi />
       </Flex>
