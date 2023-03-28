@@ -73,7 +73,6 @@ export function SarcoTable({ ids, isClaimTab }: SarcoTableProps) {
     <TableContainer
       overflowY="auto"
       h="100%"
-      minHeight="300px"
     >
       <Table
         variant="unstyled"
