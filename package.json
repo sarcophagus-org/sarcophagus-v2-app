@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@ajna/pagination": "^1.4.19",
+    "@apollo/client": "^3.7.10",
     "@bundlr-network/client": "^0.9.11",
     "@chainsafe/libp2p-noise": "^10.0.0",
     "@chakra-ui/anatomy": "^2.1.0",
@@ -52,6 +53,7 @@
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "framer-motion": "^6.4.3",
+    "graphql": "^16.6.0",
     "history": "^5.3.0",
     "https-browserify": "^1.0.0",
     "it-pipe": "^2.0.4",

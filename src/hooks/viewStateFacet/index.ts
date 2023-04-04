@@ -1,7 +1,3 @@
-export { useGetArchaeologistAccusals } from './useGetArchaeologistAccusals';
-export { useGetArchaeologistCleanups } from './useGetArchaeologistCleanups';
-export { useGetArchaeologistSarcophagi } from './useGetArchaeologistSarcophagi';
-export { useGetArchaeologistSuccessOnSarcophagus } from './useGetArchaeologistSuccessOnSarcophagus';
 export { useGetAvailableRewards } from './useGetAvailableRewards';
 export { useGetCursedBond } from './useGetCursedBond';
 export { useGetEmbalmerSarcophagi } from './useGetEmbalmerSarcophagi';
