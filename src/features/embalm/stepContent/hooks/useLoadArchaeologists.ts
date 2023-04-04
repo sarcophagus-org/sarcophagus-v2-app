@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
+import { ArchStatsSubgraph, useGraphQl } from 'hooks/useGraphQl';
+import { BigNumber, ethers } from 'ethers';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -16,10 +18,11 @@ export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
-  const { libp2pNode } = useSelector(s => s.appState);
+  const { libp2pNode, timestampMs } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
+  const { getStats } = useGraphQl(Math.trunc(timestampMs / 1000));
   const { data: signer } = useSigner();
 
   const viewStateFacet = useContract({
@@ -31,21 +34,43 @@ export function useLoadArchaeologists() {
   const getFullArchProfilesFromAddresses = useCallback(
     async (addresses: string[]): Promise<Archaeologist[]> => {
       try {
-        if (addresses.length === 0 || !viewStateFacet) return [];
-        const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
+        if (addresses.length === 0 || !viewStateFacet || !timestampMs) return [];
         const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
+        // const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
 
-        const registeredArchaeologists = profiles.map((p, i) => ({
-          profile: {
-            ...p,
-            archAddress: addresses[i],
-            successes: stats[i].successes,
-            cleanups: stats[i].cleanups,
-            accusals: stats[i].accusals,
-            failures: stats[i].failures,
-          },
-          isOnline: false,
-        }));
+        const statsData = await getStats();
+
+        const registeredArchaeologists = profiles.map((p, i) => {
+          const archStats: ArchStatsSubgraph = statsData.find(
+            (a: any) => a.address.toLowerCase() === addresses[i].toLowerCase()
+          )!;
+
+          if (!archStats) {
+            return {
+              profile: {
+                ...p,
+                archAddress: addresses[i],
+                successes: ethers.constants.Zero,
+                accusals: ethers.constants.Zero,
+                failures: ethers.constants.Zero,
+              },
+              isOnline: false,
+            };
+          }
+
+          const { successes, accusals, failures } = archStats;
+
+          return {
+            profile: {
+              ...p,
+              archAddress: addresses[i],
+              successes: BigNumber.from(successes),
+              accusals: BigNumber.from(accusals),
+              failures: BigNumber.from(failures),
+            },
+            isOnline: false,
+          };
+        });
 
         const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
         const onlinePeerIds = res.data;
@@ -63,7 +88,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [viewStateFacet]
+    [getStats, viewStateFacet, timestampMs]
   );
 
   const refreshProfiles = useCallback(
@@ -92,7 +117,6 @@ export function useLoadArchaeologists() {
     const addresses: string[] = await viewStateFacet.callStatic.getArchaeologistProfileAddresses();
 
     if (!addresses || addresses.length === 0) return [];
-
     return getFullArchProfilesFromAddresses(addresses);
   }, [
     getFullArchProfilesFromAddresses,
