@@ -62,8 +62,6 @@ export function useGraphQl(timestampSeconds: number) {
         })
       ).data.archaeologists;
 
-      console.log('archStats', archStats);
-
       let sarcos: SarcoDataSubgraph[] = (
         await graphQlClient.query({
           query: gql(getSarcosQuery(timestampSeconds, gracePeriod)),
@@ -71,34 +69,31 @@ export function useGraphQl(timestampSeconds: number) {
         })
       ).data.createSarcophaguses;
 
-      const finalArchStats: ArchStatsSubgraph[] = [];
+      const statsPromises: Promise<ArchStatsSubgraph[]> = Promise.all(sarcos.map(sarcoData => {
+        const promise: Promise<ArchStatsSubgraph> = new Promise(async (resolve) => {
+          let archsThatPublished: string[] = (
+            await graphQlClient.query({
+              query: gql(getPublishPrivateKeysQuery(sarcoData.sarcoId)),
+              fetchPolicy: 'cache-first',
+            })
+          ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
 
-      console.log('got sarcos');
+          // For each cursed arch on this sarco, check if they do NOT have a publish private key -- that's a failure
+          sarcoData.cursedArchaeologists.forEach(archAddress => {
+            const cursedArch = { ...archStats.find(arch => arch.address === archAddress)! };
 
-      // Use a Promise.all instead, see if it improves speed
-      for await (const sarcoData of sarcos) {
-        let archsThatPublished: string[] = (
-          await graphQlClient.query({
-            query: gql(getPublishPrivateKeysQuery(sarcoData.sarcoId)),
-            fetchPolicy: 'cache-first',
-          })
-        ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
+            if (!archsThatPublished.includes(archAddress)) {
+              cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
+            }
 
-        console.log('publishKeysOnSarco', sarcoData.sarcoId, archsThatPublished);
-
-        // For each cursed arch on this sarco, check if they do NOT have a publish private key -- that's a failure
-        sarcoData.cursedArchaeologists.forEach(archAddress => {
-          const cursedArch = { ...archStats.find(arch => arch.address === archAddress)! };
-
-          if (!archsThatPublished.includes(archAddress)) {
-            cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
-          }
-
-          finalArchStats.push(cursedArch);
+            resolve(cursedArch);
+          });
         });
-      }
 
-      return finalArchStats;
+        return promise;
+      }));
+
+      return await statsPromises;
     } catch (e) {
       console.error(e);
       return [];
