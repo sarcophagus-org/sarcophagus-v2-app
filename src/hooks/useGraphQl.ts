@@ -7,7 +7,6 @@ const graphQlClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// go through all sarco with res time less than current blockstamp, go through each's archs, check failures
 const getSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
     createSarcophaguses (
         where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
@@ -69,29 +68,31 @@ export function useGraphQl(timestampSeconds: number) {
         })
       ).data.createSarcophaguses;
 
-      const statsPromises: Promise<ArchStatsSubgraph[]> = Promise.all(sarcos.map(sarcoData => {
-        const promise: Promise<ArchStatsSubgraph> = new Promise(async (resolve) => {
-          let archsThatPublished: string[] = (
-            await graphQlClient.query({
-              query: gql(getPublishPrivateKeysQuery(sarcoData.sarcoId)),
-              fetchPolicy: 'cache-first',
-            })
-          ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
+      const statsPromises: Promise<ArchStatsSubgraph[]> = Promise.all(
+        sarcos.map(sarcoData => {
+          const promise: Promise<ArchStatsSubgraph> = new Promise(async resolve => {
+            let archsThatPublished: string[] = (
+              await graphQlClient.query({
+                query: gql(getPublishPrivateKeysQuery(sarcoData.sarcoId)),
+                fetchPolicy: 'cache-first',
+              })
+            ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
 
-          // For each cursed arch on this sarco, check if they do NOT have a publish private key -- that's a failure
-          sarcoData.cursedArchaeologists.forEach(archAddress => {
-            const cursedArch = { ...archStats.find(arch => arch.address === archAddress)! };
+            // For each cursed arch on this sarco, check if they do NOT have a publish private key -- that's a failure
+            sarcoData.cursedArchaeologists.map(archAddress => {
+              const cursedArch = { ...archStats.find(arch => arch.address === archAddress)! };
 
-            if (!archsThatPublished.includes(archAddress)) {
-              cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
-            }
+              if (!archsThatPublished.includes(archAddress)) {
+                cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
+              }
 
-            resolve(cursedArch);
+              resolve(cursedArch);
+            });
           });
-        });
 
-        return promise;
-      }));
+          return promise;
+        })
+      );
 
       return await statsPromises;
     } catch (e) {
