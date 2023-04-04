@@ -5,13 +5,14 @@ import { useNetworkConfig } from 'lib/config';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 
-export function useCleanSarcophagus(sarcoId: string) {
+export function useCleanSarcophagus(sarcoId: string, canEmbalmerClean: boolean) {
   const networkConfig = useNetworkConfig();
   const toast = useToast();
 
   const { config, isError: mayFail } = usePrepareContractWrite({
     address: networkConfig.diamondDeployAddress,
     abi: ThirdPartyFacet__factory.abi as Abi,
+    enabled: canEmbalmerClean,
     functionName: 'clean',
     args: [sarcoId],
   });
