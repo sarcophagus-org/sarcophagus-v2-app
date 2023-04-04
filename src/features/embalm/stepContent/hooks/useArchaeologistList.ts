@@ -46,7 +46,9 @@ export function useArchaeologistList() {
 
     const estimatedCurse = !resurrectionTimeMs
       ? ethers.constants.Zero
-      : a.profile.minimumDiggingFeePerSecond.mul(Math.trunc(resurrectionIntervalMs / 1000));
+      : a.profile.minimumDiggingFeePerSecond
+          .mul(Math.trunc(resurrectionIntervalMs / 1000))
+          .add(a.profile.curseFee);
 
     if (resurrectionIntervalMs > maxRewrapIntervalMs) {
       a.hiddenReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
@@ -55,7 +57,6 @@ export function useArchaeologistList() {
       return false;
     }
 
-    // TODO: also validate with curse fee once implemented
     if (estimatedCurse.gt(a.profile.freeBond)) {
       a.hiddenReason =
         'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';

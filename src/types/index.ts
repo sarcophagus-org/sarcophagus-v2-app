@@ -53,6 +53,7 @@ export interface ArchaeologistProfile {
   minimumDiggingFeePerSecond: BigNumber;
   peerId: string;
   successes: BigNumber;
+  curseFee: BigNumber;
 }
 
 export interface ArchaeologistEncryptedShard {

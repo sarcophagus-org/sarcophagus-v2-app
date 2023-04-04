@@ -1,10 +1,10 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { BigNumber, ethers } from 'ethers';
+import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
 import { formatFee, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
-import { ethers } from 'ethers';
-import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function SarcophagusSummaryFees() {
@@ -13,12 +13,20 @@ export function SarcophagusSummaryFees() {
   const { balance } = useSarcoBalance();
   const { timestampMs } = useSelector(x => x.appState);
 
-  const { formattedTotalDiggingFees, totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+  const { formattedTotalDiggingFees, totalDiggingFees } = getTotalFeesInSarco(
     resurrection,
     selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
     timestampMs,
     protocolFeeBasePercentage
   );
+
+  const totalCurseFees = selectedArchaeologists.reduce((acc, archaeologist) => {
+    return acc.add(archaeologist.profile.curseFee);
+  }, BigNumber.from(0));
+
+  const protocolFeeWithCurseFee = totalDiggingFees
+    .add(totalCurseFees)
+    .div(BigNumber.from(100 * protocolFeeBasePercentage));
 
   return (
     <Box
@@ -30,11 +38,11 @@ export function SarcophagusSummaryFees() {
         px={6}
       >
         <Flex alignItems="center">
-          {balance?.lt(totalDiggingFees.add(protocolFee)) ? (
+          {balance?.lt(totalDiggingFees.add(protocolFeeWithCurseFee)) ? (
             <SummaryErrorIcon error={"You don't have enough SARCO to cover creation fees!"} />
           ) : (
             <Tooltip
-              label="Fee to be paid on each rewrap, and a one time upload fee"
+              label="Fee to be paid for the next rewrap, and a one time upload fee"
               placement="top"
             >
               <InfoOutlineIcon fontSize="md" />
@@ -62,6 +70,13 @@ export function SarcophagusSummaryFees() {
             w="100%"
             justifyContent="space-between"
           >
+            <Text as="i">Curse Fee</Text>
+            <Text as="i">{formatSarco(totalCurseFees.toString())} SARCO</Text>
+          </Flex>
+          <Flex
+            w="100%"
+            justifyContent="space-between"
+          >
             <Text
               as="i"
               variant="secondary"
@@ -74,7 +89,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              {formatSarco(protocolFee.toString())} SARCO
+              {formatSarco(protocolFeeWithCurseFee.toString())} SARCO
             </Text>
           </Flex>
           <Divider
