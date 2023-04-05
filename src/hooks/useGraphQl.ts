@@ -7,7 +7,7 @@ const graphQlClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const getSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
+const getSarcosAndStatsQuery = (blockTimestamp: number, gracePeriod: number) => `query {
     createSarcophaguses (
         where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
         orderBy: resurrectionTime,
@@ -16,10 +16,7 @@ const getSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
         sarcoId
         resurrectionTime
         cursedArchaeologists
-    }
-  }`;
-
-const getStatsQuery = `query {
+    },
     archaeologists {
         address
         successes
@@ -27,7 +24,7 @@ const getStatsQuery = `query {
         failures
         blockTimestamp
     }
-}`;
+  }`;
 
 const getPublishPrivateKeysQuery = (sarcoId: string) => `query {
   publishPrivateKeys (where: { sarcoId: "${sarcoId}" }) {
@@ -43,10 +40,15 @@ export interface ArchStatsSubgraph {
   blockTimestamp: number;
 }
 
-export interface SarcoDataSubgraph {
+interface SarcoDataSubgraph {
   sarcoId: string;
   resurrectionTime: string;
   cursedArchaeologists: string[];
+}
+
+interface SarcosAndStats {
+  archaeologists: ArchStatsSubgraph[];
+  createSarcophaguses: SarcoDataSubgraph[];
 }
 
 export function useGraphQl(timestampSeconds: number) {
@@ -54,22 +56,15 @@ export function useGraphQl(timestampSeconds: number) {
 
   const getStats = useCallback(async (): Promise<ArchStatsSubgraph[]> => {
     try {
-      let archStats: ArchStatsSubgraph[] = (
+      const { archaeologists: archStats, createSarcophaguses } = (
         await graphQlClient.query({
-          query: gql(getStatsQuery),
+          query: gql(getSarcosAndStatsQuery(timestampSeconds, gracePeriod)),
           fetchPolicy: 'cache-first',
         })
-      ).data.archaeologists;
-
-      let sarcos: SarcoDataSubgraph[] = (
-        await graphQlClient.query({
-          query: gql(getSarcosQuery(timestampSeconds, gracePeriod)),
-          fetchPolicy: 'cache-first',
-        })
-      ).data.createSarcophaguses;
+      ).data as SarcosAndStats;
 
       const statsPromises: Promise<ArchStatsSubgraph[]> = Promise.all(
-        sarcos.map(sarcoData => {
+        createSarcophaguses.map(sarcoData => {
           const promise: Promise<ArchStatsSubgraph> = new Promise(async resolve => {
             let archsThatPublished: string[] = (
               await graphQlClient.query({
