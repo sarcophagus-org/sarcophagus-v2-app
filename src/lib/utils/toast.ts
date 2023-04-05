@@ -40,6 +40,13 @@ export const errorSample = (): UseToastOptions => ({
   ...defaultOptions,
 });
 
+export const loadArchStatsError = (): UseToastOptions => ({
+  title: 'Error loading archaeologists',
+  description: 'Unable to load archaeologist statistics',
+  status: 'error',
+  ...defaultOptions,
+});
+
 export const connectStart = (): UseToastOptions => ({
   title: 'Attempting to Connect',
   description: 'Attempting to connect to the Bundlr node...',

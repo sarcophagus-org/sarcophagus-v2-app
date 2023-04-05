@@ -9,7 +9,9 @@ import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 import { ArchStatsSubgraph, useGraphQl } from 'hooks/useGraphQl';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
+import { useToast } from '@chakra-ui/react';
+import { loadArchStatsError } from 'lib/utils/toast';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -21,6 +23,7 @@ export function useLoadArchaeologists() {
   const { libp2pNode, timestampMs } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
+  const toast = useToast();
 
   const { getStats } = useGraphQl(Math.trunc(timestampMs / 1000));
   const { data: signer } = useSigner();
@@ -46,16 +49,10 @@ export function useLoadArchaeologists() {
           )!;
 
           if (!archStats) {
-            return {
-              profile: {
-                ...p,
-                archAddress: addresses[i],
-                successes: ethers.constants.Zero,
-                accusals: ethers.constants.Zero,
-                failures: ethers.constants.Zero,
-              },
-              isOnline: false,
-            };
+            const errorData = loadArchStatsError();
+            toast(errorData);
+            Sentry.captureException(errorData.description);
+            throw Error(errorData.description?.toString());
           }
 
           const { successes, accusals, failures } = archStats;
@@ -88,7 +85,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [getStats, viewStateFacet, timestampMs]
+    [viewStateFacet, timestampMs, getStats, toast]
   );
 
   const refreshProfiles = useCallback(

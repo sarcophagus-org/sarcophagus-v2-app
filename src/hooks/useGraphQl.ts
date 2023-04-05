@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useGetGracePeriod } from './viewStateFacet/useGetGracePeriod';
 
 const graphQlClient = new ApolloClient({
-  uri: 'https://api.studio.thegraph.com/query/44302/sarcotest2/9',
+  uri: 'https://api.studio.thegraph.com/query/44302/sarcotest2/10',
   cache: new InMemoryCache(),
 });
 
