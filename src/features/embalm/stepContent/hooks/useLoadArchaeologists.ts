@@ -8,10 +8,8 @@ import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
-import { ArchStatsSubgraph, useGraphQl } from 'hooks/useGraphQl';
-import { BigNumber } from 'ethers';
-import { useToast } from '@chakra-ui/react';
-import { loadArchStatsError } from 'lib/utils/toast';
+import { useGraphQl } from 'hooks/useSubgraph';
+import { BigNumber, ethers } from 'ethers';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -23,7 +21,6 @@ export function useLoadArchaeologists() {
   const { libp2pNode, timestampMs } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
-  const toast = useToast();
 
   const { getStats } = useGraphQl(Math.trunc(timestampMs / 1000));
   const { data: signer } = useSigner();
@@ -39,20 +36,31 @@ export function useLoadArchaeologists() {
       try {
         if (addresses.length === 0 || !viewStateFacet || !timestampMs) return [];
         const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
-        // const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
 
         const statsData = await getStats();
 
         const registeredArchaeologists = profiles.map((p, i) => {
-          const archStats: ArchStatsSubgraph = statsData.find(
-            (a: any) => a.address.toLowerCase() === addresses[i].toLowerCase()
-          )!;
+          const archStats = statsData.find(
+            a => a.address.toLowerCase() === addresses[i].toLowerCase()
+          );
 
           if (!archStats) {
-            const errorData = loadArchStatsError();
-            toast(errorData);
-            Sentry.captureException(errorData.description);
-            throw Error(errorData.description?.toString());
+            const err = `${addresses} not found in statsData`;
+            Sentry.captureException(err, {
+              fingerprint: ['SUBGRAPH_EXCEPTION'],
+            });
+            console.error(err, statsData);
+
+            return {
+              profile: {
+                ...p,
+                archAddress: addresses[i],
+                successes: ethers.constants.Zero,
+                accusals: ethers.constants.Zero,
+                failures: ethers.constants.Zero,
+              },
+              isOnline: false,
+            };
           }
 
           const { successes, accusals, failures } = archStats;
@@ -85,7 +93,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [viewStateFacet, timestampMs, getStats, toast]
+    [viewStateFacet, timestampMs, getStats]
   );
 
   const refreshProfiles = useCallback(

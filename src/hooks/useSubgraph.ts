@@ -1,11 +1,33 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 import { useCallback } from 'react';
 import { useGetGracePeriod } from './viewStateFacet/useGetGracePeriod';
+import * as Sentry from '@sentry/react';
 
 const graphQlClient = new ApolloClient({
-  uri: 'https://api.studio.thegraph.com/query/44302/sarcotest2/10',
+  uri:
+    process.env.REACT_APP_SUBGRAPH_API_URL ||
+    'https://api.studio.thegraph.com/query/44302/sarcotest2/10',
   cache: new InMemoryCache(),
 });
+
+export interface ArchStatsSubgraph {
+  address: string;
+  successes: string;
+  accusals: string;
+  failures: string;
+  blockTimestamp: number;
+}
+
+interface SarcoDataSubgraph {
+  sarcoId: string;
+  resurrectionTime: string;
+  cursedArchaeologists: string[];
+}
+
+interface SarcosAndStats {
+  archaeologists: ArchStatsSubgraph[];
+  createSarcophaguses: SarcoDataSubgraph[];
+}
 
 const getSarcosAndStatsQuery = (blockTimestamp: number, gracePeriod: number) => `query {
     createSarcophaguses (
@@ -31,25 +53,6 @@ const getPublishPrivateKeysQuery = (sarcoId: string) => `query {
     archaeologist
   }
 }`;
-
-export interface ArchStatsSubgraph {
-  address: string;
-  successes: string;
-  accusals: string;
-  failures: string;
-  blockTimestamp: number;
-}
-
-interface SarcoDataSubgraph {
-  sarcoId: string;
-  resurrectionTime: string;
-  cursedArchaeologists: string[];
-}
-
-interface SarcosAndStats {
-  archaeologists: ArchStatsSubgraph[];
-  createSarcophaguses: SarcoDataSubgraph[];
-}
 
 export function useGraphQl(timestampSeconds: number) {
   const gracePeriod = useGetGracePeriod();
@@ -92,9 +95,10 @@ export function useGraphQl(timestampSeconds: number) {
       return await statsPromises;
     } catch (e) {
       console.error(e);
+      Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
       return [];
     }
   }, [gracePeriod, timestampSeconds]);
 
-  return { graphQlClient, getStats };
+  return { getStats };
 }
