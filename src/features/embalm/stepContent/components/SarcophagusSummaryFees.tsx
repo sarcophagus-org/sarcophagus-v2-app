@@ -29,6 +29,8 @@ export function SarcophagusSummaryFees() {
     ? diggingFeesAndCurseFees.div(100 * protocolFeeBasePercentage)
     : BigNumber.from(0);
 
+  const totalFees = diggingFeesAndCurseFees.add(protocolFee);
+
   return (
     <Box
       py={4}
@@ -92,6 +94,13 @@ export function SarcophagusSummaryFees() {
             >
               {formatSarco(protocolFee.toString())} SARCO
             </Text>
+          </Flex>
+          <Flex
+            w="100%"
+            justifyContent="space-between"
+          >
+            <Text as="i">Total Fees</Text>
+            <Text as="i">{formatSarco(totalFees.toString())} SARCO</Text>
           </Flex>
           <Divider
             my={2}
