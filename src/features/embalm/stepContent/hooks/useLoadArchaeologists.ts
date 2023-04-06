@@ -9,7 +9,7 @@ import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 import { useGraphQl } from 'hooks/useSubgraph';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -22,7 +22,7 @@ export function useLoadArchaeologists() {
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
-  const { getStats } = useGraphQl(Math.trunc(timestampMs / 1000));
+  const { getArchaeologists } = useGraphQl(Math.trunc(timestampMs / 1000));
   const { data: signer } = useSigner();
 
   const viewStateFacet = useContract({
@@ -35,43 +35,33 @@ export function useLoadArchaeologists() {
     async (addresses: string[]): Promise<Archaeologist[]> => {
       try {
         if (addresses.length === 0 || !viewStateFacet || !timestampMs) return [];
-        const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
 
-        const statsData = await getStats();
+        const archData = await getArchaeologists();
 
-        const registeredArchaeologists = profiles.map((p, i) => {
-          const archStats = statsData.find(
-            a => a.address.toLowerCase() === addresses[i].toLowerCase()
-          );
-
-          if (!archStats) {
-            const err = `${addresses} not found in statsData`;
-            Sentry.captureException(err, {
-              fingerprint: ['SUBGRAPH_EXCEPTION'],
-            });
-            console.error(err, statsData);
-
-            return {
-              profile: {
-                ...p,
-                archAddress: addresses[i],
-                successes: ethers.constants.Zero,
-                accusals: ethers.constants.Zero,
-                failures: ethers.constants.Zero,
-              },
-              isOnline: false,
-            };
-          }
-
-          const { successes, accusals, failures } = archStats;
+        const registeredArchaeologists = archData.map(arch => {
+          const {
+            successes,
+            accusals,
+            failures,
+            address: archAddress,
+            maximumResurrectionTime,
+            freeBond,
+            maximumRewrapInterval,
+            minimumDiggingFeePerSecond,
+            peerId,
+          } = arch;
 
           return {
             profile: {
-              ...p,
-              archAddress: addresses[i],
+              archAddress,
+              peerId,
               successes: BigNumber.from(successes),
               accusals: BigNumber.from(accusals),
               failures: BigNumber.from(failures),
+              maximumResurrectionTime: BigNumber.from(maximumResurrectionTime),
+              freeBond: BigNumber.from(freeBond),
+              maximumRewrapInterval: BigNumber.from(maximumRewrapInterval),
+              minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
             },
             isOnline: false,
           };
@@ -93,7 +83,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [viewStateFacet, timestampMs, getStats]
+    [viewStateFacet, timestampMs, getArchaeologists]
   );
 
   const refreshProfiles = useCallback(

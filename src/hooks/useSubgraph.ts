@@ -4,18 +4,20 @@ import { useGetGracePeriod } from './viewStateFacet/useGetGracePeriod';
 import * as Sentry from '@sentry/react';
 
 const graphQlClient = new ApolloClient({
-  uri:
-    process.env.REACT_APP_SUBGRAPH_API_URL ||
-    'https://api.studio.thegraph.com/query/44302/sarcotest2/10',
+  uri: process.env.REACT_APP_SUBGRAPH_API_URL,
   cache: new InMemoryCache(),
 });
 
-export interface ArchStatsSubgraph {
+export interface ArchDataSubgraph {
   address: string;
   successes: string;
   accusals: string;
   failures: string;
-  blockTimestamp: number;
+  peerId: string;
+  freeBond: string;
+  maximumResurrectionTime: string;
+  maximumRewrapInterval: string;
+  minimumDiggingFeePerSecond: string;
 }
 
 interface SarcoDataSubgraph {
@@ -25,11 +27,11 @@ interface SarcoDataSubgraph {
 }
 
 interface SarcosAndStats {
-  archaeologists: ArchStatsSubgraph[];
+  archaeologists: ArchDataSubgraph[];
   createSarcophaguses: SarcoDataSubgraph[];
 }
 
-const getSarcosAndStatsQuery = (blockTimestamp: number, gracePeriod: number) => `query {
+const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
     createSarcophaguses (
         where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
         orderBy: resurrectionTime,
@@ -44,43 +46,50 @@ const getSarcosAndStatsQuery = (blockTimestamp: number, gracePeriod: number) => 
         successes
         accusals
         failures
-        blockTimestamp
+        freeBond
+        maximumResurrectionTime
+        maximumRewrapInterval
+        minimumDiggingFeePerSecond
+        peerId
     }
   }`;
 
-const getPublishPrivateKeysQuery = (sarcoId: string) => `query {
-  publishPrivateKeys (where: { sarcoId: "${sarcoId}" }) {
-    archaeologist
-  }
-}`;
+const getArchPrivateKeyPublishesOnSarco = async (sarcoId: string): Promise<string[]> =>
+  (
+    await graphQlClient.query({
+      query: gql(`query {
+        publishPrivateKeys (where: { sarcoId: "${sarcoId}" }) {
+          archaeologist
+        }}`),
+      fetchPolicy: 'cache-first',
+    })
+  ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
 
 export function useGraphQl(timestampSeconds: number) {
   const gracePeriod = useGetGracePeriod();
 
-  const getStats = useCallback(async (): Promise<ArchStatsSubgraph[]> => {
+  const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
     try {
-      const { archaeologists: archStats, createSarcophaguses } = (
+      const { archaeologists, createSarcophaguses } = (
         await graphQlClient.query({
-          query: gql(getSarcosAndStatsQuery(timestampSeconds, gracePeriod)),
+          query: gql(getArchsAndSarcosQuery(timestampSeconds, gracePeriod)),
           fetchPolicy: 'cache-first',
         })
       ).data as SarcosAndStats;
 
-      const statsPromises: Promise<ArchStatsSubgraph[]> = Promise.all(
+      const aggregatedFailures: ArchDataSubgraph[] = await Promise.all(
         createSarcophaguses.map(sarcoData => {
-          const promise: Promise<ArchStatsSubgraph> = new Promise(async resolve => {
-            let archsThatPublished: string[] = (
-              await graphQlClient.query({
-                query: gql(getPublishPrivateKeysQuery(sarcoData.sarcoId)),
-                fetchPolicy: 'cache-first',
-              })
-            ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
+          const promise: Promise<ArchDataSubgraph> = new Promise(async resolve => {
+            // Each sarco's private key publishes needs to be queried. This is done within
+            // a promise (array) to try to reduce execution time.
+            const publishesOnSarco = await getArchPrivateKeyPublishesOnSarco(sarcoData.sarcoId);
 
-            // For each cursed arch on this sarco, check if they do NOT have a publish private key -- that's a failure
+            // For each sarco, check each of its cursed archs.
+            // If they do NOT have a publish private key -- that's a failure for that arch.
             sarcoData.cursedArchaeologists.map(archAddress => {
-              const cursedArch = { ...archStats.find(arch => arch.address === archAddress)! };
+              let cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
 
-              if (!archsThatPublished.includes(archAddress)) {
+              if (publishesOnSarco.includes(archAddress)) {
                 cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
               }
 
@@ -92,7 +101,18 @@ export function useGraphQl(timestampSeconds: number) {
         })
       );
 
-      return await statsPromises;
+      // `aggregatedFailures` will contain duplicate archaeologists as they can be cursed on multiple sarcophagi.
+      // Code below adds up the total failures on each archaeologist
+      const finalArchData = archaeologists.map(arch =>
+        aggregatedFailures
+          .filter(data => data.address === arch.address)!
+          .reduce((prev, cur) => ({
+            ...cur,
+            failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`,
+          }))
+      );
+
+      return finalArchData;
     } catch (e) {
       console.error(e);
       Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
@@ -100,5 +120,5 @@ export function useGraphQl(timestampSeconds: number) {
     }
   }, [gracePeriod, timestampSeconds]);
 
-  return { getStats };
+  return { getArchaeologists };
 }
