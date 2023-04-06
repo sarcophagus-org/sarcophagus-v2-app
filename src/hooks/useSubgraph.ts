@@ -89,7 +89,7 @@ export function useGraphQl(timestampSeconds: number) {
             sarcoData.cursedArchaeologists.map(archAddress => {
               let cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
 
-              if (publishesOnSarco.includes(archAddress)) {
+              if (!publishesOnSarco.includes(archAddress)) {
                 cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
               }
 
