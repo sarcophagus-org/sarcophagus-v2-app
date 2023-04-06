@@ -24,9 +24,10 @@ export function SarcophagusSummaryFees() {
     return acc.add(archaeologist.profile.curseFee);
   }, BigNumber.from(0));
 
-  const protocolFeeWithCurseFee = totalDiggingFees
-    .add(totalCurseFees)
-    .div(BigNumber.from(100 * protocolFeeBasePercentage));
+  const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
+  const protocolFee = diggingFeesAndCurseFees.gt(0)
+    ? diggingFeesAndCurseFees.div(100 * protocolFeeBasePercentage)
+    : BigNumber.from(0);
 
   return (
     <Box
@@ -38,7 +39,7 @@ export function SarcophagusSummaryFees() {
         px={6}
       >
         <Flex alignItems="center">
-          {balance?.lt(totalDiggingFees.add(protocolFeeWithCurseFee)) ? (
+          {balance?.lt(totalDiggingFees.add(protocolFee)) ? (
             <SummaryErrorIcon error={"You don't have enough SARCO to cover creation fees!"} />
           ) : (
             <Tooltip
@@ -89,7 +90,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              {formatSarco(protocolFeeWithCurseFee.toString())} SARCO
+              {formatSarco(protocolFee.toString())} SARCO
             </Text>
           </Flex>
           <Divider
