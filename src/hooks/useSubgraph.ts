@@ -54,17 +54,6 @@ const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => 
     }
   }`;
 
-const getArchPrivateKeyPublishesOnSarco = async (sarcoId: string): Promise<string[]> =>
-  (
-    await graphQlClient.query({
-      query: gql(`query {
-        publishPrivateKeys (where: { sarcoId: "${sarcoId}" }) {
-          archaeologist
-        }}`),
-      fetchPolicy: 'cache-first',
-    })
-  ).data.publishPrivateKeys.map((data: any) => data.archaeologist);
-
 export function useGraphQl(timestampSeconds: number) {
   const gracePeriod = useGetGracePeriod();
 
@@ -80,19 +69,16 @@ export function useGraphQl(timestampSeconds: number) {
       const aggregatedFailures: ArchDataSubgraph[] = await Promise.all(
         createSarcophaguses.map(sarcoData => {
           const promise: Promise<ArchDataSubgraph> = new Promise(async resolve => {
-            // Each sarco's private key publishes needs to be queried. This is done within
-            // a promise (array) to try to reduce execution time.
-            const publishesOnSarco = await getArchPrivateKeyPublishesOnSarco(sarcoData.sarcoId);
-
-            // For each sarco, check each of its cursed archs.
-            // If they do NOT have a publish private key -- that's a failure for that arch.
             sarcoData.cursedArchaeologists.map(archAddress => {
               let cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
 
-              if (!publishesOnSarco.includes(archAddress)) {
+              // If this cursed arch doesn't have this sarcoId in its successes, then it never published
+              if (!cursedArch.successes.includes(sarcoData.sarcoId)) {
                 cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
               }
 
+              // `cursedArch.successes` from subgraph query is actually a list of strings
+              cursedArch.successes = `${cursedArch.successes.length}`;
               resolve(cursedArch);
             });
           });
