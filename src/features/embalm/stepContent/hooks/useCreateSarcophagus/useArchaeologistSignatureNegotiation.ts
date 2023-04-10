@@ -7,7 +7,7 @@ import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import {
   getCurrentTimeSec,
   getLowestResurrectionTime,
-  getLowestRewrapInterval
+  getLowestRewrapInterval,
 } from '../../../../../lib/utils/helpers';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useDialArchaeologists } from './useDialArchaeologists';
@@ -82,7 +82,7 @@ export function useArchaeologistSignatureNegotiation() {
             console.log(`${arch.profile.peerId} connection is undefined`);
             setArchaeologistException(arch.profile.peerId, {
               code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-              message: 'No connection to archaeologist'
+              message: 'No connection to archaeologist',
             });
 
             if (isRetry && arch.fullPeerId) {
@@ -98,7 +98,7 @@ export function useArchaeologistSignatureNegotiation() {
             maxRewrapInterval: lowestRewrapInterval,
             maximumResurrectionTime: lowestResurrectionTime,
             timestamp: negotiationTimestamp,
-            curseFee: arch.profile.curseFee.toString()
+            curseFee: arch.profile.curseFee.toString(),
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
@@ -124,7 +124,7 @@ export function useArchaeologistSignatureNegotiation() {
                       message: processDeclinedSignatureCode(
                         response.error.code as SarcophagusValidationError,
                         arch.profile.archAddress
-                      )
+                      ),
                     })
                   );
                 } else {
@@ -140,7 +140,7 @@ export function useArchaeologistSignatureNegotiation() {
                 dispatch(
                   setArchaeologistException(arch.profile.peerId, {
                     code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
-                    message
+                    message,
                   })
                 );
                 throw Error('stream exception');
@@ -172,11 +172,11 @@ export function useArchaeologistSignatureNegotiation() {
       selectedArchaeologists,
       setArchaeologistPublicKeys,
       setArchaeologistSignatures,
-      setNegotiationTimestamp
+      setNegotiationTimestamp,
     ]
   );
 
   return {
-    initiateSarcophagusNegotiation
+    initiateSarcophagusNegotiation,
   };
 }
