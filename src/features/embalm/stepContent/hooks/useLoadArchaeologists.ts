@@ -1,5 +1,7 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import * as Sentry from '@sentry/react';
 import axios from 'axios';
+import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -7,7 +9,6 @@ import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
-import * as Sentry from '@sentry/react';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -33,7 +34,15 @@ export function useLoadArchaeologists() {
       try {
         if (addresses.length === 0 || !viewStateFacet) return [];
         const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
-        const profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
+        let profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
+
+        // TODO: remove when curseFee is added to contract
+        const mockCurseFee = ethers.utils.parseUnits('5.12', 'ether'); // returns result in smallest denomination of sarco
+        // add the curseFee prop to each objects profiles array
+        profiles = profiles.map(p => ({
+          ...p,
+          curseFee: mockCurseFee,
+        }));
 
         const registeredArchaeologists = profiles.map((p, i) => ({
           profile: {

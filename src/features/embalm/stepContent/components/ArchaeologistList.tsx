@@ -142,7 +142,7 @@ export function ArchaeologistList({
                           </Flex>
                         </Button>
                         <Tooltip
-                          label="Amount to be paid for each rewrap"
+                          label="Amount to be paid for the next rewrap"
                           placement="top"
                         >
                           <Icon
