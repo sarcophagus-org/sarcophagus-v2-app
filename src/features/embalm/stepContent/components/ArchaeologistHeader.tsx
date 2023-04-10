@@ -9,6 +9,7 @@ import {
   Tooltip,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { ethers } from 'ethers';
 import { calculateProjectedDiggingFees, formatSarco } from 'lib/utils/helpers';
 import { useMemo } from 'react';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
@@ -38,6 +39,10 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
       ),
     [resurrection, selectedArchaeologists, timestampMs]
   );
+
+  const curseFees = selectedArchaeologists.reduce((acc, archaeologist) => {
+    return acc.add(archaeologist.profile.curseFee);
+  }, ethers.constants.Zero);
 
   return (
     <Box mt={10}>
@@ -74,7 +79,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         {resurrection ? (
           <HStack mr={2}>
             <Tooltip
-              label="This is how much SARCO it will cost you each time you rewrap your Sarchophagus"
+              label="This is how much SARCO it will cost you the next time you rewrap the Sarcophagus"
               placement="top"
             >
               <Icon as={InfoOutlineIcon}></Icon>
@@ -86,7 +91,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
                 variant="bold"
                 as="u"
               >
-                {formatSarco(diggingFees.toString())} SARCO
+                {formatSarco(diggingFees.add(curseFees).toString())} SARCO
               </Text>
             </Text>
             <Text

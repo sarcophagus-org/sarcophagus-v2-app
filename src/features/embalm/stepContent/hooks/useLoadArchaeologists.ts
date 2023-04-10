@@ -1,5 +1,7 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import * as Sentry from '@sentry/react';
 import axios from 'axios';
+import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -49,6 +51,7 @@ export function useLoadArchaeologists() {
             maximumRewrapInterval,
             minimumDiggingFeePerSecond,
             peerId,
+            curseFee
           } = arch;
 
           return {
@@ -62,6 +65,7 @@ export function useLoadArchaeologists() {
               freeBond: BigNumber.from(freeBond),
               maximumRewrapInterval: BigNumber.from(maximumRewrapInterval),
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
+              curseFee: BigNumber.from(curseFee)
             },
             isOnline: false,
           };
