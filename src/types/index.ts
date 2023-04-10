@@ -44,8 +44,6 @@ export interface SarcophagusArchaeologist {
 export interface ArchaeologistProfile {
   accusals: BigNumber;
   archAddress: string;
-  cleanups: BigNumber;
-  exists: boolean;
   failures: BigNumber;
   freeBond: BigNumber;
   maximumRewrapInterval: BigNumber;
