@@ -9,6 +9,9 @@ import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
+import * as Sentry from '@sentry/react';
+import { useGraphQl } from 'hooks/useSubgraph';
+import { BigNumber } from 'ethers';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -17,10 +20,11 @@ export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
-  const { libp2pNode } = useSelector(s => s.appState);
+  const { libp2pNode, timestampMs } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
 
+  const { getArchaeologists } = useGraphQl(Math.trunc(timestampMs / 1000));
   const { data: signer } = useSigner();
 
   const viewStateFacet = useContract({
@@ -32,29 +36,40 @@ export function useLoadArchaeologists() {
   const getFullArchProfilesFromAddresses = useCallback(
     async (addresses: string[]): Promise<Archaeologist[]> => {
       try {
-        if (addresses.length === 0 || !viewStateFacet) return [];
-        const stats: any[] = await viewStateFacet.callStatic.getArchaeologistsStatistics(addresses);
-        let profiles: any[] = await viewStateFacet.callStatic.getArchaeologistProfiles(addresses);
+        if (addresses.length === 0 || !viewStateFacet || !timestampMs) return [];
 
-        // TODO: remove when curseFee is added to contract
-        const mockCurseFee = ethers.utils.parseUnits('5.12', 'ether'); // returns result in smallest denomination of sarco
-        // add the curseFee prop to each objects profiles array
-        profiles = profiles.map(p => ({
-          ...p,
-          curseFee: mockCurseFee,
-        }));
+        const archData = await getArchaeologists();
 
-        const registeredArchaeologists = profiles.map((p, i) => ({
-          profile: {
-            ...p,
-            archAddress: addresses[i],
-            successes: stats[i].successes,
-            cleanups: stats[i].cleanups,
-            accusals: stats[i].accusals,
-            failures: stats[i].failures,
-          },
-          isOnline: false,
-        }));
+        const registeredArchaeologists = archData.map(arch => {
+          const {
+            successes,
+            accusals,
+            failures,
+            address: archAddress,
+            maximumResurrectionTime,
+            freeBond,
+            maximumRewrapInterval,
+            minimumDiggingFeePerSecond,
+            peerId,
+            curseFee
+          } = arch;
+
+          return {
+            profile: {
+              archAddress,
+              peerId,
+              successes: BigNumber.from(successes),
+              accusals: BigNumber.from(accusals),
+              failures: BigNumber.from(failures),
+              maximumResurrectionTime: BigNumber.from(maximumResurrectionTime),
+              freeBond: BigNumber.from(freeBond),
+              maximumRewrapInterval: BigNumber.from(maximumRewrapInterval),
+              minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
+              curseFee: BigNumber.from(curseFee)
+            },
+            isOnline: false,
+          };
+        });
 
         const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
         const onlinePeerIds = res.data;
@@ -72,7 +87,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [viewStateFacet]
+    [viewStateFacet, timestampMs, getArchaeologists]
   );
 
   const refreshProfiles = useCallback(
@@ -101,7 +116,6 @@ export function useLoadArchaeologists() {
     const addresses: string[] = await viewStateFacet.callStatic.getArchaeologistProfileAddresses();
 
     if (!addresses || addresses.length === 0) return [];
-
     return getFullArchProfilesFromAddresses(addresses);
   }, [
     getFullArchProfilesFromAddresses,
