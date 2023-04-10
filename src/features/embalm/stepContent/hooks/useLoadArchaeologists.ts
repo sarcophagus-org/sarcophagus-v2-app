@@ -1,7 +1,5 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import * as Sentry from '@sentry/react';
 import axios from 'axios';
-import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
@@ -30,7 +28,7 @@ export function useLoadArchaeologists() {
   const viewStateFacet = useContract({
     address: networkConfig.diamondDeployAddress,
     abi: ViewStateFacet__factory.abi,
-    signerOrProvider: signer,
+    signerOrProvider: signer
   });
 
   const getFullArchProfilesFromAddresses = useCallback(
@@ -67,7 +65,7 @@ export function useLoadArchaeologists() {
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
               curseFee: BigNumber.from(curseFee)
             },
-            isOnline: false,
+            isOnline: false
           };
         });
 
@@ -121,7 +119,7 @@ export function useLoadArchaeologists() {
     getFullArchProfilesFromAddresses,
     networkConfig.diamondDeployAddress,
     signer,
-    viewStateFacet,
+    viewStateFacet
   ]);
 
   // This useEffect is used to trigger the other useEffect below once
@@ -172,7 +170,7 @@ export function useLoadArchaeologists() {
     dispatch,
     getRegisteredProfiles,
     libp2pNode,
-    isProfileLoading,
+    isProfileLoading
   ]);
 
   return { refreshProfiles };

@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react';
 
 const graphQlClient = new ApolloClient({
   uri: process.env.REACT_APP_SUBGRAPH_API_URL,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });
 
 export interface ArchDataSubgraph {
@@ -63,7 +63,7 @@ export function useGraphQl(timestampSeconds: number) {
       const { archaeologists, createSarcophaguses } = (
         await graphQlClient.query({
           query: gql(getArchsAndSarcosQuery(timestampSeconds, gracePeriod)),
-          fetchPolicy: 'cache-first'
+          fetchPolicy: 'cache-first',
         })
       ).data as SarcosAndStats;
 
@@ -95,7 +95,7 @@ export function useGraphQl(timestampSeconds: number) {
           .filter(data => data.address === arch.address)!
           .reduce((prev, cur) => ({
             ...cur,
-            failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`
+            failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`,
           }))
       );
 
