@@ -7,7 +7,7 @@ import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import {
   getCurrentTimeSec,
   getLowestResurrectionTime,
-  getLowestRewrapInterval,
+  getLowestRewrapInterval
 } from '../../../../../lib/utils/helpers';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { useDialArchaeologists } from './useDialArchaeologists';
@@ -20,6 +20,7 @@ interface ArchaeologistSignatureNegotiationParams {
   maximumResurrectionTime: number;
   diggingFeePerSecond: string;
   timestamp: number;
+  curseFee: string;
 }
 
 interface ArchaeologistResponse {
@@ -51,6 +52,10 @@ export function useArchaeologistSignatureNegotiation() {
         return `${archAddress} rejected negotiation time`;
       case SarcophagusValidationError.MAX_REWRAP_INTERVAL_TOO_LARGE:
         return `Rewrap interval set for ${archAddress} is too large`;
+      case SarcophagusValidationError.CURSE_FEE_TOO_LOW:
+        return `Curse fee provided is too low`;
+      case SarcophagusValidationError.MAX_RESURRECTION_TIME_TOO_LARGE:
+        return `Max resurrection time is too high`;
       case SarcophagusValidationError.UNKNOWN_ERROR:
       default:
         return `Exception while waiting for signature from ${archAddress}`;
@@ -77,7 +82,7 @@ export function useArchaeologistSignatureNegotiation() {
             console.log(`${arch.profile.peerId} connection is undefined`);
             setArchaeologistException(arch.profile.peerId, {
               code: ArchaeologistExceptionCode.CONNECTION_EXCEPTION,
-              message: 'No connection to archaeologist',
+              message: 'No connection to archaeologist'
             });
 
             if (isRetry && arch.fullPeerId) {
@@ -93,6 +98,7 @@ export function useArchaeologistSignatureNegotiation() {
             maxRewrapInterval: lowestRewrapInterval,
             maximumResurrectionTime: lowestResurrectionTime,
             timestamp: negotiationTimestamp,
+            curseFee: arch.profile.curseFee.toString()
           };
 
           const outboundMsg = JSON.stringify(negotiationParams);
@@ -107,7 +113,7 @@ export function useArchaeologistSignatureNegotiation() {
 
                 // TODO: #multiple-key-update - verify signature in response using:
                 // the signature from arch and all data in that sig
-                // maxRewrapInterval, diggingFee, timestamp, publicKey
+                // maxRewrapInterval, diggingFeePerSecond, timestamp, curseFee, maximumResurrectionTime
 
                 if (response.error) {
                   Sentry.captureException(response);
@@ -118,7 +124,7 @@ export function useArchaeologistSignatureNegotiation() {
                       message: processDeclinedSignatureCode(
                         response.error.code as SarcophagusValidationError,
                         arch.profile.archAddress
-                      ),
+                      )
                     })
                   );
                 } else {
@@ -134,7 +140,7 @@ export function useArchaeologistSignatureNegotiation() {
                 dispatch(
                   setArchaeologistException(arch.profile.peerId, {
                     code: ArchaeologistExceptionCode.STREAM_EXCEPTION,
-                    message,
+                    message
                   })
                 );
                 throw Error('stream exception');
@@ -166,11 +172,11 @@ export function useArchaeologistSignatureNegotiation() {
       selectedArchaeologists,
       setArchaeologistPublicKeys,
       setArchaeologistSignatures,
-      setNegotiationTimestamp,
+      setNegotiationTimestamp
     ]
   );
 
   return {
-    initiateSarcophagusNegotiation,
+    initiateSarcophagusNegotiation
   };
 }

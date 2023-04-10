@@ -18,9 +18,10 @@ export interface Archaeologist {
 export enum SarcophagusValidationError {
   UNKNOWN_ERROR,
   MAX_REWRAP_INTERVAL_TOO_LARGE,
-  INVALID_ARWEAVE_SHARD,
   DIGGING_FEE_TOO_LOW,
   INVALID_TIMESTAMP,
+  MAX_RESURRECTION_TIME_TOO_LARGE,
+  CURSE_FEE_TOO_LOW,
 }
 
 export enum ArchaeologistExceptionCode {
