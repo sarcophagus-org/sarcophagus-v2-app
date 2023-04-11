@@ -7,6 +7,7 @@ import { RecipientState } from '../../../../store/embalm/actions';
 export interface ContractArchaeologist {
   archAddress: string;
   diggingFeePerSecond: BigNumber;
+  curseFee: BigNumber;
   publicKey: string;
   v: number;
   r: string;
@@ -36,16 +37,16 @@ export interface SubmitSarcophagusProps {
 }
 
 export function formatSubmitSarcophagusArgs({
-  name,
-  recipientState,
-  resurrection,
-  selectedArchaeologists,
-  requiredArchaeologists,
-  negotiationTimestamp,
-  archaeologistPublicKeys,
-  archaeologistSignatures,
-  arweaveTxId,
-}: SubmitSarcophagusProps) {
+                                              name,
+                                              recipientState,
+                                              resurrection,
+                                              selectedArchaeologists,
+                                              requiredArchaeologists,
+                                              negotiationTimestamp,
+                                              archaeologistPublicKeys,
+                                              archaeologistSignatures,
+                                              arweaveTxId
+                                            }: SubmitSarcophagusProps) {
   const getContractArchaeologists = (): ContractArchaeologist[] => {
     return selectedArchaeologists.map(arch => {
       const { v, r, s } = ethers.utils.splitSignature(
@@ -54,11 +55,11 @@ export function formatSubmitSarcophagusArgs({
       return {
         archAddress: arch.profile.archAddress,
         diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond,
-        // TODO: #multiple-key-update - we may want further validation this exsits
+        curseFee: arch.profile.curseFee,
         publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
         v,
         r,
-        s,
+        s
       };
     });
   };
@@ -71,7 +72,7 @@ export function formatSubmitSarcophagusArgs({
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),
     maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
-    maximumResurrectionTime: getLowestResurrectionTime(selectedArchaeologists),
+    maximumResurrectionTime: getLowestResurrectionTime(selectedArchaeologists)
   };
 
   const contractArchaeologists = getContractArchaeologists();
@@ -79,10 +80,10 @@ export function formatSubmitSarcophagusArgs({
   const args = [
     sarcoId,
     {
-      ...settings,
+      ...settings
     },
     contractArchaeologists,
-    arweaveTxId,
+    arweaveTxId
   ];
 
   return { submitSarcophagusArgs: args };
