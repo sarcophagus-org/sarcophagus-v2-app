@@ -53,9 +53,9 @@ export function useArchaeologistSignatureNegotiation() {
       case SarcophagusValidationError.MAX_REWRAP_INTERVAL_TOO_LARGE:
         return `Rewrap interval set for ${archAddress} is too large`;
       case SarcophagusValidationError.CURSE_FEE_TOO_LOW:
-        return `Curse fee provided is too low`;
+        return 'Curse fee provided is too low';
       case SarcophagusValidationError.MAX_RESURRECTION_TIME_TOO_LARGE:
-        return `Max resurrection time is too high`;
+        return 'Max resurrection time is too high';
       case SarcophagusValidationError.UNKNOWN_ERROR:
       default:
         return `Exception while waiting for signature from ${archAddress}`;
