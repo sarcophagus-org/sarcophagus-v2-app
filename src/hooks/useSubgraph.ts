@@ -29,11 +29,11 @@ interface SarcoDataSubgraph {
 
 interface SarcosAndStats {
   archaeologists: ArchDataSubgraph[];
-  createSarcophaguses: SarcoDataSubgraph[];
+  sarcophagusData: SarcoDataSubgraph[];
 }
 
 const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
-    createSarcophaguses (
+    sarcophagusData (
         where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
         orderBy: resurrectionTime,
         orderDirection: desc
@@ -60,7 +60,7 @@ export function useGraphQl(timestampSeconds: number) {
 
   const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
     try {
-      const { archaeologists, createSarcophaguses } = (
+      const { archaeologists, sarcophagusData } = (
         await graphQlClient.query({
           query: gql(getArchsAndSarcosQuery(timestampSeconds, gracePeriod)),
           fetchPolicy: 'cache-first',
@@ -68,10 +68,10 @@ export function useGraphQl(timestampSeconds: number) {
       ).data as SarcosAndStats;
 
       const aggregatedFailures: ArchDataSubgraph[] = await Promise.all(
-        createSarcophaguses.map(sarcoData => {
+        sarcophagusData.map(sarcoData => {
           const promise: Promise<ArchDataSubgraph> = new Promise(async resolve => {
             sarcoData.cursedArchaeologists.map(archAddress => {
-              let cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
+              const cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
 
               // If this cursed arch doesn't have this sarcoId in its successes, then it never published
               if (!cursedArch.successes.includes(sarcoData.sarcoId)) {
