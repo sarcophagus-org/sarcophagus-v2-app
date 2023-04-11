@@ -90,8 +90,9 @@ export function useGraphQl(timestampSeconds: number) {
       // `aggregatedFailures` will contain duplicate archaeologists as they can be cursed on multiple sarcophagi.
       // Code below adds up the total failures on each archaeologist
       const finalArchData = archaeologists.map(arch => {
-        const aggregatedFailuresOnArch = aggregatedFailures
-          .filter(data => data.address === arch.address);
+        const aggregatedFailuresOnArch = aggregatedFailures.filter(
+          data => data.address === arch.address
+        );
 
         if (aggregatedFailuresOnArch.length == 0) {
           return arch;
@@ -101,9 +102,7 @@ export function useGraphQl(timestampSeconds: number) {
           ...cur,
           failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`,
         }));
-
-      }
-      );
+      });
 
       return finalArchData;
     } catch (e) {
