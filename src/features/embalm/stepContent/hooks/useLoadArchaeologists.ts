@@ -56,7 +56,7 @@ export function useLoadArchaeologists() {
             profile: {
               archAddress,
               peerId,
-              successes: BigNumber.from(successes),
+              successes: BigNumber.from(successes.length),
               accusals: BigNumber.from(accusals),
               failures: BigNumber.from(failures),
               maximumResurrectionTime: BigNumber.from(maximumResurrectionTime),
