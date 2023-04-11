@@ -10,7 +10,7 @@ const graphQlClient = new ApolloClient({
 
 export interface ArchDataSubgraph {
   address: string;
-  successes: string;
+  successes: string[];
   accusals: string;
   failures: string;
   peerId: string;
@@ -29,11 +29,11 @@ interface SarcoDataSubgraph {
 
 interface SarcosAndStats {
   archaeologists: ArchDataSubgraph[];
-  sarcophagusData: SarcoDataSubgraph[];
+  sarcophagusDatas: SarcoDataSubgraph[];
 }
 
 const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
-    sarcophagusData (
+    sarcophagusDatas (
         where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
         orderBy: resurrectionTime,
         orderDirection: desc
@@ -51,6 +51,7 @@ const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => 
         maximumResurrectionTime
         maximumRewrapInterval
         minimumDiggingFeePerSecond
+        curseFee
         peerId
     }
   }`;
@@ -60,7 +61,7 @@ export function useGraphQl(timestampSeconds: number) {
 
   const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
     try {
-      const { archaeologists, sarcophagusData } = (
+      const { archaeologists, sarcophagusDatas } = (
         await graphQlClient.query({
           query: gql(getArchsAndSarcosQuery(timestampSeconds, gracePeriod)),
           fetchPolicy: 'cache-first',
@@ -68,7 +69,7 @@ export function useGraphQl(timestampSeconds: number) {
       ).data as SarcosAndStats;
 
       const aggregatedFailures: ArchDataSubgraph[] = await Promise.all(
-        sarcophagusData.map(sarcoData => {
+        sarcophagusDatas.map(sarcoData => {
           const promise: Promise<ArchDataSubgraph> = new Promise(async resolve => {
             sarcoData.cursedArchaeologists.map(archAddress => {
               const cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
@@ -78,8 +79,6 @@ export function useGraphQl(timestampSeconds: number) {
                 cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
               }
 
-              // `cursedArch.successes` from subgraph query is actually a list of strings
-              cursedArch.successes = `${cursedArch.successes.length}`;
               resolve(cursedArch);
             });
           });
@@ -90,14 +89,20 @@ export function useGraphQl(timestampSeconds: number) {
 
       // `aggregatedFailures` will contain duplicate archaeologists as they can be cursed on multiple sarcophagi.
       // Code below adds up the total failures on each archaeologist
-      const finalArchData = archaeologists.map(arch =>
-        aggregatedFailures
-          .filter(data => data.address === arch.address)!
-          .reduce((prev, cur) => ({
-            ...cur,
-            failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`,
-          }))
-      );
+      const finalArchData = archaeologists.map(arch => {
+        const aggregatedFailuresOnArch = aggregatedFailures.filter(
+          data => data.address === arch.address
+        );
+
+        if (aggregatedFailuresOnArch.length == 0) {
+          return arch;
+        }
+
+        return aggregatedFailuresOnArch.reduce((prev, cur) => ({
+          ...cur,
+          failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`,
+        }));
+      });
 
       return finalArchData;
     } catch (e) {
