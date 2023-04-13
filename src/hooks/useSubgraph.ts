@@ -74,7 +74,10 @@ export function useGraphQl(timestampSeconds: number) {
             sarcoData.cursedArchaeologists.map(archAddress => {
               const cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
 
-              if (Number.parseInt(sarcoData.resurrectionTime) < timestampSeconds + gracePeriod) {
+              const resurrectionTimeThreshold = Number.parseInt(
+                sarcoData.resurrectionTime + gracePeriod
+              );
+              if (resurrectionTimeThreshold < timestampSeconds) {
                 // If this cursed arch doesn't have a sarcoId which is past its grace period, in its successes, then it never published
                 if (!cursedArch.successes.includes(sarcoData.sarcoId)) {
                   cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
