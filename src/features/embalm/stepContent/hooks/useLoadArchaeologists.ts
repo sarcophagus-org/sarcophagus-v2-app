@@ -9,7 +9,7 @@ import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 import { useGraphQl } from 'hooks/useSubgraph';
 import { BigNumber } from 'ethers';
-import axios from "axios";
+import axios from 'axios';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
