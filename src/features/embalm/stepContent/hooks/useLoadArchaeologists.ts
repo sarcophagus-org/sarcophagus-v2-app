@@ -9,6 +9,7 @@ import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 import { useGraphQl } from 'hooks/useSubgraph';
 import { BigNumber } from 'ethers';
+import axios from "axios";
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -65,18 +66,18 @@ export function useLoadArchaeologists() {
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
               curseFee: BigNumber.from(curseFee),
             },
-            isOnline: true,
+            isOnline: false,
           };
         });
 
-        // const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-        // const onlinePeerIds = res.data;
-        //
-        // for (let arch of registeredArchaeologists) {
-        //   if (onlinePeerIds.includes(arch.profile.peerId)) {
-        //     arch.isOnline = true;
-        //   }
-        // }
+        const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+        const onlinePeerIds = res.data;
+
+        for (let arch of registeredArchaeologists) {
+          if (onlinePeerIds.includes(arch.profile.peerId)) {
+            arch.isOnline = true;
+          }
+        }
 
         return registeredArchaeologists;
       } catch (e) {
