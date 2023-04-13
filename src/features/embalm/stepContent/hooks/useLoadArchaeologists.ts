@@ -9,7 +9,8 @@ import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 import { useGraphQl } from 'hooks/useSubgraph';
 import { BigNumber } from 'ethers';
-import axios from 'axios';
+
+// import axios from 'axios';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -29,7 +30,7 @@ export function useLoadArchaeologists() {
   const viewStateFacet = useContract({
     address: networkConfig.diamondDeployAddress,
     abi: ViewStateFacet__factory.abi,
-    signerOrProvider: signer,
+    signerOrProvider: signer
   });
 
   const getFullArchProfilesFromAddresses = useCallback(
@@ -50,7 +51,7 @@ export function useLoadArchaeologists() {
             maximumRewrapInterval,
             minimumDiggingFeePerSecond,
             peerId,
-            curseFee,
+            curseFee
           } = arch;
 
           return {
@@ -64,20 +65,20 @@ export function useLoadArchaeologists() {
               freeBond: BigNumber.from(freeBond),
               maximumRewrapInterval: BigNumber.from(maximumRewrapInterval),
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
-              curseFee: BigNumber.from(curseFee),
+              curseFee: BigNumber.from(curseFee)
             },
-            isOnline: false,
+            isOnline: true
           };
         });
 
-        const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-        const onlinePeerIds = res.data;
-
-        for (let arch of registeredArchaeologists) {
-          if (onlinePeerIds.includes(arch.profile.peerId)) {
-            arch.isOnline = true;
-          }
-        }
+        // const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+        // const onlinePeerIds = res.data;
+        //
+        // for (let arch of registeredArchaeologists) {
+        //   if (onlinePeerIds.includes(arch.profile.peerId)) {
+        //     arch.isOnline = true;
+        //   }
+        // }
 
         return registeredArchaeologists;
       } catch (e) {
@@ -120,7 +121,7 @@ export function useLoadArchaeologists() {
     getFullArchProfilesFromAddresses,
     networkConfig.diamondDeployAddress,
     signer,
-    viewStateFacet,
+    viewStateFacet
   ]);
 
   // This useEffect is used to trigger the useEffect below to load archaeologists once
@@ -152,7 +153,7 @@ export function useLoadArchaeologists() {
     networkConfig.diamondDeployAddress,
     signer,
     timestampMs,
-    viewStateFacet,
+    viewStateFacet
   ]);
 
   useEffect(() => {
@@ -196,7 +197,7 @@ export function useLoadArchaeologists() {
     getRegisteredProfiles,
     libp2pNode,
     isDependenciesReady,
-    isArchsLoaded,
+    isArchsLoaded
   ]);
 
   return { refreshProfiles };
