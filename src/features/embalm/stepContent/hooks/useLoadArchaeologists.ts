@@ -19,7 +19,8 @@ export function useLoadArchaeologists() {
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
   const { libp2pNode, timestampMs } = useSelector(s => s.appState);
   const { chain } = useNetwork();
-  const [isProfileLoading, setIsProfileLoading] = useState<boolean | undefined>(undefined);
+  const [isArchsLoaded, setIsArchsLoaded] = useState<boolean>(false);
+  const [isDependenciesReady, setIsDependenciesReady] = useState<boolean>(false);
 
   const { getArchaeologists } = useGraphQl(Math.trunc(timestampMs / 1000));
   const { data: signer } = useSigner();
@@ -121,30 +122,34 @@ export function useLoadArchaeologists() {
     viewStateFacet,
   ]);
 
-  // This useEffect is used to trigger the other useEffect below once
-  // the dependencies are ready
+  // This useEffect is used to trigger the useEffect below to load archaeologists once
+  // the dependencies are ready.
   useEffect(() => {
     if (!!chain?.id && !!dispatch && !!getRegisteredProfiles && !!libp2pNode) {
-      setIsProfileLoading(false);
+      setIsDependenciesReady(true);
+
+      // Additionally we will reload the archaeologist on network switch.
+      if (chain.id !== currentChainId) {
+        setIsArchsLoaded(false);
+      }
     }
-  }, [chain?.id, dispatch, getRegisteredProfiles, libp2pNode]);
+  }, [chain?.id, currentChainId, dispatch, getRegisteredProfiles, libp2pNode]);
 
   useEffect(() => {
-    if (isProfileLoading === undefined) return;
+    // Only load the archaeologists once, when the component mounts.
+    if (!isDependenciesReady) {
+      return;
+    }
 
-    // Only load the archaeologists once when the component mounts. The only reason the
-    // archaeologists would need to be loaded from the contract again is when a new
+    // The only reason the archaeologists would need to be loaded from the contract again is when a new
     // archaeologist registers.
-    //
-    // Additionally we will reload the archaeologist on network switch.
     if (
       !libp2pNode ||
-      isProfileLoading ||
+      isArchsLoaded ||
       (archaeologists.length > 0 && currentChainId === chain?.id)
-    )
+    ) {
       return;
-
-    setIsProfileLoading(true);
+    }
 
     (async () => {
       try {
@@ -158,7 +163,7 @@ export function useLoadArchaeologists() {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsProfileLoading(false);
+        setIsArchsLoaded(true);
         dispatch(stopLoad());
       }
     })();
@@ -169,7 +174,8 @@ export function useLoadArchaeologists() {
     dispatch,
     getRegisteredProfiles,
     libp2pNode,
-    isProfileLoading,
+    isDependenciesReady,
+    isArchsLoaded,
   ]);
 
   return { refreshProfiles };
