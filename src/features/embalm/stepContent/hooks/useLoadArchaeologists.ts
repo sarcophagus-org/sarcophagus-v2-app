@@ -123,9 +123,18 @@ export function useLoadArchaeologists() {
   ]);
 
   // This useEffect is used to trigger the useEffect below to load archaeologists once
-  // the dependencies are ready.
+  // ALL dependencies are ready.
   useEffect(() => {
-    if (!!chain?.id && !!dispatch && !!getRegisteredProfiles && !!libp2pNode) {
+    if (
+      !!chain?.id &&
+      !!dispatch &&
+      !!getRegisteredProfiles &&
+      !!libp2pNode &&
+      !!networkConfig.diamondDeployAddress &&
+      !!viewStateFacet &&
+      !!signer &&
+      !!timestampMs
+    ) {
       setIsDependenciesReady(true);
 
       // Additionally we will reload the archaeologist on network switch.
@@ -133,7 +142,17 @@ export function useLoadArchaeologists() {
         setIsArchsLoaded(false);
       }
     }
-  }, [chain?.id, currentChainId, dispatch, getRegisteredProfiles, libp2pNode]);
+  }, [
+    chain?.id,
+    currentChainId,
+    dispatch,
+    getRegisteredProfiles,
+    libp2pNode,
+    networkConfig.diamondDeployAddress,
+    signer,
+    timestampMs,
+    viewStateFacet,
+  ]);
 
   useEffect(() => {
     // Only load the archaeologists once, when the component mounts.
@@ -157,6 +176,7 @@ export function useLoadArchaeologists() {
         dispatch(setCurrentChainId(chain?.id));
 
         const newArchaeologists = await getRegisteredProfiles();
+
         if (newArchaeologists) {
           dispatch(setArchaeologists(newArchaeologists));
         }
