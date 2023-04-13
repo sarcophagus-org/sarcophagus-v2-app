@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { Archaeologist } from '../../../../types/index';
+import { MultiLineTooltip } from './MultiLineTooltip';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -23,6 +24,7 @@ interface TableContentProps {
   icon: boolean;
   checkbox: boolean;
   align?: string;
+  multiLineTooltipLabel?: string[];
 }
 
 export function ArchaeologistListItem({
@@ -49,6 +51,8 @@ export function ArchaeologistListItem({
       : null;
   }, [archaeologist.profile.minimumDiggingFeePerSecond, resurrectionTime, timestampMs]);
 
+  const totalFees = diggingFees?.add(archaeologist.profile.curseFee);
+
   const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
     chainId: networkConfig.chainId,
@@ -58,38 +62,49 @@ export function ArchaeologistListItem({
     return ensName ?? formatAddress(archaeologist.profile.archAddress);
   };
 
-  function TableContent({ children, icon, checkbox, align }: TableContentProps) {
+  function TableContent({
+    children,
+    icon,
+    checkbox,
+    align,
+    multiLineTooltipLabel,
+  }: TableContentProps) {
     return (
       <Td
         borderBottom="none"
         isNumeric
       >
-        <Flex justify={align || (icon || checkbox ? 'left' : 'center')}>
-          {icon && <SarcoTokenIcon boxSize="18px" />}
-          {checkbox && (
-            <Checkbox
-              isChecked={isSelected}
-              onChange={() => {
-                if (isSelected === true) {
-                  dispatch(selectArchaeologist(archaeologist));
-                } else {
-                  dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
-                }
-              }}
-            />
-          )}
-          <Box width={!icon && !checkbox ? '4' : '0'} />
-          <Text
-            ml={3}
-            bg={archaeologist.hiddenReason ? 'transparent.red' : 'grayBlue.950'}
-            color={rowTextColor}
-            py={0.5}
-            px={2}
-            borderRadius="2px"
-          >
-            {children}
-          </Text>
-        </Flex>
+        <MultiLineTooltip
+          lines={multiLineTooltipLabel}
+          placement="top"
+        >
+          <Flex justify={align || (icon || checkbox ? 'left' : 'center')}>
+            {icon && <SarcoTokenIcon boxSize="18px" />}
+            {checkbox && (
+              <Checkbox
+                isChecked={isSelected}
+                onChange={() => {
+                  if (isSelected === true) {
+                    dispatch(selectArchaeologist(archaeologist));
+                  } else {
+                    dispatch(deselectArchaeologist(archaeologist.profile.archAddress));
+                  }
+                }}
+              />
+            )}
+            <Box width={!icon && !checkbox ? '4' : '0'} />
+            <Text
+              ml={3}
+              bg={archaeologist.hiddenReason ? 'transparent.red' : 'grayBlue.950'}
+              color={rowTextColor}
+              py={0.5}
+              px={2}
+              borderRadius="2px"
+            >
+              {children}
+            </Text>
+          </Flex>
+        </MultiLineTooltip>
       </Td>
     );
   }
@@ -122,9 +137,13 @@ export function ArchaeologistListItem({
         <TableContent
           icon={true}
           checkbox={false}
+          multiLineTooltipLabel={[
+            `Digging fee: ${formatSarco(diggingFees?.toString() ?? '0')}`,
+            `Curse fee: ${formatSarco(archaeologist.profile.curseFee.toString())}`,
+          ]}
         >
           {diggingFees
-            ? formatSarco(diggingFees.toString())
+            ? formatSarco(totalFees?.toString() ?? '0')
             : formatSarco(
                 convertSarcoPerSecondToPerMonth(
                   archaeologist.profile.minimumDiggingFeePerSecond.toString()

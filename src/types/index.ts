@@ -18,9 +18,10 @@ export interface Archaeologist {
 export enum SarcophagusValidationError {
   UNKNOWN_ERROR,
   MAX_REWRAP_INTERVAL_TOO_LARGE,
-  INVALID_ARWEAVE_SHARD,
   DIGGING_FEE_TOO_LOW,
   INVALID_TIMESTAMP,
+  MAX_RESURRECTION_TIME_TOO_LARGE,
+  CURSE_FEE_TOO_LOW,
 }
 
 export enum ArchaeologistExceptionCode {
@@ -44,8 +45,6 @@ export interface SarcophagusArchaeologist {
 export interface ArchaeologistProfile {
   accusals: BigNumber;
   archAddress: string;
-  cleanups: BigNumber;
-  exists: boolean;
   failures: BigNumber;
   freeBond: BigNumber;
   maximumRewrapInterval: BigNumber;
@@ -53,6 +52,7 @@ export interface ArchaeologistProfile {
   minimumDiggingFeePerSecond: BigNumber;
   peerId: string;
   successes: BigNumber;
+  curseFee: BigNumber;
 }
 
 export interface ArchaeologistEncryptedShard {
