@@ -2,8 +2,12 @@ import { Box, Button, Checkbox, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/r
 import { SarcoTokenIcon } from 'components/icons';
 import { useNetworkConfig } from 'lib/config';
 import { convertSarcoPerSecondToPerMonth, formatAddress, formatSarco } from 'lib/utils/helpers';
-import { Dispatch, SetStateAction, useMemo } from 'react';
-import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
+import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
+import {
+  deselectArchaeologist,
+  selectArchaeologist,
+  setArchaeologistEnsName,
+} from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
@@ -57,6 +61,11 @@ export function ArchaeologistListItem({
     address: archaeologist.profile.archAddress as `0x${string}`,
     chainId: networkConfig.chainId,
   });
+
+  useEffect(() => {
+    if (!ensName) return;
+    dispatch(setArchaeologistEnsName(archaeologist.profile.peerId, ensName));
+  }, [archaeologist.profile.peerId, dispatch, ensName]);
 
   const formattedArchAddress = () => {
     return ensName ?? formatAddress(archaeologist.profile.archAddress);

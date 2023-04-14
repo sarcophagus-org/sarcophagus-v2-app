@@ -16,6 +16,7 @@ export enum ActionType {
   SetCancelToken = 'EMBALM_SET_CANCEL_TOKEN',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
+  SetArchaeologistEnsName = 'EMBALM_SET_ARCHAEOLOGIST_ENS_NAME',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
   SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
@@ -77,6 +78,7 @@ type EmbalmPayload = {
   [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
+  [ActionType.SetArchaeologistEnsName]: { peerId: string; ensName: string };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
   [ActionType.SetArchaeologistOnlineStatus]: {
     peerId: string;
@@ -273,6 +275,16 @@ export function setArchaeologistConnection(
     payload: {
       peerId,
       connection,
+    },
+  };
+}
+
+export function setArchaeologistEnsName(peerId: string, ensName: string): EmbalmActions {
+  return {
+    type: ActionType.SetArchaeologistEnsName,
+    payload: {
+      peerId,
+      ensName,
     },
   };
 }

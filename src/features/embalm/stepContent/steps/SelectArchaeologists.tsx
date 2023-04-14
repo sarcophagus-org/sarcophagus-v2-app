@@ -134,7 +134,7 @@ export function SelectArchaeologists({
         >
           <VStack>
             <ArchaeologistList
-              paginatedArchaeologist={paginatedArchaeologists}
+              paginatedArchaeologists={paginatedArchaeologists}
               totalCount={visibleArchaeologists.length}
               showDial={isArchaeologistsDashboard}
             />

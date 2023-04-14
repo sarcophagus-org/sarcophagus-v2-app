@@ -109,11 +109,12 @@ function updateArchProperty(
       a => a.profile.peerId === peerId
     );
 
-    if (selectedArchaeologistIndex === -1) return state;
-    selectedArchaeologistsCopy[selectedArchaeologistIndex] = {
-      ...selectedArchaeologistsCopy[selectedArchaeologistIndex],
-      [key]: value,
-    };
+    if (selectedArchaeologistIndex !== -1) {
+      selectedArchaeologistsCopy[selectedArchaeologistIndex] = {
+        ...selectedArchaeologistsCopy[selectedArchaeologistIndex],
+        [key]: value,
+      };
+    }
   }
 
   return {
@@ -209,6 +210,13 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
       return updateArchProperty(state, action.payload.peerId, {
         key: 'isOnline',
         value: action.payload.isOnline,
+      });
+
+    case ActionType.SetArchaeologistEnsName:
+      return updateArchProperty(state, action.payload.peerId, {
+        key: 'ensName',
+        value: action.payload.ensName,
+        updateSelected: true,
       });
 
     case ActionType.SetArchaeologistException:
