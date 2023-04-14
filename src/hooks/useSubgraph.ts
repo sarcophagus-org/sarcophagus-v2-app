@@ -40,7 +40,7 @@ const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => 
         resurrectionTime
         cursedArchaeologists
     },
-    archaeologists (orderBy: blockTimestamp) {
+    archaeologists (orderBy: blockTimestamp, first: 1000) {
         address
         successes
         accusals
