@@ -4,7 +4,7 @@ import {
   SarcoTokenMock__factory,
 } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { RetryCreateModal } from 'components/RetryCreateModal';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
@@ -82,6 +82,19 @@ export function CreateSarcophagus() {
 
   const protocolFeeBasePercentage = useGetProtocolFeeAmount();
 
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    resurrectionTimeMs,
+    selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
+    timestampMs,
+    protocolFeeBasePercentage
+  );
+
+  const totalCurseFees = selectedArchaeologists.reduce((acc, archaeologist) => {
+    return acc.add(archaeologist.profile.curseFee);
+  }, BigNumber.from(0));
+  const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
+  const totalFees = diggingFeesAndCurseFees.add(protocolFee);
+
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
   const isCreateCompleted = useCallback(() => {
@@ -99,13 +112,8 @@ export function CreateSarcophagus() {
 
   useEffect(() => {
     // remove approval step if user has allowance on sarco token
-    // TODO: compare with pending fees instead
     if (allowance) {
-      if (
-        BigNumber.from(allowance).gte(
-          ethers.constants.MaxUint256.sub(ethers.utils.parseEther('1000'))
-        )
-      ) {
+      if (BigNumber.from(allowance).gte(totalFees)) {
         const stepsCopy = { ...defaultCreateSarcophagusStages };
         delete stepsCopy[CreateSarcophagusStage.APPROVE];
         setCreateSarcophagusStages(stepsCopy);
@@ -113,7 +121,7 @@ export function CreateSarcophagus() {
         setCreateSarcophagusStages(defaultCreateSarcophagusStages);
       }
     }
-  }, [allowance, signer]);
+  }, [allowance, totalFees]);
 
   // Reload the archaeologist list when create is completed. This is so that free bonds from the
   // arch profiles will be updated.
@@ -150,13 +158,6 @@ export function CreateSarcophagus() {
       });
     }, 10);
   }
-
-  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
-    resurrectionTimeMs,
-    selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
-    timestampMs,
-    protocolFeeBasePercentage
-  );
 
   return (
     <Flex
