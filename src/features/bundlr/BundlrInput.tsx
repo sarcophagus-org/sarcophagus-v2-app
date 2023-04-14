@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { uploadPriceDecimals } from 'lib/constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const inputLimit = 46;
 
@@ -32,11 +32,12 @@ export const BundlrInput = ({
   const [inputAmount, setInputAmount] = useState(initialInputStr);
   const [initialised, setInitialised] = useState(false);
 
-  if (!initialised && !!initialInputStr) {
-    // prevent render loop
-    onInputChange(ethers.utils.parseUnits(initialInputStr));
-    setInitialised(true);
-  }
+  useEffect(() => {
+    if (!initialised && !!initialInputStr) {
+      onInputChange(ethers.utils.parseUnits(initialInputStr));
+      setInitialised(true);
+    }
+  }, [initialised, initialInputStr, onInputChange]);
 
   const handleInputChange = (valueAsString: string) => {
     let isValidInput = false;
