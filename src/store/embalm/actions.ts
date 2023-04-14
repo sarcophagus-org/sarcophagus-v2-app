@@ -12,7 +12,7 @@ export enum ActionType {
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   DisableSteps = 'EMBALM_DISABLE_STEPS',
   EnableSteps = 'EMBALM_ENABLE_STEPS',
-  ToggleRetryingCreate = 'TOGGLE_RETRYING_CREATE',
+  ToggleRetryingCreate = 'EMBALM_TOGGLE_RETRYING_CREATE',
   SetCancelToken = 'EMBALM_SET_CANCEL_TOKEN',
   GoToStep = 'EMBALM_GO_TO_STEP',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
@@ -24,7 +24,7 @@ export enum ActionType {
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
-  SetName = 'EMBALM_SET_NAME',
+  SetSarcophagusName = 'EMBALM_SET_SARCOPHAGUS_NAME',
   SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetRecipientState = 'EMBALM_SET_RECIPIENT_STATE',
@@ -89,7 +89,7 @@ type EmbalmPayload = {
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
-  [ActionType.SetName]: { name: string };
+  [ActionType.SetSarcophagusName]: { name: string };
   [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetRecipientState]: RecipientState;
@@ -150,9 +150,9 @@ export function setExpandedStepIndices(indices: number[]): EmbalmActions {
   };
 }
 
-export function setName(name: string): EmbalmActions {
+export function setSarcophagusName(name: string): EmbalmActions {
   return {
-    type: ActionType.SetName,
+    type: ActionType.SetSarcophagusName,
     payload: {
       name,
     },

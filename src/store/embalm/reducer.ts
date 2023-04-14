@@ -146,7 +146,7 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         outerPublicKey: action.payload.publicKey,
       };
 
-    case ActionType.SetName:
+    case ActionType.SetSarcophagusName:
       return { ...state, name: action.payload.name };
 
     case ActionType.SetRecipientState:

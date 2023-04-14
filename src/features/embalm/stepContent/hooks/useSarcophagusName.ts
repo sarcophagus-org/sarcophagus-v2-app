@@ -1,4 +1,4 @@
-import { setName } from 'store/embalm/actions';
+import { setSarcophagusName } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { maxSarcophagusNameLength } from 'lib/constants';
 
@@ -12,7 +12,7 @@ export function useSarcophgusName() {
       return;
     }
 
-    dispatch(setName(value));
+    dispatch(setSarcophagusName(value));
   }
 
   return { name, handleNameChange };
