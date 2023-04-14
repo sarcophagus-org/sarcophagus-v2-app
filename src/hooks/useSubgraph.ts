@@ -35,14 +35,12 @@ interface SarcosAndStats {
 const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
     sarcophagusDatas (
         where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
-        orderBy: resurrectionTime,
-        orderDirection: desc
     ) {
         sarcoId
         resurrectionTime
         cursedArchaeologists
     },
-    archaeologists {
+    archaeologists (orderBy: blockTimestamp) {
         address
         successes
         accusals
