@@ -1,8 +1,13 @@
 import { Box, Button, Checkbox, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { SarcoTokenIcon } from 'components/icons';
 import { useNetworkConfig } from 'lib/config';
-import { convertSarcoPerSecondToPerMonth, formatAddress, formatSarco } from 'lib/utils/helpers';
-import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
+import {
+  calculateDiggingFees,
+  convertSarcoPerSecondToPerMonth,
+  formatAddress,
+  formatSarco,
+} from 'lib/utils/helpers';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import {
   deselectArchaeologist,
   selectArchaeologist,
@@ -47,13 +52,7 @@ export function ArchaeologistListItem({
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
   const { timestampMs } = useSelector(s => s.appState);
 
-  const diggingFees = useMemo(() => {
-    const nowSec = Math.floor(timestampMs / 1000);
-    const resurrectionTimeSec = Math.floor(resurrectionTime / 1000);
-    return resurrectionTimeSec > nowSec
-      ? archaeologist.profile.minimumDiggingFeePerSecond.mul(resurrectionTimeSec - nowSec)
-      : null;
-  }, [archaeologist.profile.minimumDiggingFeePerSecond, resurrectionTime, timestampMs]);
+  const diggingFees = calculateDiggingFees(archaeologist, resurrectionTime, timestampMs);
 
   const totalFees = diggingFees?.add(archaeologist.profile.curseFee);
 

@@ -1,17 +1,21 @@
+import { constants, ethers } from 'ethers';
+import { monthSeconds } from 'lib/constants';
+import { calculateDiggingFees, filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
+import { keys, orderBy } from 'lodash';
 import { useCallback } from 'react';
-import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
+import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
-import { orderBy, keys } from 'lodash';
-import { constants, ethers } from 'ethers';
-import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
-import { monthSeconds } from 'lib/constants';
 
 export function useArchaeologistList() {
   const dispatch = useDispatch();
 
-  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
+  const {
+    archaeologists,
+    selectedArchaeologists,
+    resurrection: resurrectionTime,
+  } = useSelector(s => s.embalmState);
 
   const {
     archaeologistFilterSort,
@@ -114,7 +118,9 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            sortValue = arch.profile.minimumDiggingFeePerSecond;
+            const diggingFees = calculateDiggingFees(arch, timestampMs, resurrectionTime);
+            const totalFees = diggingFees?.add(arch.profile.curseFee);
+            sortValue = totalFees ?? arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
             sortValue = arch.profile.successes;
           } else if (archaeologistFilterSort.sortType === SortFilterType.FAILS) {

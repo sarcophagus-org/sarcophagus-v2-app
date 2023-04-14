@@ -298,3 +298,15 @@ export async function getCurrentTimeSec(provider: Provider | Web3Provider) {
   const block = await provider.getBlock(blockNumber);
   return block.timestamp;
 }
+
+export function calculateDiggingFees(
+  archaeologist: Archaeologist,
+  timestampMs: number,
+  resurrectionTime: number
+) {
+  const nowSec = Math.floor(timestampMs / 1000);
+  const resurrectionTimeSec = Math.floor(resurrectionTime / 1000);
+  return resurrectionTimeSec > nowSec
+    ? archaeologist.profile.minimumDiggingFeePerSecond.mul(resurrectionTimeSec - nowSec)
+    : null;
+}
