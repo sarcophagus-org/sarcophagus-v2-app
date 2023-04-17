@@ -28,12 +28,12 @@ import { ArchaeologistListItem } from './ArchaeologistListItem';
 
 export function ArchaeologistList({
   showDial,
-  paginatedArchaeologist,
+  paginatedArchaeologists,
   totalCount,
 }: {
   totalCount: number;
   showDial?: boolean;
-  paginatedArchaeologist: Archaeologist[];
+  paginatedArchaeologists: Archaeologist[];
 }) {
   const {
     handleCheckArchaeologist,
@@ -205,7 +205,7 @@ export function ArchaeologistList({
                 </Tr>
               </Thead>
               <Tbody>
-                {paginatedArchaeologist?.map(arch => {
+                {paginatedArchaeologists?.map(arch => {
                   const isSelected =
                     selectedArchaeologists.findIndex(
                       a => a.profile.peerId === arch.profile.peerId

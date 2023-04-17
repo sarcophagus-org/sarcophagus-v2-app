@@ -67,12 +67,6 @@ export function useArchaeologistList() {
     return true;
   });
 
-  const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
-    [SortDirection.NONE]: undefined,
-    [SortDirection.ASC]: 'asc',
-    [SortDirection.DESC]: 'desc',
-  };
-
   const handleCheckArchaeologist = useCallback(
     (archaeologist: Archaeologist) => {
       if (
@@ -107,7 +101,13 @@ export function useArchaeologistList() {
     dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, directionValue));
   }
 
-  const sortedArchaeologists = (): Archaeologist[] => {
+  const sortedArchaeologists = useCallback((): Archaeologist[] => {
+    const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
+      [SortDirection.NONE]: undefined,
+      [SortDirection.ASC]: 'asc',
+      [SortDirection.DESC]: 'desc',
+    };
+
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
       return orderBy(
         visibleArchaeologists,
@@ -129,18 +129,20 @@ export function useArchaeologistList() {
     } else {
       return visibleArchaeologists;
     }
-  };
+  }, [
+    archaeologistFilterSort.sortDirection,
+    archaeologistFilterSort.sortType,
+    visibleArchaeologists,
+  ]);
+
+  function shouldFilterBySelected(arch: Archaeologist): boolean {
+    if (showOnlySelectedArchaeologists) {
+      return selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1;
+    }
+    return true;
+  }
 
   const archaeologistListVisible = (arg: { forceShowHidden: boolean }): Archaeologist[] => {
-    function shouldFilterBySelected(arch: Archaeologist): boolean {
-      if (showOnlySelectedArchaeologists) {
-        return (
-          selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1
-        );
-      }
-      return true;
-    }
-
     const filteredSorted = sortedArchaeologists()?.filter(
       arch =>
         shouldFilterBySelected(arch) &&

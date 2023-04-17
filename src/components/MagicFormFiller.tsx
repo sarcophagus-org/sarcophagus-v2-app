@@ -8,7 +8,7 @@ import {
   selectArchaeologist,
   setCustomResurrectionDate,
   setFile,
-  setName,
+  setSarcophagusName,
   setRecipientState,
   setRequiredArchaeologists,
   setResurrection,
@@ -44,7 +44,7 @@ export function MagicFormFiller() {
     // Name Sarcophagus
     await sleep(delay);
     dispatch(goToStep(Step.NameSarcophagus));
-    dispatch(setName(sarcohagusName));
+    dispatch(setSarcophagusName(sarcohagusName));
 
     // Set resurrection
     await sleep(delay);

@@ -30,7 +30,7 @@ export function useLoadArchaeologists() {
   const viewStateFacet = useContract({
     address: networkConfig.diamondDeployAddress,
     abi: ViewStateFacet__factory.abi,
-    signerOrProvider: signer
+    signerOrProvider: signer,
   });
 
   const getFullArchProfilesFromAddresses = useCallback(
@@ -51,7 +51,7 @@ export function useLoadArchaeologists() {
             maximumRewrapInterval,
             minimumDiggingFeePerSecond,
             peerId,
-            curseFee
+            curseFee,
           } = arch;
 
           return {
@@ -65,9 +65,9 @@ export function useLoadArchaeologists() {
               freeBond: BigNumber.from(freeBond),
               maximumRewrapInterval: BigNumber.from(maximumRewrapInterval),
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
-              curseFee: BigNumber.from(curseFee)
+              curseFee: BigNumber.from(curseFee),
             },
-            isOnline: true
+            isOnline: true,
           };
         });
 
@@ -121,7 +121,7 @@ export function useLoadArchaeologists() {
     getFullArchProfilesFromAddresses,
     networkConfig.diamondDeployAddress,
     signer,
-    viewStateFacet
+    viewStateFacet,
   ]);
 
   // This useEffect is used to trigger the useEffect below to load archaeologists once
@@ -153,7 +153,7 @@ export function useLoadArchaeologists() {
     networkConfig.diamondDeployAddress,
     signer,
     timestampMs,
-    viewStateFacet
+    viewStateFacet,
   ]);
 
   useEffect(() => {
@@ -197,7 +197,7 @@ export function useLoadArchaeologists() {
     getRegisteredProfiles,
     libp2pNode,
     isDependenciesReady,
-    isArchsLoaded
+    isArchsLoaded,
   ]);
 
   return { refreshProfiles };
