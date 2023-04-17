@@ -28,7 +28,7 @@ interface TableContentProps {
   icon: boolean;
   checkbox: boolean;
   align?: string;
-  multiLineTooltipLabel?: string[];
+  multiLineTooltipLabel?: string[] | null;
 }
 
 export function ArchaeologistListItem({
@@ -84,7 +84,7 @@ export function ArchaeologistListItem({
         isNumeric
       >
         <MultiLineTooltip
-          lines={multiLineTooltipLabel}
+          lines={multiLineTooltipLabel ?? []}
           placement="top"
         >
           <Flex justify={align || (icon || checkbox ? 'left' : 'center')}>
@@ -146,10 +146,12 @@ export function ArchaeologistListItem({
         <TableContent
           icon={true}
           checkbox={false}
-          multiLineTooltipLabel={[
-            `Digging fee: ${formatSarco(diggingFees?.toString() ?? '0')}`,
-            `Curse fee: ${formatSarco(archaeologist.profile.curseFee.toString())}`,
-          ]}
+          multiLineTooltipLabel={
+            diggingFees && [
+              `Digging fee: ${formatSarco(diggingFees?.toString() ?? '0')}`,
+              `Curse fee: ${formatSarco(archaeologist.profile.curseFee.toString())}`,
+            ]
+          }
         >
           {diggingFees
             ? formatSarco(totalFees?.toString() ?? '0')
