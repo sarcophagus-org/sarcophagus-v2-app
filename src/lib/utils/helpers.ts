@@ -69,7 +69,7 @@ export function readFileDataAsBase64(file: File): Promise<{ type: string; data: 
 
       resolve({
         type: res.slice(0, i),
-        data: Buffer.from(res.slice(i + 1), 'base64'),
+        data: Buffer.from(res.slice(i + 1), 'base64')
       });
     };
 
@@ -222,7 +222,7 @@ export function getTotalFeesInSarco(
   return {
     totalDiggingFees,
     formattedTotalDiggingFees: formatSarco(totalDiggingFees.toString()),
-    protocolFee,
+    protocolFee
   };
 }
 
@@ -297,4 +297,16 @@ export async function getCurrentTimeSec(provider: Provider | Web3Provider) {
   const blockNumber = await provider.getBlockNumber();
   const block = await provider.getBlock(blockNumber);
   return block.timestamp;
+}
+
+export function calculateDiggingFees(
+  archaeologist: Archaeologist,
+  resurrectionTime: number,
+  timestampMs: number
+): BigNumber | null {
+  const nowSec = Math.floor(timestampMs / 1000);
+  const resurrectionTimeSec = Math.floor(resurrectionTime / 1000);
+  return resurrectionTimeSec > nowSec
+    ? archaeologist.profile.minimumDiggingFeePerSecond.mul(resurrectionTimeSec - nowSec)
+    : null;
 }

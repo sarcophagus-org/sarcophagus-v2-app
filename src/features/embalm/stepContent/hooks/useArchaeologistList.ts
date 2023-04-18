@@ -1,17 +1,21 @@
+import { constants, ethers } from 'ethers';
+import { monthSeconds } from 'lib/constants';
+import { calculateDiggingFees, filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
+import { keys, orderBy } from 'lodash';
 import { useCallback } from 'react';
-import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
+import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { Archaeologist } from 'types/index';
-import { orderBy, keys } from 'lodash';
-import { constants, ethers } from 'ethers';
-import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
-import { monthSeconds } from 'lib/constants';
 
 export function useArchaeologistList() {
   const dispatch = useDispatch();
 
-  const { archaeologists, selectedArchaeologists } = useSelector(s => s.embalmState);
+  const {
+    archaeologists,
+    selectedArchaeologists,
+    resurrection: resurrectionTime
+  } = useSelector(s => s.embalmState);
 
   const {
     archaeologistFilterSort,
@@ -20,7 +24,7 @@ export function useArchaeologistList() {
     failsFilter,
     archAddressSearch,
     showOnlySelectedArchaeologists,
-    showHiddenArchaeologists,
+    showHiddenArchaeologists
   } = useSelector(s => s.archaeologistListState);
 
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
@@ -47,8 +51,8 @@ export function useArchaeologistList() {
     const estimatedCurse = !resurrectionTimeMs
       ? ethers.constants.Zero
       : a.profile.minimumDiggingFeePerSecond
-          .mul(Math.trunc(resurrectionIntervalMs / 1000))
-          .add(a.profile.curseFee);
+        .mul(Math.trunc(resurrectionIntervalMs / 1000))
+        .add(a.profile.curseFee);
 
     if (resurrectionIntervalMs > maxRewrapIntervalMs) {
       a.hiddenReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
@@ -105,7 +109,7 @@ export function useArchaeologistList() {
     const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
       [SortDirection.NONE]: undefined,
       [SortDirection.ASC]: 'asc',
-      [SortDirection.DESC]: 'desc',
+      [SortDirection.DESC]: 'desc'
     };
 
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
@@ -114,7 +118,9 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            sortValue = arch.profile.minimumDiggingFeePerSecond;
+            const diggingFees = calculateDiggingFees(arch, resurrectionTime, timestampMs);
+            const totalFees = diggingFees?.add(arch.profile.curseFee);
+            sortValue = totalFees ?? arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
             sortValue = arch.profile.successes;
           } else if (archaeologistFilterSort.sortType === SortFilterType.FAILS) {
@@ -132,7 +138,9 @@ export function useArchaeologistList() {
   }, [
     archaeologistFilterSort.sortDirection,
     archaeologistFilterSort.sortType,
-    visibleArchaeologists,
+    resurrectionTime,
+    timestampMs,
+    visibleArchaeologists
   ]);
 
   function shouldFilterBySelected(arch: Archaeologist): boolean {
@@ -178,6 +186,6 @@ export function useArchaeologistList() {
     showHiddenArchaeologists,
     SortDirection,
     archaeologistListVisible,
-    unwrapsFilter,
+    unwrapsFilter
   };
 }
