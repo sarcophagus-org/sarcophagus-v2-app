@@ -14,7 +14,7 @@ export function useArchaeologistList() {
   const {
     archaeologists,
     selectedArchaeologists,
-    resurrection: resurrectionTime,
+    resurrection: resurrectionTime
   } = useSelector(s => s.embalmState);
 
   const {
@@ -24,7 +24,7 @@ export function useArchaeologistList() {
     failsFilter,
     archAddressSearch,
     showOnlySelectedArchaeologists,
-    showHiddenArchaeologists,
+    showHiddenArchaeologists
   } = useSelector(s => s.archaeologistListState);
 
   const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
@@ -51,8 +51,8 @@ export function useArchaeologistList() {
     const estimatedCurse = !resurrectionTimeMs
       ? ethers.constants.Zero
       : a.profile.minimumDiggingFeePerSecond
-          .mul(Math.trunc(resurrectionIntervalMs / 1000))
-          .add(a.profile.curseFee);
+        .mul(Math.trunc(resurrectionIntervalMs / 1000))
+        .add(a.profile.curseFee);
 
     if (resurrectionIntervalMs > maxRewrapIntervalMs) {
       a.hiddenReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
@@ -109,7 +109,7 @@ export function useArchaeologistList() {
     const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
       [SortDirection.NONE]: undefined,
       [SortDirection.ASC]: 'asc',
-      [SortDirection.DESC]: 'desc',
+      [SortDirection.DESC]: 'desc'
     };
 
     if (archaeologistFilterSort.sortDirection !== SortDirection.NONE) {
@@ -118,7 +118,7 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            const diggingFees = calculateDiggingFees(arch, timestampMs, resurrectionTime);
+            const diggingFees = calculateDiggingFees(arch, resurrectionTime, timestampMs);
             const totalFees = diggingFees?.add(arch.profile.curseFee);
             sortValue = totalFees ?? arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {
@@ -140,7 +140,7 @@ export function useArchaeologistList() {
     archaeologistFilterSort.sortType,
     resurrectionTime,
     timestampMs,
-    visibleArchaeologists,
+    visibleArchaeologists
   ]);
 
   function shouldFilterBySelected(arch: Archaeologist): boolean {
@@ -186,6 +186,6 @@ export function useArchaeologistList() {
     showHiddenArchaeologists,
     SortDirection,
     archaeologistListVisible,
-    unwrapsFilter,
+    unwrapsFilter
   };
 }
