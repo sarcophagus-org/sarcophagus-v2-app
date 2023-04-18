@@ -138,6 +138,8 @@ export function useArchaeologistList() {
   }, [
     archaeologistFilterSort.sortDirection,
     archaeologistFilterSort.sortType,
+    resurrectionTime,
+    timestampMs,
     visibleArchaeologists,
   ]);
 
