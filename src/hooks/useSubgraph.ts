@@ -1,6 +1,5 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 import { useCallback } from 'react';
-import { useGetGracePeriod } from './viewStateFacet/useGetGracePeriod';
 import * as Sentry from '@sentry/react';
 
 const graphQlClient = new ApolloClient({
@@ -21,25 +20,7 @@ export interface ArchDataSubgraph {
   curseFee: string;
 }
 
-interface SarcoDataSubgraph {
-  sarcoId: string;
-  resurrectionTime: string;
-  cursedArchaeologists: string[];
-}
-
-interface SarcosAndStats {
-  archaeologists: ArchDataSubgraph[];
-  sarcophagusDatas: SarcoDataSubgraph[];
-}
-
-const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => `query {
-    sarcophagusDatas (
-        where: {resurrectionTime_lt: ${gracePeriod + blockTimestamp}},
-    ) {
-        sarcoId
-        resurrectionTime
-        cursedArchaeologists
-    },
+const getArchsQuery = `query {
     archaeologists (orderBy: blockTimestamp, first: 1000) {
         address
         successes
@@ -54,66 +35,23 @@ const getArchsAndSarcosQuery = (blockTimestamp: number, gracePeriod: number) => 
     }
   }`;
 
-export function useGraphQl(timestampSeconds: number) {
-  const gracePeriod = useGetGracePeriod();
-
+export function useGraphQl() {
   const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
     try {
-      const { archaeologists, sarcophagusDatas } = (
+      const { archaeologists } = (
         await graphQlClient.query({
-          query: gql(getArchsAndSarcosQuery(timestampSeconds, gracePeriod)),
+          query: gql(getArchsQuery),
           fetchPolicy: 'cache-first',
         })
-      ).data as SarcosAndStats;
+      ).data as { archaeologists: ArchDataSubgraph[] };
 
-      const aggregatedFailures: ArchDataSubgraph[] = await Promise.all(
-        sarcophagusDatas.map(sarcoData => {
-          const promise: Promise<ArchDataSubgraph> = new Promise(async resolve => {
-            sarcoData.cursedArchaeologists.map(archAddress => {
-              const cursedArch = { ...archaeologists.find(arch => arch.address === archAddress)! };
-
-              const resurrectionTimeThreshold = Number.parseInt(
-                sarcoData.resurrectionTime + gracePeriod
-              );
-              if (resurrectionTimeThreshold < timestampSeconds) {
-                // If this cursed arch doesn't have a sarcoId which is past its grace period, in its successes, then it never published
-                if (!cursedArch.successes.includes(sarcoData.sarcoId)) {
-                  cursedArch.failures = `${Number.parseInt(cursedArch.failures) + 1}`;
-                }
-              }
-
-              resolve(cursedArch);
-            });
-          });
-
-          return promise;
-        })
-      );
-
-      // `aggregatedFailures` will contain duplicate archaeologists as they can be cursed on multiple sarcophagi.
-      // Code below adds up the total failures on each archaeologist
-      const finalArchData = archaeologists.map(arch => {
-        const aggregatedFailuresOnArch = aggregatedFailures.filter(
-          data => data.address === arch.address
-        );
-
-        if (aggregatedFailuresOnArch.length == 0) {
-          return arch;
-        }
-
-        return aggregatedFailuresOnArch.reduce((prev, cur) => ({
-          ...cur,
-          failures: `${Number.parseInt(prev.failures) + Number.parseInt(cur.failures)}`,
-        }));
-      });
-
-      return finalArchData;
+      return archaeologists;
     } catch (e) {
       console.error(e);
       Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
       return [];
     }
-  }, [gracePeriod, timestampSeconds]);
+  }, []);
 
   return { getArchaeologists };
 }
