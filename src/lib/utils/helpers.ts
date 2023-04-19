@@ -69,7 +69,7 @@ export function readFileDataAsBase64(file: File): Promise<{ type: string; data: 
 
       resolve({
         type: res.slice(0, i),
-        data: Buffer.from(res.slice(i + 1), 'base64')
+        data: Buffer.from(res.slice(i + 1), 'base64'),
       });
     };
 
@@ -222,7 +222,7 @@ export function getTotalFeesInSarco(
   return {
     totalDiggingFees,
     formattedTotalDiggingFees: formatSarco(totalDiggingFees.toString()),
-    protocolFee
+    protocolFee,
   };
 }
 
