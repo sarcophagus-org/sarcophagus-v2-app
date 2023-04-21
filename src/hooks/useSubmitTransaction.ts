@@ -38,6 +38,8 @@ export function useSubmitTransaction(
     ...contractConfig.contractConfigParams,
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { writeAsync, data } = useContractWrite({
     onSuccess(d) {
       addRecentTransaction({
@@ -46,6 +48,7 @@ export function useSubmitTransaction(
       });
     },
     onError(e) {
+      setIsSubmitting(false);
       console.log(
         'Transaction failed with args\n:',
         JSON.stringify(contractConfig.contractConfigParams.args)
@@ -61,8 +64,6 @@ export function useSubmitTransaction(
     },
     ...config,
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useWaitForTransaction({
     hash: data?.hash,

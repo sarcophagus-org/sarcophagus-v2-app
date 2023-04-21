@@ -19,7 +19,7 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'store/index';
 
@@ -49,7 +49,7 @@ export function Rewrap() {
   // Defaults to max possible number
   const maxRewrapIntervalCalculatedSec = sarcophagus
     ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
-    (200 / sarcophagus.cursedBondPercentage)
+      (200 / sarcophagus.cursedBondPercentage)
     : Number.MAX_SAFE_INTEGER;
 
   // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and
@@ -69,12 +69,21 @@ export function Rewrap() {
   const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
   const maxResurrectionDateMs = maxResurrectionDate.getTime();
 
-  const { approve, isApproving } = useApprove();
-  const isApproveError = error.includes('amount exceeds allowance');
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    resurrectionTime?.getTime() || 0,
+    archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
+    timestampMs,
+    protocolFeeAmountInt
+  );
 
-  useEffect(() => {
-    if (!isApproving) setResurrectionTime(null);
-  }, [isApproving]);
+  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
+
+  const { approve, isApproving } = useApprove({
+    amount: diggingPlusProtocolFees,
+    onApprove: () =>
+      setResurrectionTime(!resurrectionTime ? null : new Date(resurrectionTime.getTime() - 1)),
+  });
+  const isApproveError = error.includes('amount exceeds allowance');
 
   function handleSetToPreviousInterval() {
     if (sarcophagus) {
@@ -107,15 +116,6 @@ export function Rewrap() {
       hideDuration: true,
     }
   );
-
-  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
-    resurrectionTime?.getTime() || 0,
-    archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
-    timestampMs,
-    protocolFeeAmountInt
-  );
-
-  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
 
   const isRewrapButtonDisabled =
     !resurrectionTime ||
@@ -263,7 +263,6 @@ export function Rewrap() {
           <div>
             <Button
               onClick={() => {
-                console.log('isApproveError', isApproveError);
                 if (isApproveError) {
                   approve?.();
                 } else {
