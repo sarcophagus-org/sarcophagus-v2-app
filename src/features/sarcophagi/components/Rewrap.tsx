@@ -7,6 +7,7 @@ import {
   GridItem,
   HStack,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
@@ -18,7 +19,7 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'store/index';
 
@@ -32,7 +33,8 @@ export function Rewrap() {
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
-  const { rewrap, isRewrapping, isSuccess, mayFail, isError, error } = useRewrapSarcophagus(
+
+  const { rewrap, isRewrapping, isSuccess, mayFail, error } = useRewrapSarcophagus(
     id || ethers.constants.HashZero,
     resurrectionTime
   );
@@ -47,7 +49,7 @@ export function Rewrap() {
   // Defaults to max possible number
   const maxRewrapIntervalCalculatedSec = sarcophagus
     ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
-      (200 / sarcophagus.cursedBondPercentage)
+    (200 / sarcophagus.cursedBondPercentage)
     : Number.MAX_SAFE_INTEGER;
 
   // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and
@@ -66,6 +68,13 @@ export function Rewrap() {
 
   const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
   const maxResurrectionDateMs = maxResurrectionDate.getTime();
+
+  const { approve, isApproving } = useApprove();
+  const isApproveError = error.includes('amount exceeds allowance');
+
+  useEffect(() => {
+    if (!isApproving) setResurrectionTime(null);
+  }, [isApproving]);
 
   function handleSetToPreviousInterval() {
     if (sarcophagus) {
@@ -112,13 +121,8 @@ export function Rewrap() {
     !resurrectionTime ||
     !rewrap ||
     isRewrapping ||
-    isError ||
     mayFail ||
     (balance && balance.lt(diggingPlusProtocolFees));
-
-  const isApproveError = error.includes('amount exceeds allowance');
-
-  const { approve, isApproving } = useApprove();
 
   return (
     <VStack
@@ -255,21 +259,25 @@ export function Rewrap() {
         >
           Cancel
         </Button>
-        <Button
-          onClick={() => {
-            console.log('isApproveError', isApproveError);
-            if (isApproveError) {
-              approve?.();
-            } else {
-              rewrap?.();
-            }
-          }}
-          isDisabled={!isApproveError && isRewrapButtonDisabled}
-          isLoading={isApproving || isRewrapping}
-          loadingText={isApproving ? 'Approving' : 'Rewrapping...'}
-        >
-          {isApproveError ? 'Approve' : 'Rewrap'}
-        </Button>
+        <Tooltip label={!resurrectionTime ? 'Please set a new resurrection time' : ''}>
+          <div>
+            <Button
+              onClick={() => {
+                console.log('isApproveError', isApproveError);
+                if (isApproveError) {
+                  approve?.();
+                } else {
+                  rewrap?.();
+                }
+              }}
+              isDisabled={!isApproveError && isRewrapButtonDisabled}
+              isLoading={isApproving || isRewrapping}
+              loadingText={isApproving ? 'Approving' : 'Rewrapping...'}
+            >
+              {isApproveError ? 'Approve' : 'Rewrap'}
+            </Button>
+          </div>
+        </Tooltip>
       </HStack>
     </VStack>
   );

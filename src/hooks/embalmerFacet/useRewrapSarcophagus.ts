@@ -43,7 +43,6 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
   const {
     isSuccess,
     isLoading,
-    isError,
     error: writeError,
   } = useWaitForTransaction({
     hash: data?.hash,
@@ -65,7 +64,6 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     isLoading,
     isSuccess,
     mayFail,
-    isError,
     error: ((writeError || likelyError) as Error | undefined)?.message || '',
   };
 }
