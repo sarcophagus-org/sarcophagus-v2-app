@@ -13,6 +13,7 @@ import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
+import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
@@ -31,7 +32,7 @@ export function Rewrap() {
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
-  const { rewrap, isRewrapping, isSuccess, mayFail, isError } = useRewrapSarcophagus(
+  const { rewrap, isRewrapping, isSuccess, mayFail, isError, error } = useRewrapSarcophagus(
     id || ethers.constants.HashZero,
     resurrectionTime
   );
@@ -63,25 +64,29 @@ export function Rewrap() {
     }
   }
 
+  const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
+  const maxResurrectionDateMs = maxResurrectionDate.getTime();
+
   function handleSetToPreviousInterval() {
     if (sarcophagus) {
       const newResurrectionTimeSec = sarcophagus.resurrectionTime
         .mul(2)
         .sub(sarcophagus.previousRewrapTime);
 
-      setResurrectionTime(new Date(newResurrectionTimeSec.mul(1000).toNumber()));
+      if (newResurrectionTimeSec.mul(1000).toNumber() > maxResurrectionDateMs) {
+        setResurrectionTime(new Date(maxResurrectionDateMs));
+      } else {
+        setResurrectionTime(new Date(newResurrectionTimeSec.mul(1000).toNumber()));
+      }
     }
   }
-
-  const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
-  const maxResurrectionDateMs = maxResurrectionDate.getTime();
 
   const filterInvalidTime = (time: Date) => {
     const selectedDateMs = new Date(time).getTime();
     return maxResurrectionDateMs >= selectedDateMs && timestampMs < selectedDateMs;
   };
 
-  const newResurrectionString = buildResurrectionDateString(
+  const maxResurrectionString = buildResurrectionDateString(
     BigNumber.from(Math.trunc(maxResurrectionDateMs / 1000)),
     timestampMs
   );
@@ -110,6 +115,10 @@ export function Rewrap() {
     isError ||
     mayFail ||
     (balance && balance.lt(diggingPlusProtocolFees));
+
+  const isApproveError = error.includes('amount exceeds allowance');
+
+  const { approve, isApproving } = useApprove();
 
   return (
     <VStack
@@ -203,7 +212,7 @@ export function Rewrap() {
           variant="secondary"
           textAlign="center"
         >
-          Furthest allowed rewrap time: {newResurrectionString}
+          Furthest allowed rewrap time: {maxResurrectionString}
         </Text>
       </Flex>
 
@@ -247,12 +256,19 @@ export function Rewrap() {
           Cancel
         </Button>
         <Button
-          onClick={() => rewrap?.()}
-          isDisabled={isRewrapButtonDisabled}
-          isLoading={isRewrapping}
-          loadingText="Rewrapping..."
+          onClick={() => {
+            console.log('isApproveError', isApproveError);
+            if (isApproveError) {
+              approve?.();
+            } else {
+              rewrap?.();
+            }
+          }}
+          isDisabled={!isApproveError && isRewrapButtonDisabled}
+          isLoading={isApproving || isRewrapping}
+          loadingText={isApproving ? 'Approving' : 'Rewrapping...'}
         >
-          Rewrap
+          {isApproveError ? 'Approve' : 'Rewrap'}
         </Button>
       </HStack>
     </VStack>

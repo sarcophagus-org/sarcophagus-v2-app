@@ -10,7 +10,7 @@ export function useApprove() {
   const toastDescription = 'Approved';
   const transactionDescription = 'Approve SARCO spending';
 
-  const { submit } = useSubmitTransaction(
+  const { submit, isSubmitting } = useSubmitTransaction(
     {
       contractConfigParams: {
         abi: SarcoTokenMock__factory.abi as Abi,
@@ -24,5 +24,5 @@ export function useApprove() {
     networkConfig.sarcoTokenAddress
   );
 
-  return { approve: submit };
+  return { approve: submit, isApproving: isSubmitting };
 }
