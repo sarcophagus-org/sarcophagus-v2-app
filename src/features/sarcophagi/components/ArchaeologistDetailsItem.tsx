@@ -10,7 +10,11 @@ interface ArchaeologistDetailItemProps {
   isResurrected: boolean;
 }
 
-export function ArchaeologistDetailItem({ archaeologist, sarcoHasRewraps, isResurrected }: ArchaeologistDetailItemProps) {
+export function ArchaeologistDetailItem({
+  archaeologist,
+  sarcoHasRewraps,
+  isResurrected,
+}: ArchaeologistDetailItemProps) {
   const networkConfig = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: archaeologist.address,
@@ -43,9 +47,8 @@ export function ArchaeologistDetailItem({ archaeologist, sarcoHasRewraps, isResu
       )}
       <Text>Address: {ensName ?? archaeologist.address}</Text>
       <Text>
-        Curse Fee:{' '}
-        {formatSarco(archaeologist.curseFee.toString())}{' '}
-        SARCO {` ${curseFeePaid ? '(PAID)' : ''}`}
+        Curse Fee: {formatSarco(archaeologist.curseFee.toString())} SARCO{' '}
+        {` ${curseFeePaid ? '(PAID)' : ''}`}
       </Text>
       <Text>
         Digging Fee Per Month:{' '}

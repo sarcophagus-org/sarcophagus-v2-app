@@ -19,7 +19,7 @@ export function ArchaeologistsDetailsCollapse({
   const [sarcoHasRewraps, setHasRewraps] = useState<boolean>();
 
   if (sarcoHasRewraps === undefined)
-    getSarcophagusRewraps(sarcophagus.id).then((rewraps) => {
+    getSarcophagusRewraps(sarcophagus.id).then(rewraps => {
       setHasRewraps(rewraps.length > 0);
     });
 
