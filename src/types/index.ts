@@ -36,7 +36,8 @@ export interface ArchaeologistException {
 }
 
 export interface SarcophagusArchaeologist {
-  diggingFeePerSecond: number;
+  diggingFeePerSecond: BigNumber;
+  curseFee: BigNumber;
   isAccused: boolean;
   publicKey: string;
   privateKey: string;

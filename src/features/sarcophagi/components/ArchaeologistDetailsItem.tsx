@@ -6,14 +6,18 @@ import { SarcophagusArchaeologist } from 'types';
 import { useEnsName } from 'wagmi';
 interface ArchaeologistDetailItemProps {
   archaeologist: SarcophagusArchaeologist & { address: `0x${string}` };
+  sarcoHasRewraps: boolean;
+  isResurrected: boolean;
 }
 
-export function ArchaeologistDetailItem({ archaeologist }: ArchaeologistDetailItemProps) {
+export function ArchaeologistDetailItem({ archaeologist, sarcoHasRewraps, isResurrected }: ArchaeologistDetailItemProps) {
   const networkConfig = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: archaeologist.address,
     chainId: networkConfig.chainId,
   });
+
+  const curseFeePaid = isResurrected || sarcoHasRewraps;
 
   return (
     <VStack
@@ -38,6 +42,11 @@ export function ArchaeologistDetailItem({ archaeologist }: ArchaeologistDetailIt
         </Text>
       )}
       <Text>Address: {ensName ?? archaeologist.address}</Text>
+      <Text>
+        Curse Fee:{' '}
+        {formatSarco(archaeologist.curseFee.toString())}{' '}
+        SARCO {` ${curseFeePaid ? '(PAID)' : ''}`}
+      </Text>
       <Text>
         Digging Fee Per Month:{' '}
         {formatSarco(convertSarcoPerSecondToPerMonth(archaeologist.diggingFeePerSecond.toString()))}{' '}

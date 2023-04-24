@@ -64,7 +64,10 @@ export function DetailsCollapse({
           <Text>Embalmer Address: {sarcophagus?.embalmerAddress}</Text>
           <Text>Recipient Address: {sarcophagus?.recipientAddress}</Text>
           <Text>Minimum Archaeologists: {sarcophagus?.threshold}</Text>
-          <ArchaeologistsDetailsCollapse archaeologists={archaeologistsWithAddresses} />
+          <ArchaeologistsDetailsCollapse
+            sarcophagus={sarcophagus}
+            archaeologists={archaeologistsWithAddresses}
+          />
         </VStack>
       </Collapse>
     </>
