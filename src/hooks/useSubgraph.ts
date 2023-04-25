@@ -35,6 +35,10 @@ const getArchsQuery = `query {
     }
   }`;
 
+const getSarcoRewrapsQuery = (sarcoId: string) => `query {
+  rewrapSarcophaguses (where: {sarcoId: "${sarcoId}"}) { id }
+}`;
+
 export function useGraphQl() {
   const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
     try {
@@ -53,5 +57,22 @@ export function useGraphQl() {
     }
   }, []);
 
-  return { getArchaeologists };
+  const getSarcophagusRewraps = async (sarcoId: string) => {
+    try {
+      const { rewrapSarcophaguses } = (
+        await graphQlClient.query({
+          query: gql(getSarcoRewrapsQuery(sarcoId)),
+          fetchPolicy: 'cache-first',
+        })
+      ).data as { rewrapSarcophaguses: any[] };
+
+      return rewrapSarcophaguses;
+    } catch (e) {
+      console.error(e);
+      Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
+      return [];
+    }
+  };
+
+  return { getArchaeologists, getSarcophagusRewraps };
 }

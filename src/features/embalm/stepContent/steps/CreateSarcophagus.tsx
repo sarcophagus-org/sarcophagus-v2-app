@@ -111,17 +111,17 @@ export function CreateSarcophagus() {
   }, [cancelCreateToken, clearSarcophagusState, dispatch, navigate]);
 
   useEffect(() => {
-    // remove approval step if user has allowance on sarco token
-    if (allowance) {
-      if (BigNumber.from(allowance).gte(totalFees)) {
-        const stepsCopy = { ...defaultCreateSarcophagusStages };
-        delete stepsCopy[CreateSarcophagusStage.APPROVE];
-        setCreateSarcophagusStages(stepsCopy);
-      } else {
-        setCreateSarcophagusStages(defaultCreateSarcophagusStages);
-      }
+    // remove approval step if user has enough allowance on sarco token
+    if (
+      !!createSarcophagusStages[CreateSarcophagusStage.APPROVE] &&
+      allowance &&
+      BigNumber.from(allowance).gte(totalFees)
+    ) {
+      const stepsCopy = { ...defaultCreateSarcophagusStages };
+      delete stepsCopy[CreateSarcophagusStage.APPROVE];
+      setCreateSarcophagusStages(stepsCopy);
     }
-  }, [allowance, totalFees]);
+  }, [allowance, createSarcophagusStages, totalFees]);
 
   // Reload the archaeologist list when create is completed. This is so that free bonds from the
   // arch profiles will be updated.
