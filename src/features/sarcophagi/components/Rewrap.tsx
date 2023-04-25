@@ -7,12 +7,14 @@ import {
   GridItem,
   HStack,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
+import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
@@ -31,7 +33,8 @@ export function Rewrap() {
   );
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
-  const { rewrap, isRewrapping, isSuccess, mayFail, isError } = useRewrapSarcophagus(
+
+  const { rewrap, isRewrapping, isSuccess, mayFail, error } = useRewrapSarcophagus(
     id || ethers.constants.HashZero,
     resurrectionTime
   );
@@ -63,25 +66,45 @@ export function Rewrap() {
     }
   }
 
+  const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
+  const maxResurrectionDateMs = maxResurrectionDate.getTime();
+
+  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
+    resurrectionTime?.getTime() || 0,
+    archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
+    timestampMs,
+    protocolFeeAmountInt
+  );
+
+  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
+
+  const { approve, isApproving } = useApprove({
+    amount: diggingPlusProtocolFees,
+    onApprove: () =>
+      setResurrectionTime(!resurrectionTime ? null : new Date(resurrectionTime.getTime() - 1)),
+  });
+  const isApproveError = error.includes('amount exceeds allowance');
+
   function handleSetToPreviousInterval() {
     if (sarcophagus) {
       const newResurrectionTimeSec = sarcophagus.resurrectionTime
         .mul(2)
         .sub(sarcophagus.previousRewrapTime);
 
-      setResurrectionTime(new Date(newResurrectionTimeSec.mul(1000).toNumber()));
+      if (newResurrectionTimeSec.mul(1000).toNumber() > maxResurrectionDateMs) {
+        setResurrectionTime(new Date(maxResurrectionDateMs));
+      } else {
+        setResurrectionTime(new Date(newResurrectionTimeSec.mul(1000).toNumber()));
+      }
     }
   }
-
-  const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
-  const maxResurrectionDateMs = maxResurrectionDate.getTime();
 
   const filterInvalidTime = (time: Date) => {
     const selectedDateMs = new Date(time).getTime();
     return maxResurrectionDateMs >= selectedDateMs && timestampMs < selectedDateMs;
   };
 
-  const newResurrectionString = buildResurrectionDateString(
+  const maxResurrectionString = buildResurrectionDateString(
     BigNumber.from(Math.trunc(maxResurrectionDateMs / 1000)),
     timestampMs
   );
@@ -94,20 +117,10 @@ export function Rewrap() {
     }
   );
 
-  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
-    resurrectionTime?.getTime() || 0,
-    archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
-    timestampMs,
-    protocolFeeAmountInt
-  );
-
-  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
-
   const isRewrapButtonDisabled =
     !resurrectionTime ||
     !rewrap ||
     isRewrapping ||
-    isError ||
     mayFail ||
     (balance && balance.lt(diggingPlusProtocolFees));
 
@@ -203,7 +216,7 @@ export function Rewrap() {
           variant="secondary"
           textAlign="center"
         >
-          Furthest allowed rewrap time: {newResurrectionString}
+          Furthest allowed rewrap time: {maxResurrectionString}
         </Text>
       </Flex>
 
@@ -246,14 +259,24 @@ export function Rewrap() {
         >
           Cancel
         </Button>
-        <Button
-          onClick={() => rewrap?.()}
-          isDisabled={isRewrapButtonDisabled}
-          isLoading={isRewrapping}
-          loadingText="Rewrapping..."
-        >
-          Rewrap
-        </Button>
+        <Tooltip label={!resurrectionTime ? 'Please set a new resurrection time' : ''}>
+          <div>
+            <Button
+              onClick={() => {
+                if (isApproveError) {
+                  approve?.();
+                } else {
+                  rewrap?.();
+                }
+              }}
+              isDisabled={!isApproveError && isRewrapButtonDisabled}
+              isLoading={isApproving || isRewrapping}
+              loadingText={isApproving ? 'Approving' : 'Rewrapping...'}
+            >
+              {isApproveError ? 'Approve' : 'Rewrap'}
+            </Button>
+          </div>
+        </Tooltip>
       </HStack>
     </VStack>
   );
