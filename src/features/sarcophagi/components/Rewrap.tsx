@@ -35,7 +35,6 @@ export function Rewrap() {
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
 
-
   const { allowance } = useAllowance();
 
   const { rewrap, isRewrapping, error } = useRewrapSarcophagus(
@@ -53,7 +52,7 @@ export function Rewrap() {
   // Defaults to max possible number
   const maxRewrapIntervalCalculatedSec = sarcophagus
     ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
-    (200 / sarcophagus.cursedBondPercentage)
+      (200 / sarcophagus.cursedBondPercentage)
     : Number.MAX_SAFE_INTEGER;
 
   // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and

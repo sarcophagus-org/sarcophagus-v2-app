@@ -17,13 +17,14 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     setError(undefined);
     setIsRewrapping(true);
 
-    sarcoSdk!.rewrapSarcophagus(sarcoId, timeInSeconds, {
-      onTxSuccess: () => {
-        toast(rewrapSuccess());
-        setIsRewrapping(false);
-        navigate(`/dashboard/${sarcoId}`);
-      },
-    })
+    sarcoSdk!
+      .rewrapSarcophagus(sarcoId, timeInSeconds, {
+        onTxSuccess: () => {
+          toast(rewrapSuccess());
+          setIsRewrapping(false);
+          navigate(`/dashboard/${sarcoId}`);
+        },
+      })
       .catch((e: Error) => {
         console.error(e);
         setError(e.message);
