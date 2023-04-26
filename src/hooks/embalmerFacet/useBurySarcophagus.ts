@@ -1,50 +1,35 @@
 import { useToast } from '@chakra-ui/react';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { Abi } from 'abitype';
-import { useNetworkConfig } from 'lib/config';
 import { buryFailure, burySuccess } from 'lib/utils/toast';
 import { useState } from 'react';
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useNavigate } from 'react-router-dom';
+import { sarco as sarcoSdk } from 'sarcophagus-v2-sdk';
+
 
 export function useBurySarcophagus(sarcoId: string) {
-  const networkConfig = useNetworkConfig();
   const toast = useToast();
-
-  const { config, isError } = usePrepareContractWrite({
-    address: networkConfig.diamondDeployAddress,
-    abi: EmbalmerFacet__factory.abi as Abi,
-    functionName: 'burySarcophagus',
-    enabled: !!sarcoId,
-    args: [sarcoId],
-  });
+  const navigate = useNavigate();
 
   // Wagmi is for some reason unable to track when write has been called
   const [isBurying, setIsBurying] = useState(false);
-
-  const { write, data } = useContractWrite({
-    ...config,
-    onError() {
-      setIsBurying(false);
-    },
-  });
+  const [error, setError] = useState<string>();
 
   function bury() {
-    write?.();
     setIsBurying(true);
+    sarcoSdk!
+      .burySarcophagus(sarcoId, {
+        onTxSuccess: () => {
+          toast(burySuccess());
+          setIsBurying(false);
+          navigate('/dashboard');
+        },
+      })
+      .catch((e: Error) => {
+        console.error(e);
+        toast(buryFailure());
+        setIsBurying(false);
+        setError(e.message);
+      });
   }
 
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-    onSuccess() {
-      toast(burySuccess());
-      setIsBurying(false);
-    },
-    onError(e) {
-      console.error(e);
-      toast(buryFailure());
-      setIsBurying(false);
-    },
-  });
-
-  return { bury, isBurying, isLoading, isSuccess, isError };
+  return { bury, isBurying, error };
 }
