@@ -12,6 +12,7 @@ export function useAllowance() {
     abi: SarcoTokenMock__factory.abi,
     functionName: 'allowance',
     args: [address, networkConfig.diamondDeployAddress],
+    watch: true,
   });
 
   return {

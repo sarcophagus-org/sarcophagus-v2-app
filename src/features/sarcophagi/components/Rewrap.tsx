@@ -14,6 +14,7 @@ import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
+import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
@@ -34,7 +35,10 @@ export function Rewrap() {
   const protocolFeeAmountInt = useGetProtocolFeeAmount();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
 
-  const { rewrap, isRewrapping, isSuccess, mayFail, error } = useRewrapSarcophagus(
+
+  const { allowance } = useAllowance();
+
+  const { rewrap, isRewrapping, error } = useRewrapSarcophagus(
     id || ethers.constants.HashZero,
     resurrectionTime
   );
@@ -49,7 +53,7 @@ export function Rewrap() {
   // Defaults to max possible number
   const maxRewrapIntervalCalculatedSec = sarcophagus
     ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
-      (200 / sarcophagus.cursedBondPercentage)
+    (200 / sarcophagus.cursedBondPercentage)
     : Number.MAX_SAFE_INTEGER;
 
   // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and
@@ -83,7 +87,7 @@ export function Rewrap() {
     onApprove: () =>
       setResurrectionTime(!resurrectionTime ? null : new Date(resurrectionTime.getTime() - 1)),
   });
-  const isApproveError = error.includes('amount exceeds allowance');
+  const isApproveError = error?.includes('amount exceeds allowance');
 
   function handleSetToPreviousInterval() {
     if (sarcophagus) {
@@ -121,14 +125,15 @@ export function Rewrap() {
     !resurrectionTime ||
     !rewrap ||
     isRewrapping ||
-    mayFail ||
     (balance && balance.lt(diggingPlusProtocolFees));
+
+  const needsApproval = allowance?.lte(diggingPlusProtocolFees);
 
   return (
     <VStack
       align="left"
       spacing={10}
-      pointerEvents={isRewrapping || isSuccess ? 'none' : 'all'}
+      pointerEvents={isRewrapping ? 'none' : 'all'}
     >
       <VStack
         align="left"
@@ -263,7 +268,7 @@ export function Rewrap() {
           <div>
             <Button
               onClick={() => {
-                if (isApproveError) {
+                if (needsApproval) {
                   approve?.();
                 } else {
                   rewrap?.();
@@ -273,7 +278,7 @@ export function Rewrap() {
               isLoading={isApproving || isRewrapping}
               loadingText={isApproving ? 'Approving' : 'Rewrapping...'}
             >
-              {isApproveError ? 'Approve' : 'Rewrap'}
+              {needsApproval ? 'Approve' : 'Rewrap'}
             </Button>
           </div>
         </Tooltip>
