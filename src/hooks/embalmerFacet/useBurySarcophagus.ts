@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sarco as sarcoSdk } from 'sarcophagus-v2-sdk';
 
-
 export function useBurySarcophagus(sarcoId: string) {
   const toast = useToast();
   const navigate = useNavigate();
