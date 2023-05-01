@@ -1,32 +1,52 @@
-import { BigNumber, ethers } from 'ethers';
-import { SarcoTokenMock__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useNetworkConfig } from 'lib/config';
-import { useSubmitTransaction } from 'hooks/useSubmitTransaction';
-import { Abi } from 'abitype';
+import { BigNumber } from 'ethers';
+import { sarco as sarcoSdk } from 'sarcophagus-v2-sdk';
+import { useState } from 'react';
+import { useToast } from '@chakra-ui/react';
 
-export function useApprove(args?: { onApprove?: Function; amount: BigNumber }) {
-  const networkConfig = useNetworkConfig();
+export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {
+  const toast = useToast();
+
+  const [isApproving, setIsApproving] = useState(false);
+  const [error, setError] = useState<string>();
 
   const toastDescription = 'Approved';
-  const transactionDescription = 'Approve SARCO spending';
 
-  const { submit, isSubmitting } = useSubmitTransaction(
-    {
-      contractConfigParams: {
-        abi: SarcoTokenMock__factory.abi as Abi,
-        functionName: 'approve',
-        args: [networkConfig.diamondDeployAddress, args?.amount ?? ethers.constants.MaxUint256],
-        mode: 'prepared',
-      },
-      toastDescription,
-      transactionDescription,
-    },
-    networkConfig.sarcoTokenAddress,
-    () => args?.onApprove && args?.onApprove()
-  );
+  function approve() {
+    setError(undefined);
+    setIsApproving(true);
+
+    sarcoSdk!
+      .approveSarcophagus(args.amount, {
+        onTxSuccess: () => {
+          toast({
+            title: 'Approved',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+            position: 'bottom-right',
+          });
+          setIsApproving(false);
+          if (!!args?.onApprove) args?.onApprove();
+        },
+      })
+      .catch((e: Error) => {
+        console.error(e);
+        setError(e.message);
+        toast({
+          title: 'Transaction Failed',
+          description: toastDescription,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom-right',
+        });
+        setIsApproving(false);
+      });
+  }
 
   return {
-    approve: submit,
-    isApproving: isSubmitting,
+    approve,
+    isApproving,
+    error,
   };
 }

@@ -8,7 +8,6 @@ export function useBurySarcophagus(sarcoId: string) {
   const toast = useToast();
   const navigate = useNavigate();
 
-  // Wagmi is for some reason unable to track when write has been called
   const [isBurying, setIsBurying] = useState(false);
   const [error, setError] = useState<string>();
 
