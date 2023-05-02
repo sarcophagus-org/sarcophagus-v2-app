@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from '../../../../../store';
 import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { formatCreateSarcophagusError } from '../../utils/errors';
 import { useDialArchaeologists } from './useDialArchaeologists';
 import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
-import { useApproveSarcoToken } from './useApproveSarcoToken';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 import { useClearSarcophagusState } from './useClearSarcophagusState';
+import { useApprove } from 'hooks/sarcoToken/useApprove';
 
 export class CancelCreateToken {
   cancelled: boolean;
@@ -26,7 +26,7 @@ export class CancelCreateToken {
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
   embalmerFacet: ethers.Contract,
-  sarcoToken: ethers.Contract
+  approveAmount: BigNumber
 ) {
   const dispatch = useDispatch();
   const { selectedArchaeologists, cancelCreateToken } = useSelector(x => x.embalmState);
@@ -42,7 +42,7 @@ export function useCreateSarcophagus(
   const { dialSelectedArchaeologists } = useDialArchaeologists();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetArweavePayload, uploadStep } = useUploadFileAndKeyShares();
-  const { approveSarcoToken } = useApproveSarcoToken(sarcoToken);
+  const { approve: approveSarcoToken } = useApprove({ amount: approveAmount });
   const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
   const { clearSarcophagusState, successData } = useClearSarcophagusState();
 
@@ -76,9 +76,9 @@ export function useCreateSarcophagus(
     dialSelectedArchaeologists,
     initiateSarcophagusNegotiation,
     uploadAndSetArweavePayload,
-    approveSarcoToken,
     submitSarcophagus,
     clearSarcophagusState,
+    approveSarcoToken,
   ]);
 
   // Process each stage as they become active

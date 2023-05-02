@@ -1,8 +1,5 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
-import {
-  EmbalmerFacet__factory,
-  SarcoTokenMock__factory,
-} from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
@@ -54,23 +51,6 @@ export function CreateSarcophagus() {
     signerOrProvider: signer,
   });
 
-  const sarcoToken = useContract({
-    address: networkConfig.sarcoTokenAddress,
-    abi: SarcoTokenMock__factory.abi,
-    signerOrProvider: signer,
-  });
-
-  const {
-    currentStage,
-    handleCreate,
-    stageError,
-    stageInfo,
-    retryStage,
-    retryCreateSarcophagus,
-    successData,
-    clearSarcophagusState,
-  } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, sarcoToken!);
-
   const {
     archaeologists,
     selectedArchaeologists,
@@ -95,6 +75,19 @@ export function CreateSarcophagus() {
   const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
   const totalFees = diggingFeesAndCurseFees.add(protocolFee);
 
+  const totalFeesWithApproveBuffer = totalFees.add(totalFees.div(10));
+
+  const {
+    currentStage,
+    handleCreate,
+    stageError,
+    stageInfo,
+    retryStage,
+    retryCreateSarcophagus,
+    successData,
+    clearSarcophagusState,
+  } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, totalFeesWithApproveBuffer);
+
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
   const isCreateCompleted = useCallback(() => {
@@ -115,13 +108,13 @@ export function CreateSarcophagus() {
     if (
       !!createSarcophagusStages[CreateSarcophagusStage.APPROVE] &&
       allowance &&
-      BigNumber.from(allowance).gte(totalFees)
+      BigNumber.from(allowance).gte(totalFeesWithApproveBuffer)
     ) {
       const stepsCopy = { ...defaultCreateSarcophagusStages };
       delete stepsCopy[CreateSarcophagusStage.APPROVE];
       setCreateSarcophagusStages(stepsCopy);
     }
-  }, [allowance, createSarcophagusStages, totalFees]);
+  }, [allowance, createSarcophagusStages, totalFeesWithApproveBuffer]);
 
   // Reload the archaeologist list when create is completed. This is so that free bonds from the
   // arch profiles will be updated.
