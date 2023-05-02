@@ -1,32 +1,33 @@
-import { BigNumber, ethers } from 'ethers';
-import { SarcoTokenMock__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { useNetworkConfig } from 'lib/config';
-import { useSubmitTransaction } from 'hooks/useSubmitTransaction';
-import { Abi } from 'abitype';
+import { BigNumber } from 'ethers';
+import { useState } from 'react';
+import { useToast } from '@chakra-ui/react';
+import { sarco } from 'sarcophagus-v2-sdk';
+import { approveFailure, approveSuccess } from 'lib/utils/toast';
 
-export function useApprove(args?: { onApprove?: Function; amount: BigNumber }) {
-  const networkConfig = useNetworkConfig();
+export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {
+  const toast = useToast();
 
-  const toastDescription = 'Approved';
-  const transactionDescription = 'Approve SARCO spending';
+  const [isApproving, setIsApproving] = useState(false);
+  const [error, setError] = useState<string>();
 
-  const { submit, isSubmitting } = useSubmitTransaction(
-    {
-      contractConfigParams: {
-        abi: SarcoTokenMock__factory.abi as Abi,
-        functionName: 'approve',
-        args: [networkConfig.diamondDeployAddress, args?.amount ?? ethers.constants.MaxUint256],
-        mode: 'prepared',
-      },
-      toastDescription,
-      transactionDescription,
-    },
-    networkConfig.sarcoTokenAddress,
-    () => args?.onApprove && args?.onApprove()
-  );
+  async function approve() {
+    try {
+      await sarco.token.approve(args.amount);
+      toast(approveSuccess());
+      if (!!args?.onApprove) args?.onApprove();
+    } catch (e) {
+      const err = e as Error;
+      console.error(err);
+      setError(err.message);
+      toast(approveFailure());
+    } finally {
+      setIsApproving(false);
+    }
+  }
 
   return {
-    approve: submit,
-    isApproving: isSubmitting,
+    approve,
+    isApproving,
+    error,
   };
 }

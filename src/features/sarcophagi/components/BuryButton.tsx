@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { useBurySarcophagus } from 'hooks/embalmerFacet';
 
 export function BuryButton({ id }: { id?: string }) {
-  const { bury, isBurying, isError } = useBurySarcophagus(id || ethers.constants.HashZero);
+  const { bury, isBurying, error } = useBurySarcophagus(id || ethers.constants.HashZero);
 
   function handleBury() {
     bury?.();
@@ -11,7 +11,7 @@ export function BuryButton({ id }: { id?: string }) {
 
   return (
     <>
-      {!isError ? (
+      {!error ? (
         <Tooltip
           placement="top"
           label="Deactivate this Sarcophagus so it can never be resurrected"
@@ -20,7 +20,7 @@ export function BuryButton({ id }: { id?: string }) {
             onClick={handleBury}
             isLoading={isBurying}
             loadingText={isBurying ? 'Burying...' : undefined}
-            disabled={isBurying || isError}
+            disabled={isBurying || !!error}
           >
             Bury
           </Button>

@@ -1,69 +1,39 @@
 import { useToast } from '@chakra-ui/react';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { Abi } from 'abitype';
-import { useNetworkConfig } from 'lib/config';
 import { rewrapFailure, rewrapSuccess } from 'lib/utils/toast';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | null) {
-  const networkConfig = useNetworkConfig();
   const toast = useToast();
   const navigate = useNavigate();
 
   const timeInSeconds = resurrectionTime ? Math.trunc(resurrectionTime.getTime() / 1000) : 0;
 
-  const {
-    config,
-    isError: mayFail,
-    error: likelyError,
-  } = usePrepareContractWrite({
-    address: networkConfig.diamondDeployAddress,
-    abi: EmbalmerFacet__factory.abi as Abi,
-    functionName: 'rewrapSarcophagus',
-    enabled: Boolean(resurrectionTime),
-    args: [sarcoId, timeInSeconds],
-  });
-
   const [isRewrapping, setIsRewrapping] = useState(false);
+  const [error, setError] = useState<string>();
 
-  const { write, data } = useContractWrite({
-    ...config,
-    onError() {
-      setIsRewrapping(false);
-    },
-  });
-
-  function rewrap() {
-    write?.();
+  async function rewrap() {
+    setError(undefined);
     setIsRewrapping(true);
-  }
-
-  const {
-    isSuccess,
-    isLoading,
-    error: writeError,
-  } = useWaitForTransaction({
-    hash: data?.hash,
-    onSuccess() {
+    try {
+      await sarco.api.rewrapSarcophagus(sarcoId, timeInSeconds);
       toast(rewrapSuccess());
       setIsRewrapping(false);
       navigate(`/dashboard/${sarcoId}`);
-    },
-    onError(e) {
-      console.error(e);
+    } catch (e) {
+      const err = e as Error;
+      console.error(err);
       toast(rewrapFailure());
+      setError(err.message);
+    } finally {
       setIsRewrapping(false);
-    },
-  });
+    }
+  }
 
   return {
     rewrap,
     isRewrapping,
-    isLoading,
-    isSuccess,
-    mayFail,
-    error: ((writeError || likelyError) as Error | undefined)?.message || '',
+    error,
   };
 }

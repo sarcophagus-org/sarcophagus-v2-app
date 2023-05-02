@@ -235,3 +235,15 @@ export const accuseFailure = (): UseToastOptions => ({
   status: 'error',
   ...defaultOptions,
 });
+
+export const approveSuccess = (): UseToastOptions => ({
+  title: 'Approve Successful.',
+  status: 'success',
+  ...defaultOptions,
+});
+
+export const approveFailure = (): UseToastOptions => ({
+  title: 'Approve Failed.',
+  status: 'error',
+  ...defaultOptions,
+});
