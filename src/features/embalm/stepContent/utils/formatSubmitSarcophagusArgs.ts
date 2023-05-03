@@ -1,8 +1,15 @@
 import { BigNumber, ethers, utils } from 'ethers';
-import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
-import { Archaeologist } from '../../../../types';
 import { computeAddress } from 'ethers/lib/utils';
+import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
 import { RecipientState } from '../../../../store/embalm/actions';
+import { Archaeologist } from '../../../../types';
+
+type SubmitSarcophagusArgsTuple = [
+  string,
+  SubmitSarcophagusSettings,
+  ContractArchaeologist[],
+  string
+];
 
 export interface ContractArchaeologist {
   archAddress: string;
@@ -77,7 +84,7 @@ export function formatSubmitSarcophagusArgs({
 
   const contractArchaeologists = getContractArchaeologists();
 
-  const args = [
+  const submitSarcophagusArgs: SubmitSarcophagusArgsTuple = [
     sarcoId,
     {
       ...settings,
@@ -86,5 +93,5 @@ export function formatSubmitSarcophagusArgs({
     arweaveTxId,
   ];
 
-  return { submitSarcophagusArgs: args };
+  return { submitSarcophagusArgs };
 }

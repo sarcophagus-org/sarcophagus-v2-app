@@ -5,6 +5,7 @@ import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagus
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
   const {
@@ -42,29 +43,26 @@ export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
     });
 
     try {
-      await embalmerFacet.callStatic.createSarcophagus(...submitSarcophagusArgs);
+      const tx = await sarco.api.createSarcophagus(...submitSarcophagusArgs);
+      setSarcophagusTxId(tx.hash);
+      await tx.wait();
     } catch (e) {
       const errorMsg = handleRpcError(e);
       Sentry.captureException(errorMsg, { fingerprint: ['CREATE_SARCOPHAGUS_FAILURE'] });
       throw new Error(errorMsg);
     }
-
-    const tx = await embalmerFacet.createSarcophagus(...submitSarcophagusArgs);
-    setSarcophagusTxId(tx.hash);
-    await tx.wait();
   }, [
-    embalmerFacet,
-    name,
-    recipientState,
-    resurrection,
-    selectedArchaeologists,
-    requiredArchaeologists,
-    negotiationTimestamp,
     archaeologistPublicKeys,
     archaeologistSignatures,
-    sarcophagusPayloadTxId,
-    setSarcophagusTxId,
+    name,
+    negotiationTimestamp,
+    recipientState,
+    requiredArchaeologists,
+    resurrection,
     retryingCreate,
+    sarcophagusPayloadTxId,
+    selectedArchaeologists,
+    setSarcophagusTxId,
   ]);
 
   return {
