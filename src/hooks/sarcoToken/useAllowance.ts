@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { getSarcoClientInstance } from 'sarcophagus-v2-sdk';
 import { useAccount } from 'wagmi';
 
 export function useAllowance() {
@@ -15,7 +15,7 @@ export function useAllowance() {
       if (!address) return;
       setIsLoading(true);
       try {
-        const fetchedAllowance = await sarco.token.allowance(address);
+        const fetchedAllowance = await getSarcoClientInstance().token.allowance(address);
         setAllowance(fetchedAllowance);
         setError(null);
         setIsError(false);
