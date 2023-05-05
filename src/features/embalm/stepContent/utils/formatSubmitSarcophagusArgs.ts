@@ -23,7 +23,7 @@ export interface ContractArchaeologist {
 
 export interface SubmitSarcophagusSettings {
   name: string;
-  recipientAddress: string;
+  recipientAddress: `0x${string}`;
   resurrectionTime: number;
   threshold: number;
   creationTime: number;
@@ -74,7 +74,7 @@ export function formatSubmitSarcophagusArgs({
   const sarcoId = utils.id(name + Date.now().toString());
   const settings: SubmitSarcophagusSettings = {
     name,
-    recipientAddress: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
+    recipientAddress: computeAddress(recipientState.publicKey) as `0x${string}`,
     resurrectionTime: Math.trunc(resurrection / 1000),
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),
