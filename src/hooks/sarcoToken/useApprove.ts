@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useToast } from '@chakra-ui/react';
-import { getSarcoClientInstance } from 'sarcophagus-v2-sdk';
+import { sarcoClient } from 'sarcophagus-v2-sdk';
 import { approveFailure, approveSuccess } from 'lib/utils/toast';
 
 export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {
@@ -12,7 +12,7 @@ export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {
 
   async function approve() {
     try {
-      const tx = await getSarcoClientInstance().token.approve(args.amount);
+      const tx = await sarcoClient.token.approve(args.amount);
       await tx.wait();
       toast(approveSuccess());
       if (!!args?.onApprove) args?.onApprove();
