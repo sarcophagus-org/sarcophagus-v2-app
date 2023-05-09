@@ -4,13 +4,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { Archaeologist } from 'types';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
-import { useGraphQl } from 'hooks/useSubgraph';
-import { BigNumber } from 'ethers';
 
-import axios from 'axios';
+import { sarcoClient } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -24,7 +22,7 @@ export function useLoadArchaeologists() {
   const [isArchsLoaded, setIsArchsLoaded] = useState<boolean>(false);
   const [isDependenciesReady, setIsDependenciesReady] = useState<boolean>(false);
 
-  const { getArchaeologists } = useGraphQl();
+  // const { getArchaeologists } = useGraphQl();
   const { data: signer } = useSigner();
 
   const viewStateFacet = useContract({
@@ -33,65 +31,8 @@ export function useLoadArchaeologists() {
     signerOrProvider: signer,
   });
 
-  const getFullArchProfilesFromAddresses = useCallback(
-    async (addresses: string[]): Promise<Archaeologist[]> => {
-      try {
-        if (addresses.length === 0 || !viewStateFacet || !timestampMs) return [];
-
-        const archData = await getArchaeologists();
-
-        const registeredArchaeologists = archData.map(arch => {
-          const {
-            successes,
-            accusals,
-            failures,
-            address: archAddress,
-            maximumResurrectionTime,
-            freeBond,
-            maximumRewrapInterval,
-            minimumDiggingFeePerSecond,
-            peerId,
-            curseFee,
-          } = arch;
-
-          return {
-            profile: {
-              archAddress,
-              peerId,
-              successes: BigNumber.from(successes.length),
-              accusals: BigNumber.from(accusals),
-              failures: BigNumber.from(failures),
-              maximumResurrectionTime: BigNumber.from(maximumResurrectionTime),
-              freeBond: BigNumber.from(freeBond),
-              maximumRewrapInterval: BigNumber.from(maximumRewrapInterval),
-              minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
-              curseFee: BigNumber.from(curseFee),
-            },
-            isOnline: false,
-          };
-        });
-
-        const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-        const onlinePeerIds = res.data;
-
-        for (let arch of registeredArchaeologists) {
-          if (onlinePeerIds.includes(arch.profile.peerId)) {
-            arch.isOnline = true;
-          }
-        }
-
-        return registeredArchaeologists;
-      } catch (e) {
-        console.log('error loading archs', e);
-        Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
-        return [];
-      }
-    },
-    [viewStateFacet, timestampMs, getArchaeologists]
-  );
-
   const refreshProfiles = useCallback(
-    async (addresses: string[]) => {
+    async (addresses: string[]): Promise<ArchaeologistData[]> => {
       if (!networkConfig.diamondDeployAddress) {
         return [];
       }
@@ -99,16 +40,17 @@ export function useLoadArchaeologists() {
       if (addresses.length === 0) return [];
 
       try {
-        return await getFullArchProfilesFromAddresses(addresses);
+        return sarcoClient.archaeologist.getFullArchProfilesFromAddresses(addresses);
       } catch (e) {
-        console.error(e);
+        console.log('error loading archs', e);
+        Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
         return [];
       }
     },
-    [getFullArchProfilesFromAddresses, networkConfig.diamondDeployAddress]
+    [networkConfig.diamondDeployAddress]
   );
 
-  const getRegisteredProfiles = useCallback(async (): Promise<Archaeologist[]> => {
+  const getRegisteredProfiles = useCallback(async (): Promise<ArchaeologistData[]> => {
     if (!networkConfig.diamondDeployAddress || !viewStateFacet || !signer) {
       return [];
     }
@@ -116,13 +58,8 @@ export function useLoadArchaeologists() {
     const addresses: string[] = await viewStateFacet.callStatic.getArchaeologistProfileAddresses();
 
     if (!addresses || addresses.length === 0) return [];
-    return getFullArchProfilesFromAddresses(addresses);
-  }, [
-    getFullArchProfilesFromAddresses,
-    networkConfig.diamondDeployAddress,
-    signer,
-    viewStateFacet,
-  ]);
+    return sarcoClient.archaeologist.getFullArchProfilesFromAddresses(addresses);
+  }, [networkConfig.diamondDeployAddress, signer, viewStateFacet]);
 
   // This useEffect is used to trigger the useEffect below to load archaeologists once
   // ALL dependencies are ready.

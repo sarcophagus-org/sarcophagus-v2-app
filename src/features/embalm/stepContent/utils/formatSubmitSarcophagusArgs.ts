@@ -2,7 +2,7 @@ import { BigNumber, ethers, utils } from 'ethers';
 import { computeAddress } from 'ethers/lib/utils';
 import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
 import { RecipientState } from '../../../../store/embalm/actions';
-import { Archaeologist } from '../../../../types';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 type SubmitSarcophagusArgsTuple = [
   string,
@@ -35,7 +35,7 @@ export interface SubmitSarcophagusProps {
   name: string;
   recipientState: RecipientState;
   resurrection: number;
-  selectedArchaeologists: Archaeologist[];
+  selectedArchaeologists: ArchaeologistData[];
   requiredArchaeologists: number;
   negotiationTimestamp: number;
   archaeologistPublicKeys: Map<string, string>;

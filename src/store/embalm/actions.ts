@@ -1,10 +1,11 @@
-import { Archaeologist, ArchaeologistException } from 'types/index';
+import { ArchaeologistException } from 'types/index';
 import { ActionMap } from '../ActionMap';
 import { Step, StepStatus } from './reducer';
 import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 import { BigNumber } from 'ethers';
 import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
@@ -76,7 +77,7 @@ type EmbalmPayload = {
   [ActionType.SetCancelToken]: { token: CancelCreateToken };
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
-  [ActionType.SelectArchaeologist]: { archaeologist: Archaeologist };
+  [ActionType.SelectArchaeologist]: { archaeologist: ArchaeologistData };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
   [ActionType.SetArchaeologistEnsName]: { peerId: string; ensName: string };
   [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
@@ -87,7 +88,7 @@ type EmbalmPayload = {
   [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
   [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
-  [ActionType.SetArchaeologists]: { archaeologists: Archaeologist[] };
+  [ActionType.SetArchaeologists]: { archaeologists: ArchaeologistData[] };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
@@ -98,7 +99,7 @@ type EmbalmPayload = {
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
-  [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: Archaeologist[] };
+  [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: ArchaeologistData[] };
   [ActionType.SetUploadPrice]: { price: BigNumber };
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
@@ -115,7 +116,7 @@ export function goToStep(step: Step): EmbalmActions {
   };
 }
 
-export function setArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
+export function setArchaeologists(archaeologists: ArchaeologistData[]): EmbalmActions {
   return {
     type: ActionType.SetArchaeologists,
     payload: {
@@ -232,7 +233,7 @@ export function setUploadPrice(price: BigNumber): EmbalmActions {
   };
 }
 
-export function selectArchaeologist(archaeologist: Archaeologist): EmbalmActions {
+export function selectArchaeologist(archaeologist: ArchaeologistData): EmbalmActions {
   return {
     type: ActionType.SelectArchaeologist,
     payload: {
@@ -250,7 +251,7 @@ export function deselectArchaeologist(address: string): EmbalmActions {
   };
 }
 
-export function setSelectedArchaeologists(archaeologists: Archaeologist[]): EmbalmActions {
+export function setSelectedArchaeologists(archaeologists: ArchaeologistData[]): EmbalmActions {
   return {
     type: ActionType.SetSelectedArchaeologists,
     payload: {

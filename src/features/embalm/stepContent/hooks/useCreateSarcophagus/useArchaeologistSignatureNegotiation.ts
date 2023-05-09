@@ -106,7 +106,7 @@ export function useArchaeologistSignatureNegotiation() {
           try {
             const stream = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
-            await pipe([new TextEncoder().encode(outboundMsg)], stream, async source => {
+            await pipe([new TextEncoder().encode(outboundMsg)], stream, async (source: any) => {
               for await (const data of source) {
                 const dataStr = new TextDecoder().decode(data.subarray());
                 const response: ArchaeologistResponse = JSON.parse(dataStr);

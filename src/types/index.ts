@@ -1,18 +1,4 @@
 import { BigNumber } from 'ethers';
-import { PeerId } from '@libp2p/interface-peer-id';
-import { Connection } from '@libp2p/interface-connection';
-
-export interface Archaeologist {
-  publicKey?: string;
-  profile: ArchaeologistProfile;
-  connection?: Connection;
-  isOnline: boolean;
-  fullPeerId?: PeerId;
-  signature?: string;
-  ensName?: string;
-  hiddenReason?: string;
-  exception?: ArchaeologistException;
-}
 
 // TODO: Replace with import from proposed npm package
 export enum SarcophagusValidationError {

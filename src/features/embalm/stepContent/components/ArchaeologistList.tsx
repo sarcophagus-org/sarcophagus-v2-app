@@ -13,7 +13,6 @@ import {
   Icon,
   Tooltip,
 } from '@chakra-ui/react';
-import { Archaeologist } from '../../../../types/index';
 import { QuestionIcon } from '@chakra-ui/icons';
 import { DownIcon, UpDownIcon, UpIcon } from 'components/icons';
 import { Loading } from 'components/Loading';
@@ -25,6 +24,7 @@ import { useState } from 'react';
 import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { useDispatch, useSelector } from 'store/index';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 export function ArchaeologistList({
   showDial,
@@ -33,7 +33,7 @@ export function ArchaeologistList({
 }: {
   totalCount: number;
   showDial?: boolean;
-  paginatedArchaeologists: Archaeologist[];
+  paginatedArchaeologists: ArchaeologistData[];
 }) {
   const {
     handleCheckArchaeologist,

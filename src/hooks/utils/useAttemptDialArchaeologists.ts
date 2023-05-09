@@ -3,7 +3,7 @@ import { useSelector } from '../../store';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
 import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
-import { Archaeologist } from '../../types';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 export function useAttemptDialArchaeologists(
   setIsDialing?: React.Dispatch<React.SetStateAction<boolean>>
@@ -15,7 +15,7 @@ export function useAttemptDialArchaeologists(
   // sets dial status for use in the UX
   const testDialArchaeologist = useCallback(
     async (
-      arch: Archaeologist,
+      arch: ArchaeologistData,
       showToast: boolean = false,
       hangUpInterval: number = 200
     ): Promise<boolean> => {
@@ -36,6 +36,7 @@ export function useAttemptDialArchaeologists(
           // @ts-ignore
           await libp2pNode.dial(ma);
         } else {
+          // @ts-ignore
           await libp2pNode.dial(arch.fullPeerId!);
         }
 

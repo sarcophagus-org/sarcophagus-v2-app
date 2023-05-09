@@ -3,10 +3,10 @@ import { monthSeconds } from 'lib/constants';
 import { calculateDiggingFees, filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
 import { keys, orderBy } from 'lodash';
 import { useCallback } from 'react';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { Archaeologist } from 'types/index';
 
 export function useArchaeologistList() {
   const dispatch = useDispatch();
@@ -72,7 +72,7 @@ export function useArchaeologistList() {
   });
 
   const handleCheckArchaeologist = useCallback(
-    (archaeologist: Archaeologist) => {
+    (archaeologist: ArchaeologistData) => {
       if (
         selectedArchaeologists.findIndex(
           arch => arch.profile.peerId === archaeologist.profile.peerId
@@ -105,7 +105,7 @@ export function useArchaeologistList() {
     dispatch(setSortDirection(SortFilterType.ADDRESS_SEARCH, directionValue));
   }
 
-  const sortedArchaeologists = useCallback((): Archaeologist[] => {
+  const sortedArchaeologists = useCallback((): ArchaeologistData[] => {
     const sortOrderByMap: { [key: number]: 'asc' | 'desc' | undefined } = {
       [SortDirection.NONE]: undefined,
       [SortDirection.ASC]: 'asc',
@@ -143,14 +143,14 @@ export function useArchaeologistList() {
     visibleArchaeologists,
   ]);
 
-  function shouldFilterBySelected(arch: Archaeologist): boolean {
+  function shouldFilterBySelected(arch: ArchaeologistData): boolean {
     if (showOnlySelectedArchaeologists) {
       return selectedArchaeologists.findIndex(a => a.profile.peerId === arch.profile.peerId) !== -1;
     }
     return true;
   }
 
-  const archaeologistListVisible = (arg: { forceShowHidden: boolean }): Archaeologist[] => {
+  const archaeologistListVisible = (arg: { forceShowHidden: boolean }): ArchaeologistData[] => {
     const filteredSorted = sortedArchaeologists()?.filter(
       arch =>
         shouldFilterBySelected(arch) &&

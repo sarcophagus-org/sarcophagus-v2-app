@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { setArchaeologistConnection, setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
-import { Archaeologist, ArchaeologistExceptionCode } from 'types';
+import { ArchaeologistExceptionCode } from 'types';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { createSarcophagusErrors } from '../../utils/errors';
 import { PeerId } from '@libp2p/interface-peer-id';
@@ -9,6 +9,7 @@ import { Connection } from '@libp2p/interface-connection';
 import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import { wait } from 'lib/utils/helpers';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 export function useDialArchaeologists() {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ export function useDialArchaeologists() {
 
   const libp2pNode = useSelector(s => s.appState.libp2pNode);
 
-  const getDialAddress = useCallback((arch: Archaeologist): PeerId | Multiaddr => {
+  const getDialAddress = useCallback((arch: ArchaeologistData): PeerId | Multiaddr => {
     // If peerIdParsed has 2 elements, it has a domain and peerId <domain>:<peerId>
     // Otherwise it is just <peerId>
     const peerIdParsed = arch.profile.peerId.split(':');
@@ -24,12 +25,14 @@ export function useDialArchaeologists() {
     if (peerIdParsed.length === 2) {
       return multiaddr(`/dns4/${peerIdParsed[0]}/tcp/443/wss/p2p/${peerIdParsed[1]}`);
     } else {
+      // TODO: import PeerId type from sarco-sdk?
+      // @ts-ignore
       return arch.fullPeerId!;
     }
   }, []);
 
   const dialPeerIdOrMultiAddr = useCallback(
-    (arch: Archaeologist, isPing?: boolean): Promise<Connection> | Promise<number> | undefined => {
+    (arch: ArchaeologistData, isPing?: boolean): Promise<Connection> | Promise<number> | undefined => {
       const dialAddr = getDialAddress(arch);
 
       // @ts-ignore
@@ -38,8 +41,7 @@ export function useDialArchaeologists() {
     [libp2pNode, getDialAddress]
   );
 
-  const hangUpPeerIdOrMultiAddr = useCallback(
-    (arch: Archaeologist) => {
+  const hangUpPeerIdOrMultiAddr = useCallback((arch: ArchaeologistData) => {
       const dialAddr = getDialAddress(arch);
 
       // @ts-ignore
@@ -49,7 +51,7 @@ export function useDialArchaeologists() {
   );
 
   const dialArchaeologist = useCallback(
-    async (arch: Archaeologist) => {
+    async (arch: ArchaeologistData) => {
       const peerIdString = arch.profile.peerId;
       try {
         const connection = (await dialPeerIdOrMultiAddr(arch)) as Connection;
@@ -123,7 +125,7 @@ export function useDialArchaeologists() {
   );
 
   const pingArchaeologist = useCallback(
-    async (arch: Archaeologist, onComplete: Function) => {
+    async (arch: ArchaeologistData, onComplete: Function) => {
       const pingTimeout = 5000;
       const peerIdString = arch.profile.peerId;
       const couldNotConnect = setTimeout(() => {

@@ -3,13 +3,13 @@ import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers, Signature, Signer } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
-import { Archaeologist } from 'types';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 /**
  * Returns the smallest maximumRewrapInterval value
  * from the profiles of the archaeologists provided
  */
-export function getLowestRewrapInterval(archaeologists: Archaeologist[]): number {
+export function getLowestRewrapInterval(archaeologists: ArchaeologistData[]): number {
   return Math.min(
     ...archaeologists.map(arch => {
       return Number(arch.profile.maximumRewrapInterval);
@@ -21,7 +21,7 @@ export function getLowestRewrapInterval(archaeologists: Archaeologist[]): number
  * Returns the smallest maximumResurrectionTime value
  * from the profiles of the archaeologists provided
  */
-export function getLowestResurrectionTime(archaeologists: Archaeologist[]): number {
+export function getLowestResurrectionTime(archaeologists: ArchaeologistData[]): number {
   return Math.min(
     ...archaeologists.map(arch => {
       return Number(arch.profile.maximumResurrectionTime);
@@ -300,7 +300,7 @@ export async function getCurrentTimeSec(provider: Provider | Web3Provider) {
 }
 
 export function calculateDiggingFees(
-  archaeologist: Archaeologist,
+  archaeologist: ArchaeologistData,
   resurrectionTime: number,
   timestampMs: number
 ): BigNumber | null {

@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { useCallback } from 'react';
 import * as Sentry from '@sentry/react';
 
 const graphQlClient = new ApolloClient({
@@ -7,56 +6,12 @@ const graphQlClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export interface ArchDataSubgraph {
-  address: string;
-  successes: string[];
-  accusals: string;
-  failures: string;
-  peerId: string;
-  freeBond: string;
-  maximumResurrectionTime: string;
-  maximumRewrapInterval: string;
-  minimumDiggingFeePerSecond: string;
-  curseFee: string;
-}
-
-const getArchsQuery = `query {
-    archaeologists (orderBy: blockTimestamp, first: 1000) {
-        address
-        successes
-        accusals
-        failures
-        freeBond
-        maximumResurrectionTime
-        maximumRewrapInterval
-        minimumDiggingFeePerSecond
-        curseFee
-        peerId
-    }
-  }`;
-
 const getSarcoRewrapsQuery = (sarcoId: string) => `query {
   rewrapSarcophaguses (where: {sarcoId: "${sarcoId}"}) { id }
 }`;
 
+// TODO: Deprecate this hook and use the sarco-sdk instead (move getSarcophagusRewraps to sarco-sdk)
 export function useGraphQl() {
-  const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
-    try {
-      const { archaeologists } = (
-        await graphQlClient.query({
-          query: gql(getArchsQuery),
-          fetchPolicy: 'cache-first',
-        })
-      ).data as { archaeologists: ArchDataSubgraph[] };
-
-      return archaeologists;
-    } catch (e) {
-      console.error(e);
-      Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
-      return [];
-    }
-  }, []);
-
   const getSarcophagusRewraps = async (sarcoId: string) => {
     try {
       const { rewrapSarcophaguses } = (
@@ -74,5 +29,5 @@ export function useGraphQl() {
     }
   };
 
-  return { getArchaeologists, getSarcophagusRewraps };
+  return { getSarcophagusRewraps };
 }

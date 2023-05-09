@@ -16,11 +16,11 @@ import {
 import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
-import { Archaeologist } from '../../../../types/index';
 import { MultiLineTooltip } from './MultiLineTooltip';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 interface ArchaeologistListItemProps {
-  archaeologist: Archaeologist;
+  archaeologist: ArchaeologistData;
   isSelected: boolean;
   includeDialButton: boolean;
   isDialing: boolean;

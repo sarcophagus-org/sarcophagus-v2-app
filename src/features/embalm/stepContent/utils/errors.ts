@@ -1,8 +1,8 @@
-import { Archaeologist } from '../../../../types';
 import { CreateSarcophagusStage } from './createSarcophagus';
 import { formatContractCallException } from '../../../../lib/utils/contract-error-handler';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
-const processArchCommsException = (offendingArchs: Archaeologist[]) => {
+const processArchCommsException = (offendingArchs: ArchaeologistData[]) => {
   if (!!offendingArchs.length) {
     console.log(
       '',
@@ -24,7 +24,7 @@ export const createSarcophagusErrors: Record<number, string> = {
 export const formatCreateSarcophagusError = (
   sourceStage: CreateSarcophagusStage,
   e: any,
-  selectedArchaeologists?: Archaeologist[]
+  selectedArchaeologists?: ArchaeologistData[]
 ): string => {
   switch (sourceStage) {
     case CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS:
