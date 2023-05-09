@@ -1,8 +1,10 @@
 import { NetworkConfig } from './networkConfigType';
 import { hardhatNetworkConfig } from './hardhat';
-import { mainnetNetworkConfig } from './mainnet';
-import { goerliNetworkConfig } from './goerli';
-import { sepoliaNetworkConfig } from './sepolia';
+import {
+  goerliNetworkConfig,
+  sepoliaNetworkConfig,
+  mainnetNetworkConfig,
+} from 'sarcophagus-v2-sdk';
 
 export const networkConfigs: { [chainId: number]: NetworkConfig } = {
   1: mainnetNetworkConfig,

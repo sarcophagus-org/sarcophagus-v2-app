@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { useSelector } from '../../../../../store';
 import { useCallback, useContext } from 'react';
 import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagusArgs';
@@ -7,7 +6,7 @@ import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
 import { sarco } from 'sarcophagus-v2-sdk';
 
-export function useSubmitSarcophagus(embalmerFacet: ethers.Contract) {
+export function useSubmitSarcophagus() {
   const {
     name,
     recipientState,

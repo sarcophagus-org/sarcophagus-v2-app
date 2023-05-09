@@ -43,7 +43,7 @@ export function useCreateSarcophagus(
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetArweavePayload, uploadStep } = useUploadFileAndKeyShares();
   const { approve: approveSarcoToken } = useApprove({ amount: approveAmount });
-  const { submitSarcophagus } = useSubmitSarcophagus(embalmerFacet);
+  const { submitSarcophagus } = useSubmitSarcophagus();
   const { clearSarcophagusState, successData } = useClearSarcophagusState();
 
   const stageInfoMap = useMemo(() => {

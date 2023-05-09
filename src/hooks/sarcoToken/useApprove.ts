@@ -12,7 +12,8 @@ export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {
 
   async function approve() {
     try {
-      await sarco.token.approve(args.amount);
+      const tx = await sarco.token.approve(args.amount);
+      await tx.wait();
       toast(approveSuccess());
       if (!!args?.onApprove) args?.onApprove();
     } catch (e) {
