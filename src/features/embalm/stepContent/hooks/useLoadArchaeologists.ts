@@ -22,7 +22,6 @@ export function useLoadArchaeologists() {
   const [isArchsLoaded, setIsArchsLoaded] = useState<boolean>(false);
   const [isDependenciesReady, setIsDependenciesReady] = useState<boolean>(false);
 
-  // const { getArchaeologists } = useGraphQl();
   const { data: signer } = useSigner();
 
   const viewStateFacet = useContract({
@@ -40,7 +39,7 @@ export function useLoadArchaeologists() {
       if (addresses.length === 0) return [];
 
       try {
-        return sarcoClient.archaeologist.getFullArchProfilesFromAddresses(addresses);
+        return sarcoClient.archaeologist.getFullArchProfiles(addresses);
       } catch (e) {
         console.log('error loading archs', e);
         Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
@@ -55,10 +54,13 @@ export function useLoadArchaeologists() {
       return [];
     }
 
-    const addresses: string[] = await viewStateFacet.callStatic.getArchaeologistProfileAddresses();
-
-    if (!addresses || addresses.length === 0) return [];
-    return sarcoClient.archaeologist.getFullArchProfilesFromAddresses(addresses);
+    try {
+      return sarcoClient.archaeologist.getFullArchProfiles();
+    } catch (e) {
+      console.log('error loading archs', e);
+      Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
+      return [];
+    }
   }, [networkConfig.diamondDeployAddress, signer, viewStateFacet]);
 
   // This useEffect is used to trigger the useEffect below to load archaeologists once
