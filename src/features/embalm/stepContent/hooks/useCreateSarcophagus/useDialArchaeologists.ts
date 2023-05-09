@@ -32,7 +32,10 @@ export function useDialArchaeologists() {
   }, []);
 
   const dialPeerIdOrMultiAddr = useCallback(
-    (arch: ArchaeologistData, isPing?: boolean): Promise<Connection> | Promise<number> | undefined => {
+    (
+      arch: ArchaeologistData,
+      isPing?: boolean
+    ): Promise<Connection> | Promise<number> | undefined => {
       const dialAddr = getDialAddress(arch);
 
       // @ts-ignore
@@ -41,7 +44,8 @@ export function useDialArchaeologists() {
     [libp2pNode, getDialAddress]
   );
 
-  const hangUpPeerIdOrMultiAddr = useCallback((arch: ArchaeologistData) => {
+  const hangUpPeerIdOrMultiAddr = useCallback(
+    (arch: ArchaeologistData) => {
       const dialAddr = getDialAddress(arch);
 
       // @ts-ignore
