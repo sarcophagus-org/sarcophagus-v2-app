@@ -11,6 +11,8 @@ type SubmitSarcophagusArgsTuple = [
   string
 ];
 
+export type Address = `0x${string}`;
+
 export interface ContractArchaeologist {
   archAddress: string;
   diggingFeePerSecond: BigNumber;

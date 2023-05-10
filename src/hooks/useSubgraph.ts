@@ -1,10 +1,7 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { useMemo } from 'react';
 import * as Sentry from '@sentry/react';
-
-const graphQlClient = new ApolloClient({
-  uri: process.env.REACT_APP_SUBGRAPH_API_URL,
-  cache: new InMemoryCache(),
-});
+import { useNetworkConfig } from 'lib/config';
 
 const getSarcoRewrapsQuery = (sarcoId: string) => `query {
   rewrapSarcophaguses (where: {sarcoId: "${sarcoId}"}) { id }
@@ -12,6 +9,17 @@ const getSarcoRewrapsQuery = (sarcoId: string) => `query {
 
 // TODO: Deprecate this hook and use the sarco-sdk instead (move getSarcophagusRewraps to sarco-sdk)
 export function useGraphQl() {
+  const networkConfig = useNetworkConfig();
+
+  const graphQlClient = useMemo(
+    () =>
+      new ApolloClient({
+        uri: networkConfig.subgraphUrl,
+        cache: new InMemoryCache(),
+      }),
+    [networkConfig.subgraphUrl]
+  );
+
   const getSarcophagusRewraps = async (sarcoId: string) => {
     try {
       const { rewrapSarcophaguses } = (
