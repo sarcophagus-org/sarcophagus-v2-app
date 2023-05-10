@@ -14,7 +14,7 @@ type SubmitSarcophagusArgsTuple = [
 export type Address = `0x${string}`;
 
 export interface ContractArchaeologist {
-  archAddress: string;
+  archAddress: Address;
   diggingFeePerSecond: BigNumber;
   curseFee: BigNumber;
   publicKey: string;
@@ -25,7 +25,7 @@ export interface ContractArchaeologist {
 
 export interface SubmitSarcophagusSettings {
   name: string;
-  recipientAddress: string;
+  recipientAddress: Address;
   resurrectionTime: number;
   threshold: number;
   creationTime: number;
@@ -76,7 +76,9 @@ export function formatSubmitSarcophagusArgs({
   const sarcoId = utils.id(name + Date.now().toString());
   const settings: SubmitSarcophagusSettings = {
     name,
-    recipientAddress: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
+    recipientAddress: (recipientState.publicKey
+      ? computeAddress(recipientState.publicKey)
+      : '') as Address,
     resurrectionTime: Math.trunc(resurrection / 1000),
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),

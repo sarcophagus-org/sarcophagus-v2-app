@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistListItemProps {
   archaeologist: ArchaeologistData;
