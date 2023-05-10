@@ -2,7 +2,6 @@ import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
-import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
 import { getTotalFeesInSarco } from 'lib/utils/helpers';
@@ -31,7 +30,6 @@ import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
-  const { addPeerDiscoveryEventListener } = useBootLibp2pNode(20_000);
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
   const { timestampMs } = useSelector(x => x.appState);
@@ -132,14 +130,7 @@ export function CreateSarcophagus() {
         // await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
-  }, [
-    addPeerDiscoveryEventListener,
-    globalLibp2pNode,
-    dispatch,
-    refreshProfiles,
-    isCreateCompleted,
-    archaeologists,
-  ]);
+  }, [globalLibp2pNode, dispatch, refreshProfiles, isCreateCompleted, archaeologists]);
 
   if (isCreateCompleted()) {
     // setTimeout with delay set to 0 is an easy fix for the following error:

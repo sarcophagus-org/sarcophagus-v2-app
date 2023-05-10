@@ -1,10 +1,9 @@
 import { nodeConfig } from 'lib/config/node_config';
-import { createLibp2p, Libp2p } from 'libp2p';
+import { createLibp2p } from 'libp2p';
 import { useCallback, useEffect } from 'react';
 import { setLibp2p } from 'store/app/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { log } from '../../lib/utils/logger';
-import { useLibp2p } from './useLibp2p';
 
 /**
  * This hook is responsible for initializing a libp2p node
@@ -16,35 +15,9 @@ import { useLibp2p } from './useLibp2p';
  * 2. Start the node
  * 3. Add event listeners to the node for peer discovery and connection
  */
-
-export function useBootLibp2pNode(discoveryPeriod?: number) {
+export function useBootLibp2pNode() {
   const dispatch = useDispatch();
   const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
-  const { onPeerDiscovery } = useLibp2p();
-
-  const addPeerDiscoveryEventListener = useCallback(
-    (libp2pNode: Libp2p): void => {
-      libp2pNode.addEventListener('peer:discovery', onPeerDiscovery);
-
-      // TODO: Remove this once we refactor how libp2p works
-      // Sets a limited time discovery period by removing the listener after a certain period of
-      // time. This is a temporary fix to prevent the discovery listener from causing components to
-      // render endlessly.
-      if (discoveryPeriod) {
-        setTimeout(() => {
-          libp2pNode.removeEventListener('peer:discovery', onPeerDiscovery);
-        }, discoveryPeriod);
-      }
-    },
-    [onPeerDiscovery, discoveryPeriod]
-  );
-
-  // const addPeerDisconnectEventListener = useCallback(
-  //   (libp2pNode: Libp2p): void => {
-  //     libp2pNode.connectionManager.addEventListener('peer:disconnect', onPeerDisconnect);
-  //   },
-  //   [onPeerDisconnect]
-  // );
 
   const createAndStartNode = useCallback(async (): Promise<void> => {
     const newLibp2pNode = await createLibp2p(nodeConfig);
@@ -71,5 +44,5 @@ export function useBootLibp2pNode(discoveryPeriod?: number) {
     })();
   }, [createAndStartNode, globalLibp2pNode]);
 
-  return { addPeerDiscoveryEventListener, createAndStartNode };
+  return { createAndStartNode };
 }
