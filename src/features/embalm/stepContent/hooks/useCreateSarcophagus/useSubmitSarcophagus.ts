@@ -4,7 +4,7 @@ import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagus
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
-import { sarcoClient } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useSubmitSarcophagus() {
   const {
@@ -42,7 +42,7 @@ export function useSubmitSarcophagus() {
     });
 
     try {
-      const tx = await sarcoClient.api.createSarcophagus(...submitSarcophagusArgs);
+      const tx = await sarco.api.createSarcophagus(...submitSarcophagusArgs);
       setSarcophagusTxId(tx.hash);
       await tx.wait();
     } catch (e) {

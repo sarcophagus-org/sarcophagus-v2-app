@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 
-import { sarcoClient } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 /**
@@ -39,7 +39,7 @@ export function useLoadArchaeologists() {
       if (addresses.length === 0) return [];
 
       try {
-        return sarcoClient.archaeologist.getFullArchProfiles(addresses);
+        return sarco.archaeologist.getFullArchProfiles(addresses);
       } catch (e) {
         console.log('error loading archs', e);
         Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
@@ -55,7 +55,7 @@ export function useLoadArchaeologists() {
     }
 
     try {
-      return sarcoClient.archaeologist.getFullArchProfiles();
+      return sarco.archaeologist.getFullArchProfiles();
     } catch (e) {
       console.log('error loading archs', e);
       Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });

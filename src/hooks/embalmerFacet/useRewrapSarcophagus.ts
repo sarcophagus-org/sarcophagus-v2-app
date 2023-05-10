@@ -2,7 +2,7 @@ import { useToast } from '@chakra-ui/react';
 import { rewrapFailure, rewrapSuccess } from 'lib/utils/toast';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sarcoClient } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | null) {
   const toast = useToast();
@@ -17,7 +17,7 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     setError(undefined);
     setIsRewrapping(true);
     try {
-      await sarcoClient.api.rewrapSarcophagus(sarcoId, timeInSeconds);
+      await sarco.api.rewrapSarcophagus(sarcoId, timeInSeconds);
       toast(rewrapSuccess());
       setIsRewrapping(false);
       navigate(`/dashboard/${sarcoId}`);

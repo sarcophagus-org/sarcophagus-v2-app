@@ -2,7 +2,7 @@ import { useToast } from '@chakra-ui/react';
 import { buryFailure, burySuccess } from 'lib/utils/toast';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sarcoClient } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useBurySarcophagus(sarcoId: string) {
   const toast = useToast();
@@ -14,7 +14,7 @@ export function useBurySarcophagus(sarcoId: string) {
   async function bury() {
     setIsBurying(true);
     try {
-      await sarcoClient.api.burySarcophagus(sarcoId);
+      await sarco.api.burySarcophagus(sarcoId);
       toast(burySuccess());
       navigate('/dashboard');
     } catch (e) {
