@@ -1,16 +1,36 @@
 import { Flex, Heading } from '@chakra-ui/react';
 import { MagicFormFiller } from 'components/MagicFormFiller';
 import { StepContent } from 'features/embalm/stepContent';
-import { useBootLibp2pNode } from '../../hooks/libp2p/useBootLibp2pNode';
 import { useLoadArchaeologists } from './stepContent/hooks/useLoadArchaeologists';
 import { StepNavigator } from './stepNavigator';
+import { sarco } from 'sarcophagus-v2-sdk';
+import { useNetwork } from 'wagmi';
+import { useEffect } from 'react';
+import { useDispatch } from 'store';
+import { setLibp2p } from 'store/app/actions';
 
 // Set to true to remove the magic form filler button on the top right
 const hideMagicFormFiller = false;
 
 export function Embalm() {
+  const network = useNetwork();
+
   useLoadArchaeologists();
-  useBootLibp2pNode(20_000);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!network.chain) {
+      return;
+    }
+
+    sarco.init({
+      chainId: network.chain.id,
+      providerUrl: process.env.REACT_APP_BUNDLR_GOERLI_PROVIDER,
+      etherscanApiKey: process.env.REACT_APP_INFURA_API_KEY,
+      // TODO: Remove global libp2p node
+      onInit: p2pNode => dispatch(setLibp2p(p2pNode)),
+    });
+  }, [dispatch, network.chain]);
 
   return (
     <Flex

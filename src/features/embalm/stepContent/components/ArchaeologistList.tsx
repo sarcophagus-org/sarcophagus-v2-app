@@ -21,7 +21,6 @@ import { deselectArchaeologist, SortDirection } from 'store/embalm/actions';
 import { SortFilterType } from 'store/archaeologistList/actions';
 import { FilterInput } from './FilterInput';
 import { useState } from 'react';
-import { useBootLibp2pNode } from '../../../../hooks/libp2p/useBootLibp2pNode';
 import { useDispatch, useSelector } from 'store/index';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
 import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
@@ -61,7 +60,6 @@ export function ArchaeologistList({
   // Used for testing archaeologist connection
   // TODO -- can be removed once we resolve connection issues
   const [isDialing, setIsDialing] = useState(false);
-  useBootLibp2pNode();
 
   function filterIcon(sortType: SortFilterType): JSX.Element {
     return archaeologistFilterSort.sortType === sortType

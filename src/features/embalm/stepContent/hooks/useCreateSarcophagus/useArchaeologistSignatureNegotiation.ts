@@ -2,7 +2,6 @@ import { pipe } from 'it-pipe';
 import { useCallback, useContext } from 'react';
 import { setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
-import { NEGOTIATION_SIGNATURE_STREAM } from '../../../../../lib/config/node_config';
 import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
 import {
   getCurrentTimeSec,
@@ -104,7 +103,7 @@ export function useArchaeologistSignatureNegotiation() {
           const outboundMsg = JSON.stringify(negotiationParams);
 
           try {
-            const stream = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
+            const stream = await arch.connection.newStream('NEGOTIATION_SIGNATURE_STREAM');
 
             await pipe([new TextEncoder().encode(outboundMsg)], stream, async (source: any) => {
               for await (const data of source) {
