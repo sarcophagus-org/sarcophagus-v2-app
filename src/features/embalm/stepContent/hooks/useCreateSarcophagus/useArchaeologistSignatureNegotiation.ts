@@ -13,7 +13,7 @@ import { useDialArchaeologists } from './useDialArchaeologists';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import * as Sentry from '@sentry/react';
 import { useProvider } from 'wagmi';
-import { ArchaeologistExceptionCode } from 'sarcophagus-v2-sdk';
+import { ArchaeologistExceptionCode, NEGOTIATION_SIGNATURE_STREAM } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
@@ -104,7 +104,7 @@ export function useArchaeologistSignatureNegotiation() {
           const outboundMsg = JSON.stringify(negotiationParams);
 
           try {
-            const stream = await arch.connection.newStream('NEGOTIATION_SIGNATURE_STREAM');
+            const stream = await arch.connection.newStream(NEGOTIATION_SIGNATURE_STREAM);
 
             await pipe([new TextEncoder().encode(outboundMsg)], stream, async (source: any) => {
               for await (const data of source) {

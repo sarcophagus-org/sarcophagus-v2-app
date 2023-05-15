@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
@@ -20,6 +20,8 @@ import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSes
 import { AccusePage } from './AccusePage';
 import { AdminDashBoardPage } from './AdminDashboardPage';
 import { useTimestampMs } from 'hooks/useTimestampMs';
+import { useEffect } from 'react';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -135,6 +137,20 @@ export function Pages() {
   ];
 
   const { isConnected } = useAccount();
+
+  const network = useNetwork();
+
+  useEffect(() => {
+    if (!network.chain || sarco.isInitialised) {
+      return;
+    }
+
+    sarco.init({
+      chainId: network.chain.id,
+      providerUrl: process.env.REACT_APP_BUNDLR_GOERLI_PROVIDER,
+      etherscanApiKey: process.env.REACT_APP_INFURA_API_KEY,
+    });
+  }, [network.chain]);
 
   // Handles Bundlr connection and disconnection
   useBundlrSession();

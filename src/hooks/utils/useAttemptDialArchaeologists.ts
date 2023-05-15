@@ -34,7 +34,6 @@ export function useAttemptDialArchaeologists(
         }
 
         setTimeout(async () => {
-          // @ts-ignore
           await sarco.archaeologist.hangUp(arch);
         }, hangUpInterval);
 
