@@ -10,36 +10,12 @@ export enum SarcophagusValidationError {
   CURSE_FEE_TOO_LOW,
 }
 
-export enum ArchaeologistExceptionCode {
-  CONNECTION_EXCEPTION,
-  STREAM_EXCEPTION,
-  DECLINED_SIGNATURE,
-}
-
-export interface ArchaeologistException {
-  code: ArchaeologistExceptionCode;
-  message: string;
-}
-
 export interface SarcophagusArchaeologist {
   diggingFeePerSecond: BigNumber;
   curseFee: BigNumber;
   isAccused: boolean;
   publicKey: string;
   privateKey: string;
-}
-
-export interface ArchaeologistProfile {
-  accusals: BigNumber;
-  archAddress: string;
-  failures: BigNumber;
-  freeBond: BigNumber;
-  maximumRewrapInterval: BigNumber;
-  maximumResurrectionTime: BigNumber;
-  minimumDiggingFeePerSecond: BigNumber;
-  peerId: string;
-  successes: BigNumber;
-  curseFee: BigNumber;
 }
 
 export interface ArchaeologistEncryptedShard {

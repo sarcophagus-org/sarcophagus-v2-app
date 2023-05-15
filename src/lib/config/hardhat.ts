@@ -23,4 +23,5 @@ export const hardhatNetworkConfig: NetworkConfig = {
     timeout: 60000 * 30,
     logging: false,
   },
+  subgraphUrl: '',
 };

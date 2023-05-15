@@ -17,7 +17,7 @@ export function useLoadArchaeologists() {
   const dispatch = useDispatch();
   const networkConfig = useNetworkConfig();
   const { archaeologists, currentChainId } = useSelector(s => s.embalmState);
-  const { libp2pNode, timestampMs } = useSelector(s => s.appState);
+  const { timestampMs } = useSelector(s => s.appState);
   const { chain } = useNetwork();
   const [isArchsLoaded, setIsArchsLoaded] = useState<boolean>(false);
   const [isDependenciesReady, setIsDependenciesReady] = useState<boolean>(false);
@@ -32,7 +32,7 @@ export function useLoadArchaeologists() {
 
   const refreshProfiles = useCallback(
     async (addresses: string[]): Promise<ArchaeologistData[]> => {
-      if (!networkConfig.diamondDeployAddress) {
+      if (!networkConfig.diamondDeployAddress || !sarco.isInitialised) {
         return [];
       }
 
@@ -70,7 +70,6 @@ export function useLoadArchaeologists() {
       !!chain?.id &&
       !!dispatch &&
       !!getRegisteredProfiles &&
-      !!libp2pNode &&
       !!networkConfig.diamondDeployAddress &&
       !!viewStateFacet &&
       !!signer &&
@@ -88,7 +87,6 @@ export function useLoadArchaeologists() {
     currentChainId,
     dispatch,
     getRegisteredProfiles,
-    libp2pNode,
     networkConfig.diamondDeployAddress,
     signer,
     timestampMs,
@@ -103,11 +101,7 @@ export function useLoadArchaeologists() {
 
     // The only reason the archaeologists would need to be loaded from the contract again is when a new
     // archaeologist registers.
-    if (
-      !libp2pNode ||
-      isArchsLoaded ||
-      (archaeologists.length > 0 && currentChainId === chain?.id)
-    ) {
+    if (isArchsLoaded || (archaeologists.length > 0 && currentChainId === chain?.id)) {
       return;
     }
 
@@ -134,7 +128,6 @@ export function useLoadArchaeologists() {
     currentChainId,
     dispatch,
     getRegisteredProfiles,
-    libp2pNode,
     isDependenciesReady,
     isArchsLoaded,
   ]);

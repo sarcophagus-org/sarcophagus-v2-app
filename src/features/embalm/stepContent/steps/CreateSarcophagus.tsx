@@ -30,7 +30,6 @@ import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
-  const globalLibp2pNode = useSelector(s => s.appState.libp2pNode);
   const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
   const { timestampMs } = useSelector(x => x.appState);
   const navigate = useNavigate();
@@ -130,7 +129,7 @@ export function CreateSarcophagus() {
         // await addPeerDiscoveryEventListener(globalLibp2pNode!);
       }
     })();
-  }, [globalLibp2pNode, dispatch, refreshProfiles, isCreateCompleted, archaeologists]);
+  }, [dispatch, refreshProfiles, isCreateCompleted, archaeologists]);
 
   if (isCreateCompleted()) {
     // setTimeout with delay set to 0 is an easy fix for the following error:

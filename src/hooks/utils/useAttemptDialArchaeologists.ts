@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
-import { multiaddr } from '@multiformats/multiaddr';
 import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 import { sarco } from 'sarcophagus-v2-sdk';
 
@@ -28,8 +27,7 @@ export function useAttemptDialArchaeologists(
           throw new Error('PeerId is not valid');
         }
 
-        const ma = multiaddr(`/dns4/${peerIdParsed[0]}/tcp/443/wss/p2p/${peerIdParsed[1]}`);
-        await sarco.archaeologist.dialArchaeologist(ma);
+        await sarco.archaeologist.dialArchaeologist(arch);
 
         if (showToast) {
           toast(dialArchaeologistSuccess());
@@ -37,7 +35,7 @@ export function useAttemptDialArchaeologists(
 
         setTimeout(async () => {
           // @ts-ignore
-          await libp2pNode?.hangUp(ma || peerId);
+          await sarco.archaeologist.hangUp(arch);
         }, hangUpInterval);
 
         return true;

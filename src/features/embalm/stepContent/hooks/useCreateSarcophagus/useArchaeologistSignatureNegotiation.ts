@@ -2,7 +2,7 @@ import { pipe } from 'it-pipe';
 import { useCallback, useContext } from 'react';
 import { setArchaeologistException } from 'store/embalm/actions';
 import { useDispatch, useSelector } from '../../../../../store';
-import { ArchaeologistExceptionCode, SarcophagusValidationError } from 'types';
+import { SarcophagusValidationError } from 'types';
 import {
   getCurrentTimeSec,
   getLowestResurrectionTime,
@@ -13,6 +13,7 @@ import { useDialArchaeologists } from './useDialArchaeologists';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import * as Sentry from '@sentry/react';
 import { useProvider } from 'wagmi';
+import { ArchaeologistExceptionCode } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistSignatureNegotiationParams {
   maxRewrapInterval: number;
