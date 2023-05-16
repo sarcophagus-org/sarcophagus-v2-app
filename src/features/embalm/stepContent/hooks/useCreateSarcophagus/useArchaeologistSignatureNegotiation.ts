@@ -8,7 +8,7 @@ import * as Sentry from '@sentry/react';
 export function useArchaeologistSignatureNegotiation() {
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
 
-  const { setArchaeologistPublicKeys, setArchaeologistSignatures } =
+  const { setArchaeologistPublicKeys, setArchaeologistSignatures, setNegotiationTimestamp } =
     useContext(CreateSarcophagusContext);
 
   const initiateSarcophagusNegotiation = useCallback(
@@ -18,10 +18,8 @@ export function useArchaeologistSignatureNegotiation() {
 
       // if (cancelToken.cancelled) return;
       try {
-        const negotiationResult = await sarco.archaeologist.initiateSarcophagusNegotiation(
-          selectedArchaeologists,
-          isRetry
-        );
+        const [negotiationResult, negotiationTimestamp] =
+          await sarco.archaeologist.initiateSarcophagusNegotiation(selectedArchaeologists, isRetry);
 
         selectedArchaeologists.forEach(arch => {
           const res = negotiationResult.get(arch.profile.peerId)!;
@@ -42,6 +40,7 @@ export function useArchaeologistSignatureNegotiation() {
           throw Error('Not enough signatures');
         }
 
+        setNegotiationTimestamp(negotiationTimestamp);
         setArchaeologistPublicKeys(archaeologistPublicKeys);
         setArchaeologistSignatures(archaeologistSignatures);
       } catch (e) {
@@ -49,7 +48,12 @@ export function useArchaeologistSignatureNegotiation() {
         throw e;
       }
     },
-    [selectedArchaeologists, setArchaeologistPublicKeys, setArchaeologistSignatures]
+    [
+      selectedArchaeologists,
+      setArchaeologistPublicKeys,
+      setArchaeologistSignatures,
+      setNegotiationTimestamp,
+    ]
   );
 
   return {
