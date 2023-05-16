@@ -4,7 +4,6 @@ import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
-import { getTotalFeesInSarco } from 'lib/utils/helpers';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +26,7 @@ import {
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
+import { getTotalFeesInSarco } from 'sarcophagus-v2-sdk';
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();

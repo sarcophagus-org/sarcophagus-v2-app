@@ -10,8 +10,8 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-import { calculateProjectedDiggingFees, formatSarco } from 'lib/utils/helpers';
 import { useMemo } from 'react';
+import { calculateProjectedDiggingFees, formatSarco } from 'sarcophagus-v2-sdk';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 

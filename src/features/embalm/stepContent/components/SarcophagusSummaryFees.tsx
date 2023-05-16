@@ -3,9 +3,10 @@ import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
-import { formatFee, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
+import { formatFee } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
+import { formatSarco, getTotalFeesInSarco } from 'sarcophagus-v2-sdk';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);

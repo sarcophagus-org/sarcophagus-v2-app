@@ -22,11 +22,6 @@ export function useAttemptDialArchaeologists(
           setIsDialing(true);
         }
 
-        const peerIdParsed = arch.profile.peerId.split(':');
-        if (peerIdParsed.length !== 2) {
-          throw new Error('PeerId is not valid');
-        }
-
         await sarco.archaeologist.dialArchaeologist(arch);
 
         if (showToast) {

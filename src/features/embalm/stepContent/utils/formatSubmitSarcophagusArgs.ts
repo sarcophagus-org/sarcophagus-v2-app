@@ -1,8 +1,8 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { computeAddress } from 'ethers/lib/utils';
-import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
 import { RecipientState } from '../../../../store/embalm/actions';
 import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { getLowestResurrectionTime, getLowestRewrapInterval } from 'sarcophagus-v2-sdk';
 
 type SubmitSarcophagusArgsTuple = [
   string,

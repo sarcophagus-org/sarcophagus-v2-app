@@ -1,33 +1,6 @@
-import { Provider, Web3Provider } from '@ethersproject/providers';
 import { decrypt as eciesDecrypt, encrypt as eciesEncrypt } from 'ecies-geth';
 import { BigNumber, ethers, Signature, Signer } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
-
-/**
- * Returns the smallest maximumRewrapInterval value
- * from the profiles of the archaeologists provided
- */
-export function getLowestRewrapInterval(archaeologists: ArchaeologistData[]): number {
-  return Math.min(
-    ...archaeologists.map(arch => {
-      return Number(arch.profile.maximumRewrapInterval);
-    })
-  );
-}
-
-/**
- * Returns the smallest maximumResurrectionTime value
- * from the profiles of the archaeologists provided
- */
-export function getLowestResurrectionTime(archaeologists: ArchaeologistData[]): number {
-  return Math.min(
-    ...archaeologists.map(arch => {
-      return Number(arch.profile.maximumResurrectionTime);
-    })
-  );
-}
 
 /**
  * Formats an address into a more readable format
@@ -153,80 +126,6 @@ export function formatFee(value: number | string, fixed = 2): string {
 }
 
 /**
- * @param diggingFeeRates An array of the archaeologist's digging fees per second rates
- * @param resurrectionTimestamp The timestamp of the resurrection in ms
- * @returns The total projected digging fees as a string
- */
-export function calculateProjectedDiggingFees(
-  diggingFeeRates: BigNumber[],
-  resurrectionTimestamp: number,
-  timestampMs: number
-): BigNumber {
-  if (resurrectionTimestamp === 0) return ethers.constants.Zero;
-  const totalDiggingFeesPerSecond = diggingFeeRates.reduce(
-    (acc, curr) => acc.add(curr),
-    ethers.constants.Zero
-  );
-
-  const resurrectionSeconds = Math.floor(resurrectionTimestamp / 1000);
-  const nowSeconds = Math.floor(timestampMs / 1000);
-
-  return totalDiggingFeesPerSecond.mul(resurrectionSeconds - nowSeconds);
-}
-
-/**
- * Reduces the number of decimals displayed for sarco value (or any float). If the value is a whole
- * number, decimals will be hidden. If a precision of 2 is set and the value is 0.0000452, then
- * "< 0.01" will be returned.
- *
- * @param valueInWei The value to be formateed
- * @param precision The number of decimal places to show
- * @returns A formatted value
- */
-export function formatSarco(valueInWei: string | number, precision: number = 2): string {
-  const value = formatEther(valueInWei.toString());
-  const numericValue: number = Number(value);
-  if (isNaN(numericValue)) {
-    return value.toString();
-  }
-  const formattedValue: string = numericValue.toFixed(precision).replace(/\.?0*$/, '');
-
-  if (formattedValue === '0' && parseFloat(value) > 0) {
-    return `< 0.${'0'.repeat(precision - 1)}1`;
-  }
-
-  return formattedValue;
-}
-
-/**
- * Returns the estimated total digging fees, and protocol fee,
- * that the embalmer will be due to pay.
- */
-export function getTotalFeesInSarco(
-  resurrectionTimestamp: number,
-  diggingFeeRates: BigNumber[],
-  timestampMs: number,
-  protocolFeeBasePercentage?: number
-) {
-  const totalDiggingFees = calculateProjectedDiggingFees(
-    diggingFeeRates,
-    resurrectionTimestamp,
-    timestampMs
-  );
-
-  // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
-  const protocolFee = protocolFeeBasePercentage
-    ? totalDiggingFees.div(BigNumber.from(100 * protocolFeeBasePercentage))
-    : ethers.constants.Zero;
-
-  return {
-    totalDiggingFees,
-    formattedTotalDiggingFees: formatSarco(totalDiggingFees.toString()),
-    protocolFee,
-  };
-}
-
-/**
  * Builds a resurrection date string from a BigNumber
  * Ex: 09.22.2022 7:30pm (12 Days)
  * @param resurrectionTime
@@ -284,29 +183,4 @@ export async function sign(
   return ethers.utils.splitSignature(signature);
 }
 
-// This function estimates sarco per month based on average number of days per month. This value is
-// only used to display to the user, never as an argument to the smart contracts.
-export function convertSarcoPerSecondToPerMonth(diggingFeePerSecond: string): string {
-  const averageNumberOfSecondsPerMonth = 2628288;
-  return BigNumber.from(diggingFeePerSecond).mul(averageNumberOfSecondsPerMonth).toString();
-}
-
 export const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-export async function getCurrentTimeSec(provider: Provider | Web3Provider) {
-  const blockNumber = await provider.getBlockNumber();
-  const block = await provider.getBlock(blockNumber);
-  return block.timestamp;
-}
-
-export function calculateDiggingFees(
-  archaeologist: ArchaeologistData,
-  resurrectionTime: number,
-  timestampMs: number
-): BigNumber | null {
-  const nowSec = Math.floor(timestampMs / 1000);
-  const resurrectionTimeSec = Math.floor(resurrectionTime / 1000);
-  return resurrectionTimeSec > nowSec
-    ? archaeologist.profile.minimumDiggingFeePerSecond.mul(resurrectionTimeSec - nowSec)
-    : null;
-}

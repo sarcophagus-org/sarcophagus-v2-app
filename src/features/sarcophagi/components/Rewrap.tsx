@@ -19,9 +19,10 @@ import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
-import { buildResurrectionDateString, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
+import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { formatSarco, getTotalFeesInSarco } from 'sarcophagus-v2-sdk';
 import { useSelector } from 'store/index';
 
 export function Rewrap() {

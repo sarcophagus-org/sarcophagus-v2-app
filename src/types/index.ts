@@ -1,28 +1,5 @@
 import { BigNumber } from 'ethers';
 
-// TODO: Replace with import from proposed npm package
-export enum SarcophagusValidationError {
-  UNKNOWN_ERROR,
-  MAX_REWRAP_INTERVAL_TOO_LARGE,
-  DIGGING_FEE_TOO_LOW,
-  INVALID_TIMESTAMP,
-  MAX_RESURRECTION_TIME_TOO_LARGE,
-  CURSE_FEE_TOO_LOW,
-}
-
-export interface SarcophagusArchaeologist {
-  diggingFeePerSecond: BigNumber;
-  curseFee: BigNumber;
-  isAccused: boolean;
-  publicKey: string;
-  privateKey: string;
-}
-
-export interface ArchaeologistEncryptedShard {
-  publicKey: string;
-  encryptedShard: string;
-}
-
 export enum SarcophagusState {
   DoesNotExist,
   Active,

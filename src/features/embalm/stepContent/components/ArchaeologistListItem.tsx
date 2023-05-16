@@ -1,12 +1,7 @@
 import { Box, Button, Checkbox, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { SarcoTokenIcon } from 'components/icons';
 import { useNetworkConfig } from 'lib/config';
-import {
-  calculateDiggingFees,
-  convertSarcoPerSecondToPerMonth,
-  formatAddress,
-  formatSarco,
-} from 'lib/utils/helpers';
+import { formatAddress } from 'lib/utils/helpers';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import {
   deselectArchaeologist,
@@ -17,7 +12,12 @@ import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk';
+import {
+  ArchaeologistData,
+  calculateDiggingFees,
+  convertSarcoPerSecondToPerMonth,
+  formatSarco,
+} from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistListItemProps {
   archaeologist: ArchaeologistData;

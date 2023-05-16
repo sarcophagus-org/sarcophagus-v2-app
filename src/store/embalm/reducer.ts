@@ -1,10 +1,12 @@
 import { BigNumber, ethers } from 'ethers';
 import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { removeFromArray } from 'lib/utils/helpers';
-import { ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
 import { ActionType, RecipientState } from './actions';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import {
+  ArchaeologistData,
+  ArchaeologistEncryptedShard,
+} from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 export enum StepStatus {
   Complete = 'complete',

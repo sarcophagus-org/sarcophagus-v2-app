@@ -1,8 +1,9 @@
 import { constants, ethers } from 'ethers';
 import { monthSeconds } from 'lib/constants';
-import { calculateDiggingFees, filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
+import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
 import { keys, orderBy } from 'lodash';
 import { useCallback } from 'react';
+import { calculateDiggingFees } from 'sarcophagus-v2-sdk';
 import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
