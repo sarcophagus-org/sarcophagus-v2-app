@@ -3,7 +3,7 @@ import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra
 import { useState } from 'react';
 import { Sarcophagus } from 'types';
 import { ArchaeologistDetailItem } from './ArchaeologistDetailsItem';
-import { SarcophagusArchaeologist, getSarcophagusRewraps } from 'sarcophagus-v2-sdk';
+import { SarcophagusArchaeologist, sarco } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistsDetailsCollapseProps {
   sarcophagus: Sarcophagus;
@@ -18,7 +18,7 @@ export function ArchaeologistsDetailsCollapse({
   const [sarcoHasRewraps, setHasRewraps] = useState<boolean>();
 
   if (sarcoHasRewraps === undefined)
-    getSarcophagusRewraps(sarcophagus.id).then((rewraps: any) => {
+    sarco.api.getRewrapsOnSarcophagus(sarcophagus.id).then((rewraps: any) => {
       setHasRewraps(rewraps?.length > 0);
     });
 
