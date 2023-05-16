@@ -2,12 +2,12 @@ import { useSelector } from '../../../../store';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useNetworkConfig } from 'lib/config';
-import { hardhatChainId } from 'lib/config/hardhat';
 import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
 import moment from 'moment';
 import { minimumResurrection } from 'lib/constants';
 import { ethers } from 'ethers';
 import { getLowestResurrectionTime, getLowestRewrapInterval } from 'sarcophagus-v2-sdk';
+import { hardhatChainId } from 'lib/config/networkConfigs';
 
 export interface SarcophagusParameter {
   name: string;

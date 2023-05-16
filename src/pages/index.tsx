@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
