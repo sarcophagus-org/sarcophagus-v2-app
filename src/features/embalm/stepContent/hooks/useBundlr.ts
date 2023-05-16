@@ -102,8 +102,6 @@ export function useBundlr() {
    * */
   const prepareToUpload = useCallback(
     (payloadBuffer: Buffer, cancelToken: CancelCreateToken, resolve?: any, reject?: any) => {
-      console.log('Preparing to upload...', payloadBuffer.length, 'bytes');
-      
       setFileBuffer(payloadBuffer);
       setCancelUploadToken(cancelToken);
       resolveUploadPromise.current = resolve;
@@ -155,8 +153,7 @@ export function useBundlr() {
         dispatch(setIsUploading(false));
       });
 
-      console.log('Uploading...');
-      
+
       const uploadPromise = chunkedUploader
         ?.uploadData(fileBuffer)
         .then(res => {
