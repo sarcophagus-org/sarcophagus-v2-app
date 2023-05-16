@@ -1,10 +1,9 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
-import { useGraphQl } from 'hooks/useSubgraph';
 import { useState } from 'react';
 import { Sarcophagus } from 'types';
 import { ArchaeologistDetailItem } from './ArchaeologistDetailsItem';
-import { SarcophagusArchaeologist } from 'sarcophagus-v2-sdk';
+import { SarcophagusArchaeologist, getSarcophagusRewraps } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistsDetailsCollapseProps {
   sarcophagus: Sarcophagus;
@@ -16,12 +15,11 @@ export function ArchaeologistsDetailsCollapse({
   sarcophagus,
 }: ArchaeologistsDetailsCollapseProps) {
   const { isOpen, onToggle } = useDisclosure();
-  const { getSarcophagusRewraps } = useGraphQl();
   const [sarcoHasRewraps, setHasRewraps] = useState<boolean>();
 
   if (sarcoHasRewraps === undefined)
-    getSarcophagusRewraps(sarcophagus.id).then(rewraps => {
-      setHasRewraps(rewraps.length > 0);
+    getSarcophagusRewraps(sarcophagus.id).then((rewraps: any) => {
+      setHasRewraps(rewraps?.length > 0);
     });
 
   return (
