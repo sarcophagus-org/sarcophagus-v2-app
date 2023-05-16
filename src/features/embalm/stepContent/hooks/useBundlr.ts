@@ -153,7 +153,6 @@ export function useBundlr() {
         dispatch(setIsUploading(false));
       });
 
-
       const uploadPromise = chunkedUploader
         ?.uploadData(fileBuffer)
         .then(res => {
