@@ -15,7 +15,6 @@ export function useArchaeologistSignatureNegotiation() {
       const archaeologistSignatures = new Map<string, string>([]);
       const archaeologistPublicKeys = new Map<string, string>([]);
 
-      // if (cancelToken.cancelled) return;
       try {
         const [negotiationResult, negotiationTimestamp] =
           await sarco.archaeologist.initiateSarcophagusNegotiation(selectedArchaeologists, isRetry);
