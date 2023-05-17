@@ -1,7 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
-import { CancelCreateToken } from './useCreateSarcophagus';
 import { sarco } from 'sarcophagus-v2-sdk';
 import * as Sentry from '@sentry/react';
 
@@ -12,7 +11,7 @@ export function useArchaeologistSignatureNegotiation() {
     useContext(CreateSarcophagusContext);
 
   const initiateSarcophagusNegotiation = useCallback(
-    async (isRetry: boolean, cancelToken: CancelCreateToken): Promise<void> => {
+    async (isRetry: boolean): Promise<void> => {
       const archaeologistSignatures = new Map<string, string>([]);
       const archaeologistPublicKeys = new Map<string, string>([]);
 

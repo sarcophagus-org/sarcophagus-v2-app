@@ -62,7 +62,7 @@ export function formatSubmitSarcophagusArgs({
         archaeologistSignatures.get(arch.profile.archAddress)!
       );
       return {
-        archAddress: arch.profile.archAddress,
+        archAddress: arch.profile.archAddress as `0x${string}`,
         diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond,
         curseFee: arch.profile.curseFee,
         publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
