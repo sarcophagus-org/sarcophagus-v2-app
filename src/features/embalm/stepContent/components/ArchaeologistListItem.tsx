@@ -103,7 +103,7 @@ export function ArchaeologistListItem({
             <Box width={!icon && !checkbox ? '4' : '0'} />
             <Text
               ml={3}
-              bg={archaeologist.hiddenReason ? 'transparent.red' : 'grayBlue.950'}
+              bg={archaeologist.ineligibleReason ? 'transparent.red' : 'grayBlue.950'}
               color={rowTextColor}
               py={0.5}
               px={2}
@@ -119,13 +119,13 @@ export function ArchaeologistListItem({
 
   return (
     <Tooltip
-      label={archaeologist.hiddenReason}
+      label={archaeologist.ineligibleReason}
       placement="top"
     >
       <Tr
         background={
           isSelected
-            ? archaeologist.exception || archaeologist.hiddenReason
+            ? archaeologist.exception || archaeologist.ineligibleReason
               ? 'background.red'
               : 'brand.50'
             : ''
@@ -136,7 +136,7 @@ export function ArchaeologistListItem({
       >
         <TableContent
           icon={false}
-          checkbox={!archaeologist.hiddenReason}
+          checkbox={!archaeologist.ineligibleReason}
           align="left"
         >
           {formattedArchAddress()}

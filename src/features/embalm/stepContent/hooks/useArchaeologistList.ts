@@ -40,7 +40,7 @@ export function useArchaeologistList() {
   const [visibleArchaeologists, hiddenArchaeologists] = filterSplit(onlineArchaeologists, a => {
     const maxResurrectionTimeMs = a.profile.maximumResurrectionTime.toNumber() * 1000;
     if (resurrectionTimeMs > maxResurrectionTimeMs) {
-      a.hiddenReason = `This archaeologist will not be available at the resurrection time you have set. Available until: ${humanizeUnixTimestamp(
+      a.ineligibleReason = `This archaeologist will not be available at the resurrection time you have set. Available until: ${humanizeUnixTimestamp(
         maxResurrectionTimeMs
       )}`;
       return false;
@@ -56,19 +56,19 @@ export function useArchaeologistList() {
           .add(a.profile.curseFee);
 
     if (resurrectionIntervalMs > maxRewrapIntervalMs) {
-      a.hiddenReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
+      a.ineligibleReason = `The time interval to your resurrection time exceeds the maximum period this archaeologist is willing to be responsible for a Sarcophagus. Maximum interval: ~${Math.round(
         maxRewrapIntervalMs / (monthSeconds * 1000)
       )} months`;
       return false;
     }
 
     if (estimatedCurse.gt(a.profile.freeBond)) {
-      a.hiddenReason =
+      a.ineligibleReason =
         'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
       return false;
     }
 
-    a.hiddenReason = undefined;
+    a.ineligibleReason = undefined;
     return true;
   });
 

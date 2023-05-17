@@ -214,7 +214,7 @@ export function ArchaeologistList({
                       key={arch.profile.archAddress}
                       archaeologist={arch}
                       onClick={() => {
-                        if (showDial || arch.hiddenReason) return;
+                        if (showDial || arch.ineligibleReason) return;
                         handleCheckArchaeologist(arch);
                       }}
                       includeDialButton={showDial!}
