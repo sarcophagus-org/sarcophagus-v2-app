@@ -32,7 +32,7 @@ export function SarcophagusSummaryFees() {
         }) => {
           setTotalDiggingFees(diggingFees);
           setProtocolFee(protocolFeeVal);
-          setProtocolFeeBasePercentage(baseFeePercent.mul(100).toString());
+          setProtocolFeeBasePercentage(baseFeePercent.toString());
           setFormattedTotalDiggingFees(formattedDiggingFees);
 
           const totalCurseFeesCalc = selectedArchaeologists.reduce(

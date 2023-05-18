@@ -92,11 +92,6 @@ export function Rewrap() {
           protocolFee: protocolFeeVal,
           protocolFeeBasePercentage: baseFeePercentage,
         }) => {
-          console.log({
-            totalDiggingFees: diggingFees,
-            protocolFee: protocolFeeVal,
-            protocolFeeBasePercentage: baseFeePercentage,
-          });
           setTotalDiggingFees(diggingFees);
           setProtocolFee(protocolFeeVal);
           setProtocolFeeBasePercentage(baseFeePercentage);
@@ -279,7 +274,8 @@ export function Rewrap() {
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Protocol fee ({protocolFeeBasePercentage.toString()}%): {formatSarco(protocolFee.toString())} SARCO
+            Protocol fee ({protocolFeeBasePercentage.toString()}%):{' '}
+            {formatSarco(protocolFee.toString())} SARCO
           </Text>
         </HStack>
       </VStack>
