@@ -1,9 +1,8 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { RetryCreateModal } from 'components/RetryCreateModal';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +25,7 @@ import {
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
-import { getTotalFeesInSarco } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
@@ -57,22 +56,30 @@ export function CreateSarcophagus() {
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
-  const protocolFeeBasePercentage = useGetProtocolFeeAmount();
-
-  const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
-    resurrectionTimeMs,
-    selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
-    timestampMs,
-    protocolFeeBasePercentage
+  const [totalDiggingFees, setTotalDiggingFees] = useState<BigNumber>();
+  const [protocolFee, setProtocolFee] = useState<BigNumber>();
+  const [totalFeesWithApproveBuffer, setTotalFeesWithApproveBuffer] = useState(
+    ethers.constants.Zero
   );
 
-  const totalCurseFees = selectedArchaeologists.reduce((acc, archaeologist) => {
-    return acc.add(archaeologist.profile.curseFee);
-  }, BigNumber.from(0));
-  const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
-  const totalFees = diggingFeesAndCurseFees.add(protocolFee);
+  useEffect(() => {
+    sarco.archaeologist
+      .getTotalFeesInSarco(selectedArchaeologists, resurrectionTimeMs, timestampMs)
+      .then(({ totalDiggingFees: diggingFees, protocolFee: protocolFeeVal }) => {
+        setTotalDiggingFees(diggingFees);
+        setProtocolFee(protocolFeeVal);
 
-  const totalFeesWithApproveBuffer = totalFees.add(totalFees.div(10));
+        const totalCurseFees = selectedArchaeologists.reduce(
+          (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
+          BigNumber.from(0)
+        );
+
+        const diggingFeesAndCurseFees = diggingFees.add(totalCurseFees);
+        const totalFees = diggingFeesAndCurseFees.add(protocolFeeVal);
+
+        setTotalFeesWithApproveBuffer(totalFees.add(totalFees.div(10)));
+      });
+  }, [resurrectionTimeMs, selectedArchaeologists, timestampMs]);
 
   const {
     currentStage,
@@ -159,6 +166,8 @@ export function CreateSarcophagus() {
               mt={9}
               onClick={handleCreate}
               disabled={
+                !totalDiggingFees ||
+                !protocolFee ||
                 balance?.lte(totalDiggingFees.add(protocolFee)) ||
                 !isSarcophagusFormDataComplete() ||
                 isError

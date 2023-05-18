@@ -31,12 +31,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   }
 
   const diggingFees = useMemo(
-    () =>
-      calculateProjectedDiggingFees(
-        selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
-        resurrection,
-        timestampMs
-      ),
+    () => calculateProjectedDiggingFees(selectedArchaeologists, resurrection, timestampMs),
     [resurrection, selectedArchaeologists, timestampMs]
   );
 
