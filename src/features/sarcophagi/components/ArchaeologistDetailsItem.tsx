@@ -1,8 +1,11 @@
 import { Text, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { convertSarcoPerSecondToPerMonth, formatSarco } from 'lib/utils/helpers';
-import { SarcophagusArchaeologist } from 'types';
+import {
+  SarcophagusArchaeologist,
+  convertSarcoPerSecondToPerMonth,
+  formatSarco,
+} from 'sarcophagus-v2-sdk';
 import { useEnsName } from 'wagmi';
 interface ArchaeologistDetailItemProps {
   archaeologist: SarcophagusArchaeologist & { address: `0x${string}` };

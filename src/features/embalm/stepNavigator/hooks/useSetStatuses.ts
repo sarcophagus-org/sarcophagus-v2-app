@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
-import { hardhatChainId } from '../../../../lib/config/hardhat';
+import { hardhatChainId } from 'lib/config/networkConfigs';
 
 export function validateRecipient(recipient: RecipientState) {
   try {

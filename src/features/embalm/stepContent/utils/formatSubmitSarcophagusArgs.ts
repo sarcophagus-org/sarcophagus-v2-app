@@ -1,8 +1,8 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { computeAddress } from 'ethers/lib/utils';
-import { getLowestResurrectionTime, getLowestRewrapInterval } from '../../../../lib/utils/helpers';
 import { RecipientState } from '../../../../store/embalm/actions';
-import { Archaeologist } from '../../../../types';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { getLowestResurrectionTime, getLowestRewrapInterval } from 'sarcophagus-v2-sdk';
 
 type SubmitSarcophagusArgsTuple = [
   string,
@@ -14,7 +14,7 @@ type SubmitSarcophagusArgsTuple = [
 export type Address = `0x${string}`;
 
 export interface ContractArchaeologist {
-  archAddress: string;
+  archAddress: Address;
   diggingFeePerSecond: BigNumber;
   curseFee: BigNumber;
   publicKey: string;
@@ -25,7 +25,7 @@ export interface ContractArchaeologist {
 
 export interface SubmitSarcophagusSettings {
   name: string;
-  recipientAddress: string;
+  recipientAddress: Address;
   resurrectionTime: number;
   threshold: number;
   creationTime: number;
@@ -37,7 +37,7 @@ export interface SubmitSarcophagusProps {
   name: string;
   recipientState: RecipientState;
   resurrection: number;
-  selectedArchaeologists: Archaeologist[];
+  selectedArchaeologists: ArchaeologistData[];
   requiredArchaeologists: number;
   negotiationTimestamp: number;
   archaeologistPublicKeys: Map<string, string>;
@@ -62,7 +62,7 @@ export function formatSubmitSarcophagusArgs({
         archaeologistSignatures.get(arch.profile.archAddress)!
       );
       return {
-        archAddress: arch.profile.archAddress,
+        archAddress: arch.profile.archAddress as `0x${string}`,
         diggingFeePerSecond: arch.profile.minimumDiggingFeePerSecond,
         curseFee: arch.profile.curseFee,
         publicKey: archaeologistPublicKeys.get(arch.profile.archAddress)!,
@@ -76,7 +76,9 @@ export function formatSubmitSarcophagusArgs({
   const sarcoId = utils.id(name + Date.now().toString());
   const settings: SubmitSarcophagusSettings = {
     name,
-    recipientAddress: recipientState.publicKey ? computeAddress(recipientState.publicKey) : '',
+    recipientAddress: (recipientState.publicKey
+      ? computeAddress(recipientState.publicKey)
+      : '') as Address,
     resurrectionTime: Math.trunc(resurrection / 1000),
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),

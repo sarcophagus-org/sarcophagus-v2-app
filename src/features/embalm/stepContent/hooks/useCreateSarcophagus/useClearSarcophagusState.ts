@@ -10,7 +10,7 @@ import {
   setSelectedArchaeologists,
 } from '../../../../../store/embalm/actions';
 import { Step } from '../../../../../store/embalm/reducer';
-import { useDialArchaeologists } from './useDialArchaeologists';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export interface SuccessData {
   successSarcophagusPayloadTxId: string;
@@ -31,7 +31,6 @@ export function useClearSarcophagusState() {
 
   const dispatch = useDispatch();
   const { selectedArchaeologists } = useSelector(x => x.embalmState);
-  const { hangUpPeerIdOrMultiAddr } = useDialArchaeologists();
 
   const [successSarcophagusPayloadTxId, setSuccessSarcophagusPayloadTxId] = useState('');
   const [successSarcophagusTxId, setSuccessSarcophagusTxId] = useState('');
@@ -58,7 +57,7 @@ export function useClearSarcophagusState() {
     // hang up archaeologists and reset connection
     for await (const arch of selectedArchaeologists) {
       if (arch.connection) {
-        hangUpPeerIdOrMultiAddr(arch);
+        sarco.archaeologist.hangUp(arch);
         dispatch(setArchaeologistConnection(arch.profile.peerId, undefined));
       }
     }
@@ -75,7 +74,6 @@ export function useClearSarcophagusState() {
     setSarcophagusPayloadTxId,
     setSarcophagusTxId,
     dispatch,
-    hangUpPeerIdOrMultiAddr,
   ]);
 
   return {

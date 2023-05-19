@@ -7,8 +7,8 @@ import { useDispatch } from 'store/index';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useNetworkConfig } from '../../../../lib/config';
 import { log } from '../../../../lib/utils/logger';
-import { hardhatChainId } from '../../../../lib/config/hardhat';
 import { wait } from 'lib/utils/helpers';
+import { hardhatChainId } from 'lib/config/networkConfigs';
 
 /**
  * returns a public key from a transaction

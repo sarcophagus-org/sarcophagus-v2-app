@@ -45,7 +45,7 @@ export function RetryCreateModal({
               );
 
           if (estimatedCurse.gt(arch.profile.freeBond.add(arch.profile.curseFee))) {
-            arch.hiddenReason =
+            arch.ineligibleReason =
               'This archaeologist does not have enough in free bond to be responsible for your Sarcophagus for the length of time you have set.';
             setArchsHaveEnoughReUploadFreeBond(false);
           }

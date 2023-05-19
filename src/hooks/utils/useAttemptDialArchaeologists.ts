@@ -1,51 +1,35 @@
 import React, { useCallback } from 'react';
-import { useSelector } from '../../store';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
-import { Multiaddr, multiaddr } from '@multiformats/multiaddr';
-import { Archaeologist } from '../../types';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useAttemptDialArchaeologists(
   setIsDialing?: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  const libp2pNode = useSelector(s => s.appState.libp2pNode);
   const toast = useToast();
 
   // Dials the archaeologist and hangs up after an interval
   // sets dial status for use in the UX
   const testDialArchaeologist = useCallback(
     async (
-      arch: Archaeologist,
+      arch: ArchaeologistData,
       showToast: boolean = false,
       hangUpInterval: number = 200
     ): Promise<boolean> => {
-      if (!libp2pNode) {
-        return false;
-      }
-
       try {
-        let ma: Multiaddr;
-
         if (!!setIsDialing) {
           setIsDialing(true);
         }
 
-        const peerIdParsed = arch.profile.peerId.split(':');
-        if (peerIdParsed.length === 2) {
-          ma = multiaddr(`/dns4/${peerIdParsed[0]}/tcp/443/wss/p2p/${peerIdParsed[1]}`);
-          // @ts-ignore
-          await libp2pNode.dial(ma);
-        } else {
-          await libp2pNode.dial(arch.fullPeerId!);
-        }
+        await sarco.archaeologist.dialArchaeologist(arch);
 
         if (showToast) {
           toast(dialArchaeologistSuccess());
         }
 
         setTimeout(async () => {
-          // @ts-ignore
-          await libp2pNode?.hangUp(ma || peerId);
+          await sarco.archaeologist.hangUp(arch);
         }, hangUpInterval);
 
         return true;
@@ -63,9 +47,8 @@ export function useAttemptDialArchaeologists(
         }
       }
     },
-    [libp2pNode, setIsDialing, toast]
+    [setIsDialing, toast]
   );
-
   return {
     testDialArchaeologist,
   };

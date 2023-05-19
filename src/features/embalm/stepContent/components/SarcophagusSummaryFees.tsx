@@ -2,35 +2,51 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
-import { formatFee, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
+import { formatFee } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
+import { formatSarco, sarco } from 'sarcophagus-v2-sdk';
+import { useEffect, useState } from 'react';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
-  const protocolFeeBasePercentage = useGetProtocolFeeAmount();
   const { balance } = useSarcoBalance();
   const { timestampMs } = useSelector(x => x.appState);
 
-  const { formattedTotalDiggingFees, totalDiggingFees } = getTotalFeesInSarco(
-    resurrection,
-    selectedArchaeologists.map(a => a.profile.minimumDiggingFeePerSecond),
-    timestampMs,
-    protocolFeeBasePercentage
-  );
+  const [totalFees, setTotalFees] = useState(ethers.constants.Zero);
+  const [totalDiggingFees, setTotalDiggingFees] = useState(ethers.constants.Zero);
+  const [formattedTotalDiggingFees, setFormattedTotalDiggingFees] = useState('');
+  const [protocolFee, setProtocolFee] = useState(ethers.constants.Zero);
+  const [totalCurseFees, setTotalCurseFees] = useState(ethers.constants.Zero);
+  const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
-  const totalCurseFees = selectedArchaeologists.reduce((acc, archaeologist) => {
-    return acc.add(archaeologist.profile.curseFee);
-  }, BigNumber.from(0));
+  useEffect(() => {
+    sarco.archaeologist
+      .getTotalFeesInSarco(selectedArchaeologists, resurrection, timestampMs)
+      .then(
+        ({
+          totalDiggingFees: diggingFees,
+          protocolFee: protocolFeeVal,
+          formattedTotalDiggingFees: formattedDiggingFees,
+          protocolFeeBasePercentage: baseFeePercent,
+        }) => {
+          setTotalDiggingFees(diggingFees);
+          setProtocolFee(protocolFeeVal);
+          setProtocolFeeBasePercentage(baseFeePercent.toString());
+          setFormattedTotalDiggingFees(formattedDiggingFees);
 
-  const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
-  const protocolFee =
-    diggingFeesAndCurseFees.gt(0) && protocolFeeBasePercentage > 0
-      ? diggingFeesAndCurseFees.div(100 * protocolFeeBasePercentage)
-      : BigNumber.from(0);
+          const totalCurseFeesCalc = selectedArchaeologists.reduce(
+            (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
+            BigNumber.from(0)
+          );
 
-  const totalFees = diggingFeesAndCurseFees.add(protocolFee);
+          setTotalCurseFees(totalCurseFeesCalc);
+          const diggingFeesAndCurseFees = diggingFees.add(totalCurseFeesCalc);
+
+          setTotalFees(diggingFeesAndCurseFees.add(protocolFeeVal));
+        }
+      );
+  }, [resurrection, selectedArchaeologists, timestampMs]);
 
   return (
     <Box

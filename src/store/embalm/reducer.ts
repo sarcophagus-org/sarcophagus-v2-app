@@ -1,9 +1,12 @@
 import { BigNumber, ethers } from 'ethers';
 import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { removeFromArray } from 'lib/utils/helpers';
-import { Archaeologist, ArchaeologistEncryptedShard } from 'types/index';
 import { Actions } from '..';
 import { ActionType, RecipientState } from './actions';
+import {
+  ArchaeologistData,
+  ArchaeologistEncryptedShard,
+} from 'sarcophagus-v2-sdk/src/types/archaeologist';
 
 export enum StepStatus {
   Complete = 'complete',
@@ -22,7 +25,7 @@ export enum Step {
 }
 
 export interface EmbalmState {
-  archaeologists: Archaeologist[];
+  archaeologists: ArchaeologistData[];
   currentStep: Step;
   expandedStepIndices: number[];
   file: File | null;
@@ -34,7 +37,7 @@ export interface EmbalmState {
   resurrection: number;
   resurrectionRadioValue: string;
   customResurrectionDate: Date | null;
-  selectedArchaeologists: Archaeologist[];
+  selectedArchaeologists: ArchaeologistData[];
   stepStatuses: { [key: number]: StepStatus };
   uploadPrice: BigNumber;
   archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
@@ -85,7 +88,7 @@ function updateArchProperty(
   state: EmbalmState,
   peerId: string,
   property: {
-    key: keyof Archaeologist;
+    key: keyof ArchaeologistData;
     value: any;
     updateSelected?: boolean;
   }

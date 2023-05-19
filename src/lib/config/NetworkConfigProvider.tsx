@@ -31,6 +31,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
             timeout: 0,
             logging: false,
           },
+          subgraphUrl: '',
         };
 
   const supportedChainIds =
