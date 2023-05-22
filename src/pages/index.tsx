@@ -53,6 +53,21 @@ export const RoutesPathMap: { [key: number]: string } = {
 };
 
 export function Pages() {
+  const network = useNetwork();
+  const networkConfig = useNetworkConfig();
+
+  useEffect(() => {
+    if (!network.chain || sarco.isInitialised || !networkConfig.providerUrl) {
+      return;
+    }
+
+    sarco.init({
+      chainId: network.chain.id,
+      providerUrl: networkConfig.providerUrl,
+      etherscanApiKey: networkConfig.etherscanApiKey,
+    });
+  }, [network.chain, networkConfig.etherscanApiKey, networkConfig.providerUrl]);
+
   const routes = [
     {
       path: RoutesPathMap[RouteKey.EMBALM_PAGE],
@@ -138,21 +153,6 @@ export function Pages() {
   ];
 
   const { isConnected } = useAccount();
-
-  const network = useNetwork();
-  const networkConfig = useNetworkConfig();
-
-  useEffect(() => {
-    if (!network.chain || sarco.isInitialised || !networkConfig.providerUrl) {
-      return;
-    }
-
-    sarco.init({
-      chainId: network.chain.id,
-      providerUrl: networkConfig.providerUrl,
-      etherscanApiKey: networkConfig.etherscanApiKey,
-    });
-  }, [network.chain, networkConfig.etherscanApiKey, networkConfig.providerUrl]);
 
   // Handles Bundlr connection and disconnection
   useBundlrSession();

@@ -28,18 +28,20 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const [totalDiggingFees, setTotalDiggingFees] = useState(ethers.constants.Zero);
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
-  sarco.archaeologist
-    .getTotalFeesInSarco(
-      // @ts-ignore
-      selectedArchaeologists,
-      resurrection,
-      timestampMs
-    )
-    .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
-      setTotalDiggingFees(diggingFees);
-      setProtocolFeeBasePercentage(baseFeePercentage.toString());
-    })
-    .catch(e => console.log(e));
+  if (sarco.isInitialised) {
+    sarco.archaeologist
+      .getTotalFeesInSarco(
+        // @ts-ignore
+        selectedArchaeologists,
+        resurrection,
+        timestampMs
+      )
+      .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
+        setTotalDiggingFees(diggingFees);
+        setProtocolFeeBasePercentage(baseFeePercentage.toString());
+      })
+      .catch(e => console.log(e));
+  }
 
   function toggleShowOnlySelected() {
     dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
