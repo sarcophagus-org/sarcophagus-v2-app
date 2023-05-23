@@ -31,8 +31,10 @@ export function Sarcophagi() {
   const [isLoadingRecipientSarcophagi, setIsLoadingRecipientSarcophagi] = useState(false);
   const [recipientSarcophagi, setRecipientSarcophagi] = useState<SarcophagusData[]>([]);
 
+  const sarcoIsInitialised = sarco.isInitialised;
+
   useEffect(() => {
-    if (sarco.isInitialised) {
+    if (sarcoIsInitialised) {
       // EMALMER SARCO
       setIsLoadingEmbalmerSarcophagi(true);
       sarco.api
@@ -55,7 +57,7 @@ export function Sarcophagi() {
           setIsLoadingRecipientSarcophagi(false);
         });
     }
-  }, [address]);
+  }, [address, sarcoIsInitialised]);
 
   function embalmerPanel() {
     if (isLoadingEmbalmerSarcophagi) {
