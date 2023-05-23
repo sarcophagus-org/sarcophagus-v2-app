@@ -17,7 +17,6 @@ import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
 import { useAllowance } from 'hooks/sarcoToken/useAllowance';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useState } from 'react';
@@ -28,7 +27,12 @@ import { useSelector } from 'store/index';
 export function Rewrap() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { sarcophagus } = useGetSarcophagus(id);
+
+  const [sarcophagus, setSarcophagus] = useState<any>();
+  sarco.api.getSarcophagusDetails(id || '').then(res => {
+    setSarcophagus(res);
+  });
+
   const archaeologists = useGetSarcophagusArchaeologists(
     id || ethers.constants.HashZero,
     sarcophagus?.archaeologistAddresses ?? []

@@ -3,20 +3,28 @@ import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
 import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
-import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'store/index';
 import { useQuery } from '../../../hooks/useQuery';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function Claim() {
   const toast = useToast();
   const { id } = useParams();
   const query = useQuery();
   const [privateKey, setPrivateKey] = useState(query.get('pk') || '');
+
   const [resurrectError, setResurrectError] = useState('');
-  const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagus(id);
+  const [isLoadingSarcophagus, setIsLoading] = useState(false);
+
+  const [sarcophagus, setSarcophagus] = useState<any>();
+  sarco.api.getSarcophagusDetails(id || '').then(res => {
+    setSarcophagus(res);
+    setIsLoading(false);
+  });
+
   const { timestampMs } = useSelector(x => x.appState);
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0),

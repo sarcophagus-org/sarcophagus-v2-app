@@ -1,12 +1,11 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
-import { Sarcophagus } from 'types';
 import { ArchaeologistDetailItem } from './ArchaeologistDetailsItem';
-import { SarcophagusArchaeologist, sarco } from 'sarcophagus-v2-sdk';
+import { SarcophagusArchaeologist, SarcophagusData, sarco } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistsDetailsCollapseProps {
-  sarcophagus: Sarcophagus;
+  sarcophagus: SarcophagusData;
   archaeologists: (SarcophagusArchaeologist & { address: `0x${string}` })[];
 }
 

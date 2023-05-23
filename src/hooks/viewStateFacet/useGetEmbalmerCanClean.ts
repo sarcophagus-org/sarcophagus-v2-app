@@ -1,8 +1,8 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
+import { SarcophagusData } from 'sarcophagus-v2-sdk';
 import { useSelector } from 'store/index';
-import { Sarcophagus } from 'types';
 import { useAccount, useContractRead } from 'wagmi';
 import { useGetGracePeriod } from './useGetGracePeriod';
 
@@ -10,7 +10,7 @@ import { useGetGracePeriod } from './useGetGracePeriod';
  * Uses `embalmerClaimWindow` from the contracts to check if the connected account can clean the
  * sarcophagus. Returns `false` if the connected account is not the embalmer of the sarcophagus.
  */
-export function useGetEmbalmerCanClean(sarcophagus: Sarcophagus | undefined): boolean {
+export function useGetEmbalmerCanClean(sarcophagus: SarcophagusData | undefined): boolean {
   const networkConfig = useNetworkConfig();
   const gracePeriod = useGetGracePeriod();
   const { timestampMs } = useSelector(x => x.appState);
