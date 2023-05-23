@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { sarco } from 'sarcophagus-v2-sdk';
 
 export const useSarcophagusCount = () => {
@@ -9,10 +9,15 @@ export const useSarcophagusCount = () => {
     totalSarcophagi: 0,
   });
 
-  sarco.api.getSarcophagiCount().then(res => {
-    setCounts({ ...res, totalSarcophagi: res.activeSarcophagi + res.inactiveSarcophagi });
-    setLoading(false);
-  });
+  useEffect(() => {
+    if (!sarco.isInitialised) return;
+
+    setLoading(true);
+    sarco.api.getSarcophagiCount().then(res => {
+      setCounts({ ...res, totalSarcophagi: res.activeSarcophagi + res.inactiveSarcophagi });
+      setLoading(false);
+    });
+  }, [sarco.isInitialised]);
 
   return { counts, loading };
 };
