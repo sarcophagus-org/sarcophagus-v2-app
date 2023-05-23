@@ -3,11 +3,11 @@ import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra
 import { ethers } from 'ethers';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet';
 import { ArchaeologistsDetailsCollapse } from './ArchaeologistDetailsCollapse';
-import { SarcophagusData } from 'sarcophagus-v2-sdk';
+import { SarcophagusDetails } from 'sarcophagus-v2-sdk';
 
 interface DetailsCollapseProps {
   id?: string;
-  sarcophagus: SarcophagusData;
+  sarcophagus: SarcophagusDetails;
 }
 
 export function DetailsCollapse({

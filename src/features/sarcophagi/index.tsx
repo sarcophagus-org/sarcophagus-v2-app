@@ -18,7 +18,7 @@ import { SarcoTab } from './components/SarcoTab';
 import { SarcoTable } from './components/SarcoTable';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { SarcophagusData, SarcophagusFilter, sarco } from 'sarcophagus-v2-sdk';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * A component that manages the app's sarcophagi. Should be styled to fit any container.
@@ -31,23 +31,31 @@ export function Sarcophagi() {
   const [isLoadingRecipientSarcophagi, setIsLoadingRecipientSarcophagi] = useState(false);
   const [recipientSarcophagi, setRecipientSarcophagi] = useState<SarcophagusData[]>([]);
 
-  // EMALMER SARCO
-  setIsLoadingEmbalmerSarcophagi(true);
-  sarco.api
-    .getSarcophagi(address || ethers.constants.AddressZero, { filter: SarcophagusFilter.embalmer })
-    .then(res => {
-      setEmbalmerSarcophagi(res);
-      setIsLoadingEmbalmerSarcophagi(false);
-    });
+  useEffect(() => {
+    if (sarco.isInitialised) {
+      // EMALMER SARCO
+      setIsLoadingEmbalmerSarcophagi(true);
+      sarco.api
+        .getSarcophagi(address || ethers.constants.AddressZero, {
+          filter: SarcophagusFilter.embalmer,
+        })
+        .then(res => {
+          setEmbalmerSarcophagi(res);
+          setIsLoadingEmbalmerSarcophagi(false);
+        });
 
-  // RECIPIENT SARCO
-  setIsLoadingRecipientSarcophagi(true);
-  sarco.api
-    .getSarcophagi(address || ethers.constants.AddressZero, { filter: SarcophagusFilter.recipient })
-    .then(res => {
-      setRecipientSarcophagi(res);
-      setIsLoadingRecipientSarcophagi(false);
-    });
+      // RECIPIENT SARCO
+      setIsLoadingRecipientSarcophagi(true);
+      sarco.api
+        .getSarcophagi(address || ethers.constants.AddressZero, {
+          filter: SarcophagusFilter.recipient,
+        })
+        .then(res => {
+          setRecipientSarcophagi(res);
+          setIsLoadingRecipientSarcophagi(false);
+        });
+    }
+  }, [address]);
 
   function embalmerPanel() {
     if (isLoadingEmbalmerSarcophagi) {

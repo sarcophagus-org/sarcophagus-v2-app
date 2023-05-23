@@ -3,8 +3,8 @@ import { useQuery } from 'hooks/useQuery';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 import { RoutesPathMap, RouteKey } from 'pages';
-import { sarco, SarcophagusState } from 'sarcophagus-v2-sdk';
-import { useState } from 'react';
+import { SarcophagusState } from 'sarcophagus-v2-sdk';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 interface SarcophagusDetailsProps {
   children?: React.ReactNode;
@@ -13,10 +13,7 @@ interface SarcophagusDetailsProps {
 export function DetailsContainer({ children }: SarcophagusDetailsProps) {
   const { id } = useParams();
 
-  const [sarcophagus, setSarcophagus] = useState<any>();
-  sarco.api.getSarcophagusDetails(id || '').then(res => {
-    setSarcophagus(res);
-  });
+  const { sarcophagus } = useGetSarcophagusDetails(id);
 
   const navigate = useNavigate();
 

@@ -8,8 +8,8 @@ import { useAccount } from 'wagmi';
 import { BuryButton } from './BuryButton';
 import { CleanButton } from './CleanButton';
 import { DetailsCollapse } from './DetailsCollapse';
-import { SarcophagusState, sarco } from 'sarcophagus-v2-sdk';
-import { useState } from 'react';
+import { SarcophagusState } from 'sarcophagus-v2-sdk';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 export const resurrectTooltip = 'Extend the resurrection date of the Sarcophagus';
 
@@ -18,10 +18,7 @@ export function Details() {
   const { address } = useAccount();
   const { timestampMs } = useSelector(x => x.appState);
 
-  const [sarcophagus, setSarcophagus] = useState<any>();
-  sarco.api.getSarcophagusDetails(id || '').then(res => {
-    setSarcophagus(res);
-  });
+  const { sarcophagus } =  useGetSarcophagusDetails(id);
 
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0),

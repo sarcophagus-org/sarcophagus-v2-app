@@ -8,7 +8,7 @@ import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'store/index';
 import { useQuery } from '../../../hooks/useQuery';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 export function Claim() {
   const toast = useToast();
@@ -17,13 +17,7 @@ export function Claim() {
   const [privateKey, setPrivateKey] = useState(query.get('pk') || '');
 
   const [resurrectError, setResurrectError] = useState('');
-  const [isLoadingSarcophagus, setIsLoading] = useState(false);
-
-  const [sarcophagus, setSarcophagus] = useState<any>();
-  sarco.api.getSarcophagusDetails(id || '').then(res => {
-    setSarcophagus(res);
-    setIsLoading(false);
-  });
+  const { sarcophagus, loadingSarcophagus } = useGetSarcophagusDetails(id);
 
   const { timestampMs } = useSelector(x => x.appState);
   const resurrectionString = buildResurrectionDateString(
@@ -84,7 +78,7 @@ export function Claim() {
       <Link ref={linkRef} />
       <Text>Resurrection Date</Text>
       <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
-      {!isLoadingResurrection && !isLoadingSarcophagus ? (
+      {!isLoadingResurrection && !loadingSarcophagus ? (
         <>
           {canResurrect ? (
             <>

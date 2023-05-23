@@ -7,7 +7,7 @@ import { combine } from 'shamirs-secret-sharing-ts';
 import { useNetworkConfig } from 'lib/config';
 import { hardhat, mainnet } from '@wagmi/chains';
 import { ethers } from 'ethers';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -16,11 +16,8 @@ import { sarco } from 'sarcophagus-v2-sdk';
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const [isLoading, setIsLoading] = useState(false);
-  const [sarcophagus, setSarcophagus] = useState<any>();
-  sarco.api.getSarcophagusDetails(sarcoId || '').then(res => {
-    setSarcophagus(res);
-    setIsLoading(false);
-  });
+  const { sarcophagus } = useGetSarcophagusDetails(sarcoId);
+
   const archaeologists = useGetSarcophagusArchaeologists(
     sarcoId,
     sarcophagus?.archaeologistAddresses ?? []
