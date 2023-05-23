@@ -18,7 +18,7 @@ export function Details() {
   const { address } = useAccount();
   const { timestampMs } = useSelector(x => x.appState);
 
-  const { sarcophagus } =  useGetSarcophagusDetails(id);
+  const { sarcophagus } = useGetSarcophagusDetails(id);
 
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0),
