@@ -37,21 +37,17 @@ export function Sarcophagi() {
     if (sarcoIsInitialised) {
       // EMALMER SARCO
       setIsLoadingEmbalmerSarcophagi(true);
-      sarco.api
-        .getEmbalmerSarcophagi(address || ethers.constants.AddressZero)
-        .then(res => {
-          setEmbalmerSarcophagi(res);
-          setIsLoadingEmbalmerSarcophagi(false);
-        });
+      sarco.api.getEmbalmerSarcophagi(address || ethers.constants.AddressZero).then(res => {
+        setEmbalmerSarcophagi(res);
+        setIsLoadingEmbalmerSarcophagi(false);
+      });
 
       // RECIPIENT SARCO
       setIsLoadingRecipientSarcophagi(true);
-      sarco.api
-        .getRecipientSarcophagi(address || ethers.constants.AddressZero)
-        .then(res => {
-          setRecipientSarcophagi(res);
-          setIsLoadingRecipientSarcophagi(false);
-        });
+      sarco.api.getRecipientSarcophagi(address || ethers.constants.AddressZero).then(res => {
+        setRecipientSarcophagi(res);
+        setIsLoadingRecipientSarcophagi(false);
+      });
     }
   }, [address, sarcoIsInitialised]);
 
