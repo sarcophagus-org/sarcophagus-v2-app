@@ -12,12 +12,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
-import {
-  ArchaeologistData,
-  calculateDiggingFees,
-  convertSarcoPerSecondToPerMonth,
-  formatSarco,
-} from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistListItemProps {
   archaeologist: ArchaeologistData;
@@ -52,7 +47,11 @@ export function ArchaeologistListItem({
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
   const { timestampMs } = useSelector(s => s.appState);
 
-  const diggingFees = calculateDiggingFees(archaeologist, resurrectionTime, timestampMs);
+  const diggingFees = sarco.archaeologist.calculateDiggingFees(
+    archaeologist,
+    resurrectionTime,
+    timestampMs
+  );
 
   const totalFees = diggingFees?.add(archaeologist.profile.curseFee);
 
@@ -147,15 +146,15 @@ export function ArchaeologistListItem({
           checkbox={false}
           multiLineTooltipLabel={
             diggingFees && [
-              `Digging fee: ${formatSarco(diggingFees?.toString() ?? '0')}`,
-              `Curse fee: ${formatSarco(archaeologist.profile.curseFee.toString())}`,
+              `Digging fee: ${sarco.utils.formatSarco(diggingFees?.toString() ?? '0')}`,
+              `Curse fee: ${sarco.utils.formatSarco(archaeologist.profile.curseFee.toString())}`,
             ]
           }
         >
           {diggingFees
-            ? formatSarco(totalFees?.toString() ?? '0')
-            : formatSarco(
-                convertSarcoPerSecondToPerMonth(
+            ? sarco.utils.formatSarco(totalFees?.toString() ?? '0')
+            : sarco.utils.formatSarco(
+                sarco.utils.convertSarcoPerSecondToPerMonth(
                   archaeologist.profile.minimumDiggingFeePerSecond.toString()
                 )
               )}

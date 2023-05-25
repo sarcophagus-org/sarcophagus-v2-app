@@ -1,6 +1,6 @@
 import { CreateSarcophagusStage } from './createSarcophagus';
 import { formatContractCallException } from '../../../../lib/utils/contract-error-handler';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { ArchaeologistData } from 'sarcophagus-v2-sdk';
 
 const processArchCommsException = (offendingArchs: ArchaeologistData[]) => {
   if (!!offendingArchs.length) {

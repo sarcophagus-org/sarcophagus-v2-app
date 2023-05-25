@@ -22,7 +22,7 @@ import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarc
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { formatSarco, sarco } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
 import { useSelector } from 'store/index';
 
 export function Rewrap() {
@@ -72,31 +72,36 @@ export function Rewrap() {
 
     if (!date) return;
 
-    sarco.archaeologist
-      .getTotalFeesInSarco(
-        // @ts-ignore
-        archaeologists.map(a => ({
-          profile: {
-            curseFee: a.curseFee,
-            diggingFee: a.diggingFeePerSecond,
-            minimumDiggingFeePerSecond: a.diggingFeePerSecond,
-          },
-          isOnline: false,
-        })),
-        date.getTime(),
+    async function setTotalFees() {
+      const archaeologistsProfiles: ArchaeologistData[] = archaeologists.map(a => ({
+        profile: {
+          accusals: BigNumber.from(0),
+          archAddress: '',
+          failures: BigNumber.from(0),
+          freeBond: BigNumber.from(0),
+          maximumRewrapInterval: BigNumber.from(0),
+          maximumResurrectionTime: BigNumber.from(0),
+          peerId: '',
+          successes: BigNumber.from(0),
+          curseFee: a.curseFee,
+          minimumDiggingFeePerSecond: a.diggingFeePerSecond,
+        },
+        isOnline: false,
+      }));
+      const {
+        totalDiggingFees: newTotalDiggingFees,
+        protocolFee: newProtoclFee,
+        protocolFeeBasePercentage: newProtocolFeeBasePercentage,
+      } = await sarco.archaeologist.getTotalFeesInSarco(
+        archaeologistsProfiles,
+        date?.getTime() || 0,
         timestampMs
-      )
-      .then(
-        ({
-          totalDiggingFees: diggingFees,
-          protocolFee: protocolFeeVal,
-          protocolFeeBasePercentage: baseFeePercentage,
-        }) => {
-          setTotalDiggingFees(diggingFees);
-          setProtocolFee(protocolFeeVal);
-          setProtocolFeeBasePercentage(baseFeePercentage);
-        }
       );
+      setTotalDiggingFees(newTotalDiggingFees);
+      setProtocolFee(newProtoclFee);
+      setProtocolFeeBasePercentage(newProtocolFeeBasePercentage);
+    }
+    setTotalFees();
   };
 
   function handleCustomDateChange(date: Date | null): void {
@@ -269,13 +274,13 @@ export function Rewrap() {
         </Flex>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Digging fee: {formatSarco(totalDiggingFees.toString())} SARCO
+            Digging fee: {sarco.utils.formatSarco(totalDiggingFees.toString())} SARCO
           </Text>
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
             Protocol fee ({protocolFeeBasePercentage.toString()}%):{' '}
-            {formatSarco(protocolFee.toString())} SARCO
+            {sarco.utils.formatSarco(protocolFee.toString())} SARCO
           </Text>
         </HStack>
       </VStack>

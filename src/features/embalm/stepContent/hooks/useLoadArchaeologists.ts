@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useContract, useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 
-import { sarco } from 'sarcophagus-v2-sdk';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract

@@ -1,8 +1,7 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { computeAddress } from 'ethers/lib/utils';
 import { RecipientState } from '../../../../store/embalm/actions';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
-import { getLowestResurrectionTime, getLowestRewrapInterval } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
 
 type SubmitSarcophagusArgsTuple = [
   string,
@@ -82,8 +81,8 @@ export function formatSubmitSarcophagusArgs({
     resurrectionTime: Math.trunc(resurrection / 1000),
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),
-    maximumRewrapInterval: getLowestRewrapInterval(selectedArchaeologists),
-    maximumResurrectionTime: getLowestResurrectionTime(selectedArchaeologists),
+    maximumRewrapInterval: sarco.archaeologist.getLowestRewrapInterval(selectedArchaeologists),
+    maximumResurrectionTime: sarco.archaeologist.getLowestResurrectionTime(selectedArchaeologists),
   };
 
   const contractArchaeologists = getContractArchaeologists();

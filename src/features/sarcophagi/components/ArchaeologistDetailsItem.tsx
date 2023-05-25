@@ -1,11 +1,7 @@
 import { Text, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import {
-  SarcophagusArchaeologist,
-  convertSarcoPerSecondToPerMonth,
-  formatSarco,
-} from 'sarcophagus-v2-sdk';
+import { sarco, SarcophagusArchaeologist } from 'sarcophagus-v2-sdk';
 import { useEnsName } from 'wagmi';
 interface ArchaeologistDetailItemProps {
   archaeologist: SarcophagusArchaeologist & { address: `0x${string}` };
@@ -50,12 +46,14 @@ export function ArchaeologistDetailItem({
       )}
       <Text>Address: {ensName ?? archaeologist.address}</Text>
       <Text>
-        Curse Fee: {formatSarco(archaeologist.curseFee.toString())} SARCO{' '}
+        Curse Fee: {sarco.utils.formatSarco(archaeologist.curseFee.toString())} SARCO{' '}
         {` ${curseFeePaid ? '(PAID)' : ''}`}
       </Text>
       <Text>
         Digging Fee Per Month:{' '}
-        {formatSarco(convertSarcoPerSecondToPerMonth(archaeologist.diggingFeePerSecond.toString()))}{' '}
+        {sarco.utils.formatSarco(
+          sarco.utils.convertSarcoPerSecondToPerMonth(archaeologist.diggingFeePerSecond.toString())
+        )}{' '}
         SARCO
       </Text>
       <Text>Public Key: {archaeologist.publicKey}</Text>

@@ -3,10 +3,7 @@ import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSa
 import { removeFromArray } from 'lib/utils/helpers';
 import { Actions } from '..';
 import { ActionType, RecipientState } from './actions';
-import {
-  ArchaeologistData,
-  ArchaeologistEncryptedShard,
-} from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { ArchaeologistData, ArchaeologistEncryptedShard } from 'sarcophagus-v2-sdk';
 
 export enum StepStatus {
   Complete = 'complete',
