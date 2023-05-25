@@ -17,7 +17,7 @@ import { NoSarcpohagi } from './components/NoSarcophagi';
 import { SarcoTab } from './components/SarcoTab';
 import { SarcoTable } from './components/SarcoTable';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { SarcophagusData, SarcophagusFilter, sarco } from 'sarcophagus-v2-sdk';
+import { SarcophagusData, sarco } from 'sarcophagus-v2-sdk';
 import { useEffect, useState } from 'react';
 
 /**
@@ -38,9 +38,7 @@ export function Sarcophagi() {
       // EMALMER SARCO
       setIsLoadingEmbalmerSarcophagi(true);
       sarco.api
-        .getSarcophagi(address || ethers.constants.AddressZero, {
-          filter: SarcophagusFilter.embalmer,
-        })
+        .getEmbalmerSarcophagi(address || ethers.constants.AddressZero)
         .then(res => {
           setEmbalmerSarcophagi(res);
           setIsLoadingEmbalmerSarcophagi(false);
@@ -49,9 +47,7 @@ export function Sarcophagi() {
       // RECIPIENT SARCO
       setIsLoadingRecipientSarcophagi(true);
       sarco.api
-        .getSarcophagi(address || ethers.constants.AddressZero, {
-          filter: SarcophagusFilter.recipient,
-        })
+        .getRecipientSarcophagi(address || ethers.constants.AddressZero)
         .then(res => {
           setRecipientSarcophagi(res);
           setIsLoadingRecipientSarcophagi(false);
