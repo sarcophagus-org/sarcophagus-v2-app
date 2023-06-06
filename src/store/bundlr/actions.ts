@@ -1,15 +1,11 @@
-import { WebBundlr } from '@bundlr-network/client';
 import { BigNumber } from 'ethers';
 import { ActionMap } from '../ActionMap';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
-  Connect = 'BUNDLR_CONNECT',
-  Disconnect = 'BUNDLR_DISCONNECT',
   Fund = 'BUNDLR_FUND',
   SetBalance = 'BUNDLR_SET_BALANCE',
-  SetBundlr = 'BUNDLR_SET',
   SetIsFunding = 'BUNDLR_SET_IS_FUNDING',
   SetIsUploading = 'BUNDLR_SET_IS_UPLOADING',
   SetUploadProgress = 'BUNDLR_SET_UPLOAD_PROGRESS',
@@ -19,11 +15,8 @@ export enum ActionType {
 }
 
 type BundlrPayload = {
-  [ActionType.Connect]: {};
-  [ActionType.Disconnect]: {};
   [ActionType.Fund]: { amount: BigNumber };
   [ActionType.SetBalance]: { balance: BigNumber };
-  [ActionType.SetBundlr]: { bundlr: WebBundlr | null };
   [ActionType.SetIsFunding]: { isFunding: boolean };
   [ActionType.SetIsUploading]: { isUploading: boolean };
   [ActionType.SetUploadProgress]: { uploadProgress: number };
@@ -31,29 +24,6 @@ type BundlrPayload = {
   [ActionType.Withdraw]: { amount: string };
   [ActionType.ResetBalanceOffset]: {};
 };
-
-export function connect(): BundlrActions {
-  return {
-    type: ActionType.Connect,
-    payload: {},
-  };
-}
-
-export function disconnect(): BundlrActions {
-  return {
-    type: ActionType.Disconnect,
-    payload: {},
-  };
-}
-
-export function setBundlr(bundlr: WebBundlr | null): BundlrActions {
-  return {
-    type: ActionType.SetBundlr,
-    payload: {
-      bundlr,
-    },
-  };
-}
 
 export function setBalance(balance: BigNumber): BundlrActions {
   return {

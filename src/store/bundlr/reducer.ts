@@ -1,12 +1,9 @@
-import { WebBundlr } from '@bundlr-network/client';
 import { BigNumber, ethers } from 'ethers';
 import { Actions } from '..';
 import { ActionType } from './actions';
 
 export interface BundlrState {
   balance: BigNumber;
-  bundlr: WebBundlr | null | undefined;
-  isConnected: boolean;
   isFunding: boolean;
   isUploading: boolean;
   uploadProgress: number;
@@ -16,8 +13,6 @@ export interface BundlrState {
 
 export const bundlrInitialState: BundlrState = {
   balance: ethers.constants.Zero,
-  bundlr: null,
-  isConnected: false,
   isFunding: false,
   isUploading: false,
   uploadProgress: 0,
@@ -27,16 +22,6 @@ export const bundlrInitialState: BundlrState = {
 
 export function bundlrReducer(state: BundlrState, action: Actions): BundlrState {
   switch (action.type) {
-    case ActionType.Connect:
-      return { ...state, isConnected: true };
-
-    case ActionType.Disconnect:
-      return { ...state, isConnected: false, bundlr: null };
-
-    case ActionType.SetBundlr:
-      const bundlr = action.payload.bundlr;
-      return { ...state, bundlr };
-
     case ActionType.SetBalance:
       return { ...state, balance: action.payload.balance };
 

@@ -8,6 +8,7 @@ import { minimumResurrection } from 'lib/constants';
 import { ethers } from 'ethers';
 import { sarco } from 'sarcophagus-v2-sdk';
 import { hardhatChainId } from 'lib/config/networkConfigs';
+import { useCallback, useState } from 'react';
 
 export interface SarcophagusParameter {
   name: string;
@@ -38,10 +39,20 @@ export const useSarcophagusParameters = () => {
   const { chainId } = useNetworkConfig();
 
   const isHardhatNetwork = chainId === hardhatChainId;
-  const maxRewrapIntervalMs =
-    sarco.archaeologist.getLowestRewrapInterval(selectedArchaeologists) * 1000;
-  const maxResurrectionTimeMs =
-    sarco.archaeologist.getLowestResurrectionTime(selectedArchaeologists) * 1000; // TODO: will be combined with `getLowestRewrapInterval` above
+
+  const [maxRewrapIntervalMs, setMaxRewrapIntervalMs] = useState(0);
+  const [maxResurrectionTimeMs, setMaxResurrectionTimeMs] = useState(0);
+
+  useCallback(() => {
+    if (!sarco.isInitialised) return;
+    setMaxRewrapIntervalMs(
+      sarco.archaeologist.getLowestRewrapInterval(selectedArchaeologists) * 1000
+    );
+    // TODO: will be combined with `getLowestRewrapInterval` above
+    setMaxResurrectionTimeMs(
+      sarco.archaeologist.getLowestResurrectionTime(selectedArchaeologists) * 1000
+    );
+  }, [selectedArchaeologists, sarco.isInitialised]);
 
   const resurrectionTimeError = !resurrection
     ? 'Please set a resurrection time'

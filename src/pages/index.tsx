@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ArchaeologistsPage } from './ArchaeologistsPage';
@@ -20,9 +20,6 @@ import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSes
 import { AccusePage } from './AccusePage';
 import { AdminDashBoardPage } from './AdminDashboardPage';
 import { useTimestampMs } from 'hooks/useTimestampMs';
-import { useEffect } from 'react';
-import { sarco } from 'sarcophagus-v2-sdk';
-import { useNetworkConfig } from 'lib/config';
 
 export enum RouteKey {
   ARCHEOLOGIST_PAGE,
@@ -53,21 +50,6 @@ export const RoutesPathMap: { [key: number]: string } = {
 };
 
 export function Pages() {
-  const network = useNetwork();
-  const networkConfig = useNetworkConfig();
-
-  useEffect(() => {
-    if (!network.chain || sarco.isInitialised || !networkConfig.providerUrl) {
-      return;
-    }
-
-    sarco.init({
-      chainId: network.chain.id,
-      providerUrl: networkConfig.providerUrl,
-      etherscanApiKey: networkConfig.etherscanApiKey,
-    });
-  }, [network.chain, networkConfig.etherscanApiKey, networkConfig.providerUrl]);
-
   const routes = [
     {
       path: RoutesPathMap[RouteKey.EMBALM_PAGE],
@@ -160,7 +142,7 @@ export function Pages() {
   // Globally stores the timestamp from the latest block
   useTimestampMs();
 
-  const { isSupportedChain } = useSupportedNetwork();
+  const { isSupportedChain, isSarcoInitialized } = useSupportedNetwork();
   const currentCommitHash = process.env.REACT_APP_COMMIT_REF;
 
   return (
@@ -230,7 +212,11 @@ export function Pages() {
           height="100%"
           pt={50}
         >
-          {isConnected && isSupportedChain ? (
+          {!isSarcoInitialized ? (
+            <Flex></Flex>
+          ) 
+          :
+          isConnected && isSupportedChain ? (
             <Routes>
               <Route
                 path="/"

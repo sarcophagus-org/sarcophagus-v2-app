@@ -10,17 +10,17 @@ const fetchBalanceTimeout = 5_000;
 
 export function useBundlrBalance() {
   const dispatch = useDispatch();
-  const { balance, isConnected, balanceOffset } = useSelector(x => x.bundlrState);
+  const { balance, balanceOffset } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
 
   const formattedBalance = useMemo(
     () =>
-      isConnected && balance
+      sarco.bundlr.isConnected && balance
         ? `${parseFloat(ethers.utils.formatUnits(balance)).toFixed(bundlrBalanceDecimals)} ${
             chain?.nativeCurrency?.name || 'ETH'
           }`
         : '',
-    [balance, chain, isConnected]
+    [balance, chain, sarco.bundlr.isConnected]
   );
 
   /**

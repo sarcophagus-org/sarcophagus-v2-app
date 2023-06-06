@@ -3,14 +3,13 @@ import { BigNumber, ethers } from 'ethers';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { SarcoTab } from 'features/sarcophagi/components/SarcoTab';
-import { useSelector } from 'store/index';
 import { BundlrAction, BundlrProfile } from './BundlrProfile';
 import { BusyIndicator } from './BusyIndicator';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function Bundlr() {
   const { connectToBundlr } = useBundlrSession();
   const { fund, withdraw, isFunding, isWithdrawing } = useBundlr();
-  const bundlr = useSelector(s => s.bundlrState.bundlr);
 
   function handleDeposit(amount: BigNumber) {
     if (amount.lte(ethers.constants.Zero)) {
@@ -75,7 +74,7 @@ export function Bundlr() {
               <BundlrProfile
                 onDeposit={handleDeposit}
                 onConnect={handleConnect}
-                action={bundlr ? BundlrAction.Deposit : BundlrAction.Connect}
+                action={sarco.bundlr.isConnected ? BundlrAction.Deposit : BundlrAction.Connect}
               />
             )}
           </TabPanel>
@@ -90,7 +89,7 @@ export function Bundlr() {
               <BundlrProfile
                 onWithdraw={handleWithdraw}
                 onConnect={handleConnect}
-                action={bundlr ? BundlrAction.Withdraw : BundlrAction.Connect}
+                action={sarco.bundlr.isConnected ? BundlrAction.Withdraw : BundlrAction.Connect}
               />
             )}
           </TabPanel>

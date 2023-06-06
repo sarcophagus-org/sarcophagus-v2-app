@@ -14,6 +14,7 @@ import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
 import { hardhatChainId } from 'lib/config/networkConfigs';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -49,7 +50,6 @@ export function useSetStatuses() {
     resurrection,
     stepStatuses,
   } = useSelector(x => x.embalmState);
-  const { isConnected: isBundlrConnected } = useSelector(x => x.bundlrState);
   const { timestampMs } = useSelector(x => x.appState);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useBundlrBalance();
@@ -80,7 +80,7 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if ((isBundlrConnected && balance.gt(uploadPrice)) || chain?.id === hardhatChainId) {
+    if ((sarco.bundlr.isConnected && balance.gt(uploadPrice)) || chain?.id === hardhatChainId) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
@@ -129,15 +129,7 @@ export function useSetStatuses() {
 
   useEffect(nameSarcophagusEffect, [dispatch, name, resurrection, timestampMs]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
-  useEffect(fundBundlrEffect, [
-    balance,
-    dispatch,
-    file,
-    fundBundlrStatus,
-    isBundlrConnected,
-    uploadPrice,
-    chain?.id,
-  ]);
+  useEffect(fundBundlrEffect, [balance, dispatch, file, fundBundlrStatus, uploadPrice, chain?.id]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [
     dispatch,
