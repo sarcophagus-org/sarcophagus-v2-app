@@ -8,7 +8,6 @@ import {
   encryptShardsWithRecipientPublicKey,
 } from '../../utils/createSarcophagus';
 import { split } from 'shamirs-secret-sharing-ts';
-import { arweaveDataDelimiter } from 'hooks/useArweave';
 import { setIsUploading } from 'store/bundlr/actions';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import useArweaveService from 'hooks/useArweaveService';
@@ -29,6 +28,7 @@ export function useUploadFileAndKeyShares() {
     setUploadStep(`Uploading to Arweave... ${(uploadProgress * 100).toFixed(0)}%`);
   }, [uploadProgress]);
 
+  // TODO: Move to sdk
   const uploadAndSetArweavePayload = useCallback(
     async (isRetry: boolean, cancelToken: CancelCreateToken) => {
       try {

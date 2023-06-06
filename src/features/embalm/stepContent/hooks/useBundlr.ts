@@ -14,13 +14,14 @@ import {
 import { useDispatch, useSelector } from 'store/index';
 import { CreateSarcophagusContext } from '../context/CreateSarcophagusContext';
 import { CancelCreateToken } from './useCreateSarcophagus/useCreateSarcophagus';
+import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useBundlr() {
   const dispatch = useDispatch();
   const toast = useToast();
 
   // Pull some bundlr data from store
-  const { bundlr, isFunding } = useSelector(x => x.bundlrState);
+  const { isFunding } = useSelector(x => x.bundlrState);
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -37,15 +38,10 @@ export function useBundlr() {
    */
   const fund = useCallback(
     async (amount: BigNumber) => {
-      if (!bundlr) {
-        console.log('Bundlr not connected');
-        return;
-      }
-
       dispatch(setIsFunding(true));
       toast(fundStart());
       try {
-        await bundlr?.fund(amount.toString());
+        await sarco.bundlr.fund(amount.toString());
 
         toast(fundSuccess());
       } catch (_error) {
@@ -61,7 +57,7 @@ export function useBundlr() {
         dispatch(setIsFunding(false));
       }
     },
-    [bundlr, dispatch, toast]
+    [dispatch, toast]
   );
 
   /**
@@ -74,7 +70,7 @@ export function useBundlr() {
       setIsWithdrawing(true);
       toast(withdrawStart());
       try {
-        await bundlr?.withdrawBalance(Number(amount));
+        await sarco.bundlr.withdrawBalance(Number(amount));
         toast(withdrawSuccess());
       } catch (_error) {
         const error = _error as Error;
@@ -90,7 +86,7 @@ export function useBundlr() {
         setIsWithdrawing(false);
       }
     },
-    [bundlr, dispatch, toast]
+    [dispatch, toast]
   );
 
   let rejectUploadPromise = useRef<any>();
@@ -118,12 +114,12 @@ export function useBundlr() {
   // Starts as soons `readyToUpload` is true.
   useEffect(() => {
     (async () => {
-      if (!bundlr || !readyToUpload || !fileBuffer) {
+      if (!readyToUpload || !fileBuffer) {
         return;
       }
 
       // SET UP UPLOAD EVENT LISTENERS
-      const chunkedUploader = bundlr.uploader.chunkedUploader;
+      const chunkedUploader = sarco.bundlr.uploader.chunkedUploader;
 
       chunkedUploader.setChunkSize(chunkedUploaderFileSize);
 
@@ -178,7 +174,6 @@ export function useBundlr() {
     toast,
     rejectUploadPromise,
     resolveUploadPromise,
-    bundlr,
     cancelUploadToken?.cancelled,
     dispatch,
   ]);
@@ -193,18 +188,13 @@ export function useBundlr() {
   const uploadFile = useCallback(
     async (payloadBuffer: Buffer, cancelToken: CancelCreateToken): Promise<string> => {
       return new Promise<string>(async (resolve, reject) => {
-        if (!bundlr) {
-          reject({ message: 'Bundlr not connected' });
-        }
-
         prepareToUpload(payloadBuffer, cancelToken, resolve, reject);
       });
     },
-    [bundlr, prepareToUpload]
+    [prepareToUpload]
   );
 
   return {
-    bundlr,
     isFunding,
     isWithdrawing,
     fund,

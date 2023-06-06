@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 export function TempResurrectionPage() {
   const [sarcoId, setSarcoId] = useState('');
   const [privateKey, setPrivateKey] = useState('');
-  const { canResurrect, resurrect } = useResurrection(sarcoId, privateKey);
+  const { resurrect } = useResurrection(sarcoId, privateKey);
 
   // linkRef is used to automatically trigger a download
   const linkRef = React.useRef<HTMLAnchorElement>(null);
@@ -52,7 +52,7 @@ export function TempResurrectionPage() {
         />
         <Button
           w="100%"
-          disabled={!canResurrect || sarcoId.trim() === '' || privateKey.trim() === ''}
+          disabled={sarcoId.trim() === '' || privateKey.trim() === ''}
           onClick={handleClickResurrect}
         >
           Resurrect
