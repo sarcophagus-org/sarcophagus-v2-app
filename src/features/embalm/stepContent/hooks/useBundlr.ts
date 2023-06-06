@@ -1,19 +1,10 @@
 import { useToast } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
-import { chunkedUploaderFileSize } from 'lib/constants';
 import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/utils/toast';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import {
-  fund as fundAction,
-  setIsFunding,
-  setIsUploading,
-  setUploadProgress,
-  withdraw as withdrawAction,
-} from 'store/bundlr/actions';
+import { useCallback, useState } from 'react';
+import { fund as fundAction, setIsFunding, withdraw as withdrawAction } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { CreateSarcophagusContext } from '../context/CreateSarcophagusContext';
-import { CancelCreateToken } from './useCreateSarcophagus/useCreateSarcophagus';
 import { sarco } from 'sarcophagus-v2-sdk';
 
 export function useBundlr() {
@@ -25,12 +16,6 @@ export function useBundlr() {
 
   // Used to tell the component when to render loading circle
   const [isWithdrawing, setIsWithdrawing] = useState(false);
-
-  const [fileBuffer, setFileBuffer] = useState<Buffer>();
-  const [cancelUploadToken, setCancelUploadToken] = useState<CancelCreateToken>();
-  const [readyToUpload, setReadyToUpload] = useState(false);
-
-  const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
 
   /**
    * Funds the bundlr node
@@ -89,116 +74,10 @@ export function useBundlr() {
     [dispatch, toast]
   );
 
-  let rejectUploadPromise = useRef<any>();
-  let resolveUploadPromise = useRef<any>();
-
-  /**
-   * Set up all needed, yet decoupled, components for uploading
-   * and raise readyToUpload flag.
-   * */
-  const prepareToUpload = useCallback(
-    (payloadBuffer: Buffer, cancelToken: CancelCreateToken, resolve?: any, reject?: any) => {
-      setFileBuffer(payloadBuffer);
-      setCancelUploadToken(cancelToken);
-      resolveUploadPromise.current = resolve;
-      rejectUploadPromise.current = reject;
-
-      setReadyToUpload(true);
-    },
-    []
-  );
-
-  //
-  // ACTUALLY BEGIN THE UPLOAD.
-  //
-  // Starts as soons `readyToUpload` is true.
-  useEffect(() => {
-    (async () => {
-      if (!readyToUpload || !fileBuffer) {
-        return;
-      }
-
-      // SET UP UPLOAD EVENT LISTENERS
-      const chunkedUploader = sarco.bundlr.uploader.chunkedUploader;
-
-      chunkedUploader.setChunkSize(chunkedUploaderFileSize);
-
-      chunkedUploader?.on('chunkUpload', chunkInfo => {
-        // STOP UPLOAD ON CANCEL
-        if (cancelUploadToken?.cancelled) {
-          chunkedUploader?.pause();
-          rejectUploadPromise.current('Cancelled upload');
-          return;
-        }
-
-        const chunkedUploadProgress = chunkInfo.totalUploaded / fileBuffer.length;
-        dispatch(setUploadProgress(chunkedUploadProgress));
-      });
-
-      chunkedUploader?.on('chunkError', e => {
-        const errorMsg = `Error uploading chunk number ${e.id} - ${e.res.statusText}`;
-        console.error(errorMsg);
-        rejectUploadPromise.current(errorMsg);
-        dispatch(setIsUploading(false));
-      });
-
-      chunkedUploader?.on('done', finishRes => {
-        console.log(
-          `Upload completed with ID ${JSON.stringify(finishRes.data?.id ?? finishRes.id)}`
-        );
-        dispatch(setIsUploading(false));
-      });
-
-      const uploadPromise = chunkedUploader
-        ?.uploadData(fileBuffer)
-        .then(res => {
-          if (!res) {
-            rejectUploadPromise.current('Could not upload');
-            return;
-          }
-
-          setSarcophagusPayloadTxId(res.data.id);
-          resolveUploadPromise.current(res.data.id);
-        })
-        .catch(err => {
-          console.log('err', err);
-          rejectUploadPromise.current(err);
-        });
-
-      await uploadPromise;
-    })();
-  }, [
-    readyToUpload,
-    fileBuffer,
-    setSarcophagusPayloadTxId,
-    toast,
-    rejectUploadPromise,
-    resolveUploadPromise,
-    cancelUploadToken?.cancelled,
-    dispatch,
-  ]);
-
-  /**
-   * Consumable entry point to initiate upload to arweave.
-   * Uploads a file given the data buffer
-   * @param payloadBuffer The data buffer
-   * @param fileMetadata Metadata with descriptive info about the file. Preferably with encrypted fields.
-   * @param cancelToken CancelCreateToken from global `embalmState`
-   */
-  const uploadFile = useCallback(
-    async (payloadBuffer: Buffer, cancelToken: CancelCreateToken): Promise<string> => {
-      return new Promise<string>(async (resolve, reject) => {
-        prepareToUpload(payloadBuffer, cancelToken, resolve, reject);
-      });
-    },
-    [prepareToUpload]
-  );
-
   return {
     isFunding,
     isWithdrawing,
     fund,
     withdraw,
-    uploadFile,
   };
 }
