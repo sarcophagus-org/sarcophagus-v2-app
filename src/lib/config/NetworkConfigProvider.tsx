@@ -64,7 +64,11 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   return (
     <NetworkConfigContext.Provider value={networkConfig}>
       <SupportedNetworkContext.Provider
-        value={{ isSarcoInitialized: sarcoInitialised, isSupportedChain: isSupportedChain, supportedNetworkNames: supportedNetworkNames }}
+        value={{
+          isSarcoInitialized: sarcoInitialised,
+          isSupportedChain: isSupportedChain,
+          supportedNetworkNames: supportedNetworkNames,
+        }}
       >
         {children}
       </SupportedNetworkContext.Provider>

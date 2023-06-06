@@ -214,9 +214,7 @@ export function Pages() {
         >
           {!isSarcoInitialized ? (
             <Flex></Flex>
-          ) 
-          :
-          isConnected && isSupportedChain ? (
+          ) : isConnected && isSupportedChain ? (
             <Routes>
               <Route
                 path="/"
