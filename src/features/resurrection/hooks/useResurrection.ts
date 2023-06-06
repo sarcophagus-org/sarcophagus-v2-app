@@ -1,5 +1,4 @@
 import { arrayify } from 'ethers/lib/utils';
-import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
@@ -8,6 +7,7 @@ import { combine } from 'shamirs-secret-sharing-ts';
 import { useNetworkConfig } from 'lib/config';
 import { hardhat, mainnet } from '@wagmi/chains';
 import { ethers } from 'ethers';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 /**
  * Hook that handles resurrection of a sarcohpagus
@@ -15,13 +15,14 @@ import { ethers } from 'ethers';
  * @param recipientPrivateKey The recipients private key
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
-  const { sarcophagus } = useGetSarcophagus(sarcoId);
+  const [isLoading, setIsLoading] = useState(false);
+  const { sarcophagus } = useGetSarcophagusDetails(sarcoId);
+
   const archaeologists = useGetSarcophagusArchaeologists(
     sarcoId,
     sarcophagus?.archaeologistAddresses ?? []
   );
   const [canResurrect, setCanResurrect] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isResurrecting, setIsResurrecting] = useState(false);
   const { fetchArweaveFileFallback, fetchArweaveFile, downloadProgress } = useArweave();
 

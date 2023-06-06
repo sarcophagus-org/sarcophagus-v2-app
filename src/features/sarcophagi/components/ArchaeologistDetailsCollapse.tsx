@@ -1,12 +1,10 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Collapse, Flex, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
-import { useState } from 'react';
-import { Sarcophagus } from 'types';
 import { ArchaeologistDetailItem } from './ArchaeologistDetailsItem';
-import { SarcophagusArchaeologist, sarco } from 'sarcophagus-v2-sdk';
+import { SarcophagusArchaeologist, SarcophagusDetails } from 'sarcophagus-v2-sdk';
 
 interface ArchaeologistsDetailsCollapseProps {
-  sarcophagus: Sarcophagus;
+  sarcophagus: SarcophagusDetails;
   archaeologists: (SarcophagusArchaeologist & { address: `0x${string}` })[];
 }
 
@@ -15,12 +13,7 @@ export function ArchaeologistsDetailsCollapse({
   sarcophagus,
 }: ArchaeologistsDetailsCollapseProps) {
   const { isOpen, onToggle } = useDisclosure();
-  const [sarcoHasRewraps, setHasRewraps] = useState<boolean>();
-
-  if (sarcoHasRewraps === undefined)
-    sarco.api.getRewrapsOnSarcophagus(sarcophagus.id).then((rewraps: any) => {
-      setHasRewraps(rewraps?.length > 0);
-    });
+  const sarcoHasRewraps = sarcophagus.rewraps.length > 0;
 
   return (
     <>

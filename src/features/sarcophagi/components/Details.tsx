@@ -1,23 +1,25 @@
 import { Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanClean';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { useSelector } from 'store/index';
-import { SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { BuryButton } from './BuryButton';
 import { CleanButton } from './CleanButton';
 import { DetailsCollapse } from './DetailsCollapse';
+import { SarcophagusState } from 'sarcophagus-v2-sdk';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 export const resurrectTooltip = 'Extend the resurrection date of the Sarcophagus';
 
 export function Details() {
   const { id } = useParams();
-  const { sarcophagus } = useGetSarcophagus(id);
   const { address } = useAccount();
   const { timestampMs } = useSelector(x => x.appState);
+
+  const { sarcophagus } = useGetSarcophagusDetails(id);
+
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0),
     timestampMs

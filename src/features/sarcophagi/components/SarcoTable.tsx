@@ -1,8 +1,8 @@
 import { Table, TableContainer, Tbody, Thead, Tr } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useGetSarcophagi } from '../hooks/useGetSarcophagi';
 import { SarcoTableHead, SortDirection } from './SarcoTableHead';
 import { SarcoTableRow } from './SarcoTableRow';
+import { SarcophagusData } from 'sarcophagus-v2-sdk';
 
 enum SortableColumn {
   State = 'state',
@@ -12,7 +12,7 @@ enum SortableColumn {
 }
 
 interface SarcoTableProps {
-  ids?: string[];
+  sarcophagi: SarcophagusData[];
   isClaimTab?: boolean;
 }
 
@@ -20,11 +20,9 @@ interface SarcoTableProps {
  * A table meant to be used to display sarcophagi with fixed column headers. Accepts sarcophagus ids
  * and pulls them from the contract.
  */
-export function SarcoTable({ ids, isClaimTab }: SarcoTableProps) {
+export function SarcoTable({ sarcophagi, isClaimTab }: SarcoTableProps) {
   const [sortColumnId, setSortColumnId] = useState<SortableColumn>(SortableColumn.None);
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.None);
-
-  const sarcophagi = useGetSarcophagi(ids || []);
 
   // Sort the sarcophagi using the sortColumnId and sortDirection states
   const sortedSarcophagi = sarcophagi?.sort((a, b) => {

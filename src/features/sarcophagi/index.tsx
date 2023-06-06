@@ -12,36 +12,76 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-import { useGetEmbalmerSarcophagi, useGetRecipientSarcophagi } from 'hooks/viewStateFacet';
 import { useAccount } from 'wagmi';
 import { NoSarcpohagi } from './components/NoSarcophagi';
 import { SarcoTab } from './components/SarcoTab';
 import { SarcoTable } from './components/SarcoTable';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
+import { SarcophagusData, sarco } from 'sarcophagus-v2-sdk';
+import { useEffect, useState } from 'react';
 
 /**
  * A component that manages the app's sarcophagi. Should be styled to fit any container.
  */
 export function Sarcophagi() {
   const { address } = useAccount();
-  const { data: embalmerSarcophagi, isLoading } = useGetEmbalmerSarcophagi(
-    address || ethers.constants.AddressZero
-  ) as { data: string[]; isLoading: boolean };
 
-  const recipientSarcophagi = useGetRecipientSarcophagi(address || ethers.constants.AddressZero);
+  const [isLoadingEmbalmerSarcophagi, setIsLoadingEmbalmerSarcophagi] = useState(false);
+  const [embalmerSarcophagi, setEmbalmerSarcophagi] = useState<SarcophagusData[]>([]);
+  const [isLoadingRecipientSarcophagi, setIsLoadingRecipientSarcophagi] = useState(false);
+  const [recipientSarcophagi, setRecipientSarcophagi] = useState<SarcophagusData[]>([]);
+
+  const sarcoIsInitialised = sarco.isInitialised;
+
+  useEffect(() => {
+    if (sarcoIsInitialised) {
+      // EMALMER SARCO
+      setIsLoadingEmbalmerSarcophagi(true);
+      sarco.api.getEmbalmerSarcophagi(address || ethers.constants.AddressZero).then(res => {
+        setEmbalmerSarcophagi(res);
+        setIsLoadingEmbalmerSarcophagi(false);
+      });
+
+      // RECIPIENT SARCO
+      setIsLoadingRecipientSarcophagi(true);
+      sarco.api.getRecipientSarcophagi(address || ethers.constants.AddressZero).then(res => {
+        setRecipientSarcophagi(res);
+        setIsLoadingRecipientSarcophagi(false);
+      });
+    }
+  }, [address, sarcoIsInitialised]);
 
   function embalmerPanel() {
-    if (isLoading) {
+    if (isLoadingEmbalmerSarcophagi) {
       return (
         <Center my={16}>
           <Spinner size="xl" />
         </Center>
       );
     }
-    if (!isLoading && embalmerSarcophagi?.length === 0) {
+    if (!isLoadingEmbalmerSarcophagi && embalmerSarcophagi?.length === 0) {
       return <NoSarcpohagi />;
     }
-    return <SarcoTable ids={embalmerSarcophagi} />;
+    return <SarcoTable sarcophagi={embalmerSarcophagi} />;
+  }
+
+  function recipientPanel() {
+    if (isLoadingRecipientSarcophagi) {
+      return (
+        <Center my={16}>
+          <Spinner size="xl" />
+        </Center>
+      );
+    }
+    if (!isLoadingRecipientSarcophagi && recipientSarcophagi?.length === 0) {
+      return <NoSarcpohagi />;
+    }
+    return (
+      <SarcoTable
+        isClaimTab
+        sarcophagi={recipientSarcophagi}
+      />
+    );
   }
 
   return (
@@ -103,12 +143,7 @@ export function Sarcophagi() {
           bg="linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 100%);"
         >
           <TabPanel h="100%">{embalmerPanel()}</TabPanel>
-          <TabPanel h="100%">
-            <SarcoTable
-              ids={recipientSarcophagi}
-              isClaimTab
-            />
-          </TabPanel>
+          <TabPanel h="100%">{recipientPanel()}</TabPanel>
         </TabPanels>
       </Tabs>
     </Flex>

@@ -10,7 +10,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { sarco } from 'sarcophagus-v2-sdk';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -28,25 +28,20 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const [totalDiggingFees, setTotalDiggingFees] = useState(ethers.constants.Zero);
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
-  useEffect(() => {
-    const fetchFees = async () => {
-      try {
-        const { totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage } =
-          await sarco.archaeologist.getTotalFeesInSarco(
-            selectedArchaeologists,
-            resurrection,
-            timestampMs
-          );
-
+  if (sarco.isInitialised) {
+    sarco.archaeologist
+      .getTotalFeesInSarco(
+        // @ts-ignore
+        selectedArchaeologists,
+        resurrection,
+        timestampMs
+      )
+      .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
         setTotalDiggingFees(diggingFees);
         setProtocolFeeBasePercentage(baseFeePercentage.toString());
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    fetchFees();
-  }, [selectedArchaeologists, resurrection, timestampMs]);
+      })
+      .catch(e => console.log(e));
+  }
 
   function toggleShowOnlySelected() {
     dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
