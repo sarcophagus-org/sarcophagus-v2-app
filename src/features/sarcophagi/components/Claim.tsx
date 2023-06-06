@@ -25,13 +25,10 @@ export function Claim() {
     timestampMs
   );
 
-  const {
-    canResurrect,
-    resurrect,
-    isResurrecting,
-    isLoading: isLoadingResurrection,
-    downloadProgress,
-  } = useResurrection(id || ethers.constants.HashZero, privateKey);
+  const { resurrect, isResurrecting, downloadProgress } = useResurrection(
+    id || ethers.constants.HashZero,
+    privateKey
+  );
 
   const privateKeyPad = (privKey: string): string => {
     return privKey.startsWith('0x') ? privKey : `0x${privKey}`;
@@ -70,6 +67,8 @@ export function Claim() {
 
   useEnterKeyCallback(handleResurrect);
 
+  const canResurrect = !!sarcophagus && sarcophagus.publishedKeys.length >= sarcophagus.threshold;
+
   return (
     <Flex
       direction="column"
@@ -78,7 +77,7 @@ export function Claim() {
       <Link ref={linkRef} />
       <Text>Resurrection Date</Text>
       <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
-      {!isLoadingResurrection && !loadingSarcophagus ? (
+      {!loadingSarcophagus ? (
         <>
           {canResurrect ? (
             <>
