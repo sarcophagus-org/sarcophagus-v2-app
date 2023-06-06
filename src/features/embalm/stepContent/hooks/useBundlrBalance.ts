@@ -1,16 +1,15 @@
 import { BigNumber, ethers } from 'ethers';
 import { bundlrBalanceDecimals } from 'lib/constants';
 import { useCallback, useEffect, useMemo } from 'react';
+import { sarco } from 'sarcophagus-v2-sdk';
 import { resetBalanceOffset, setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
-import { useBundlr } from './useBundlr';
 
 const fetchBalanceTimeout = 5_000;
 
 export function useBundlrBalance() {
   const dispatch = useDispatch();
-  const { bundlr } = useBundlr();
   const { balance, isConnected, balanceOffset } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
 
@@ -28,22 +27,17 @@ export function useBundlrBalance() {
    * The hook returns this to manually load the balance after a successful fund
    */
   const getBalance = useCallback(async () => {
-    if (!bundlr) return ethers.constants.Zero;
-    const newBalance = await bundlr.getLoadedBalance();
+    const newBalance = await sarco.bundlr.getLoadedBalance();
     return BigNumber.from(newBalance.toString());
-  }, [bundlr]);
+  }, []);
 
   // Effect that loads the balance when the component mounts and if the bundlr is instantiated
   useEffect(() => {
     (async () => {
-      if (bundlr) {
         const newBalance = await getBalance();
         dispatch(setBalance(newBalance));
-      } else {
-        dispatch(setBalance(ethers.constants.Zero));
-      }
     })();
-  }, [bundlr, dispatch, getBalance]);
+  }, [dispatch, getBalance]);
 
   // Effect that runs an interval which queries the bundlr balance if the balanceOffset is not 0. If
   // the balance coming from the bundlr turns out to match the current balance plus the
