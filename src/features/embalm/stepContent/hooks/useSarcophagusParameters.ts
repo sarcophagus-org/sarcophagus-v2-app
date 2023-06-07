@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 import { sarco } from 'sarcophagus-v2-sdk';
 import { hardhatChainId } from 'lib/config/networkConfigs';
 import { useCallback, useState } from 'react';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export interface SarcophagusParameter {
   name: string;
@@ -43,16 +44,15 @@ export const useSarcophagusParameters = () => {
   const [maxRewrapIntervalMs, setMaxRewrapIntervalMs] = useState(0);
   const [maxResurrectionTimeMs, setMaxResurrectionTimeMs] = useState(0);
 
+  const { isSarcoInitialized } = useSupportedNetwork();
+
   useCallback(() => {
-    if (!sarco.isInitialised) return;
-    setMaxRewrapIntervalMs(
-      sarco.archaeologist.getLowestRewrapInterval(selectedArchaeologists) * 1000
-    );
-    // TODO: will be combined with `getLowestRewrapInterval` above
-    setMaxResurrectionTimeMs(
-      sarco.archaeologist.getLowestResurrectionTime(selectedArchaeologists) * 1000
-    );
-  }, [selectedArchaeologists, sarco.isInitialised]);
+    if (!isSarcoInitialized) return;
+    const { lowestResurrectiontime, lowestRewrapInterval } =
+      sarco.archaeologist.getLowestResurrectionTimeAndRewrapInterval(selectedArchaeologists);
+    setMaxRewrapIntervalMs(lowestRewrapInterval * 1000);
+    setMaxResurrectionTimeMs(lowestResurrectiontime * 1000);
+  }, [isSarcoInitialized, selectedArchaeologists]);
 
   const resurrectionTimeError = !resurrection
     ? 'Please set a resurrection time'

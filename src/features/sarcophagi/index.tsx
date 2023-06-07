@@ -19,6 +19,7 @@ import { SarcoTable } from './components/SarcoTable';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { SarcophagusData, sarco } from 'sarcophagus-v2-sdk';
 import { useEffect, useState } from 'react';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 /**
  * A component that manages the app's sarcophagi. Should be styled to fit any container.
@@ -31,10 +32,10 @@ export function Sarcophagi() {
   const [isLoadingRecipientSarcophagi, setIsLoadingRecipientSarcophagi] = useState(false);
   const [recipientSarcophagi, setRecipientSarcophagi] = useState<SarcophagusData[]>([]);
 
-  const sarcoIsInitialised = sarco.isInitialised;
+  const { isSarcoInitialized } = useSupportedNetwork();
 
   useEffect(() => {
-    if (sarcoIsInitialised) {
+    if (isSarcoInitialized) {
       // EMALMER SARCO
       setIsLoadingEmbalmerSarcophagi(true);
       sarco.api.getEmbalmerSarcophagi(address || ethers.constants.AddressZero).then(res => {
@@ -49,7 +50,7 @@ export function Sarcophagi() {
         setIsLoadingRecipientSarcophagi(false);
       });
     }
-  }, [address, sarcoIsInitialised]);
+  }, [address, isSarcoInitialized]);
 
   function embalmerPanel() {
     if (isLoadingEmbalmerSarcophagi) {

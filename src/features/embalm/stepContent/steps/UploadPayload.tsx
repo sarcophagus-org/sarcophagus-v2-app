@@ -5,11 +5,13 @@ import { maxSarcophagusNameLength } from 'lib/constants';
 import prettyBytes from 'pretty-bytes';
 import { FileDragAndDrop } from '../components/FileDragAndDrop';
 import { useUploadPayload } from '../hooks/useUploadPayload';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function UploadPayload() {
   const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
   const { formattedUploadPrice } = useUploadPrice();
+
+  const { isBundlrConnected } = useSupportedNetwork();
 
   function handleClickFilePicker() {
     if (fileInputRef.current) {
@@ -77,7 +79,7 @@ export function UploadPayload() {
             <Text>Size: {prettyBytes(file.size)}</Text>
             <Text>
               {"Bundlr's upload price: "}
-              {sarco.bundlr.isConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
+              {isBundlrConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
             </Text>
             <Link textDecor="underline">Upload a different file</Link>
           </VStack>

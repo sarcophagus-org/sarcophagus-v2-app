@@ -8,13 +8,15 @@ import { useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useBundlrBalance } from '../hooks/useBundlrBalance';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
   const { connectToBundlr, disconnectFromBundlr } = useBundlrSession();
   const { formattedBalance } = useBundlrBalance();
   const { uploadPrice, formattedUploadPrice } = useUploadPrice();
+
+  const { isBundlrConnected } = useSupportedNetwork();
 
   const { balanceOffset } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
@@ -36,7 +38,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
       align="left"
       w="100%"
     >
-      {!sarco.bundlr.isConnected ? (
+      {!isBundlrConnected ? (
         <VStack
           py={8}
           spacing={6}

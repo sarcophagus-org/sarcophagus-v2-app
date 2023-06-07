@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 // import { BigNumber as BN } from 'bignumber.js';
 import { sarco } from 'sarcophagus-v2-sdk';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function useUploadPrice() {
   const dispatch = useDispatch();
@@ -13,14 +14,16 @@ export function useUploadPrice() {
   const file = useSelector(x => x.embalmState.file);
   const uploadPrice = useSelector(x => x.embalmState.uploadPrice);
 
+  const { isBundlrConnected } = useSupportedNetwork();
+
   const formattedUploadPrice = useMemo(
     () =>
-      sarco.bundlr.isConnected
+      isBundlrConnected
         ? `${parseFloat(ethers.utils.formatUnits(uploadPrice) || '0').toFixed(
             uploadPriceDecimals
           )} ${chain?.nativeCurrency?.name}`
         : '',
-    [chain, uploadPrice, sarco.bundlr.isConnected]
+    [isBundlrConnected, uploadPrice, chain?.nativeCurrency?.name]
   );
 
   // Updates the upload price when the file changes

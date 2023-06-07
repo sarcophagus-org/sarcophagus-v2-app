@@ -9,7 +9,8 @@ import { sarco } from 'sarcophagus-v2-sdk';
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
 
-  const [sarcoInitialised, setSarcoInitialised] = useState(false);
+  const [isSarcoInitialized, setSarcoInitialised] = useState(false);
+  const [isBundlrConnected, setIsBundlrConnected] = useState(false);
 
   const networkConfig: NetworkConfig | null = useMemo(() => {
     const emptyConfig: NetworkConfig = {
@@ -39,7 +40,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
     const validChain = !!chain && !!networkConfigs[chain.id];
     const config = validChain ? networkConfigs[chain.id] : emptyConfig;
 
-    if (validChain && !sarcoInitialised) {
+    if (validChain && !isSarcoInitialized) {
       sarco
         .init({
           chainId: chain.id,
@@ -50,7 +51,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
     }
 
     return sarco.isInitialised ? config : emptyConfig;
-  }, [chain, sarcoInitialised]);
+  }, [chain, isSarcoInitialized]);
 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
@@ -65,7 +66,9 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
     <NetworkConfigContext.Provider value={networkConfig}>
       <SupportedNetworkContext.Provider
         value={{
-          isSarcoInitialized: sarcoInitialised,
+          isSarcoInitialized,
+          isBundlrConnected,
+          setIsBundlrConnected,
           isSupportedChain: isSupportedChain,
           supportedNetworkNames: supportedNetworkNames,
         }}

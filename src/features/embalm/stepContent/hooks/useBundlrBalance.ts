@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { bundlrBalanceDecimals } from 'lib/constants';
 import { useCallback, useEffect, useMemo } from 'react';
 import { sarco } from 'sarcophagus-v2-sdk';
@@ -12,15 +13,16 @@ export function useBundlrBalance() {
   const dispatch = useDispatch();
   const { balance, balanceOffset } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
+  const { isBundlrConnected } = useSupportedNetwork();
 
   const formattedBalance = useMemo(
     () =>
-      sarco.bundlr.isConnected && balance
+      isBundlrConnected && balance
         ? `${parseFloat(ethers.utils.formatUnits(balance)).toFixed(bundlrBalanceDecimals)} ${
             chain?.nativeCurrency?.name || 'ETH'
           }`
         : '',
-    [balance, chain, sarco.bundlr.isConnected]
+    [balance, chain?.nativeCurrency?.name, isBundlrConnected]
   );
 
   /**

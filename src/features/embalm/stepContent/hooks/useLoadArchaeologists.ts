@@ -7,6 +7,7 @@ import { useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 
 import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -21,10 +22,11 @@ export function useLoadArchaeologists() {
   const [isDependenciesReady, setIsDependenciesReady] = useState<boolean>(false);
 
   const { data: signer } = useSigner();
+  const { isSarcoInitialized } = useSupportedNetwork();
 
   const refreshProfiles = useCallback(
     async (addresses: string[]): Promise<ArchaeologistData[]> => {
-      if (!networkConfig.diamondDeployAddress || !sarco.isInitialised) {
+      if (!networkConfig.diamondDeployAddress || !isSarcoInitialized) {
         return [];
       }
 
@@ -38,7 +40,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [networkConfig.diamondDeployAddress]
+    [isSarcoInitialized, networkConfig.diamondDeployAddress]
   );
 
   const getRegisteredProfiles = useCallback(async (): Promise<ArchaeologistData[]> => {

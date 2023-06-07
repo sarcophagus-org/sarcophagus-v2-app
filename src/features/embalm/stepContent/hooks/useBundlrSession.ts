@@ -2,6 +2,7 @@ import { useToast } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { hardhatChainId } from 'lib/config/networkConfigs';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import {
   connectFailure,
   connectStart,
@@ -17,17 +18,20 @@ export function useBundlrSession() {
   const networkConfig = useNetworkConfig();
   const isHardhatNetwork = networkConfig.chainId === hardhatChainId;
 
+  const { setIsBundlrConnected } = useSupportedNetwork();
+
   /**
    * Disconnects from the arweave bundlr node
    */
   const disconnectFromBundlr = useCallback(() => {
     localStorage.removeItem('publicKey');
     sarco.bundlr.disconnect();
+    setIsBundlrConnected(false);
     const id = 'disconnectFromBundlr';
     if (!toast.isActive(id)) {
       toast({ ...disconnectToast(), id });
     }
-  }, [toast]);
+  }, [setIsBundlrConnected, toast]);
 
   useAccount({
     onDisconnect() {
@@ -54,6 +58,7 @@ export function useBundlrSession() {
     toast(connectStart());
     try {
       const publicKey = await sarco.bundlr.connect();
+      setIsBundlrConnected(true);
       console.log('injectPublicKey', publicKey);
       // sarco.bundlr.injectPublicKey(publicKey);
       console.log('done');
@@ -63,7 +68,7 @@ export function useBundlrSession() {
       const error = _error as Error;
       toast(connectFailure(error.message));
     }
-  }, [toast, isHardhatNetwork]);
+  }, [isHardhatNetwork, toast, setIsBundlrConnected]);
 
   // Uses the connect wallet button to detect chain change.
   // I was not able to use an wagmi hooks to detect a chain change from the wallet.

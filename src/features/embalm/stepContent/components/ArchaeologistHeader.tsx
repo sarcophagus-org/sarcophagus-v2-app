@@ -10,6 +10,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useState } from 'react';
 import { sarco } from 'sarcophagus-v2-sdk';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
@@ -28,7 +29,9 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const [totalDiggingFees, setTotalDiggingFees] = useState(ethers.constants.Zero);
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
-  if (sarco.isInitialised) {
+  const { isSarcoInitialized } = useSupportedNetwork();
+
+  if (isSarcoInitialized) {
     sarco.archaeologist
       .getTotalFeesInSarco(
         // @ts-ignore
