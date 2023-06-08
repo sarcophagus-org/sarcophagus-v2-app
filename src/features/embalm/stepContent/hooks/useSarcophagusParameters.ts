@@ -1,15 +1,15 @@
+import { ethers } from 'ethers';
+import { useNetworkConfig } from 'lib/config';
+import { hardhatChainId } from 'lib/config/networkConfigs';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { minimumResurrection } from 'lib/constants';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { sarco } from 'sarcophagus-v2-sdk';
+import { Step, StepStatus } from 'store/embalm/reducer';
+import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
 import { useSelector } from '../../../../store';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
-import { Step, StepStatus } from 'store/embalm/reducer';
-import { useNetworkConfig } from 'lib/config';
-import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
-import moment from 'moment';
-import { minimumResurrection } from 'lib/constants';
-import { ethers } from 'ethers';
-import { sarco } from 'sarcophagus-v2-sdk';
-import { hardhatChainId } from 'lib/config/networkConfigs';
-import { useCallback, useState } from 'react';
-import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export interface SarcophagusParameter {
   name: string;
@@ -46,8 +46,8 @@ export const useSarcophagusParameters = () => {
 
   const { isSarcoInitialized } = useSupportedNetwork();
 
-  useCallback(() => {
-    if (!isSarcoInitialized) return;
+  useEffect(() => {
+    if (!isSarcoInitialized || selectedArchaeologists.length === 0) return;
     const { lowestResurrectiontime, lowestRewrapInterval } =
       sarco.archaeologist.getLowestResurrectionTimeAndRewrapInterval(selectedArchaeologists);
     setMaxRewrapIntervalMs(lowestRewrapInterval * 1000);
