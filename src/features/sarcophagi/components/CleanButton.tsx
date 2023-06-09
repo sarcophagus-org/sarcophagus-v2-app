@@ -1,12 +1,12 @@
 import { Button, Tooltip } from '@chakra-ui/react';
 import { useCleanSarcophagus } from 'hooks/thirdPartyFacet/useCleanSarcophagus';
 import { useGetEmbalmerCanClean } from 'hooks/viewStateFacet/useGetEmbalmerCanClean';
-import { Sarcophagus } from 'types';
+import { SarcophagusData } from 'sarcophagus-v2-sdk';
 
 export const cleanTooltip =
   'Claim bonds and digging fees from Archaeologists that did not participate in the unwrapping ceremony';
 
-export function CleanButton({ sarco }: { sarco: Sarcophagus }) {
+export function CleanButton({ sarco }: { sarco: SarcophagusData }) {
   const canEmbalmerClean = useGetEmbalmerCanClean(sarco);
   const { clean, isCleaning, isError, mayFail } = useCleanSarcophagus(sarco.id, canEmbalmerClean);
 

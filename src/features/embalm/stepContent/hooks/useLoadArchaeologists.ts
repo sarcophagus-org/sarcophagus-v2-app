@@ -1,14 +1,13 @@
-import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
 import { useCallback, useEffect, useState } from 'react';
 import { startLoad, stopLoad } from 'store/app/actions';
 import { setArchaeologists, setCurrentChainId } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useContract, useNetwork, useSigner } from 'wagmi';
+import { useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 
-import { sarco } from 'sarcophagus-v2-sdk';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -23,16 +22,11 @@ export function useLoadArchaeologists() {
   const [isDependenciesReady, setIsDependenciesReady] = useState<boolean>(false);
 
   const { data: signer } = useSigner();
-
-  const viewStateFacet = useContract({
-    address: networkConfig.diamondDeployAddress,
-    abi: ViewStateFacet__factory.abi,
-    signerOrProvider: signer,
-  });
+  const { isSarcoInitialized } = useSupportedNetwork();
 
   const refreshProfiles = useCallback(
     async (addresses: string[]): Promise<ArchaeologistData[]> => {
-      if (!networkConfig.diamondDeployAddress || !sarco.isInitialised) {
+      if (!networkConfig.diamondDeployAddress || !isSarcoInitialized) {
         return [];
       }
 
@@ -46,11 +40,11 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [networkConfig.diamondDeployAddress]
+    [isSarcoInitialized, networkConfig.diamondDeployAddress]
   );
 
   const getRegisteredProfiles = useCallback(async (): Promise<ArchaeologistData[]> => {
-    if (!networkConfig.diamondDeployAddress || !viewStateFacet || !signer) {
+    if (!networkConfig.diamondDeployAddress || !signer) {
       return [];
     }
 
@@ -61,7 +55,7 @@ export function useLoadArchaeologists() {
       Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
       return [];
     }
-  }, [networkConfig.diamondDeployAddress, signer, viewStateFacet]);
+  }, [networkConfig, signer]);
 
   // This useEffect is used to trigger the useEffect below to load archaeologists once
   // ALL dependencies are ready.
@@ -71,7 +65,6 @@ export function useLoadArchaeologists() {
       !!dispatch &&
       !!getRegisteredProfiles &&
       !!networkConfig.diamondDeployAddress &&
-      !!viewStateFacet &&
       !!signer &&
       !!timestampMs
     ) {
@@ -90,7 +83,6 @@ export function useLoadArchaeologists() {
     networkConfig.diamondDeployAddress,
     signer,
     timestampMs,
-    viewStateFacet,
   ]);
 
   useEffect(() => {

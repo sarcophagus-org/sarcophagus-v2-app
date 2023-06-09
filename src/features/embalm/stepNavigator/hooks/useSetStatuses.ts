@@ -14,6 +14,7 @@ import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
 import { hardhatChainId } from 'lib/config/networkConfigs';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -40,6 +41,8 @@ export function validateRequiredArchaeologists(required: number, total: number):
 export function useSetStatuses() {
   const dispatch = useDispatch();
 
+  const { isBundlrConnected } = useSupportedNetwork();
+
   const {
     selectedArchaeologists,
     file,
@@ -49,7 +52,6 @@ export function useSetStatuses() {
     resurrection,
     stepStatuses,
   } = useSelector(x => x.embalmState);
-  const { isConnected: isBundlrConnected } = useSelector(x => x.bundlrState);
   const { timestampMs } = useSelector(x => x.appState);
   const { uploadPrice } = useUploadPrice();
   const { balance } = useBundlrBalance();
@@ -134,9 +136,9 @@ export function useSetStatuses() {
     dispatch,
     file,
     fundBundlrStatus,
-    isBundlrConnected,
     uploadPrice,
     chain?.id,
+    isBundlrConnected,
   ]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [

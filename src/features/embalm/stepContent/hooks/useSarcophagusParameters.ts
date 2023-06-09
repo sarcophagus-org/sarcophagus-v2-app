@@ -1,13 +1,15 @@
+import { ethers } from 'ethers';
+import { useNetworkConfig } from 'lib/config';
+import { hardhatChainId } from 'lib/config/networkConfigs';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { minimumResurrection } from 'lib/constants';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { sarco } from 'sarcophagus-v2-sdk';
+import { Step, StepStatus } from 'store/embalm/reducer';
+import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
 import { useSelector } from '../../../../store';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
-import { Step, StepStatus } from 'store/embalm/reducer';
-import { useNetworkConfig } from 'lib/config';
-import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
-import moment from 'moment';
-import { minimumResurrection } from 'lib/constants';
-import { ethers } from 'ethers';
-import { getLowestResurrectionTime, getLowestRewrapInterval } from 'sarcophagus-v2-sdk';
-import { hardhatChainId } from 'lib/config/networkConfigs';
 
 export interface SarcophagusParameter {
   name: string;
@@ -38,8 +40,19 @@ export const useSarcophagusParameters = () => {
   const { chainId } = useNetworkConfig();
 
   const isHardhatNetwork = chainId === hardhatChainId;
-  const maxRewrapIntervalMs = getLowestRewrapInterval(selectedArchaeologists) * 1000;
-  const maxResurrectionTimeMs = getLowestResurrectionTime(selectedArchaeologists) * 1000; // TODO: will be combined with `getLowestRewrapInterval` above
+
+  const [maxRewrapIntervalMs, setMaxRewrapIntervalMs] = useState(0);
+  const [maxResurrectionTimeMs, setMaxResurrectionTimeMs] = useState(0);
+
+  const { isSarcoInitialized } = useSupportedNetwork();
+
+  useEffect(() => {
+    if (!isSarcoInitialized || selectedArchaeologists.length === 0) return;
+    const { lowestResurrectiontime, lowestRewrapInterval } =
+      sarco.archaeologist.getLowestResurrectionTimeAndRewrapInterval(selectedArchaeologists);
+    setMaxRewrapIntervalMs(lowestRewrapInterval * 1000);
+    setMaxResurrectionTimeMs(lowestResurrectiontime * 1000);
+  }, [isSarcoInitialized, selectedArchaeologists]);
 
   const resurrectionTimeError = !resurrection
     ? 'Please set a resurrection time'

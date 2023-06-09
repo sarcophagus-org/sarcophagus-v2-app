@@ -13,6 +13,10 @@ module.exports = function override(config) {
     zlib: require.resolve('browserify-zlib'),
     process: require.resolve('process'),
     path: require.resolve('path-browserify'),
+    fs: false,
+    tty: false,
+    child_process: false,
+    readline: false,
   };
   config.plugins.push(
     new webpack.ProvidePlugin({

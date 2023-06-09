@@ -10,8 +10,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useState } from 'react';
-import { formatSarco, sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 
@@ -28,18 +29,22 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const [totalDiggingFees, setTotalDiggingFees] = useState(ethers.constants.Zero);
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
-  sarco.archaeologist
-    .getTotalFeesInSarco(
-      // @ts-ignore
-      selectedArchaeologists,
-      resurrection,
-      timestampMs
-    )
-    .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
-      setTotalDiggingFees(diggingFees);
-      setProtocolFeeBasePercentage(baseFeePercentage.toString());
-    })
-    .catch(e => console.log(e));
+  const { isSarcoInitialized } = useSupportedNetwork();
+
+  if (isSarcoInitialized) {
+    sarco.archaeologist
+      .getTotalFeesInSarco(
+        // @ts-ignore
+        selectedArchaeologists,
+        resurrection,
+        timestampMs
+      )
+      .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
+        setTotalDiggingFees(diggingFees);
+        setProtocolFeeBasePercentage(baseFeePercentage.toString());
+      })
+      .catch(e => console.log(e));
+  }
 
   function toggleShowOnlySelected() {
     dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
@@ -97,7 +102,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
                 variant="bold"
                 as="u"
               >
-                {formatSarco(totalDiggingFees.add(curseFees).toString())} SARCO
+                {sarco.utils.formatSarco(totalDiggingFees.add(curseFees).toString())} SARCO
               </Text>
             </Text>
             <Text

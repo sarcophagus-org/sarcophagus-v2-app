@@ -63,22 +63,29 @@ export function CreateSarcophagus() {
   );
 
   useEffect(() => {
-    sarco.archaeologist
-      .getTotalFeesInSarco(selectedArchaeologists, resurrectionTimeMs, timestampMs)
-      .then(({ totalDiggingFees: diggingFees, protocolFee: protocolFeeVal }) => {
-        setTotalDiggingFees(diggingFees);
-        setProtocolFee(protocolFeeVal);
-
-        const totalCurseFees = selectedArchaeologists.reduce(
-          (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
-          BigNumber.from(0)
+    const fetchFees = async () => {
+      const { totalDiggingFees: diggingFees, protocolFee: protocolFeeVal } =
+        await sarco.archaeologist.getTotalFeesInSarco(
+          selectedArchaeologists,
+          resurrectionTimeMs,
+          timestampMs
         );
 
-        const diggingFeesAndCurseFees = diggingFees.add(totalCurseFees);
-        const totalFees = diggingFeesAndCurseFees.add(protocolFeeVal);
+      setTotalDiggingFees(diggingFees);
+      setProtocolFee(protocolFeeVal);
 
-        setTotalFeesWithApproveBuffer(totalFees.add(totalFees.div(10)));
-      });
+      const totalCurseFees = selectedArchaeologists.reduce(
+        (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
+        BigNumber.from(0)
+      );
+
+      const diggingFeesAndCurseFees = diggingFees.add(totalCurseFees);
+      const totalFees = diggingFeesAndCurseFees.add(protocolFeeVal);
+
+      setTotalFeesWithApproveBuffer(totalFees.add(totalFees.div(10)));
+    };
+
+    fetchFees();
   }, [resurrectionTimeMs, selectedArchaeologists, timestampMs]);
 
   const {

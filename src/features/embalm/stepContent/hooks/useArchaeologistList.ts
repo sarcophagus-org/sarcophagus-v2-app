@@ -3,8 +3,7 @@ import { monthSeconds } from 'lib/constants';
 import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
 import { keys, orderBy } from 'lodash';
 import { useCallback } from 'react';
-import { calculateDiggingFees } from 'sarcophagus-v2-sdk';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk/src/types/archaeologist';
+import { sarco, ArchaeologistData } from 'sarcophagus-v2-sdk';
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
@@ -119,7 +118,11 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            const diggingFees = calculateDiggingFees(arch, resurrectionTime, timestampMs);
+            const diggingFees = sarco.archaeologist.calculateDiggingFees(
+              arch,
+              resurrectionTime,
+              timestampMs
+            );
             const totalFees = diggingFees?.add(arch.profile.curseFee);
             sortValue = totalFees ?? arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {

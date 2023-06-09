@@ -8,11 +8,11 @@ import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'store/index';
-import { Sarcophagus, SarcophagusState } from 'types';
 import { useAccount } from 'wagmi';
 import { cleanTooltip } from './CleanButton';
 import { resurrectTooltip } from './Details';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
+import { SarcophagusData, SarcophagusState } from 'sarcophagus-v2-sdk';
 
 export enum SarcoAction {
   Rewrap = 'rewrap',
@@ -21,7 +21,7 @@ export enum SarcoAction {
 }
 
 export interface SarcophagusTableRowProps extends TableRowProps {
-  sarco: Sarcophagus;
+  sarco: SarcophagusData;
   isClaimTab?: boolean;
   dateCalculationInterval?: number;
 }

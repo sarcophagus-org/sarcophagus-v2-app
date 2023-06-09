@@ -5,7 +5,7 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { formatFee } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
-import { formatSarco, sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from 'sarcophagus-v2-sdk';
 import { useEffect, useState } from 'react';
 
 export function SarcophagusSummaryFees() {
@@ -21,31 +21,38 @@ export function SarcophagusSummaryFees() {
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
   useEffect(() => {
-    sarco.archaeologist
-      .getTotalFeesInSarco(selectedArchaeologists, resurrection, timestampMs)
-      .then(
-        ({
-          totalDiggingFees: diggingFees,
-          protocolFee: protocolFeeVal,
-          formattedTotalDiggingFees: formattedDiggingFees,
-          protocolFeeBasePercentage: baseFeePercent,
-        }) => {
-          setTotalDiggingFees(diggingFees);
-          setProtocolFee(protocolFeeVal);
-          setProtocolFeeBasePercentage(baseFeePercent.toString());
-          setFormattedTotalDiggingFees(formattedDiggingFees);
-
-          const totalCurseFeesCalc = selectedArchaeologists.reduce(
-            (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
-            BigNumber.from(0)
-          );
-
-          setTotalCurseFees(totalCurseFeesCalc);
-          const diggingFeesAndCurseFees = diggingFees.add(totalCurseFeesCalc);
-
-          setTotalFees(diggingFeesAndCurseFees.add(protocolFeeVal));
-        }
+    async function setFees() {
+      // Get the fees
+      const {
+        totalDiggingFees: newTotalDiggingFees,
+        protocolFee: newProtocolFee,
+        formattedTotalDiggingFees: newFormattedTotalDiggingFees,
+        protocolFeeBasePercentage: newProtocolFeeBasePercentage,
+      } = await sarco.archaeologist.getTotalFeesInSarco(
+        selectedArchaeologists,
+        resurrection,
+        timestampMs
       );
+
+      // Set the fees in state
+      setTotalDiggingFees(newTotalDiggingFees);
+      setProtocolFee(newProtocolFee);
+      setFormattedTotalDiggingFees(newFormattedTotalDiggingFees);
+      setProtocolFeeBasePercentage(newProtocolFeeBasePercentage.toString());
+
+      // Calculate and set total curse fees
+      const totalCurseFeesCalc = selectedArchaeologists.reduce(
+        (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
+        BigNumber.from(0)
+      );
+      setTotalCurseFees(totalCurseFeesCalc);
+
+      // Calculate and set digging and curse fees
+      const diggingFeesAndCurseFees = newTotalDiggingFees.add(totalCurseFeesCalc);
+      setTotalFees(diggingFeesAndCurseFees.add(newProtocolFee));
+    }
+
+    setFees();
   }, [resurrection, selectedArchaeologists, timestampMs]);
 
   return (
@@ -91,7 +98,7 @@ export function SarcophagusSummaryFees() {
             justifyContent="space-between"
           >
             <Text as="i">Curse Fee</Text>
-            <Text as="i">{formatSarco(totalCurseFees.toString())} SARCO</Text>
+            <Text as="i">{sarco.utils.formatSarco(totalCurseFees.toString())} SARCO</Text>
           </Flex>
           <Flex
             w="100%"
@@ -109,7 +116,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              {formatSarco(protocolFee.toString())} SARCO
+              {sarco.utils.formatSarco(protocolFee.toString())} SARCO
             </Text>
           </Flex>
           <Flex
@@ -117,7 +124,7 @@ export function SarcophagusSummaryFees() {
             justifyContent="space-between"
           >
             <Text as="i">Total Fees</Text>
-            <Text as="i">{formatSarco(totalFees.toString())} SARCO</Text>
+            <Text as="i">{sarco.utils.formatSarco(totalFees.toString())} SARCO</Text>
           </Flex>
           <Divider
             my={2}

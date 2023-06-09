@@ -1,9 +1,9 @@
+import { SarcophagusData } from 'sarcophagus-v2-sdk';
 import { Actions } from '..';
-import { Sarcophagus } from '../../types';
 import { ActionType } from './actions';
 
 export interface SarcophagiState {
-  sarcophagi: Sarcophagus[];
+  sarcophagi: SarcophagusData[];
   value: string;
 }
 

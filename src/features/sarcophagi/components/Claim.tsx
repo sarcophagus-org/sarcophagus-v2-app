@@ -3,33 +3,32 @@ import { SarcoAlert } from 'components/SarcoAlert';
 import { BigNumber, ethers } from 'ethers';
 import { useResurrection } from 'features/resurrection/hooks/useResurrection';
 import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
-import { useGetSarcophagus } from 'hooks/viewStateFacet';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'store/index';
 import { useQuery } from '../../../hooks/useQuery';
+import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 export function Claim() {
   const toast = useToast();
   const { id } = useParams();
   const query = useQuery();
   const [privateKey, setPrivateKey] = useState(query.get('pk') || '');
+
   const [resurrectError, setResurrectError] = useState('');
-  const { sarcophagus, isLoading: isLoadingSarcophagus } = useGetSarcophagus(id);
+  const { sarcophagus, loadingSarcophagus } = useGetSarcophagusDetails(id);
+
   const { timestampMs } = useSelector(x => x.appState);
   const resurrectionString = buildResurrectionDateString(
     sarcophagus?.resurrectionTime || BigNumber.from(0),
     timestampMs
   );
 
-  const {
-    canResurrect,
-    resurrect,
-    isResurrecting,
-    isLoading: isLoadingResurrection,
-    downloadProgress,
-  } = useResurrection(id || ethers.constants.HashZero, privateKey);
+  const { resurrect, isResurrecting, downloadProgress } = useResurrection(
+    id || ethers.constants.HashZero,
+    privateKey
+  );
 
   const privateKeyPad = (privKey: string): string => {
     return privKey.startsWith('0x') ? privKey : `0x${privKey}`;
@@ -68,6 +67,8 @@ export function Claim() {
 
   useEnterKeyCallback(handleResurrect);
 
+  const canResurrect = !!sarcophagus && sarcophagus.publishedKeys.length >= sarcophagus.threshold;
+
   return (
     <Flex
       direction="column"
@@ -76,7 +77,7 @@ export function Claim() {
       <Link ref={linkRef} />
       <Text>Resurrection Date</Text>
       <Text variant="secondary">{sarcophagus?.resurrectionTime ? resurrectionString : '--'}</Text>
-      {!isLoadingResurrection && !isLoadingSarcophagus ? (
+      {!loadingSarcophagus ? (
         <>
           {canResurrect ? (
             <>

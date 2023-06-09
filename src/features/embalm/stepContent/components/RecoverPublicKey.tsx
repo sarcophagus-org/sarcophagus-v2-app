@@ -1,9 +1,10 @@
 import { VStack, Input, Button, Textarea, AlertStatus } from '@chakra-ui/react';
-import { useRecoverPublicKey, ErrorStatus } from '../hooks/useRecoverPublicKey';
 import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
+import { RecoverPublicKeyErrorStatus } from 'sarcophagus-v2-sdk';
+import { useRecoverPublicKey } from '../hooks/useRecoverPublicKey';
 
 interface IErrorStatusMap {
   alertMessage: string;
@@ -12,19 +13,15 @@ interface IErrorStatusMap {
 
 export function RecoverPublicKey() {
   const ErrorStatusMap: { [key: number]: IErrorStatusMap } = {
-    [ErrorStatus.SUCCESS]: {
-      alertStatus: 'success',
-      alertMessage: 'Public Key found! You can move on to the next step.',
-    },
-    [ErrorStatus.INVALID_ADDRESS]: {
+    [RecoverPublicKeyErrorStatus.INVALID_ADDRESS]: {
       alertStatus: 'warning',
       alertMessage: 'Address is not a value Etherum address.',
     },
-    [ErrorStatus.CANNOT_RECOVER]: {
+    [RecoverPublicKeyErrorStatus.CANNOT_RECOVER]: {
       alertStatus: 'warning',
       alertMessage: 'This address has no transactions in which to recover the pubilc key.',
     },
-    [ErrorStatus.ERROR]: {
+    [RecoverPublicKeyErrorStatus.ERROR]: {
       alertStatus: 'error',
       alertMessage: 'An error occurred while trying to recover the public key.',
     },
@@ -32,8 +29,8 @@ export function RecoverPublicKey() {
 
   const dispatch = useDispatch();
   const { recipientState } = useSelector(x => x.embalmState);
-
-  const { recoverPublicKey, isLoading, errorStatus, clearErrorStatus } = useRecoverPublicKey();
+  const { recoverPublicKey, publicKey, clearErrorStatus, errorStatus, isLoading } =
+    useRecoverPublicKey();
 
   useEnterKeyCallback(() => recoverPublicKey(recipientState.address));
 
@@ -67,7 +64,12 @@ export function RecoverPublicKey() {
         value={recipientState.publicKey}
         resize="none"
       />
-      {errorStatus && (
+      {publicKey && (
+        <SarcoAlert status="success">
+          Public Key found! You can move on to the next step.
+        </SarcoAlert>
+      )}
+      {!publicKey && errorStatus && (
         <SarcoAlert status={ErrorStatusMap[errorStatus].alertStatus}>
           {ErrorStatusMap[errorStatus].alertMessage}
         </SarcoAlert>
