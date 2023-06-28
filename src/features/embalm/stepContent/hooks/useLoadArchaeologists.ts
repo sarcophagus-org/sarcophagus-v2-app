@@ -26,6 +26,7 @@ export function useLoadArchaeologists() {
 
   const { getArchaeologists } = useGraphQl();
   const { data: signer } = useSigner();
+  const useUptimeMonitor = process.env.REACT_APP_USE_UPTIME_MONITOR === 'true';
 
   const viewStateFacet = useContract({
     address: networkConfig.diamondDeployAddress,
@@ -67,18 +68,20 @@ export function useLoadArchaeologists() {
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
               curseFee: BigNumber.from(curseFee),
             },
-            isOnline: true,
+            isOnline: !useUptimeMonitor,
           };
         });
 
-        // const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-        // const onlinePeerIds = res.data;
-        //
-        // for (let arch of registeredArchaeologists) {
-        //   if (onlinePeerIds.includes(arch.profile.peerId)) {
-        //     arch.isOnline = true;
-        //   }
-        // }
+        if (useUptimeMonitor) {
+          const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+          const onlinePeerIds = res.data;
+
+          for (let arch of registeredArchaeologists) {
+            if (onlinePeerIds.includes(arch.profile.peerId)) {
+              arch.isOnline = true;
+            }
+          }
+        }
 
         return registeredArchaeologists;
       } catch (e) {
