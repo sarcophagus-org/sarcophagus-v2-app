@@ -67,18 +67,18 @@ export function useLoadArchaeologists() {
               minimumDiggingFeePerSecond: BigNumber.from(minimumDiggingFeePerSecond),
               curseFee: BigNumber.from(curseFee),
             },
-            isOnline: false,
+            isOnline: true,
           };
         });
 
-        const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
-        const onlinePeerIds = res.data;
-
-        for (let arch of registeredArchaeologists) {
-          if (onlinePeerIds.includes(arch.profile.peerId)) {
-            arch.isOnline = true;
-          }
-        }
+        // const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+        // const onlinePeerIds = res.data;
+        //
+        // for (let arch of registeredArchaeologists) {
+        //   if (onlinePeerIds.includes(arch.profile.peerId)) {
+        //     arch.isOnline = true;
+        //   }
+        // }
 
         return registeredArchaeologists;
       } catch (e) {
