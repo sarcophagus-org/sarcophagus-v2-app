@@ -1,16 +1,38 @@
-import { useContractRead } from 'wagmi';
-import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
+import { useEffect, useState } from 'react';
+import { useProvider } from 'wagmi';
 
 export function useGetEmbalmerSarcophagi(embalmer: string) {
   const networkConfig = useNetworkConfig();
+  const provider = useProvider();
+  const [sarcoIds, setSarcoIds] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const result = useContractRead({
-    address: networkConfig.diamondDeployAddress,
-    abi: ViewStateFacet__factory.abi,
-    functionName: 'getEmbalmerSarcophagi',
-    args: [embalmer],
-  });
+  useEffect(() => {
+    const fetchSarcophagi = async () => {
+      const contract = EmbalmerFacet__factory.connect(networkConfig.diamondDeployAddress, provider);
+      const filter = contract.filters.CreateSarcophagus(null, null, null, null, embalmer);
+      try {
+        setIsLoading(true);
+        const logs = await provider.getLogs({
+          fromBlock: 0, // Adjust as needed
+          toBlock: 'latest',
+          address: networkConfig.diamondDeployAddress,
+          topics: filter.topics,
+        });
 
-  return result;
+        const events = logs.map(log => contract.interface.parseLog(log)).map(event => event.args);
+        setSarcoIds(events.map(s => s.sarcoId));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSarcophagi();
+  }, [embalmer, networkConfig.diamondDeployAddress, provider]);
+
+  return { data: sarcoIds, isLoading };
 }
