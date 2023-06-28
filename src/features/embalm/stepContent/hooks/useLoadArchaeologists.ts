@@ -73,7 +73,9 @@ export function useLoadArchaeologists() {
         });
 
         if (useUptimeMonitor) {
-          const res = await axios.get(`${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`);
+          const res = await axios.get(
+            `${process.env.REACT_APP_ARCH_MONITOR}/online-archaeologists`
+          );
           const onlinePeerIds = res.data;
 
           for (let arch of registeredArchaeologists) {
