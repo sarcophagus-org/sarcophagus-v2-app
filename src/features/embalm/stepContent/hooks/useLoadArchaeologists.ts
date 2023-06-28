@@ -90,7 +90,7 @@ export function useLoadArchaeologists() {
         return [];
       }
     },
-    [viewStateFacet, timestampMs, getArchaeologists]
+    [viewStateFacet, timestampMs, getArchaeologists, useUptimeMonitor]
   );
 
   const refreshProfiles = useCallback(
