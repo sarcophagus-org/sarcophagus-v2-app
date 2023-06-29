@@ -14,7 +14,9 @@ export const mainnetNetworkConfig: NetworkConfig = {
   bundlr: {
     currencyName: 'ethereum',
     nodeUrl: 'https://node1.bundlr.network',
-    providerUrl: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
+    providerUrl: process.env.REACT_APP_INFURA_API_KEY
+      ? `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
+      : 'https://rpc.ankr.com/eth',
   },
   arweaveConfig: {
     host: 'arweave.net',
