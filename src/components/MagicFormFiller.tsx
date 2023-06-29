@@ -1,6 +1,6 @@
-import { sleep } from '@bundlr-network/client/build/common/utils';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Button, Collapse, Flex, IconButton, Text, useDisclosure } from '@chakra-ui/react';
+import { sleep } from 'lib/utils/helpers';
 import { useCallback, useState } from 'react';
 import {
   goToStep,
