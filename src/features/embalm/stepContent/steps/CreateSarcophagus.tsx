@@ -7,7 +7,7 @@ import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useBootLibp2pNode } from 'hooks/libp2p/useBootLibp2pNode';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
+import { useGetProtocolFeeBasePercentage } from 'hooks/viewStateFacet';
 import { getTotalFeesInSarco } from 'lib/utils/helpers';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
@@ -80,7 +80,7 @@ export function CreateSarcophagus() {
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
-  const protocolFeeBasePercentage = useGetProtocolFeeAmount();
+  const protocolFeeBasePercentage = useGetProtocolFeeBasePercentage();
 
   const { totalDiggingFees, protocolFee } = getTotalFeesInSarco(
     resurrectionTimeMs,

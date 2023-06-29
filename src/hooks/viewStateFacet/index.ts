@@ -2,7 +2,7 @@ export { useGetAvailableRewards } from './useGetAvailableRewards';
 export { useGetCursedBond } from './useGetCursedBond';
 export { useGetEmbalmerSarcophagi } from './useGetEmbalmerSarcophagi';
 export { useGetFreeBond } from './useGetFreeBond';
-export { useGetProtocolFeeAmount } from './useGetProtocolFeeAmount';
+export { useGetProtocolFeeBasePercentage } from './useGetProtocolFeeBasePercentage';
 export { useGetRecipientSarcophagi } from './useGetRecipientSarcophagi';
 export { useGetSarcophagusArchaeologist } from './useGetSarcophagusArchaeologist';
 export { useGetSarcophagusArchaeologists } from './useGetSarcophagusArchaeologists';

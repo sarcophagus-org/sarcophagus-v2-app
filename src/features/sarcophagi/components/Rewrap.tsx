@@ -16,7 +16,7 @@ import { BigNumber, ethers } from 'ethers';
 import { useRewrapSarcophagus } from 'hooks/embalmerFacet';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { useGetProtocolFeeAmount, useGetSarcophagus } from 'hooks/viewStateFacet';
+import { useGetProtocolFeeBasePercentage, useGetSarcophagus } from 'hooks/viewStateFacet';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useState } from 'react';
@@ -31,7 +31,7 @@ export function Rewrap() {
     id || ethers.constants.HashZero,
     sarcophagus?.archaeologistAddresses ?? []
   );
-  const protocolFeeAmountInt = useGetProtocolFeeAmount();
+  const protocolFeeBasePercentageInt = useGetProtocolFeeBasePercentage();
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
 
   const { rewrap, isRewrapping, isSuccess, mayFail, error } = useRewrapSarcophagus(
@@ -73,7 +73,7 @@ export function Rewrap() {
     resurrectionTime?.getTime() || 0,
     archaeologists.map(a => BigNumber.from(a.diggingFeePerSecond)),
     timestampMs,
-    protocolFeeAmountInt
+    protocolFeeBasePercentageInt
   );
 
   const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
@@ -240,7 +240,7 @@ export function Rewrap() {
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Protocol fee ({protocolFeeAmountInt}%): {formatSarco(protocolFee.toString())} SARCO
+            Protocol fee ({protocolFeeBasePercentageInt / 100}%): {formatSarco(protocolFee.toString())} SARCO
           </Text>
         </HStack>
       </VStack>

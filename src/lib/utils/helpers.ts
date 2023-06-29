@@ -216,7 +216,7 @@ export function getTotalFeesInSarco(
 
   // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
   const protocolFee = protocolFeeBasePercentage
-    ? totalDiggingFees.div(BigNumber.from(10000 * protocolFeeBasePercentage))
+    ? totalDiggingFees.div(BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage)))
     : ethers.constants.Zero;
 
   return {

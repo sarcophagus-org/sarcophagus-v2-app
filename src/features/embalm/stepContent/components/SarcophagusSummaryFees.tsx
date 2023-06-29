@@ -2,14 +2,14 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { useGetProtocolFeeAmount } from 'hooks/viewStateFacet';
+import { useGetProtocolFeeBasePercentage } from 'hooks/viewStateFacet';
 import { formatFee, formatSarco, getTotalFeesInSarco } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
-  const protocolFeeBasePercentage = useGetProtocolFeeAmount();
+  const protocolFeeBasePercentage = useGetProtocolFeeBasePercentage();
   const { balance } = useSarcoBalance();
   const { timestampMs } = useSelector(x => x.appState);
 
@@ -26,8 +26,8 @@ export function SarcophagusSummaryFees() {
 
   const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
   const protocolFee =
-    diggingFeesAndCurseFees.gt(0) && protocolFeeBasePercentage > 0
-      ? diggingFeesAndCurseFees.div(10000 * protocolFeeBasePercentage)
+    diggingFeesAndCurseFees.gt(0) && protocolFeeBasePercentage
+      ? diggingFeesAndCurseFees.div(BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage)))
       : BigNumber.from(0);
 
   const totalFees = diggingFeesAndCurseFees.add(protocolFee);
@@ -86,7 +86,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              + {protocolFeeBasePercentage}% protocol fee
+              + {protocolFeeBasePercentage / 100}% protocol fee
             </Text>
             <Text
               as="i"
