@@ -216,7 +216,7 @@ export function getTotalFeesInSarco(
 
   // protocolFeeBasePercentage is pulled from the chain, temp show 0 until it loads
   const protocolFee = protocolFeeBasePercentage
-    ? totalDiggingFees.div(BigNumber.from(100 * protocolFeeBasePercentage))
+    ? totalDiggingFees.div(BigNumber.from(10000 * protocolFeeBasePercentage))
     : ethers.constants.Zero;
 
   return {
@@ -230,6 +230,8 @@ export function getTotalFeesInSarco(
  * Builds a resurrection date string from a BigNumber
  * Ex: 09.22.2022 7:30pm (12 Days)
  * @param resurrectionTime
+ * @param timestampMs
+ * @param options
  * @returns The resurrection string
  */
 export function buildResurrectionDateString(
