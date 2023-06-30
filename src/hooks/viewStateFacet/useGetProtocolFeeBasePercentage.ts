@@ -2,7 +2,7 @@ import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contrac
 import { useNetworkConfig } from 'lib/config';
 import { useContractRead } from 'wagmi';
 
-export function useGetProtocolFeeAmount(): number {
+export function useGetProtocolFeeBasePercentage(): number {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({

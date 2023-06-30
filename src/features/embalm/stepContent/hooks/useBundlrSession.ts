@@ -1,6 +1,5 @@
 import { WebBundlr } from '@bundlr-network/client';
 import { useToast } from '@chakra-ui/react';
-import { InjectedEthereumSigner } from 'arbundles/src/signing';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import {
@@ -12,7 +11,6 @@ import {
 import { useCallback, useEffect, useMemo } from 'react';
 import { connect, disconnect as disconnectBundlr, setBundlr } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { useAccount } from 'wagmi';
 import { hardhatChainId } from '../../../../lib/config/hardhat';
 
 export function useBundlrSession() {
@@ -33,12 +31,6 @@ export function useBundlrSession() {
       toast({ ...disconnectToast(), id });
     }
   }, [dispatch, toast]);
-
-  const { address } = useAccount({
-    onDisconnect() {
-      disconnectFromBundlr();
-    },
-  });
 
   // TODO: Find a way to use the provider from wagmi
   const connector: any = window.ethereum;
@@ -71,10 +63,6 @@ export function useBundlrSession() {
       // get inject the user's public key into the bundlr instance.
       await newBundlr.ready();
 
-      // Store the public key in local storage to be injected into the bundlr instance after a reload
-      const publicKey = newBundlr.currencyConfig.getSigner().publicKey;
-      localStorage.setItem('publicKey', JSON.stringify(publicKey));
-
       dispatch(connect());
       dispatch(setBundlr(newBundlr));
       toast(connectSuccess());
@@ -83,47 +71,6 @@ export function useBundlrSession() {
       toast(connectFailure(error.message));
     }
   }, [dispatch, networkConfig, provider, toast, isHardhatNetwork]);
-
-  /**
-   * Manually injects a public key into a bundlr instance, bypassing the signature.
-   *
-   * To connect to the bundlr, `await bundlr.ready()` is called. This prompts the user to sign a
-   * message, then the bundlr methods may be called. This method injects a public key into a signer
-   * and injects the signer, address, and provider into the bundlr instance so that no signature is
-   * needed.
-   *
-   */
-  const createInjectedBundlr = useCallback(
-    (publicKey: Buffer) => {
-      if (!provider) {
-        return undefined;
-      }
-
-      const injectedSigner = new InjectedEthereumSigner(provider);
-      injectedSigner.publicKey = publicKey;
-
-      // Cast as `any` because typescript doesn't recognize that the bundlr has some of
-      // these properties
-      let newBundlr: any = new WebBundlr(
-        networkConfig.bundlr.nodeUrl,
-        networkConfig.bundlr.currencyName,
-        provider,
-        {
-          timeout: 100000,
-          providerUrl: networkConfig.bundlr.providerUrl,
-        }
-      );
-
-      newBundlr.address = address?.toLowerCase();
-      newBundlr.currencyConfig._address = address?.toLowerCase();
-      newBundlr.currencyConfig.signer = injectedSigner;
-      newBundlr.currencyConfig.providerInstance = provider;
-      newBundlr.currencyConfig.w3signer = provider.getSigner();
-
-      return newBundlr;
-    },
-    [address, networkConfig, provider]
-  );
 
   // Uses the connect wallet button to detect chain change.
   // I was not able to use an wagmi hooks to detect a chain change from the wallet.
@@ -136,31 +83,6 @@ export function useBundlrSession() {
   const handleAccountsChange = useCallback(() => {
     disconnectFromBundlr();
   }, [disconnectFromBundlr]);
-
-  /**
-   * Automatically instantiates the WebBundlr if it doesn't exist.
-   *
-   * The injected bundlr within this useEffect has been tested with `getBalance()`, `getPrice()`,
-   * `fund()`, `withdraw()`, and `upload()`. It's not guaranteed that the bundlr will work with
-   * other methods.
-   *
-   * If a developer runs into an issue with the bundlr not working, disable this useEffect and
-   * connect to the bundlr the standard way using the `connectToBundlr()` function.
-   */
-  useEffect(() => {
-    if (isHardhatNetwork || isConnected || !networkConfig.bundlr.nodeUrl) return;
-
-    const publicKeyJson = localStorage.getItem('publicKey');
-    if (!publicKeyJson) return;
-    const publicKeyObj = JSON.parse(publicKeyJson);
-    const publicKey = Buffer.from(new Uint8Array(publicKeyObj.data));
-
-    // const publicKey = loadPublicKey();
-    const newBundlr = createInjectedBundlr(publicKey);
-
-    dispatch(connect());
-    dispatch(setBundlr(newBundlr));
-  }, [createInjectedBundlr, dispatch, isConnected, isHardhatNetwork, networkConfig.bundlr.nodeUrl]);
 
   /**
    * Disconnects from the bundlr node if the chain or account changes.
