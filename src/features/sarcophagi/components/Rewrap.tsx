@@ -240,7 +240,8 @@ export function Rewrap() {
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Protocol fee ({protocolFeeBasePercentageInt / 100}%): {formatSarco(protocolFee.toString())} SARCO
+            Protocol fee ({protocolFeeBasePercentageInt / 100}%):{' '}
+            {formatSarco(protocolFee.toString())} SARCO
           </Text>
         </HStack>
       </VStack>

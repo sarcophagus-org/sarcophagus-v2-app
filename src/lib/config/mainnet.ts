@@ -6,7 +6,7 @@ export const mainnetNetworkConfig: NetworkConfig = {
   networkShortName: 'Mainnet',
   sarcoTokenAddress: '0x7697b462a7c4ff5f8b55bdbc2f4076c2af9cf51a',
   // TODO: Add mainnet diamond address
-  diamondDeployAddress: '',
+  diamondDeployAddress: '0x0Ec977D1863Eb919a2Ecd65d17Cc3f2CFdaCe3Ab',
   etherscanApiUrl: 'https://api.etherscan.io/api',
   etherscanApiKey: process.env.REACT_APP_ETHERSCAN_API_KEY ?? '',
   explorerUrl: 'https://etherscan.io/',
