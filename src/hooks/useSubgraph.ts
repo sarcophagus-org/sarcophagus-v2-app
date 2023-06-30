@@ -1,11 +1,7 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { useCallback } from 'react';
+import {useCallback, useMemo} from 'react';
 import * as Sentry from '@sentry/react';
-
-const graphQlClient = new ApolloClient({
-  uri: process.env.REACT_APP_SUBGRAPH_API_URL,
-  cache: new InMemoryCache(),
-});
+import {useNetwork} from "wagmi";
 
 export interface ArchDataSubgraph {
   address: string;
@@ -40,6 +36,13 @@ const getSarcoRewrapsQuery = (sarcoId: string) => `query {
 }`;
 
 export function useGraphQl() {
+  const { chain } = useNetwork();
+
+  const graphQlClient = useMemo(() => new ApolloClient({
+    uri: chain?.id === 1 ? process.env.REACT_APP_SUBGRAPH_API_URL : process.env.REACT_APP_SUBGRAPH_API_URL_TESTNET,
+    cache: new InMemoryCache(),
+  }), [chain]);
+
   const getArchaeologists = useCallback(async (): Promise<ArchDataSubgraph[]> => {
     try {
       const { archaeologists } = (
