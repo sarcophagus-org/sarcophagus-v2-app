@@ -1,4 +1,4 @@
-import { Flex, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Button, Flex, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useBundlr } from 'features/embalm/stepContent/hooks/useBundlr';
 import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
@@ -47,55 +47,72 @@ export function Bundlr() {
       >
         <Text fontSize="md">BUNDLR</Text>
       </Flex>
-      <Tabs
-        variant="enclosed"
-        overflow="hidden"
-        isFitted
-        display="flex"
-        flexDirection="column"
-        border="1px solid"
-        borderColor="whiteAlpha.300"
-      >
-        <TabList border="none">
-          <SarcoTab>Deposit</SarcoTab>
-          <SarcoTab>Withdraw</SarcoTab>
-        </TabList>
-        <TabPanels
+      {bundlr ? (
+        <Tabs
+          variant="enclosed"
           overflow="hidden"
-          bg="linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 100%);"
+          isFitted
+          display="flex"
+          flexDirection="column"
+          border="1px solid"
+          borderColor="whiteAlpha.300"
         >
-          <TabPanel
-            px={10}
-            py={6}
-            h="100%"
+          <TabList border="none">
+            <SarcoTab>Deposit</SarcoTab>
+            <SarcoTab>Withdraw</SarcoTab>
+          </TabList>
+          <TabPanels
+            overflow="hidden"
+            bg="linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 100%);"
           >
-            {isFunding ? (
-              <BusyIndicator>Funding. Please wait...</BusyIndicator>
-            ) : (
-              <BundlrProfile
-                onDeposit={handleDeposit}
-                onConnect={handleConnect}
-                action={bundlr ? BundlrAction.Deposit : BundlrAction.Connect}
-              />
-            )}
-          </TabPanel>
-          <TabPanel
-            px={10}
-            py={6}
-            h="100%"
+            <TabPanel
+              px={10}
+              py={6}
+              h="100%"
+            >
+              {isFunding ? (
+                <BusyIndicator>Funding. Please wait...</BusyIndicator>
+              ) : (
+                <BundlrProfile
+                  onDeposit={handleDeposit}
+                  onConnect={handleConnect}
+                  action={bundlr ? BundlrAction.Deposit : BundlrAction.Connect}
+                />
+              )}
+            </TabPanel>
+            <TabPanel
+              px={10}
+              py={6}
+              h="100%"
+            >
+              {isWithdrawing ? (
+                <BusyIndicator>Withdrawing. Please wait...</BusyIndicator>
+              ) : (
+                <BundlrProfile
+                  onWithdraw={handleWithdraw}
+                  onConnect={handleConnect}
+                  action={bundlr ? BundlrAction.Withdraw : BundlrAction.Connect}
+                />
+              )}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      ) : (
+        <Flex
+          flexDirection="column"
+          my={16}
+          mx={16}
+          textAlign="center"
+        >
+          <Text>You need to connect to the Bundlr to continue.</Text>
+          <Button
+            mt={6}
+            onClick={handleConnect}
           >
-            {isWithdrawing ? (
-              <BusyIndicator>Withdrawing. Please wait...</BusyIndicator>
-            ) : (
-              <BundlrProfile
-                onWithdraw={handleWithdraw}
-                onConnect={handleConnect}
-                action={bundlr ? BundlrAction.Withdraw : BundlrAction.Connect}
-              />
-            )}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+            Connect to Bundlr
+          </Button>
+        </Flex>
+      )}
     </Flex>
   );
 }
