@@ -27,7 +27,9 @@ export function SarcophagusSummaryFees() {
   const diggingFeesAndCurseFees = totalDiggingFees.add(totalCurseFees);
   const protocolFee =
     diggingFeesAndCurseFees.gt(0) && protocolFeeBasePercentage
-      ? diggingFeesAndCurseFees.div(BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage)))
+      ? diggingFeesAndCurseFees.div(
+          BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage))
+        )
       : BigNumber.from(0);
 
   const totalFees = diggingFeesAndCurseFees.add(protocolFee);
