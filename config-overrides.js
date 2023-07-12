@@ -26,5 +26,13 @@ module.exports = function override(config) {
     })
   );
 
+  config.externals = {
+    crypto: 'crypto',
+  };
+
+  config.experiments = {
+    topLevelAwait: true,
+  };
+
   return config;
 };
