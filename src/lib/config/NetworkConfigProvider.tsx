@@ -44,7 +44,6 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       sarco
         .init({
           chainId: chain.id,
-          providerUrl: config.providerUrl!,
           etherscanApiKey: config.etherscanApiKey,
         })
         .then(() => setSarcoInitialised(true));

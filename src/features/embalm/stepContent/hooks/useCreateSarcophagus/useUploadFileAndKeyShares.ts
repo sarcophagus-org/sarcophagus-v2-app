@@ -28,7 +28,7 @@ export function useUploadFileAndKeyShares() {
 
         const uploadPromise = sarco.api.uploadFileToArweave({
           file: file!,
-          archaeologistPublicKeys,
+          archaeologistPublicKeys: Array.from(archaeologistPublicKeys.values()),
           onStep: (step: string) => setUploadStep(step),
           recipientPublicKey: recipientState.publicKey,
           shares: selectedArchaeologists.length,

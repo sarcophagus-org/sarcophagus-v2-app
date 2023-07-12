@@ -81,8 +81,8 @@ export function formatSubmitSarcophagusArgs({
     resurrectionTime: Math.trunc(resurrection / 1000),
     threshold: requiredArchaeologists,
     creationTime: Math.trunc(negotiationTimestamp / 1000),
-    maximumRewrapInterval: sarco.archaeologist.getLowestRewrapInterval(selectedArchaeologists),
-    maximumResurrectionTime: sarco.archaeologist.getLowestResurrectionTime(selectedArchaeologists),
+    maximumRewrapInterval: sarco.utils.getLowestRewrapInterval(selectedArchaeologists),
+    maximumResurrectionTime: sarco.utils.getLowestResurrectionTime(selectedArchaeologists),
   };
 
   const contractArchaeologists = getContractArchaeologists();
