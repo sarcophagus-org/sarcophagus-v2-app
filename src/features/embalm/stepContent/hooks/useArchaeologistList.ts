@@ -27,7 +27,8 @@ export function useArchaeologistList() {
     showHiddenArchaeologists,
   } = useSelector(s => s.archaeologistListState);
 
-  const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  // const onlineArchaeologists = archaeologists.filter(a => a.isOnline);
+  const onlineArchaeologists = archaeologists.filter(a => a);
 
   const resurrectionTimeMs = useSelector(s => s.embalmState.resurrection);
   const { timestampMs } = useSelector(s => s.appState);
@@ -118,11 +119,10 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            const diggingFees = resurrectionTime === 0 ? ethers.constants.Zero : sarco.archaeologist.calculateDiggingFees(
-              arch,
-              resurrectionTime,
-              timestampMs
-            );
+            const diggingFees =
+              resurrectionTime === 0
+                ? ethers.constants.Zero
+                : sarco.archaeologist.calculateDiggingFees(arch, resurrectionTime, timestampMs);
             const totalFees = diggingFees?.add(arch.profile.curseFee);
             sortValue = totalFees ?? arch.profile.minimumDiggingFeePerSecond;
           } else if (archaeologistFilterSort.sortType === SortFilterType.UNWRAPS) {

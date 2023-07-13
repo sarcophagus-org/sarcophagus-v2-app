@@ -48,11 +48,10 @@ export function ArchaeologistListItem({
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
   const { timestampMs } = useSelector(s => s.appState);
 
-  const diggingFees = resurrectionTime === 0 ? ethers.constants.Zero : sarco.archaeologist.calculateDiggingFees(
-    archaeologist,
-    resurrectionTime,
-    timestampMs
-  );
+  const diggingFees =
+    resurrectionTime === 0
+      ? ethers.constants.Zero
+      : sarco.archaeologist.calculateDiggingFees(archaeologist, resurrectionTime, timestampMs);
 
   const totalFees = diggingFees?.add(archaeologist.profile.curseFee);
 
