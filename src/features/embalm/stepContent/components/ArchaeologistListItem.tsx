@@ -13,6 +13,7 @@ import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
 import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { ethers } from 'ethers';
 
 interface ArchaeologistListItemProps {
   archaeologist: ArchaeologistData;
@@ -47,7 +48,7 @@ export function ArchaeologistListItem({
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
   const { timestampMs } = useSelector(s => s.appState);
 
-  const diggingFees = sarco.archaeologist.calculateDiggingFees(
+  const diggingFees = resurrectionTime === 0 ? ethers.constants.Zero : sarco.archaeologist.calculateDiggingFees(
     archaeologist,
     resurrectionTime,
     timestampMs

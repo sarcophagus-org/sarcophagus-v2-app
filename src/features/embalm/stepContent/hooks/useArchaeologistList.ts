@@ -118,7 +118,7 @@ export function useArchaeologistList() {
         function (arch) {
           let sortValue;
           if (archaeologistFilterSort.sortType === SortFilterType.DIGGING_FEES) {
-            const diggingFees = sarco.archaeologist.calculateDiggingFees(
+            const diggingFees = resurrectionTime === 0 ? ethers.constants.Zero : sarco.archaeologist.calculateDiggingFees(
               arch,
               resurrectionTime,
               timestampMs
