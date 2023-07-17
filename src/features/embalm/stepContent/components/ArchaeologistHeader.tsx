@@ -10,6 +10,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { useGetProtocolFeeBasePercentage } from 'hooks/viewStateFacet';
 import { calculateProjectedDiggingFees, formatSarco } from 'lib/utils/helpers';
 import { useMemo } from 'react';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
@@ -24,6 +25,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const { showOnlySelectedArchaeologists } = useSelector(x => x.archaeologistListState);
   const { timestampMs } = useSelector(x => x.appState);
+  const protocolFeeBasePercentage = useGetProtocolFeeBasePercentage();
 
   function toggleShowOnlySelected() {
     dispatch(setShowSelectedArchaeologists(!showOnlySelectedArchaeologists));
@@ -79,7 +81,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         {resurrection ? (
           <HStack mr={2}>
             <Tooltip
-              label="This is how much SARCO it will cost you the next time you rewrap the Sarcophagus"
+              label="This is how much SARCO you will pay in total to your selected Archaeologists to create your Sarcophagus. (NOTE: This sum does not include protocol fees)"
               placement="top"
             >
               <Icon as={InfoOutlineIcon}></Icon>
@@ -97,9 +99,9 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
             <Text
               variant="secondary"
               as="i"
-              fontSize="10"
+              fontSize="12"
             >
-              +1% protocol fee
+              + {protocolFeeBasePercentage / 100}% protocol fee
             </Text>
           </HStack>
         ) : (
