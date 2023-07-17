@@ -61,6 +61,8 @@ export function RetryCreateModal({
   return (
     <SarcoModal
       isDismissible={false}
+      showCancelButton={true}
+      onCancelClick={cancelCreation}
       secondaryButton={{
         dismissesModal: true,
         label: validationFailed ? 'Cancel Sarcophagus' : 'Continue',
