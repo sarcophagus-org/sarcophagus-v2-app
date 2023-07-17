@@ -13,7 +13,7 @@ import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
 import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 
 interface ArchaeologistListItemProps {
   archaeologist: ArchaeologistData;
@@ -159,12 +159,21 @@ export function ArchaeologistListItem({
                 )
               )}
         </TableContent>
+
+        <TableContent
+          icon={true}
+          checkbox={false}
+        >
+          {sarco.utils.formatSarco(archaeologist.profile.curseFee.toString())}
+        </TableContent>
+
         <TableContent
           icon={false}
           checkbox={false}
         >
           {archaeologist.profile.successes.toString()}
         </TableContent>
+
         <TableContent
           icon={false}
           checkbox={false}

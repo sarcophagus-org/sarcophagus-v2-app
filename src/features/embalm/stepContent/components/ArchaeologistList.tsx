@@ -39,11 +39,13 @@ export function ArchaeologistList({
     selectedArchaeologists,
     hiddenArchaeologists,
     onClickSortDiggingFees,
+    onClickSortCurseFee,
     onClickSortUnwraps,
     onClickSortFails,
     onClickSortArchs,
     archaeologistFilterSort,
     diggingFeesFilter,
+    curseFeeFilter,
     archAddressSearch,
     unwrapsFilter,
     failsFilter,
@@ -127,7 +129,7 @@ export function ArchaeologistList({
                             direction="column"
                             alignItems="flex-start"
                           >
-                            <Text> Fees </Text>
+                            <Text> Digging Fee </Text>
                             {resurrectionTime === 0 && (
                               <Text
                                 fontSize="xs"
@@ -152,6 +154,43 @@ export function ArchaeologistList({
                       <FilterInput
                         filterName={SortFilterType.DIGGING_FEES}
                         value={diggingFeesFilter}
+                        placeholder="max"
+                        color="brand.950"
+                      />
+                    </VStack>
+                  </Th>
+                  <Th
+                    isNumeric
+                    borderBottom="none"
+                  >
+                    <VStack align="left">
+                      <HStack>
+                        <Button
+                          variant="ghost"
+                          rightIcon={filterIcon(SortFilterType.CURSE_FEE)}
+                          onClick={onClickSortCurseFee}
+                          p={'0.5'}
+                        >
+                          <Flex
+                            direction="column"
+                            alignItems="flex-start"
+                          >
+                            <Text> Curse Fee </Text>
+                          </Flex>
+                        </Button>
+                        <Tooltip
+                          label="A one time fee to be paid for the Archaeologist to be cursed on this Sarcophagus"
+                          placement="top"
+                        >
+                          <Icon
+                            as={QuestionIcon}
+                            color="brand.950"
+                          />
+                        </Tooltip>
+                      </HStack>
+                      <FilterInput
+                        filterName={SortFilterType.CURSE_FEE}
+                        value={curseFeeFilter}
                         placeholder="max"
                         color="brand.950"
                       />
