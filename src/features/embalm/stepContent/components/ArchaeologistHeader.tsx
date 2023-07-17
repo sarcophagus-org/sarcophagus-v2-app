@@ -9,10 +9,11 @@ import {
   Tooltip,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { ethers } from 'ethers';
+import { useGetProtocolFeeBasePercentage } from 'hooks/viewStateFacet';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useState } from 'react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { setShowSelectedArchaeologists } from 'store/archaeologistList/actions';
 import { useDispatch, useSelector } from 'store/index';
 
@@ -25,9 +26,9 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
   const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const { showOnlySelectedArchaeologists } = useSelector(x => x.archaeologistListState);
   const { timestampMs } = useSelector(x => x.appState);
+  const protocolFeeBasePercentage = useGetProtocolFeeBasePercentage();
 
   const [totalDiggingFees, setTotalDiggingFees] = useState(ethers.constants.Zero);
-  const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
   const { isSarcoInitialized } = useSupportedNetwork();
 
@@ -41,7 +42,6 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
       )
       .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
         setTotalDiggingFees(diggingFees);
-        setProtocolFeeBasePercentage(baseFeePercentage.toString());
       })
       .catch(e => console.log(e));
   }
@@ -90,7 +90,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         {resurrection ? (
           <HStack mr={2}>
             <Tooltip
-              label="This is how much SARCO it will cost you the next time you rewrap the Sarcophagus"
+              label="This is how much SARCO you will pay in total to your selected Archaeologists to create your Sarcophagus. (NOTE: This sum does not include protocol fees)"
               placement="top"
             >
               <Icon as={InfoOutlineIcon}></Icon>
@@ -108,9 +108,9 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
             <Text
               variant="secondary"
               as="i"
-              fontSize="10"
+              fontSize="12"
             >
-              +{protocolFeeBasePercentage}% protocol fee
+              + {protocolFeeBasePercentage / 100}% protocol fee
             </Text>
           </HStack>
         ) : (

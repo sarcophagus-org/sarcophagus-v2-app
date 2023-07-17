@@ -141,15 +141,17 @@ export function ArchaeologistList({
                             )}
                           </Flex>
                         </Button>
-                        <Tooltip
-                          label="Amount to be paid for the next rewrap"
-                          placement="top"
-                        >
-                          <Icon
-                            as={QuestionIcon}
-                            color="brand.950"
-                          />
-                        </Tooltip>
+                        {resurrectionTime === 0 ? null : (
+                          <Tooltip
+                            label="Amount to be paid to the archaeologist in order for it to resurrect at the resurrrection time you have selected."
+                            placement="top"
+                          >
+                            <Icon
+                              as={QuestionIcon}
+                              color="brand.950"
+                            />
+                          </Tooltip>
+                        )}
                       </HStack>
                       <FilterInput
                         filterName={SortFilterType.DIGGING_FEES}
@@ -179,7 +181,7 @@ export function ArchaeologistList({
                           </Flex>
                         </Button>
                         <Tooltip
-                          label="A one time fee to be paid for the Archaeologist to be cursed on this Sarcophagus"
+                          label="A one time fee to be paid to the Archaeologist in order to be cursed on your Sarcophagus."
                           placement="top"
                         >
                           <Icon
