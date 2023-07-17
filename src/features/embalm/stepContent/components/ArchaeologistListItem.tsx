@@ -18,6 +18,7 @@ import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { Archaeologist } from '../../../../types/index';
 import { MultiLineTooltip } from './MultiLineTooltip';
+import { BigNumber } from 'ethers';
 
 interface ArchaeologistListItemProps {
   archaeologist: Archaeologist;
@@ -52,9 +53,11 @@ export function ArchaeologistListItem({
   const resurrectionTime = useSelector(s => s.embalmState.resurrection);
   const { timestampMs } = useSelector(s => s.appState);
 
-  const diggingFees = calculateDiggingFees(archaeologist, resurrectionTime, timestampMs);
-
-  const totalFees = diggingFees?.add(archaeologist.profile.curseFee);
+  const diggingFees: BigNumber | null = calculateDiggingFees(
+    archaeologist,
+    resurrectionTime,
+    timestampMs
+  );
 
   const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
@@ -145,27 +148,30 @@ export function ArchaeologistListItem({
         <TableContent
           icon={true}
           checkbox={false}
-          multiLineTooltipLabel={
-            diggingFees && [
-              `Digging fee: ${formatSarco(diggingFees?.toString() ?? '0')}`,
-              `Curse fee: ${formatSarco(archaeologist.profile.curseFee.toString())}`,
-            ]
-          }
         >
           {diggingFees
-            ? formatSarco(totalFees?.toString() ?? '0')
+            ? formatSarco(diggingFees?.toString() ?? '0')
             : formatSarco(
                 convertSarcoPerSecondToPerMonth(
                   archaeologist.profile.minimumDiggingFeePerSecond.toString()
                 )
               )}
         </TableContent>
+
+        <TableContent
+          icon={true}
+          checkbox={false}
+        >
+          {formatSarco(archaeologist.profile.curseFee.toString())}
+        </TableContent>
+
         <TableContent
           icon={false}
           checkbox={false}
         >
           {archaeologist.profile.successes.toString()}
         </TableContent>
+
         <TableContent
           icon={false}
           checkbox={false}

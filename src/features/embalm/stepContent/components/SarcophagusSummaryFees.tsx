@@ -32,7 +32,7 @@ export function SarcophagusSummaryFees() {
         )
       : BigNumber.from(0);
 
-  const totalFees = diggingFeesAndCurseFees.add(protocolFee);
+  const totalFees = diggingFeesAndCurseFees.add(protocolFee).add(uploadPrice);
 
   return (
     <Box
@@ -48,7 +48,7 @@ export function SarcophagusSummaryFees() {
             <SummaryErrorIcon error={"You don't have enough SARCO to cover creation fees!"} />
           ) : (
             <Tooltip
-              label="Fee to be paid for the next rewrap, and a one time upload fee"
+              label="This is how much SARCO it will cost in total to create your Sarcophagus. (NOTE: This includes a one time upload fee)"
               placement="top"
             >
               <InfoOutlineIcon fontSize="md" />
@@ -102,8 +102,8 @@ export function SarcophagusSummaryFees() {
             w="100%"
             justifyContent="space-between"
           >
-            <Text as="i">Total Fees</Text>
-            <Text as="i">{formatSarco(totalFees.toString())} SARCO</Text>
+            <Text as="i">Payload Upload</Text>
+            <Text as="i">{formatFee(ethers.utils.formatUnits(uploadPrice), 4)} ETH</Text>
           </Flex>
           <Divider
             my={2}
@@ -113,8 +113,20 @@ export function SarcophagusSummaryFees() {
             w="100%"
             justifyContent="space-between"
           >
-            <Text as="i">Payload Upload</Text>
-            <Text as="i">{formatFee(ethers.utils.formatUnits(uploadPrice), 4)} ETH</Text>
+            <Text
+              as="i"
+              fontSize="16"
+              fontWeight="bold"
+            >
+              Total:
+            </Text>
+            <Text
+              as="i"
+              fontSize="16"
+              fontWeight="bold"
+            >
+              {formatSarco(totalFees.toString(), 8)} SARCO
+            </Text>
           </Flex>
         </Flex>
       </Flex>

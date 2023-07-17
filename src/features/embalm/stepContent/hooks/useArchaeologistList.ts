@@ -20,6 +20,7 @@ export function useArchaeologistList() {
   const {
     archaeologistFilterSort,
     diggingFeesFilter,
+    curseFeeFilter,
     unwrapsFilter,
     failsFilter,
     archAddressSearch,
@@ -93,6 +94,10 @@ export function useArchaeologistList() {
     dispatch(setSortDirection(SortFilterType.DIGGING_FEES, directionValue));
   }
 
+  function onClickSortCurseFee() {
+    dispatch(setSortDirection(SortFilterType.CURSE_FEE, directionValue));
+  }
+
   function onClickSortUnwraps() {
     dispatch(setSortDirection(SortFilterType.UNWRAPS, directionValue));
   }
@@ -161,6 +166,9 @@ export function useArchaeologistList() {
           .lte(
             (diggingFeesFilter && ethers.utils.parseEther(diggingFeesFilter)) || constants.MaxInt256
           ) &&
+        arch.profile.curseFee.lte(
+          (curseFeeFilter && ethers.utils.parseEther(curseFeeFilter)) || constants.MaxInt256
+        ) &&
         arch.profile.successes.gte(unwrapsFilter || constants.MinInt256) &&
         arch.profile.failures.lte(failsFilter || constants.MaxInt256)
     );
@@ -174,11 +182,13 @@ export function useArchaeologistList() {
     archAddressSearch,
     archaeologistFilterSort,
     diggingFeesFilter,
+    curseFeeFilter,
     failsFilter,
     handleCheckArchaeologist,
     hiddenArchaeologists,
     onClickSortArchs,
     onClickSortDiggingFees,
+    onClickSortCurseFee,
     onClickSortFails,
     onClickSortUnwraps,
     selectedArchaeologists,

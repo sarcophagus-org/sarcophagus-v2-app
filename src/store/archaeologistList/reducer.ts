@@ -4,6 +4,7 @@ import { ActionType, SortDirection, SortFilterType } from './actions';
 export interface ArchaeologistListState {
   archaeologistFilterSort: { sortDirection: SortDirection; sortType: SortFilterType };
   diggingFeesFilter: string;
+  curseFeeFilter: string;
   unwrapsFilter: string;
   failsFilter: string;
   archAddressSearch: string;
@@ -14,6 +15,7 @@ export interface ArchaeologistListState {
 export const archaeologistListInitialState: ArchaeologistListState = {
   archaeologistFilterSort: { sortDirection: SortDirection.NONE, sortType: SortFilterType.NONE },
   diggingFeesFilter: '',
+  curseFeeFilter: '',
   unwrapsFilter: '',
   failsFilter: '',
   archAddressSearch: '',
@@ -37,6 +39,9 @@ export function archaeologistListReducer(
 
     case ActionType.SetDiggingFeesFilter:
       return { ...state, diggingFeesFilter: action.payload.filter };
+
+    case ActionType.SetCurseFeeFilter:
+      return { ...state, curseFeeFilter: action.payload.filter };
 
     case ActionType.SetUnwrapsFilter:
       return { ...state, unwrapsFilter: action.payload.filter };

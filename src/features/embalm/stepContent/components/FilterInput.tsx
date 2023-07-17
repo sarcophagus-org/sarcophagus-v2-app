@@ -15,6 +15,7 @@ import {
   SortFilterType,
   ArchaeologistListActions,
   setArchAddressSearch,
+  setCurseFeeFilter,
 } from 'store/archaeologistList/actions';
 import { SarcoTokenIcon } from 'components/icons';
 import { useDispatch } from 'store/index';
@@ -106,6 +107,17 @@ export function FilterInput({ filterName, placeholder = '', ...rest }: FilterPro
           filterWidth={'150px'}
           placeholder={placeholder}
           filterTypeAction={setDiggingFeesFilter}
+          icon={true}
+          {...rest}
+        />
+      );
+
+    case SortFilterType.CURSE_FEE:
+      return (
+        <NumberInputFilterComponent
+          filterWidth={'150px'}
+          placeholder={placeholder}
+          filterTypeAction={setCurseFeeFilter}
           icon={true}
           {...rest}
         />
