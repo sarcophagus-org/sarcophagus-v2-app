@@ -67,22 +67,25 @@ export function useGraphQl() {
     }
   }, [graphQlClient]);
 
-  const getSarcophagusRewraps = useCallback(async (sarcoId: string) => {
-    try {
-      const { rewrapSarcophaguses } = (
-        await graphQlClient.query({
-          query: gql(getSarcoRewrapsQuery(sarcoId)),
-          fetchPolicy: 'cache-first',
-        })
-      ).data as { rewrapSarcophaguses: any[] };
+  const getSarcophagusRewraps = useCallback(
+    async (sarcoId: string) => {
+      try {
+        const { rewrapSarcophaguses } = (
+          await graphQlClient.query({
+            query: gql(getSarcoRewrapsQuery(sarcoId)),
+            fetchPolicy: 'cache-first',
+          })
+        ).data as { rewrapSarcophaguses: any[] };
 
-      return rewrapSarcophaguses;
-    } catch (e) {
-      console.error(e);
-      Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
-      return [];
-    }
-  }, [graphQlClient]);
+        return rewrapSarcophaguses;
+      } catch (e) {
+        console.error(e);
+        Sentry.captureException(e, { fingerprint: ['SUBGRAPH_EXCEPTION'] });
+        return [];
+      }
+    },
+    [graphQlClient]
+  );
 
   return { getArchaeologists, getSarcophagusRewraps };
 }

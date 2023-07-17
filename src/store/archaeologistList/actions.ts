@@ -7,6 +7,7 @@ export enum ActionType {
   SetShowSelectedArchaeologists = 'EMBALM_SET_SHOW_SELECTED_ARCHAEOLOGISTS',
   ToggleShowHiddenArchaeologists = 'EMBALM_TOGGLE_SHOW_HIDDEN_ARCHAEOLOGISTS',
   SetDiggingFeesFilter = 'EMBALM_SET_DIGGING_FEES_FILTER',
+  SetCurseFeeFilter = 'EMBALM_SET_CURSE_FEE_FILTER',
   SetUnwrapsFilter = 'EMBALM_SET_UNWRAPS_FILTER',
   SetFailsFilter = 'EMBALM_SET_FAILS_FILTER',
   SetArchAddressSearch = 'EMBALM_SET_ARCH_ADDRESS_SEARCH',
@@ -21,6 +22,7 @@ export enum SortDirection {
 export enum SortFilterType {
   ADDRESS_SEARCH,
   DIGGING_FEES,
+  CURSE_FEE,
   UNWRAPS,
   FAILS,
   NONE,
@@ -29,6 +31,7 @@ export enum SortFilterType {
 type ArchaeologistListPayload = {
   [ActionType.SetSortDirection]: { direction: SortDirection; sortType: SortFilterType };
   [ActionType.SetDiggingFeesFilter]: { filter: string };
+  [ActionType.SetCurseFeeFilter]: { filter: string };
   [ActionType.SetUnwrapsFilter]: { filter: string };
   [ActionType.SetFailsFilter]: { filter: string };
   [ActionType.SetArchAddressSearch]: { search: string };
@@ -52,6 +55,15 @@ export function setSortDirection(
 export function setDiggingFeesFilter(filter: string): ArchaeologistListActions {
   return {
     type: ActionType.SetDiggingFeesFilter,
+    payload: {
+      filter,
+    },
+  };
+}
+
+export function setCurseFeeFilter(filter: string): ArchaeologistListActions {
+  return {
+    type: ActionType.SetCurseFeeFilter,
     payload: {
       filter,
     },
