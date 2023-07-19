@@ -180,6 +180,13 @@ export function ArchaeologistList({
                             alignItems="flex-start"
                           >
                             <Text> Curse Fee </Text>
+                            <Text
+                              fontSize="xs"
+                              mt={1}
+                              variant="secondary"
+                            >
+                              <i>One-time</i>
+                            </Text>
                           </Flex>
                         </Button>
                         <Tooltip
