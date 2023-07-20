@@ -10,7 +10,7 @@ import {
   setSelectedArchaeologists,
 } from '../../../../../store/embalm/actions';
 import { Step } from '../../../../../store/embalm/reducer';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export interface SuccessData {
   successSarcophagusPayloadTxId: string;

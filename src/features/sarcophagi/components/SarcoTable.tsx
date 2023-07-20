@@ -2,7 +2,7 @@ import { Table, TableContainer, Tbody, Thead, Tr } from '@chakra-ui/react';
 import { useState } from 'react';
 import { SarcoTableHead, SortDirection } from './SarcoTableHead';
 import { SarcoTableRow } from './SarcoTableRow';
-import { SarcophagusData } from 'sarcophagus-v2-sdk';
+import { SarcophagusData } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 enum SortableColumn {
   State = 'state',

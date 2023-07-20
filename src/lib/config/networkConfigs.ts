@@ -3,7 +3,7 @@ import {
   goerliNetworkConfig,
   mainnetNetworkConfig,
   sepoliaNetworkConfig,
-} from 'sarcophagus-v2-sdk';
+} from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export const hardhatChainId = 31337;
 

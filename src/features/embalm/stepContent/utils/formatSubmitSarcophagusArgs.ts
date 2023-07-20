@@ -1,7 +1,7 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { computeAddress } from 'ethers/lib/utils';
 import { RecipientState } from '../../../../store/embalm/actions';
-import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 type SubmitSarcophagusArgsTuple = [
   string,

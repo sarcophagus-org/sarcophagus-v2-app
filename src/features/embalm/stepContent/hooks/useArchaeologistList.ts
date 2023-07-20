@@ -3,7 +3,7 @@ import { monthSeconds } from 'lib/constants';
 import { filterSplit, humanizeUnixTimestamp } from 'lib/utils/helpers';
 import { keys, orderBy } from 'lodash';
 import { useCallback } from 'react';
-import { sarco, ArchaeologistData } from 'sarcophagus-v2-sdk';
+import { sarco, ArchaeologistData } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { SortDirection, SortFilterType, setSortDirection } from 'store/archaeologistList/actions';
 import { deselectArchaeologist, selectArchaeologist } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';

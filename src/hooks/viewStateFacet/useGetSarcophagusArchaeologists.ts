@@ -1,6 +1,6 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { useNetworkConfig } from 'lib/config';
-import { SarcophagusArchaeologist } from 'sarcophagus-v2-sdk';
+import { SarcophagusArchaeologist } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useContractReads } from 'wagmi';
 
 export function useGetSarcophagusArchaeologists(

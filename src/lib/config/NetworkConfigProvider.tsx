@@ -4,7 +4,7 @@ import { useNetwork } from 'wagmi';
 import { networkConfigs } from './networkConfigs';
 import { NetworkConfig } from './networkConfigType';
 import { useMemo, useState } from 'react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();

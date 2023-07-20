@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 /**
  * Hook that handles resurrection of a sarcohpagus

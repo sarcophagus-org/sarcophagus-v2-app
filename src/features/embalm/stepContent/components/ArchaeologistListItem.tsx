@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
-import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { ethers } from 'ethers';
 
 interface ArchaeologistListItemProps {

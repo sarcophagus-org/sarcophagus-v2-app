@@ -17,7 +17,7 @@ import { NoSarcpohagi } from './components/NoSarcophagi';
 import { SarcoTab } from './components/SarcoTab';
 import { SarcoTable } from './components/SarcoTable';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { SarcophagusData, sarco } from 'sarcophagus-v2-sdk';
+import { SarcophagusData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useEffect, useState } from 'react';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 

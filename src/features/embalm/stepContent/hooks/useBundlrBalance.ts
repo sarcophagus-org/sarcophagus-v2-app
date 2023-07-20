@@ -2,7 +2,7 @@ import { BigNumber, ethers } from 'ethers';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { bundlrBalanceDecimals } from 'lib/constants';
 import { useCallback, useEffect, useMemo } from 'react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { resetBalanceOffset, setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';

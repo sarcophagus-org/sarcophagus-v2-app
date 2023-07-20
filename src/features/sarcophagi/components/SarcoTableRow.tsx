@@ -12,7 +12,7 @@ import { useAccount } from 'wagmi';
 import { cleanTooltip } from './CleanButton';
 import { resurrectTooltip } from './Details';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
-import { SarcophagusData, SarcophagusState } from 'sarcophagus-v2-sdk';
+import { SarcophagusData, SarcophagusState } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export enum SarcoAction {
   Rewrap = 'rewrap',

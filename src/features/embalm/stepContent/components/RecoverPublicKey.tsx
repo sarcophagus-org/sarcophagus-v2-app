@@ -3,7 +3,7 @@ import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useEnterKeyCallback } from 'hooks/useEnterKeyCallback';
-import { RecoverPublicKeyErrorStatus } from 'sarcophagus-v2-sdk';
+import { RecoverPublicKeyErrorStatus } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useRecoverPublicKey } from '../hooks/useRecoverPublicKey';
 
 interface IErrorStatusMap {

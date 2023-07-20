@@ -1,5 +1,5 @@
 import { Text, Badge, Flex, Tooltip } from '@chakra-ui/react';
-import { SarcophagusState } from 'sarcophagus-v2-sdk';
+import { SarcophagusState } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export const sarcoStateMap = {
   [SarcophagusState.DoesNotExist]: '',

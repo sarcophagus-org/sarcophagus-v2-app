@@ -5,7 +5,7 @@ import { setUploadPrice } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
 // import { BigNumber as BN } from 'bignumber.js';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function useUploadPrice() {

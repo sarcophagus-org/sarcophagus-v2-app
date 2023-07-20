@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'store/index';
 import { useNetwork, useSigner } from 'wagmi';
 import * as Sentry from '@sentry/react';
 
-import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 /**

@@ -5,7 +5,7 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { formatFee } from 'lib/utils/helpers';
 import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useEffect, useState } from 'react';
 
 export function SarcophagusSummaryFees() {

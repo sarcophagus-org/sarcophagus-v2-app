@@ -25,7 +25,7 @@ import {
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();

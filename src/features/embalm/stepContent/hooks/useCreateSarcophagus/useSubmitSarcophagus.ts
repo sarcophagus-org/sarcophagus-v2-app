@@ -4,7 +4,7 @@ import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagus
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function useSubmitSarcophagus() {
   const {

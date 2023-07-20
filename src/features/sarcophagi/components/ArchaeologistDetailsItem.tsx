@@ -1,7 +1,7 @@
 import { Text, VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { sarco, SarcophagusArchaeologist } from 'sarcophagus-v2-sdk';
+import { sarco, SarcophagusArchaeologist } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useEnsName } from 'wagmi';
 interface ArchaeologistDetailItemProps {
   archaeologist: SarcophagusArchaeologist & { address: `0x${string}` };

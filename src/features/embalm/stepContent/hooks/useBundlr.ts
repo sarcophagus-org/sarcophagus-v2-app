@@ -5,7 +5,7 @@ import { fundStart, fundSuccess, withdrawStart, withdrawSuccess } from 'lib/util
 import { useCallback, useState } from 'react';
 import { fund as fundAction, setIsFunding, withdraw as withdrawAction } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function useBundlr() {
   const dispatch = useDispatch();

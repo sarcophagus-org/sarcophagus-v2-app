@@ -1,4 +1,4 @@
-import { SarcophagusData } from 'sarcophagus-v2-sdk';
+import { SarcophagusData } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { Actions } from '..';
 import { ActionType } from './actions';
 

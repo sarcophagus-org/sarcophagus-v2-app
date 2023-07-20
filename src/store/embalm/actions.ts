@@ -4,7 +4,7 @@ import { PeerId } from '@libp2p/interface-peer-id';
 import { Connection } from '@libp2p/interface-connection';
 import { BigNumber } from 'ethers';
 import { CancelCreateToken } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useCreateSarcophagus';
-import { ArchaeologistData, ArchaeologistException } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, ArchaeologistException } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.

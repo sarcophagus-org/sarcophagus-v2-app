@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useToast } from '@chakra-ui/react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { approveFailure, approveSuccess } from 'lib/utils/toast';
 
 export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {

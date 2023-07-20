@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi';
 import { BuryButton } from './BuryButton';
 import { CleanButton } from './CleanButton';
 import { DetailsCollapse } from './DetailsCollapse';
-import { SarcophagusState } from 'sarcophagus-v2-sdk';
+import { SarcophagusState } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 export const resurrectTooltip = 'Extend the resurrection date of the Sarcophagus';

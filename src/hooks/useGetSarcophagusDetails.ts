@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SarcophagusDetails, sarco } from 'sarcophagus-v2-sdk';
+import { SarcophagusDetails, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function useGetSarcophagusDetails(sarcoId: string | undefined) {
   const [sarcophagus, setSarcophagus] = useState<SarcophagusDetails>();

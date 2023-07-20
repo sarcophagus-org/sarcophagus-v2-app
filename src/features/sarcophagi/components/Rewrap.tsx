@@ -22,7 +22,7 @@ import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarc
 import { buildResurrectionDateString } from 'lib/utils/helpers';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useSelector } from 'store/index';
 
 export function Rewrap() {

@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import * as Sentry from '@sentry/react';
 
 export function useArchaeologistSignatureNegotiation() {

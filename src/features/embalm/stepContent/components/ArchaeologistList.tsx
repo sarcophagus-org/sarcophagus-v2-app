@@ -23,7 +23,7 @@ import { FilterInput } from './FilterInput';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'store/index';
 import { ArchaeologistListItem } from './ArchaeologistListItem';
-import { ArchaeologistData } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function ArchaeologistList({
   showDial,

@@ -1,6 +1,6 @@
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useEffect, useState } from 'react';
-import { sarco } from 'sarcophagus-v2-sdk';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export const useSarcophagusCount = () => {
   const [loading, setLoading] = useState(false);

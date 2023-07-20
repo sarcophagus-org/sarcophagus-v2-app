@@ -6,7 +6,7 @@ import { createSarcophagusErrors } from '../../utils/errors';
 import { Connection } from '@libp2p/interface-connection';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import { wait } from 'lib/utils/helpers';
-import { sarco, ArchaeologistData } from 'sarcophagus-v2-sdk';
+import { sarco, ArchaeologistData } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 // TODO: Move this to sdk. Having trouble exporting enums from the sdk
 export enum ArchaeologistExceptionCode {

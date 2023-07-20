@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { dialArchaeologistFailure, dialArchaeologistSuccess } from '../../lib/utils/toast';
-import { ArchaeologistData, sarco } from 'sarcophagus-v2-sdk';
+import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function useAttemptDialArchaeologists(
   setIsDialing?: React.Dispatch<React.SetStateAction<boolean>>

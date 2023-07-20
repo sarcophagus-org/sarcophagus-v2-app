@@ -3,7 +3,7 @@ import { useQuery } from 'hooks/useQuery';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { SarcoStateIndicator } from './SarcoStateIndicator';
 import { RoutesPathMap, RouteKey } from 'pages';
-import { SarcophagusState } from 'sarcophagus-v2-sdk';
+import { SarcophagusState } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 
 interface SarcophagusDetailsProps {

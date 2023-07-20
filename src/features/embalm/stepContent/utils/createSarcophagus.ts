@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { encrypt } from '../../../../lib/utils/helpers';
 import { ArweaveFileMetadata } from 'hooks/useArweaveService';
-import { ArchaeologistEncryptedShard } from 'sarcophagus-v2-sdk';
+import { ArchaeologistEncryptedShard } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export async function encryptShardsWithArchaeologistPublicKeys(
   publicKeys: string[],

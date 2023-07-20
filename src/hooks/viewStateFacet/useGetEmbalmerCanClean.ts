@@ -1,7 +1,7 @@
 import { ViewStateFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { BigNumber } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { SarcophagusData } from 'sarcophagus-v2-sdk';
+import { SarcophagusData } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useSelector } from 'store/index';
 import { useAccount, useContractRead } from 'wagmi';
 import { useGetGracePeriod } from './useGetGracePeriod';
