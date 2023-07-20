@@ -51,11 +51,11 @@ export function Rewrap() {
   const maxRewrapIntervalFromSarcophagusSec = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
 
   // The calculated max rewrap interval is
-  // ( new resurrection time - previous resurrection time ) * (200 / cursed bond percentage)
+  // ( new resurrection time - previous resurrection time ) * (2_000_000 / cursed bond percentage)
   // Defaults to max possible number
   const maxRewrapIntervalCalculatedSec = sarcophagus
     ? (Number(sarcophagus.resurrectionTime) - Number(sarcophagus.previousRewrapTime)) *
-      (200 / sarcophagus.cursedBondPercentage)
+      (2_000_000 / sarcophagus.cursedBondPercentage)
     : Number.MAX_SAFE_INTEGER;
 
   // The max rewrap interval is the lesser value of the max rewrap interval from the sarcophagus and
