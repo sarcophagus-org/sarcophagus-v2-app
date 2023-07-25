@@ -121,10 +121,10 @@ export function useArweave() {
         throw Error(arweaveNotReadyMsg);
       }
 
-      const response = await arweave.api.get(`tx/${id}`, {
+      const response = await arweave.api.get(`${id}`, {
+        responseType: 'arraybuffer',
         onDownloadProgress,
       });
-      console.log('response', response);
 
       if (response.status == 200) {
         const dataSize = parseInt(response.data.data_size);
@@ -161,7 +161,6 @@ export function useArweave() {
       }
 
       try {
-        // const tx = await arweave.transactions.get(arweaveTxId);
         const tx = await customGetTx(arweaveTxId);
         console.log('tx', tx);
 
