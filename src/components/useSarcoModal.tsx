@@ -10,6 +10,7 @@ import {
   useDisclosure,
   Box,
   Flex,
+  HStack,
 } from '@chakra-ui/react';
 import { colors } from 'theme/colors';
 
@@ -22,6 +23,8 @@ interface ModalButtonProps {
 interface SarcoModalProps {
   children: JSX.Element[] | JSX.Element;
   isDismissible: boolean;
+  showCancelButton?: boolean;
+  onCancelClick?: Function;
   coverImage?: JSX.Element;
   title?: JSX.Element;
   secondaryButton?: ModalButtonProps;
@@ -77,17 +80,31 @@ export function useSarcoModal() {
         </ModalBody>
 
         <ModalFooter alignSelf={'center'}>
-          {props.secondaryButton && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                props.secondaryButton?.onClick();
-                if (props.secondaryButton?.dismissesModal) onClose();
-              }}
-            >
-              {props.secondaryButton.label}
-            </Button>
-          )}
+          <HStack>
+            {props.showCancelButton && (
+              <Button
+                variant="ghost"
+                color="#bbb"
+                onClick={() => {
+                  if (props.onCancelClick) props.onCancelClick();
+                  onClose();
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+            {props.secondaryButton && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  props.secondaryButton?.onClick();
+                  if (props.secondaryButton?.dismissesModal) onClose();
+                }}
+              >
+                {props.secondaryButton.label}
+              </Button>
+            )}
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>

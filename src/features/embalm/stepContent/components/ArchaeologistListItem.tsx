@@ -1,5 +1,7 @@
 import { Box, Button, Checkbox, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
+import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { SarcoTokenIcon } from 'components/icons';
+import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
 import { formatAddress } from 'lib/utils/helpers';
 import { Dispatch, SetStateAction, useEffect } from 'react';
@@ -12,8 +14,6 @@ import { useDispatch, useSelector } from 'store/index';
 import { useEnsName } from 'wagmi';
 import { useAttemptDialArchaeologists } from '../../../../hooks/utils/useAttemptDialArchaeologists';
 import { MultiLineTooltip } from './MultiLineTooltip';
-import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-import { ethers } from 'ethers';
 
 interface ArchaeologistListItemProps {
   archaeologist: ArchaeologistData;
@@ -159,12 +159,21 @@ export function ArchaeologistListItem({
                 )
               )}
         </TableContent>
+
+        <TableContent
+          icon={true}
+          checkbox={false}
+        >
+          {sarco.utils.formatSarco(archaeologist.profile.curseFee.toString())}
+        </TableContent>
+
         <TableContent
           icon={false}
           checkbox={false}
         >
           {archaeologist.profile.successes.toString()}
         </TableContent>
+
         <TableContent
           icon={false}
           checkbox={false}

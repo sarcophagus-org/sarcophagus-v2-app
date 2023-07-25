@@ -1,12 +1,11 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { BigNumber, ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
-import { formatFee } from 'lib/utils/helpers';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-import { useEffect, useState } from 'react';
 
 export function SarcophagusSummaryFees() {
   const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
@@ -69,7 +68,7 @@ export function SarcophagusSummaryFees() {
             <SummaryErrorIcon error={"You don't have enough SARCO to cover creation fees!"} />
           ) : (
             <Tooltip
-              label="Fee to be paid for the next rewrap, and a one time upload fee"
+              label="This is how much SARCO it will cost in total to create your Sarcophagus. (NOTE: This includes a one time upload fee)"
               placement="top"
             >
               <InfoOutlineIcon fontSize="md" />
@@ -134,8 +133,20 @@ export function SarcophagusSummaryFees() {
             w="100%"
             justifyContent="space-between"
           >
-            <Text as="i">Payload Upload</Text>
-            <Text as="i">{formatFee(ethers.utils.formatUnits(uploadPrice), 4)} ETH</Text>
+            <Text
+              as="i"
+              fontSize="16"
+              fontWeight="bold"
+            >
+              Total:
+            </Text>
+            <Text
+              as="i"
+              fontSize="16"
+              fontWeight="bold"
+            >
+              {sarco.utils.formatSarco(totalFees.toString(), 8)} SARCO
+            </Text>
           </Flex>
         </Flex>
       </Flex>
