@@ -57,7 +57,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       }
 
       // Load the payload from arweave using the txId
-      const arweaveFile =  await fetchArweaveFileFallback(payloadTxId);
+      const arweaveFile = await fetchArweaveFileFallback(payloadTxId);
 
       if (!arweaveFile) throw Error('Failed to download file from arweave');
 
