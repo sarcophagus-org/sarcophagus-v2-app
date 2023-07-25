@@ -5,8 +5,6 @@ import { useArweave } from 'hooks/useArweave';
 import { decrypt } from 'lib/utils/helpers';
 import { useCallback, useEffect, useState } from 'react';
 import { combine } from 'shamirs-secret-sharing-ts';
-import { useNetworkConfig } from 'lib/config';
-import { hardhat, mainnet } from '@wagmi/chains';
 import { ethers } from 'ethers';
 
 /**
@@ -23,9 +21,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   const [canResurrect, setCanResurrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isResurrecting, setIsResurrecting] = useState(false);
-  const { fetchArweaveFileFallback, fetchArweaveFile, downloadProgress } = useArweave();
-
-  const networkConfig = useNetworkConfig();
+  const { fetchArweaveFileFallback, downloadProgress } = useArweave();
 
   // Set the canResurrect state based on if the sarcophagus has unencrypted shards
   useEffect(() => {
@@ -38,7 +34,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   }, [archaeologists, sarcophagus]);
 
   /**
-   * Resurrects the sarcohpagus using the values passed in to the hook
+   * Resurrects the sarcophagus using the values passed in to the hook
    */
   const resurrect = useCallback(async (): Promise<{
     fileName: string;
@@ -61,10 +57,7 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
       }
 
       // Load the payload from arweave using the txId
-      const arweaveFile =
-        networkConfig.chainId === hardhat.id || networkConfig.chainId === mainnet.id
-          ? await fetchArweaveFile(payloadTxId)
-          : await fetchArweaveFileFallback(payloadTxId);
+      const arweaveFile =  await fetchArweaveFileFallback(payloadTxId);
 
       if (!arweaveFile) throw Error('Failed to download file from arweave');
 
@@ -129,8 +122,6 @@ export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
   }, [
     canResurrect,
     sarcophagus?.arweaveTxId,
-    networkConfig.chainId,
-    fetchArweaveFile,
     fetchArweaveFileFallback,
     sarcoId,
     archaeologists,

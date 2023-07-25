@@ -153,6 +153,7 @@ export function useArweave() {
     [arweave, onDownloadProgress]
   );
 
+  // TODO -- this function is not currently working, using fallback currently for all arweave fetches
   const fetchArweaveFile = useCallback(
     async (arweaveTxId: string): Promise<ArweaveResponse | undefined> => {
       if (!arweave) {
@@ -162,7 +163,6 @@ export function useArweave() {
 
       try {
         const tx = await customGetTx(arweaveTxId);
-        console.log('tx', tx);
 
         setDownloadProgress(0);
 
