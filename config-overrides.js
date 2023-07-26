@@ -16,18 +16,18 @@ module.exports = function override(config) {
     fs: false,
     tty: false,
     child_process: false,
-    readline: false
+    readline: false,
   };
   config.plugins.push(
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       // https://github.com/framer/motion/issues/1504#issuecomment-1092838443
-      process: 'process/browser.js'
+      process: 'process/browser.js',
     })
   );
 
   config.experiments = {
-    topLevelAwait: true
+    topLevelAwait: true,
   };
 
   return config;
