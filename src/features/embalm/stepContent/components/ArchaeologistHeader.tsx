@@ -40,7 +40,7 @@ export function ArchaeologistHeader({ resetPage }: ResetPage) {
         resurrection,
         timestampMs
       )
-      .then(({ totalDiggingFees: diggingFees, protocolFeeBasePercentage: baseFeePercentage }) => {
+      .then(({ totalDiggingFees: diggingFees }) => {
         setTotalDiggingFees(diggingFees);
       })
       .catch(e => console.log(e));

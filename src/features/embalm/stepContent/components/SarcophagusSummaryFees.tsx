@@ -8,7 +8,7 @@ import { useSelector } from 'store/index';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
 export function SarcophagusSummaryFees() {
-  const { uploadPrice, selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
+  const { selectedArchaeologists, resurrection } = useSelector(x => x.embalmState);
   const { balance } = useSarcoBalance();
   const { timestampMs } = useSelector(x => x.appState);
 
