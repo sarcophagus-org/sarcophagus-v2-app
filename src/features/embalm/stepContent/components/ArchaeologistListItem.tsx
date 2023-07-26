@@ -30,6 +30,7 @@ interface TableContentProps {
   checkbox: boolean;
   align?: string;
   multiLineTooltipLabel?: string[] | null;
+  subtitle?: string;
 }
 
 export function ArchaeologistListItem({
@@ -53,8 +54,6 @@ export function ArchaeologistListItem({
       ? ethers.constants.Zero
       : sarco.archaeologist.calculateDiggingFees(archaeologist, resurrectionTime, timestampMs);
 
-  const totalFees = diggingFees?.add(archaeologist.profile.curseFee);
-
   const { data: ensName } = useEnsName({
     address: archaeologist.profile.archAddress as `0x${string}`,
     chainId: networkConfig.chainId,
@@ -75,6 +74,7 @@ export function ArchaeologistListItem({
     checkbox,
     align,
     multiLineTooltipLabel,
+    subtitle,
   }: TableContentProps) {
     return (
       <Td
@@ -85,7 +85,10 @@ export function ArchaeologistListItem({
           lines={multiLineTooltipLabel ?? []}
           placement="top"
         >
-          <Flex justify={align || (icon || checkbox ? 'left' : 'center')}>
+          <Flex
+            justify={align || (icon || checkbox ? 'left' : 'center')}
+            position="relative"
+          >
             {icon && <SarcoTokenIcon boxSize="18px" />}
             {checkbox && (
               <Checkbox
@@ -100,16 +103,29 @@ export function ArchaeologistListItem({
               />
             )}
             <Box width={!icon && !checkbox ? '4' : '0'} />
-            <Text
-              ml={3}
-              bg={archaeologist.ineligibleReason ? 'transparent.red' : 'grayBlue.950'}
-              color={rowTextColor}
-              py={0.5}
-              px={2}
-              borderRadius="2px"
+            <Flex
+              justify="space-between"
+              width={'100%'}
             >
-              {children}
-            </Text>
+              <Text
+                ml={3}
+                bg={archaeologist.ineligibleReason ? 'transparent.red' : 'grayBlue.950'}
+                color={rowTextColor}
+                py={0.5}
+                px={2}
+                borderRadius="2px"
+              >
+                {children}
+              </Text>
+              {subtitle && (
+                <Text
+                  fontSize="xs"
+                  variant="secondary"
+                >
+                  <i>{subtitle}</i>
+                </Text>
+              )}
+            </Flex>
           </Flex>
         </MultiLineTooltip>
       </Td>
@@ -144,20 +160,16 @@ export function ArchaeologistListItem({
         <TableContent
           icon={true}
           checkbox={false}
+          subtitle={`${sarco.utils.formatSarco(
+            sarco.utils.convertSarcoPerSecondToPerMonth(
+              archaeologist.profile.minimumDiggingFeePerSecond.toString()
+            )
+          )}/month`}
           multiLineTooltipLabel={
-            diggingFees && [
-              `Digging fee: ${sarco.utils.formatSarco(diggingFees?.toString() ?? '0')}`,
-              `Curse fee: ${sarco.utils.formatSarco(archaeologist.profile.curseFee.toString())}`,
-            ]
+            !resurrectionTime ? ['Set a resurrection time to calculate the digging fee'] : []
           }
         >
-          {diggingFees
-            ? sarco.utils.formatSarco(totalFees?.toString() ?? '0')
-            : sarco.utils.formatSarco(
-                sarco.utils.convertSarcoPerSecondToPerMonth(
-                  archaeologist.profile.minimumDiggingFeePerSecond.toString()
-                )
-              )}
+          {resurrectionTime ? sarco.utils.formatSarco(diggingFees.toString()) : '--'}
         </TableContent>
 
         <TableContent

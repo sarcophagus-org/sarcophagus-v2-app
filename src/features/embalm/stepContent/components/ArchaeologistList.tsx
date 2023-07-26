@@ -125,21 +125,7 @@ export function ArchaeologistList({
                           onClick={onClickSortDiggingFees}
                           p={'0.5'}
                         >
-                          <Flex
-                            direction="column"
-                            alignItems="flex-start"
-                          >
-                            <Text> Digging Fee </Text>
-                            {resurrectionTime === 0 && (
-                              <Text
-                                fontSize="xs"
-                                mt={1}
-                                variant="secondary"
-                              >
-                                <i>SARCO/month</i>
-                              </Text>
-                            )}
-                          </Flex>
+                          <Text> Digging Fee </Text>
                         </Button>
                         {resurrectionTime === 0 ? null : (
                           <Tooltip
