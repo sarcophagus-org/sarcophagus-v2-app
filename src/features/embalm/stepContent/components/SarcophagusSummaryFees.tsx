@@ -48,7 +48,11 @@ export function SarcophagusSummaryFees() {
       // TODO -- protocol fees with curse fees should happen in the SDK
       let totalProtocolFees;
       if (newProtocolFee && protocolFeeBasePercentage) {
-        totalProtocolFees = newProtocolFee.add(totalCurseFeesCalc.div(BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage))));
+        totalProtocolFees = newProtocolFee.add(
+          totalCurseFeesCalc.div(
+            BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage))
+          )
+        );
       } else {
         totalProtocolFees = BigNumber.from(0);
       }
