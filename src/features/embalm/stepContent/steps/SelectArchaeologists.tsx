@@ -98,7 +98,7 @@ export function SelectArchaeologists({
                 textDecor="underline"
                 ml={2}
               >
-                {moment(resurrectionDate).format('DD.MM.YY h:mma')}
+                {moment(resurrectionDate).format('MM.DD.YY h:mma')}
               </chakra.span>
             )}
           </Text>
