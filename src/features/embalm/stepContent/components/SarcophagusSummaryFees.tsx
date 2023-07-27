@@ -35,7 +35,6 @@ export function SarcophagusSummaryFees() {
 
       // Set the fees in state
       setTotalDiggingFees(newTotalDiggingFees);
-      setProtocolFee(newProtocolFee);
       setFormattedTotalDiggingFees(newFormattedTotalDiggingFees);
       setProtocolFeeBasePercentage(newProtocolFeeBasePercentage.toString());
 
@@ -46,13 +45,23 @@ export function SarcophagusSummaryFees() {
       );
       setTotalCurseFees(totalCurseFeesCalc);
 
+      // TODO -- protocol fees with curse fees should happen in the SDK
+      let totalProtocolFees;
+      if (newProtocolFee && protocolFeeBasePercentage) {
+        totalProtocolFees = newProtocolFee.add(totalCurseFeesCalc.div(BigNumber.from(10000).div(BigNumber.from(protocolFeeBasePercentage))));
+      } else {
+        totalProtocolFees = BigNumber.from(0);
+      }
+
+      setProtocolFee(totalProtocolFees);
+
       // Calculate and set digging and curse fees
       const diggingFeesAndCurseFees = newTotalDiggingFees.add(totalCurseFeesCalc);
-      setTotalFees(diggingFeesAndCurseFees.add(newProtocolFee));
+      setTotalFees(diggingFeesAndCurseFees.add(totalProtocolFees));
     }
 
     setFees();
-  }, [resurrection, selectedArchaeologists, timestampMs]);
+  }, [resurrection, selectedArchaeologists, timestampMs, protocolFeeBasePercentage]);
 
   return (
     <Box
@@ -108,7 +117,7 @@ export function SarcophagusSummaryFees() {
               variant="secondary"
               fontSize="xs"
             >
-              + {protocolFeeBasePercentage}% protocol fee
+              + {Number(protocolFeeBasePercentage) / 100}% protocol fee
             </Text>
             <Text
               as="i"

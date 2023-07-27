@@ -32,7 +32,6 @@ export function SelectArchaeologists({
 }: SelectArchaeologistsProps) {
   const outerLimit = 1;
   const innerLimit = 1;
-
   // Load the archaeologists' data
   useLoadArchaeologists();
 

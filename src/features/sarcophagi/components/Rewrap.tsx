@@ -92,7 +92,7 @@ export function Rewrap() {
       }));
       const {
         totalDiggingFees: newTotalDiggingFees,
-        protocolFee: newProtoclFee,
+        protocolFee: newProtocolFee,
         protocolFeeBasePercentage: newProtocolFeeBasePercentage,
       } = await sarco.archaeologist.getTotalFeesInSarco(
         archaeologistsProfiles,
@@ -100,7 +100,7 @@ export function Rewrap() {
         timestampMs
       );
       setTotalDiggingFees(newTotalDiggingFees);
-      setProtocolFee(newProtoclFee);
+      setProtocolFee(newProtocolFee);
       setProtocolFeeBasePercentage(newProtocolFeeBasePercentage);
     }
     setTotalFees();
@@ -281,7 +281,7 @@ export function Rewrap() {
         </HStack>
         <HStack spacing={3}>
           <Text variant="secondary">
-            Protocol fee ({protocolFeeBasePercentage.toString()}%):{' '}
+            Protocol fee ({protocolFeeBasePercentage.div(100).toString()}%):{' '}
             {sarco.utils.formatSarco(protocolFee.toString())} SARCO
           </Text>
         </HStack>
