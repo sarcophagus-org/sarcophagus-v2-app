@@ -33,7 +33,7 @@
     "@rainbow-me/rainbowkit": "0.8.1",
     "@react-pdf/renderer": "^3.0.0",
     "@sarcophagus-org/sarcophagus-v2-contracts": "^0.17.2",
-    "@sarcophagus-org/sarcophagus-v2-sdk-client": "^0.1.0",
+    "@sarcophagus-org/sarcophagus-v2-sdk-client": "^0.2.1",
     "@sentry/react": "^7.43.0",
     "@sentry/tracing": "^7.43.0",
     "@wagmi/chains": "^0.1.5",

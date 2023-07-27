@@ -17,7 +17,8 @@ export function useRewrapSarcophagus(sarcoId: string, resurrectionTime: Date | n
     setError(undefined);
     setIsRewrapping(true);
     try {
-      await sarco.api.rewrapSarcophagus(sarcoId, timeInSeconds);
+      const tx = await sarco.api.rewrapSarcophagus(sarcoId, timeInSeconds);
+      await tx.wait();
       toast(rewrapSuccess());
       setIsRewrapping(false);
       navigate(`/dashboard/${sarcoId}`);

@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 /**
- * Hook that handles resurrection of a sarcohpagus
- * @param sarcoId The sarcohpagus id
+ * Hook that handles resurrection of a sarcophagus
+ * @param sarcoId The sarcophagus id
  * @param recipientPrivateKey The recipients private key
  */
 export function useResurrection(sarcoId: string, recipientPrivateKey: string) {
