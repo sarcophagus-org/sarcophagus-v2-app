@@ -36,7 +36,7 @@ export function Sarcophagi() {
 
   useEffect(() => {
     if (isSarcoInitialized) {
-      // EMALMER SARCO
+      // EMBALMER SARCO
       setIsLoadingEmbalmerSarcophagi(true);
       sarco.api.getEmbalmerSarcophagi(address || ethers.constants.AddressZero).then(res => {
         setEmbalmerSarcophagi(res);
