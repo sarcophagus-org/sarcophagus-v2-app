@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RecoverPublicKeyErrorStatus, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-import { useDispatch } from 'store';
+import { useDispatch } from 'store/index';
 import { RecipientSetByOption, setRecipientState } from 'store/embalm/actions';
 
 export function useRecoverPublicKey() {
