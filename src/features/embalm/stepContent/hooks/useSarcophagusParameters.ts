@@ -1,6 +1,3 @@
-import { ethers } from 'ethers';
-import { useNetworkConfig } from 'lib/config';
-import { hardhatChainId } from 'lib/config/networkConfigs';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { minimumResurrection } from 'lib/constants';
 import moment from 'moment';
@@ -33,13 +30,9 @@ export const useSarcophagusParameters = () => {
     selectedArchaeologists,
     requiredArchaeologists,
   } = useSelector(x => x.embalmState);
-  const { balance } = useSelector(x => x.bundlrState);
   const { timestampMs } = useSelector(x => x.appState);
 
   const { getStatus } = useStepNavigator();
-  const { chainId } = useNetworkConfig();
-
-  const isHardhatNetwork = chainId === hardhatChainId;
 
   const [maxRewrapIntervalMs, setMaxRewrapIntervalMs] = useState(0);
   const [maxResurrectionTimeMs, setMaxResurrectionTimeMs] = useState(0);
@@ -106,15 +99,6 @@ export const useSarcophagusParameters = () => {
       error: !file ? 'You have not selected a file to embalm' : null,
     },
     {
-      name: 'BUNDLR BALANCE',
-      value: ethers.utils.formatUnits(balance),
-      step: Step.FundBundlr,
-      error:
-        !isHardhatNetwork && (balance.eq(ethers.constants.Zero) || !balance)
-          ? 'You do not have enough balance on Bundlr'
-          : null,
-    },
-    {
       name: 'SELECTED ARCHAEOLOGISTS',
       value: selectedArchaeologists.length.toString(),
       step: Step.SelectArchaeologists,
@@ -136,19 +120,15 @@ export const useSarcophagusParameters = () => {
    * Returns true if all required data for the sarcophagus has been supplied
    * */
   const isSarcophagusFormDataComplete = (): boolean => {
-    // TODO -- enable bundlr
     const requiredSteps = [
       Step.NameSarcophagus,
       Step.UploadPayload,
-      Step.FundBundlr,
       Step.SetRecipient,
       Step.SelectArchaeologists,
       Step.RequiredArchaeologists,
     ];
 
-    return requiredSteps
-      .filter(s => (!isHardhatNetwork ? true : s !== Step.FundBundlr)) // Not checking fund bundlr step when testing in hardhat
-      .every(step => getStatus(step) === StepStatus.Complete);
+    return requiredSteps.every(step => getStatus(step) === StepStatus.Complete);
   };
 
   const isError = Object.values(sarcophagusParameters).some(p => p.error);

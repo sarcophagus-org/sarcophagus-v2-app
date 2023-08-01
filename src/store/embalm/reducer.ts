@@ -17,11 +17,10 @@ export enum StepStatus {
 export enum Step {
   NameSarcophagus = 0,
   UploadPayload = 1,
-  FundBundlr = 2,
-  SetRecipient = 3,
-  SelectArchaeologists = 4,
-  RequiredArchaeologists = 5,
-  CreateSarcophagus = 6,
+  SetRecipient = 2,
+  SelectArchaeologists = 3,
+  RequiredArchaeologists = 4,
+  CreateSarcophagus = 5,
 }
 
 export interface EmbalmState {

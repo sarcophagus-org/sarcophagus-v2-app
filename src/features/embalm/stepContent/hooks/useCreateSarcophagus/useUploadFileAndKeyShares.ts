@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from '../../../../../store';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
-import { setIsUploading, setUploadProgress } from 'store/bundlr/actions';
+import { setIsUploading, setUploadProgress } from 'store/upload/actions';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
@@ -13,7 +13,7 @@ export function useUploadFileAndKeyShares() {
     useContext(CreateSarcophagusContext);
 
   const [uploadStep, setUploadStep] = useState('');
-  const { uploadProgress, isUploading } = useSelector(s => s.bundlrState);
+  const { uploadProgress, isUploading } = useSelector(s => s.uploadState);
 
   const dispatch = useDispatch();
 
@@ -58,7 +58,7 @@ export function useUploadFileAndKeyShares() {
         await uploadPromise;
       } catch (error: any) {
         console.log(error);
-        throw new Error(error.message || 'Error uploading file payload to Bundlr');
+        throw new Error(error.message || 'Error uploading file payload to Arweave');
       }
     },
     [

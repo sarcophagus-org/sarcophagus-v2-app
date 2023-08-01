@@ -1,17 +1,12 @@
 import { Input, Link, Text, Tooltip, VStack } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
-import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { maxSarcophagusNameLength } from 'lib/constants';
 import prettyBytes from 'pretty-bytes';
 import { FileDragAndDrop } from '../components/FileDragAndDrop';
 import { useUploadPayload } from '../hooks/useUploadPayload';
-import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function UploadPayload() {
   const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
-  const { formattedUploadPrice } = useUploadPrice();
-
-  const { isBundlrConnected } = useSupportedNetwork();
 
   function handleClickFilePicker() {
     if (fileInputRef.current) {
@@ -77,10 +72,6 @@ export function UploadPayload() {
               </Text>
             </Tooltip>
             <Text>Size: {prettyBytes(file.size)}</Text>
-            <Text>
-              {"Bundlr's upload price: "}
-              {isBundlrConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
-            </Text>
             <Link textDecor="underline">Upload a different file</Link>
           </VStack>
         ) : (

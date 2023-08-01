@@ -16,7 +16,7 @@ export function ReviewSarcophagus() {
       <Text>
         Review your details below. Once you are ready, you can submit your transactions. Be aware,
         you will also make two transactions: (1) encrypt your payload, and (2) upload your payload
-        to Arweave via Bundlr.
+        to Arweave.
       </Text>
 
       <Flex

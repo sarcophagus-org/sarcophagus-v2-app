@@ -3,8 +3,6 @@ import { createContext, useContext } from 'react';
 interface SupportedNetwork {
   isSupportedChain: boolean;
   isSarcoInitialized: boolean;
-  isBundlrConnected: boolean;
-  setIsBundlrConnected: Function;
   supportedNetworkNames: string[];
 }
 

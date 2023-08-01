@@ -4,9 +4,7 @@ import { toggleRetryingCreate } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useLoadArchaeologists } from 'features/embalm/stepContent/hooks/useLoadArchaeologists';
 import { ethers } from 'ethers';
-import { useBundlrBalance } from 'features/embalm/stepContent/hooks/useBundlrBalance';
 import { SummaryErrorIcon } from 'features/embalm/stepContent/components/SummaryErrorIcon';
-import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { useState } from 'react';
 
 export function RetryCreateModal({
@@ -21,15 +19,10 @@ export function RetryCreateModal({
     s => s.embalmState
   );
 
-  const { uploadPrice, formattedUploadPrice } = useUploadPrice();
-
   const { refreshProfiles } = useLoadArchaeologists();
-
-  const { balance: bundlrBalance } = useBundlrBalance();
 
   const { SarcoModal, openModal, isOpen } = useSarcoModal();
 
-  const hasEnoughReUploadBalance = bundlrBalance.gte(uploadPrice);
   const [archsHaveEnoughReUploadFreeBond, setArchsHaveEnoughReUploadFreeBond] = useState(true);
 
   if (!isOpen) {
@@ -56,7 +49,7 @@ export function RetryCreateModal({
     );
   }
 
-  const validationFailed = !archsHaveEnoughReUploadFreeBond || !hasEnoughReUploadBalance;
+  const validationFailed = !archsHaveEnoughReUploadFreeBond;
 
   return (
     <SarcoModal
@@ -116,16 +109,6 @@ export function RetryCreateModal({
           ) : (
             <></>
           )}
-          {!hasEnoughReUploadBalance ? (
-            <Text
-              variant="secondary"
-              fontSize="xs"
-            >
-              - You do not have enough Bundlr balance to re-upload
-            </Text>
-          ) : (
-            <></>
-          )}
         </Flex>
       ) : (
         <Flex flexDirection="column">
@@ -137,13 +120,6 @@ export function RetryCreateModal({
           >
             Your file will need to be re-uploaded, and new encryption keys will be requested of the
             archaeologists.
-          </Text>
-          <Text
-            variant="secondary"
-            fontSize="xs"
-            textAlign="center"
-          >
-            Upload price: {formattedUploadPrice}
           </Text>
         </Flex>
       )}

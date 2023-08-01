@@ -1,6 +1,4 @@
-import { ethers } from 'ethers';
 import { Step } from 'store/embalm/reducer';
-import { useSelector } from 'store/index';
 import { StepElement } from './components/StepElement';
 import { StepsContainer } from './components/StepsContainer';
 import { useSetStatuses } from './hooks/useSetStatuses';
@@ -11,8 +9,6 @@ import { useSetStatuses } from './hooks/useSetStatuses';
  * Does not use routes to track the current step.
  */
 export function StepNavigator() {
-  const { isFunding, balanceOffset } = useSelector(x => x.bundlrState);
-
   useSetStatuses();
 
   return (
@@ -25,12 +21,6 @@ export function StepNavigator() {
       <StepElement
         step={Step.UploadPayload}
         title="Upload Payload"
-      />
-
-      <StepElement
-        step={Step.FundBundlr}
-        title="Fund Arweave Bundlr"
-        isLoading={isFunding || !balanceOffset.eq(ethers.constants.Zero)}
       />
 
       <StepElement
