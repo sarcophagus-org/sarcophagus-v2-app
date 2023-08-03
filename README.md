@@ -28,11 +28,14 @@ You’ll need an address on Goerli funded with ETH and SARCO to run through the 
 2. On the network dropdown at the top of the MetaMask popup, select show/hide test networks and toggle on test networks
 3. Change your network to Goerli
 4. Import the private key for an account funded with Goerli Ether and SARCO
+5. On step 3 within the embalm flow, you’ll be prompted to fund your Bundlr account with Ether. This process can take up
+   to 20 minutes to complete on Goerli.
 
 ## Running on hardhat local network and ArLocal with MetaMask
 
 You may deploy the contracts on a local hardhat node and simulate an Arweave connection with ArLocal for local
-development.
+development. Note that you will not be able to connect to Bundlr when connecting the app to a local hardhat network.
+Step 3 (Fund Bundlr) will not be required.
 
 1. Run ArLocal and mint tokens -
 

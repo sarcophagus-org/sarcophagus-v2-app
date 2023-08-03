@@ -40,16 +40,87 @@ export const errorSample = (): UseToastOptions => ({
   ...defaultOptions,
 });
 
+export const connectStart = (): UseToastOptions => ({
+  title: 'Attempting to Connect',
+  description: 'Attempting to connect to the Bundlr node...',
+  status: 'info',
+  ...defaultOptions,
+});
+
+export const connectSuccess = (): UseToastOptions => ({
+  title: 'Connection Successful',
+  description: 'Successfully connected to the Bundlr node',
+  status: 'success',
+  ...defaultOptions,
+});
+
+export const connectFailure = (errorMessage: string): UseToastOptions => ({
+  title: 'Failed to connect to Bundlr',
+  description: formatToastMessage(errorMessage),
+  status: 'error',
+  ...defaultOptions,
+});
+
+export const disconnect = (): UseToastOptions => ({
+  title: 'Disconnected',
+  description: 'Disconnected from the Bundlr node',
+  status: 'info',
+  ...defaultOptions,
+});
+
+export const fundStart = (): UseToastOptions => ({
+  title: 'Funding...',
+  description: 'Funding the Bundlr node',
+  status: 'info',
+  ...defaultOptions,
+});
+
+export const fundSuccess = (): UseToastOptions => ({
+  title: 'Successful Bundlr fund transaction!',
+  description:
+    'Bundlr transaction is confirmed. It may take a few minutes for your Bundlr balance to update.',
+  status: 'success',
+  ...defaultOptions,
+});
+
+export const fundFailure = (errorMessage: string): UseToastOptions => ({
+  title: 'Funding failed',
+  description: formatToastMessage(errorMessage),
+  status: 'error',
+  ...defaultOptions,
+});
+
+export const withdrawStart = (): UseToastOptions => ({
+  title: 'Withdrawing...',
+  description: 'Withdrawing balance from the Bundlr node',
+  status: 'info',
+  ...defaultOptions,
+});
+
+export const withdrawSuccess = (): UseToastOptions => ({
+  title: 'Withdraw Successful!',
+  description: 'Successfully withdrew funds from Bundlr node',
+  status: 'success',
+  ...defaultOptions,
+});
+
+export const withdrawFailure = (errorMessage: string): UseToastOptions => ({
+  title: 'Withdraw failed',
+  description: formatToastMessage(errorMessage),
+  status: 'error',
+  ...defaultOptions,
+});
+
 export const uploadStart = (): UseToastOptions => ({
   title: 'Uploading...',
-  description: 'Uploading file to Arweave',
+  description: 'Uploading file to the Bundlr node',
   status: 'info',
   ...defaultOptions,
 });
 
 export const uploadSuccess = (): UseToastOptions => ({
   title: 'Upload Successful!',
-  description: 'Successfully uploaded file!',
+  description: 'Successful uploaded file to Bundlr node',
   status: 'success',
   ...defaultOptions,
 });

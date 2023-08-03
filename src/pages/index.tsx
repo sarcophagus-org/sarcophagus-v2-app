@@ -7,6 +7,7 @@ import { ArchaeologistsPage } from './ArchaeologistsPage';
 import { DashboardPage } from './DashboardPage';
 import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
+import { BundlrPage } from './BundlrPage';
 import { TempResurrectionPage } from './TempResurrectionPage';
 import { RecipientsPage } from './RecipientsPage';
 import { ThemeTestPage } from './ThemeTestPage';
@@ -15,6 +16,7 @@ import { SarcophagusCreatedPage } from './SarcophagusCreatedPage';
 import { NotFoundPage } from './NotFoundPage';
 import { CreateSarcophagusContextProvider } from 'features/embalm/stepContent/context/CreateSarcophagusContext';
 import { WalletDisconnectPage } from './WalletDisconnectPage';
+import { useBundlrSession } from 'features/embalm/stepContent/hooks/useBundlrSession';
 import { AccusePage } from './AccusePage';
 import { AdminDashBoardPage } from './AdminDashboardPage';
 import { useTimestampMs } from 'hooks/useTimestampMs';
@@ -35,6 +37,7 @@ export enum RouteKey {
 
 export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.ARCHEOLOGIST_PAGE]: '/archaeologists',
+  [RouteKey.BUNDLER_PAGE]: '/fundbundlr',
   [RouteKey.DASHBOARD_DETAIL]: '/dashboard/:id',
   [RouteKey.DASHBOARD_PAGE]: '/dashboard',
   [RouteKey.EMBALM_PAGE]: '/embalm',
@@ -94,6 +97,12 @@ export function Pages() {
       label: 'Accuse',
     },
     {
+      path: RoutesPathMap[RouteKey.BUNDLER_PAGE],
+      element: <BundlrPage />,
+      label: 'Bundlr',
+      tooltip: 'Fund or withdraw from your Bundlr account',
+    },
+    {
       path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
       element: <TempResurrectionPage />,
       label: 'TempResurrectionPage',
@@ -126,6 +135,9 @@ export function Pages() {
   ];
 
   const { isConnected } = useAccount();
+
+  // Handles Bundlr connection and disconnection
+  useBundlrSession();
 
   // Globally stores the timestamp from the latest block
   useTimestampMs();

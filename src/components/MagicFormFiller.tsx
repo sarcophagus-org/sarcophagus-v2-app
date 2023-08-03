@@ -59,6 +59,10 @@ export function MagicFormFiller() {
     await sleep(delay);
     dispatch(setFile(file));
 
+    // Fund Bundlr
+    await sleep(delay);
+    dispatch(goToStep(Step.FundBundlr));
+
     // Set recipient
     await sleep(delay);
     dispatch(goToStep(Step.SetRecipient));

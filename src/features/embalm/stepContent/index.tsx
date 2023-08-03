@@ -2,6 +2,7 @@ import { Button, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { useSelector } from 'store/index';
 import { Step } from 'store/embalm/reducer';
 import { useStepContent } from './hooks/useStepContent';
+import { FundBundlr } from './steps/FundBundlr';
 import { NameSarcophagus } from './steps/NameSarcophagus';
 import { SelectArchaeologists } from './steps/SelectArchaeologists';
 import { SetRecipientPublicKey } from './steps/SetRecipientPublicKey';
@@ -26,6 +27,7 @@ export function StepContent() {
   const contentMap: { [key: number]: StepContentMap } = {
     [Step.NameSarcophagus]: { component: <NameSarcophagus />, title: 'Name your sarcophagus' },
     [Step.UploadPayload]: { component: <UploadPayload />, title: 'Upload your payload' },
+    [Step.FundBundlr]: { component: <FundBundlr />, title: 'Fund Arweave Bundlr' },
     [Step.SetRecipient]: { component: <SetRecipientPublicKey />, title: 'Set Recipient' },
     [Step.SelectArchaeologists]: { component: <SelectArchaeologists />, title: '' },
     [Step.RequiredArchaeologists]: { component: <TotalRequiredArchaegologists />, title: '' },

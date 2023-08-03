@@ -10,6 +10,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const { chain } = useNetwork();
 
   const [isSarcoInitialized, setSarcoInitialised] = useState(false);
+  const [isBundlrConnected, setIsBundlrConnected] = useState(false);
 
   const networkConfig: NetworkConfig | null = useMemo(() => {
     const emptyConfig: NetworkConfig = {
@@ -21,6 +22,11 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       explorerUrl: '',
       etherscanApiUrl: '',
       etherscanApiKey: '',
+      bundlr: {
+        currencyName: '',
+        nodeUrl: '',
+        providerUrl: '',
+      },
       arweaveConfig: {
         host: '',
         port: 0,
@@ -35,16 +41,14 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
     const config = validChain ? networkConfigs[chain.id] : emptyConfig;
 
     if (validChain && !isSarcoInitialized) {
-      fetch('http://localhost:4000/bundlr/publicKey').then(async response => {
-        const data = await response.json();
-        await sarco.init({
+      sarco
+        .init({
           chainId: chain.id,
           etherscanApiKey: config.etherscanApiKey,
-          bundlrPublicKey: data.publicKey,
-        });
-        setSarcoInitialised(true);
-      });
+        })
+        .then(() => setSarcoInitialised(true));
     }
+
     return sarco.isInitialised ? config : emptyConfig;
   }, [chain, isSarcoInitialized]);
 
@@ -62,6 +66,8 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       <SupportedNetworkContext.Provider
         value={{
           isSarcoInitialized,
+          isBundlrConnected,
+          setIsBundlrConnected,
           isSupportedChain: isSupportedChain,
           supportedNetworkNames: supportedNetworkNames,
         }}

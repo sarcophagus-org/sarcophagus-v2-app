@@ -1,7 +1,8 @@
 import React, { createContext, useContext } from 'react';
 import { AppActions } from './app/actions';
 import { appInitialState, appReducer, AppState } from './app/reducer';
-import { uploadInitialState, uploadReducer, UploadState } from './upload/reducer';
+import { BundlrActions } from './bundlr/actions';
+import { bundlrInitialState, bundlrReducer, BundlrState } from './bundlr/reducer';
 import { EmbalmActions } from './embalm/actions';
 import { embalmInitialState, embalmReducer, EmbalmState } from './embalm/reducer';
 import { SarcophagusActions } from './sarcophagus/actions';
@@ -12,12 +13,11 @@ import {
   archaeologistListReducer,
   ArchaeologistListState,
 } from './archaeologistList/reducer';
-import { UploadActions } from './upload/actions';
 
 export type Actions =
   | AppActions
-  | UploadActions
   | SarcophagusActions
+  | BundlrActions
   | EmbalmActions
   | ArchaeologistListActions;
 
@@ -41,7 +41,7 @@ export function useDispatch(): React.Dispatch<Actions> {
 export interface RootState {
   appState: AppState;
   sarcophagiState: SarcophagiState;
-  uploadState: UploadState;
+  bundlrState: BundlrState;
   embalmState: EmbalmState;
   archaeologistListState: ArchaeologistListState;
 }
@@ -49,7 +49,7 @@ export interface RootState {
 export const initialState: RootState = {
   appState: appInitialState,
   sarcophagiState: sarcophagiInitialState,
-  uploadState: uploadInitialState,
+  bundlrState: bundlrInitialState,
   embalmState: embalmInitialState,
   archaeologistListState: archaeologistListInitialState,
 };
@@ -58,7 +58,7 @@ export function storeReducer(state: RootState, action: Actions): RootState {
   return {
     appState: appReducer(state.appState, action),
     sarcophagiState: sarcophagiReducer(state.sarcophagiState, action),
-    uploadState: uploadReducer(state.uploadState, action),
+    bundlrState: bundlrReducer(state.bundlrState, action),
     embalmState: embalmReducer(state.embalmState, action),
     archaeologistListState: archaeologistListReducer(state.archaeologistListState, action),
   };

@@ -1,3 +1,4 @@
+import { useBundlrBalance } from 'features/embalm/stepContent/hooks/useBundlrBalance';
 import { maxTotalArchaeologists, minimumResurrection } from 'lib/constants';
 import { useEffect } from 'react';
 import {
@@ -9,8 +10,11 @@ import {
 } from 'store/embalm/actions';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { useDispatch, useSelector } from 'store/index';
+import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
+import { hardhatChainId } from 'lib/config/networkConfigs';
+import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -37,6 +41,8 @@ export function validateRequiredArchaeologists(required: number, total: number):
 export function useSetStatuses() {
   const dispatch = useDispatch();
 
+  const { isBundlrConnected } = useSupportedNetwork();
+
   const {
     selectedArchaeologists,
     file,
@@ -47,9 +53,13 @@ export function useSetStatuses() {
     stepStatuses,
   } = useSelector(x => x.embalmState);
   const { timestampMs } = useSelector(x => x.appState);
+  const { uploadPrice } = useUploadPrice();
+  const { balance } = useBundlrBalance();
   const { isConnected: isWalletConnected } = useAccount();
+  const { chain } = useNetwork();
 
   // Need to declare this here to prevent infinite effect loop
+  const fundBundlrStatus = stepStatuses[Step.FundBundlr];
   const requiredArchaeologistsStatus = stepStatuses[Step.RequiredArchaeologists];
   const selectedArchaeologistsStatus = stepStatuses[Step.SelectArchaeologists];
 
@@ -68,6 +78,16 @@ export function useSetStatuses() {
   function uploadPayloadEffect() {
     if (!!file) {
       dispatch(updateStepStatus(Step.UploadPayload, StepStatus.Complete));
+    }
+  }
+
+  function fundBundlrEffect() {
+    if ((isBundlrConnected && balance.gt(uploadPrice)) || chain?.id === hardhatChainId) {
+      dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
+    } else {
+      if (fundBundlrStatus !== StepStatus.NotStarted) {
+        dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Started));
+      }
     }
   }
 
@@ -111,6 +131,15 @@ export function useSetStatuses() {
 
   useEffect(nameSarcophagusEffect, [dispatch, name, resurrection, timestampMs]);
   useEffect(uploadPayloadEffect, [dispatch, file]);
+  useEffect(fundBundlrEffect, [
+    balance,
+    dispatch,
+    file,
+    fundBundlrStatus,
+    uploadPrice,
+    chain?.id,
+    isBundlrConnected,
+  ]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [
     dispatch,

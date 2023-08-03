@@ -17,7 +17,7 @@ export function SarcophagusSummaryFees() {
   const [formattedTotalDiggingFees, setFormattedTotalDiggingFees] = useState('');
   const [protocolFee, setProtocolFee] = useState(ethers.constants.Zero);
   const [totalCurseFees, setTotalCurseFees] = useState(ethers.constants.Zero);
-  const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('');
+  const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
 
   useEffect(() => {
     async function setFees() {
