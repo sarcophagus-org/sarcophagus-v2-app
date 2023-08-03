@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from '../../../../../store';
 import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { formatCreateSarcophagusError } from '../../utils/errors';
 import { useDialArchaeologists } from './useDialArchaeologists';
 import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
@@ -25,7 +25,6 @@ export class CancelCreateToken {
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
-  embalmerFacet: ethers.Contract,
   approveAmount: BigNumber
 ) {
   const dispatch = useDispatch();

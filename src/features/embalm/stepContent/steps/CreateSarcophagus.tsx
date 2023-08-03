@@ -1,14 +1,11 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber, ethers } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
-import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
 import { goToStep, setArchaeologists, setCancelToken } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
@@ -37,15 +34,6 @@ export function CreateSarcophagus() {
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
   );
-
-  const networkConfig = useNetworkConfig();
-  const { data: signer } = useSigner();
-
-  const embalmerFacet = useContract({
-    address: networkConfig.diamondDeployAddress,
-    abi: EmbalmerFacet__factory.abi,
-    signerOrProvider: signer,
-  });
 
   const {
     archaeologists,
@@ -97,7 +85,7 @@ export function CreateSarcophagus() {
     retryCreateSarcophagus,
     successData,
     clearSarcophagusState,
-  } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, totalFeesWithApproveBuffer);
+  } = useCreateSarcophagus(createSarcophagusStages, totalFeesWithApproveBuffer);
 
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
