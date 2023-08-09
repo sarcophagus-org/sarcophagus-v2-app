@@ -15,10 +15,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     ]
   );
 
-  const { connectors } = getDefaultWallets({
+  const { connectors: allConnectors } = getDefaultWallets({
     appName: 'Sarcophagus v2',
     chains,
   });
+
+  // Temporarily filter out WalletConnect connectors
+  // https://github.com/wagmi-dev/wagmi/discussions/2827
+  const connectors = allConnectors().filter(connector => connector.id !== 'walletConnect');
 
   const wagmiClient = createClient({
     autoConnect: true,
