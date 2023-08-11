@@ -25,10 +25,16 @@ export enum Step {
 }
 
 export interface EmbalmState {
+  archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
   archaeologists: ArchaeologistData[];
+  areStepsDisabled: boolean;
+  cancelCreateToken: CancelCreateToken;
+  currentChainId: number | undefined;
   currentStep: Step;
+  customResurrectionDate: Date | null;
   expandedStepIndices: number[];
   file: File | null;
+  isBuyingSarco: boolean;
   name: string;
   outerPrivateKey: string | null;
   outerPublicKey: string | null;
@@ -36,22 +42,24 @@ export interface EmbalmState {
   requiredArchaeologists: number;
   resurrection: number;
   resurrectionRadioValue: string;
-  customResurrectionDate: Date | null;
+  retryingCreate: boolean;
   selectedArchaeologists: ArchaeologistData[];
   stepStatuses: { [key: number]: StepStatus };
+  totalFees: BigNumber;
   uploadPrice: BigNumber;
-  archaeologistEncryptedShards: ArchaeologistEncryptedShard[];
-  areStepsDisabled: boolean;
-  retryingCreate: boolean;
-  cancelCreateToken: CancelCreateToken;
-  currentChainId: number | undefined;
 }
 
 export const embalmInitialState: EmbalmState = {
+  archaeologistEncryptedShards: [],
   archaeologists: [],
+  areStepsDisabled: false,
+  cancelCreateToken: new CancelCreateToken(),
+  currentChainId: undefined,
   currentStep: Step.NameSarcophagus,
+  customResurrectionDate: null,
   expandedStepIndices: [Step.NameSarcophagus],
   file: null,
+  isBuyingSarco: true,
   name: '',
   outerPrivateKey: null,
   outerPublicKey: null,
@@ -59,18 +67,14 @@ export const embalmInitialState: EmbalmState = {
   requiredArchaeologists: 0,
   resurrection: 0,
   resurrectionRadioValue: '',
-  customResurrectionDate: null,
+  retryingCreate: false,
   selectedArchaeologists: [],
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
     {}
   ),
+  totalFees: ethers.constants.Zero,
   uploadPrice: ethers.constants.Zero,
-  archaeologistEncryptedShards: [],
-  areStepsDisabled: false,
-  retryingCreate: false,
-  currentChainId: undefined,
-  cancelCreateToken: new CancelCreateToken(),
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -277,6 +281,12 @@ export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState 
         archaeologists: state.archaeologists,
         currentChainId: state.currentChainId,
       };
+
+    case ActionType.SetTotalFees:
+      return { ...state, totalFees: action.payload.amount };
+
+    case ActionType.ToggleIsBuyingSarco:
+      return { ...state, isBuyingSarco: !state.isBuyingSarco };
 
     default:
       return state;

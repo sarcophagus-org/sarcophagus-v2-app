@@ -127,7 +127,7 @@ export function MagicFormFiller() {
           float="right"
           aria-label="Close dev panel"
           variant="unstyled"
-          icon={isOpen ? <ChevronDownIcon fontSize="xs" /> : <ChevronUpIcon fontSize="xs" />}
+          icon={isOpen ? <ChevronUpIcon fontSize="xs" /> : <ChevronDownIcon fontSize="xs" />}
           onClick={onToggle}
         />
       </Flex>

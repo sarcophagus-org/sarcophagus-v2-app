@@ -1,15 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from '../../../../../store';
-import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
-import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
-import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
 import { BigNumber, ethers } from 'ethers';
-import { formatCreateSarcophagusError } from '../../utils/errors';
-import { useDialArchaeologists } from './useDialArchaeologists';
-import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
-import { useSubmitSarcophagus } from './useSubmitSarcophagus';
-import { useClearSarcophagusState } from './useClearSarcophagusState';
+import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
+import { useDispatch, useSelector } from '../../../../../store';
+import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
+import { formatCreateSarcophagusError } from '../../utils/errors';
+import { useBuySarco } from './useBuySarco';
+import { useClearSarcophagusState } from './useClearSarcophagusState';
+import { useDialArchaeologists } from './useDialArchaeologists';
+import { useSubmitSarcophagus } from './useSubmitSarcophagus';
+import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
 
 export class CancelCreateToken {
   cancelled: boolean;
@@ -42,6 +43,7 @@ export function useCreateSarcophagus(
   const { dialSelectedArchaeologists } = useDialArchaeologists();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetArweavePayload, uploadStep } = useUploadFileAndKeyShares();
+  const { buySarco } = useBuySarco();
   const { approve: approveSarcoToken } = useApprove({ amount: approveAmount });
   const { submitSarcophagus } = useSubmitSarcophagus();
   const { clearSarcophagusState, successData } = useClearSarcophagusState();
@@ -51,6 +53,7 @@ export function useCreateSarcophagus(
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, ''],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, ''],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadStep],
+      [CreateSarcophagusStage.BUY_SARCO, 'Waiting for transaction'],
       [CreateSarcophagusStage.APPROVE, 'Waiting for transaction'],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, 'Waiting for transaction'],
       [CreateSarcophagusStage.CLEAR_STATE, ''],
@@ -67,6 +70,7 @@ export function useCreateSarcophagus(
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetArweavePayload],
+      [CreateSarcophagusStage.BUY_SARCO, buySarco],
       [CreateSarcophagusStage.APPROVE, approveSarcoToken],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, submitSarcophagus],
       [CreateSarcophagusStage.CLEAR_STATE, clearSarcophagusState],
@@ -76,6 +80,7 @@ export function useCreateSarcophagus(
     dialSelectedArchaeologists,
     initiateSarcophagusNegotiation,
     uploadAndSetArweavePayload,
+    buySarco,
     approveSarcoToken,
     submitSarcophagus,
     clearSarcophagusState,
