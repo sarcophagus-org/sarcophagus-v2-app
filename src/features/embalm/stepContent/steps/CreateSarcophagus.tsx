@@ -15,6 +15,7 @@ import {
   goToStep,
   setArchaeologists,
   setCancelToken,
+  setSarcoQuoteInterval,
   toggleIsBuyingSarco,
 } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
@@ -63,7 +64,14 @@ export function CreateSarcophagus() {
   const { balance } = useSarcoBalance();
 
   const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
-  const quote = useSarcoQuote(sarcoDeficit);
+
+  const { sarcoQuoteETHAmount, sarcoQuoteInterval } = useSarcoQuote(sarcoDeficit);
+
+  useEffect(() => {
+    if (!!sarcoQuoteInterval) {
+      dispatch(setSarcoQuoteInterval(sarcoQuoteInterval));
+    }
+  }, [dispatch, sarcoQuoteInterval]);
 
   const {
     currentStage,
@@ -178,7 +186,7 @@ export function CreateSarcophagus() {
                 >
                   {isBuyingSarco
                     ? `${sarco.utils.formatSarco(
-                        quote,
+                        sarcoQuoteETHAmount,
                         4
                       )} ETH will be swapped for ${sarco.utils.formatSarco(
                         sarcoDeficit.toString()

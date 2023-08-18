@@ -12,6 +12,8 @@ import {
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
+  SetSarcoQuoteInterval = 'EMBALM_SET_SARCO_QUOTE_INTERVAL',
+  ClearSarcoQuoteInterval = 'EMBALM_CLEAR_SARCO_QUOTE_INTERVAL',
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   DisableSteps = 'EMBALM_DISABLE_STEPS',
   EnableSteps = 'EMBALM_ENABLE_STEPS',
@@ -75,6 +77,8 @@ export interface RecipientState {
 
 type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
+  [ActionType.SetSarcoQuoteInterval]: { interval: NodeJS.Timer };
+  [ActionType.ClearSarcoQuoteInterval]: {};
   [ActionType.DisableSteps]: {};
   [ActionType.EnableSteps]: {};
   [ActionType.GoToStep]: { step: Step };
@@ -251,6 +255,22 @@ export function deselectArchaeologist(address: string): EmbalmActions {
     payload: {
       address,
     },
+  };
+}
+
+export function setSarcoQuoteInterval(interval: NodeJS.Timer): EmbalmActions {
+  return {
+    type: ActionType.SetSarcoQuoteInterval,
+    payload: {
+      interval,
+    },
+  };
+}
+
+export function clearSarcoQuoteInterval(): EmbalmActions {
+  return {
+    type: ActionType.ClearSarcoQuoteInterval,
+    payload: {},
   };
 }
 

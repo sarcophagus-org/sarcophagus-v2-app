@@ -1,19 +1,33 @@
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'store/index';
 
-export function useSarcoQuote(amount: BigNumber): string {
-  const [sarcoQuoteAmount, setSarcoQuoteAmount] = useState('0');
+export function useSarcoQuote(amount: BigNumber) {
+  const [sarcoQuoteETHAmount, setSarcoQuoteETHAmount] = useState('0');
+  const [isPolling, setIsPolling] = useState(false);
+  const [quoteIntervalState, setSarcoQuoteInterval] = useState<NodeJS.Timer>();
+
+  const { sarcoQuoteInterval } = useSelector(x => x.embalmState);
 
   useEffect(() => {
     async function getQuote() {
-      if (amount.lte(0)) return;
+      if (sarcoQuoteInterval || isPolling || amount.lte(0)) return;
 
-      const quote = await sarco.utils.getSarcoQuote(amount);
-      setSarcoQuoteAmount(quote.sellAmount);
+      setIsPolling(true);
+
+      const runGetQuote = async () => {
+        const quote = await sarco.utils.getSarcoQuote(amount);
+        setSarcoQuoteETHAmount(quote.sellAmount);
+      };
+
+      runGetQuote();
+
+      const quoteInterval = setInterval(() => runGetQuote(), 60_000); // 1 minute
+      setSarcoQuoteInterval(quoteInterval);
     }
     getQuote();
-  }, [amount]);
+  }, [amount, isPolling, sarcoQuoteInterval]);
 
-  return sarcoQuoteAmount;
+  return { sarcoQuoteETHAmount, sarcoQuoteInterval: quoteIntervalState };
 }

@@ -47,6 +47,7 @@ export interface EmbalmState {
   stepStatuses: { [key: number]: StepStatus };
   totalFees: BigNumber;
   uploadPrice: BigNumber;
+  sarcoQuoteInterval: NodeJS.Timer | undefined;
 }
 
 export const embalmInitialState: EmbalmState = {
@@ -75,6 +76,7 @@ export const embalmInitialState: EmbalmState = {
   ),
   totalFees: ethers.constants.Zero,
   uploadPrice: ethers.constants.Zero,
+  sarcoQuoteInterval: undefined,
 };
 
 function toggleStep(state: EmbalmState, step: Step): EmbalmState {
@@ -133,6 +135,13 @@ function updateArchProperty(
 
 export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState {
   switch (action.type) {
+    case ActionType.SetSarcoQuoteInterval:
+      return { ...state, sarcoQuoteInterval: action.payload.interval };
+
+    case ActionType.ClearSarcoQuoteInterval:
+      clearInterval(state.sarcoQuoteInterval);
+      return { ...state, sarcoQuoteInterval: undefined };
+
     case ActionType.GoToStep:
       return { ...state, currentStep: action.payload.step };
 
