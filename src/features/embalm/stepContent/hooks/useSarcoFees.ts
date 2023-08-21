@@ -14,7 +14,7 @@ export function useSarcoFees() {
   const [formattedTotalDiggingFees, setFormattedTotalDiggingFees] = useState('');
   const [protocolFee, setProtocolFee] = useState(ethers.constants.Zero);
   const [totalCurseFees, setTotalCurseFees] = useState(ethers.constants.Zero);
-  const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('--');
+  const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('');
 
   useEffect(() => {
     async function setFees() {
@@ -38,7 +38,7 @@ export function useSarcoFees() {
       // Calculate and set total curse fees
       const totalCurseFeesCalc = selectedArchaeologists.reduce(
         (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
-        BigNumber.from(0)
+        ethers.constants.Zero
       );
       setTotalCurseFees(totalCurseFeesCalc);
 
@@ -51,7 +51,7 @@ export function useSarcoFees() {
           )
         );
       } else {
-        totalProtocolFees = BigNumber.from(0);
+        totalProtocolFees = ethers.constants.Zero;
       }
 
       setProtocolFee(totalProtocolFees);
