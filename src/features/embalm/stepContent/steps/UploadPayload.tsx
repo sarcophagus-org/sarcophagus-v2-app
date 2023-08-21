@@ -7,7 +7,7 @@ import { FileDragAndDrop } from '../components/FileDragAndDrop';
 import { useUploadPayload } from '../hooks/useUploadPayload';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useDispatch, useSelector } from 'store/index';
-import { toggleSponserBundlr } from 'store/embalm/actions';
+import { toggleSponsorBundlr } from 'store/embalm/actions';
 
 export function UploadPayload() {
   const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
@@ -17,7 +17,7 @@ export function UploadPayload() {
 
   const { isBundlrConnected } = useSupportedNetwork();
 
-  const sponserBundlr = useSelector(select => select.embalmState.sponserBundlr);
+  const sponsorBundlr = useSelector(select => select.embalmState.sponsorBundlr);
 
   function handleClickFilePicker() {
     if (fileInputRef.current) {
@@ -87,17 +87,17 @@ export function UploadPayload() {
               cursor={'pointer'}
               onClick={e => {
                 e.stopPropagation();
-                dispatch(toggleSponserBundlr());
+                dispatch(toggleSponsorBundlr());
               }}
             >
               <Checkbox
                 mr={1}
-                isChecked={sponserBundlr}
-                onChange={() => dispatch(toggleSponserBundlr())}
+                isChecked={sponsorBundlr}
+                onChange={() => dispatch(toggleSponsorBundlr())}
               />
               <Text>Use sponsored upload</Text>
             </HStack>
-            {!sponserBundlr ? (
+            {!sponsorBundlr ? (
               <Text>
                 {"Bundlr's upload price: "}
                 {isBundlrConnected ? formattedUploadPrice : 'Not connected to Bundlr'}

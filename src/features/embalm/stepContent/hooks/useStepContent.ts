@@ -3,7 +3,7 @@ import { useSelector } from 'store/index';
 import { useStepNavigator } from '../../stepNavigator/hooks/useStepNavigator';
 
 export function useStepContent() {
-  const currentStep = useSelector(x => x.embalmState.currentStep);
+  const { currentStep, sponsorBundlr } = useSelector(x => x.embalmState);
   const { selectStep } = useStepNavigator();
 
   // Divide by 2 because an enum has double the number of values as it does keys
@@ -24,7 +24,10 @@ export function useStepContent() {
   function goToNext() {
     const maxIndex = stepCount - 1;
     const nextIndex = currentStep.valueOf() < maxIndex ? currentStep.valueOf() + 1 : maxIndex;
-    selectStep(nextIndex);
+
+    const skipFundBundrStep = currentStep === Step.UploadPayload && sponsorBundlr;
+
+    selectStep(nextIndex + (skipFundBundrStep ? 1 : 0));
   }
 
   return { currentStep, stepCount, goToPrev, goToNext };

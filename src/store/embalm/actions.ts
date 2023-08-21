@@ -12,7 +12,7 @@ import {
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
-  ToggleSponserBundlr = 'EMBALM_TOGGLE_SPONSER_BUNDLR',
+  ToggleSponsorBundlr = 'EMBALM_TOGGLE_SPONSOR_BUNDLR',
   SetSarcoQuoteInterval = 'EMBALM_SET_SARCO_QUOTE_INTERVAL',
   ClearSarcoQuoteInterval = 'EMBALM_CLEAR_SARCO_QUOTE_INTERVAL',
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
@@ -82,7 +82,7 @@ type EmbalmPayload = {
   [ActionType.ClearSarcoQuoteInterval]: {};
   [ActionType.DisableSteps]: {};
   [ActionType.EnableSteps]: {};
-  [ActionType.ToggleSponserBundlr]: {};
+  [ActionType.ToggleSponsorBundlr]: {};
   [ActionType.GoToStep]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
@@ -153,9 +153,9 @@ export function toggleStep(step: Step): EmbalmActions {
   };
 }
 
-export function toggleSponserBundlr(): EmbalmActions {
+export function toggleSponsorBundlr(): EmbalmActions {
   return {
-    type: ActionType.ToggleSponserBundlr,
+    type: ActionType.ToggleSponsorBundlr,
     payload: {},
   };
 }

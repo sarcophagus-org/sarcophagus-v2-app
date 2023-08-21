@@ -43,7 +43,7 @@ export interface EmbalmState {
   resurrection: number;
   resurrectionRadioValue: string;
   retryingCreate: boolean;
-  sponserBundlr: boolean;
+  sponsorBundlr: boolean;
   selectedArchaeologists: ArchaeologistData[];
   stepStatuses: { [key: number]: StepStatus };
   totalFees: BigNumber;
@@ -70,7 +70,7 @@ export const embalmInitialState: EmbalmState = {
   resurrection: 0,
   resurrectionRadioValue: '',
   retryingCreate: false,
-  sponserBundlr: false,
+  sponsorBundlr: false,
   selectedArchaeologists: [],
   stepStatuses: Object.keys(Step).reduce(
     (acc, step) => ({ ...acc, [step]: StepStatus.NotStarted }),
@@ -137,8 +137,8 @@ function updateArchProperty(
 
 export function embalmReducer(state: EmbalmState, action: Actions): EmbalmState {
   switch (action.type) {
-    case ActionType.ToggleSponserBundlr:
-      return { ...state, sponserBundlr: !state.sponserBundlr };
+    case ActionType.ToggleSponsorBundlr:
+      return { ...state, sponsorBundlr: !state.sponsorBundlr };
 
     case ActionType.SetSarcoQuoteInterval:
       return { ...state, sarcoQuoteInterval: action.payload.interval };
