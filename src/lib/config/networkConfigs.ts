@@ -16,10 +16,11 @@ const hardhatNetworkConfig: NetworkConfig = {
   etherscanApiUrl: '',
   etherscanApiKey: '',
   explorerUrl: '',
+  providerUrl: '',
+  apiUrlBase: '',
   bundlr: {
     currencyName: '',
     nodeUrl: '',
-    providerUrl: '',
   },
   arweaveConfig: {
     host: 'localhost',

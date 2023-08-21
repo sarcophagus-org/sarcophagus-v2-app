@@ -22,10 +22,11 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       explorerUrl: '',
       etherscanApiUrl: '',
       etherscanApiKey: '',
+      providerUrl: '',
+      apiUrlBase: '',
       bundlr: {
         currencyName: '',
         nodeUrl: '',
-        providerUrl: '',
       },
       arweaveConfig: {
         host: '',
