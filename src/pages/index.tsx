@@ -212,9 +212,7 @@ export function Pages() {
           height="100%"
           pt={50}
         >
-          {!isSarcoInitialized ? (
-            <Flex></Flex>
-          ) : isConnected && isSupportedChain ? (
+          {isSarcoInitialized && isConnected && isSupportedChain ? (
             <Routes>
               <Route
                 path="/"
