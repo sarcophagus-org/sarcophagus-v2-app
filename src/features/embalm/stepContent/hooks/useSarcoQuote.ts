@@ -18,12 +18,13 @@ export function useSarcoQuote(amount: BigNumber) {
 
       const runGetQuote = async () => {
         const quote = await sarco.utils.getSarcoQuote(amount);
+        console.log('run get quote');
         setSarcoQuoteETHAmount(quote.sellAmount);
       };
 
       runGetQuote();
 
-      const quoteInterval = setInterval(() => runGetQuote(), 60_000); // 1 minute
+      const quoteInterval = setInterval(() => runGetQuote(), 10_000); // 10 seconds
       setSarcoQuoteInterval(quoteInterval);
     }
     getQuote();
