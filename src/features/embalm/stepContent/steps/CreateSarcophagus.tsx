@@ -12,6 +12,7 @@ import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
 import {
+  clearSarcoQuoteInterval,
   goToStep,
   setArchaeologists,
   setCancelToken,
@@ -66,6 +67,12 @@ export function CreateSarcophagus() {
   const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
 
   const { sarcoQuoteETHAmount, sarcoQuoteInterval } = useSarcoQuote(sarcoDeficit);
+
+  useEffect(() => {
+    if (sarcoQuoteETHAmount === '0') {
+      dispatch(clearSarcoQuoteInterval());
+    }
+  }, [dispatch, sarcoQuoteETHAmount]);
 
   useEffect(() => {
     if (!!sarcoQuoteInterval) {
@@ -203,7 +210,7 @@ export function CreateSarcophagus() {
               isDisabled={
                 !totalDiggingFees ||
                 !protocolFee ||
-                (balance?.lte(totalDiggingFees.add(protocolFee)) && !isBuyingSarco) ||
+                (sarcoDeficit.gt(0) && !isBuyingSarco) ||
                 !isSarcophagusFormDataComplete() ||
                 isError
               }
