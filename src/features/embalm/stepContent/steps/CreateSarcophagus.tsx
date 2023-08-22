@@ -200,7 +200,11 @@ export function CreateSarcophagus() {
                       )} ETH will be swapped for ${sarco.utils.formatSarco(
                         sarcoDeficit.toString()
                       )} SARCO before the sarcophagus is created.`
-                    : `Your current SARCO balance is ${sarco.utils.formatSarco(balance ? balance.toString() : '0')} SARCO, but required balance is ${sarco.utils.formatSarco(totalFeesWithBuffer.toString())} SARCO. 
+                    : `Your current SARCO balance is ${sarco.utils.formatSarco(
+                        balance ? balance.toString() : '0'
+                      )} SARCO, but required balance is ${sarco.utils.formatSarco(
+                        totalFeesWithBuffer.toString()
+                      )} SARCO. 
                     You can check the box to automatically swap ETH to purchase the required balance during the creation process.`}
                 </Text>
               </Flex>
