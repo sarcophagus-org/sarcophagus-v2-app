@@ -18,7 +18,6 @@ export function useSarcoQuote(amount: BigNumber) {
 
       const runGetQuote = async () => {
         const quote = await sarco.utils.getSarcoQuote(amount);
-        console.log('run get quote');
         setSarcoQuoteETHAmount(quote.sellAmount);
       };
 

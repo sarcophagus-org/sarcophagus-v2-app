@@ -59,7 +59,9 @@ export function CreateSarcophagus() {
 
   const { totalFees, totalDiggingFees, protocolFee } = useSarcoFees();
 
-  const totalFeesWithBuffer = totalFees.add(totalFees.div(10));
+  // TODO -- buffer is temporarily removed. Determine if we need a buffer.
+  // When testing, it was confusing that swap amount was more than required fees.
+  const totalFeesWithBuffer = totalFees;
 
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
@@ -185,7 +187,7 @@ export function CreateSarcophagus() {
                   isChecked={isBuyingSarco}
                   onChange={handleChangeBuySarcoChecked}
                 >
-                  <Text>Automatically buy SARCO</Text>
+                  <Text>Swap ETH for SARCO</Text>
                 </Checkbox>
                 <Text
                   mt={3}
@@ -194,11 +196,12 @@ export function CreateSarcophagus() {
                   {isBuyingSarco
                     ? `${sarco.utils.formatSarco(
                         sarcoQuoteETHAmount,
-                        4
+                        18
                       )} ETH will be swapped for ${sarco.utils.formatSarco(
                         sarcoDeficit.toString()
                       )} SARCO before the sarcophagus is created.`
-                    : "You don't have enough SARCO to cover the fees. You can check the box to automatically buy the required SARCO token"}
+                    : `Your current SARCO balance is ${sarco.utils.formatSarco(balance ? balance.toString() : '0')} SARCO, but required balance is ${sarco.utils.formatSarco(totalFeesWithBuffer.toString())} SARCO. 
+                    You can check the box to automatically swap ETH to purchase the required balance during the creation process.`}
                 </Text>
               </Flex>
             )}
