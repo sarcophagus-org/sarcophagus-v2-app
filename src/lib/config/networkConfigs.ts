@@ -34,11 +34,13 @@ const hardhatNetworkConfig: NetworkConfig = {
 
 export const networkConfigs: { [chainId: number]: NetworkConfig } = {
   1: mainnetNetworkConfig(process.env.REACT_APP_BUNDLR_MAINNET_PROVIDER!, {
-    zeroExApiKey: process.env.REACT_APP_ZEROEX_API_KEY!,
+    zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
   }),
   5: goerliNetworkConfig(process.env.REACT_APP_BUNDLR_GOERLI_PROVIDER!, {
-    zeroExApiKey: process.env.REACT_APP_ZEROEX_API_KEY!,
+    zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
   }),
-  11155111: sepoliaNetworkConfig(process.env.REACT_APP_BUNDLR_SEPOLIA_PROVIDER!),
+  11155111: sepoliaNetworkConfig(process.env.REACT_APP_BUNDLR_SEPOLIA_PROVIDER!, {
+    zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
+  }),
   31337: hardhatNetworkConfig,
 };
