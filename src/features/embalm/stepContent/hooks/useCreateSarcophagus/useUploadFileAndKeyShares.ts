@@ -33,12 +33,9 @@ export function useUploadFileAndKeyShares() {
         dispatch(setIsUploading(true));
 
         if (sponsorBundlr && chain) {
-          // Re-initialize sarco with bundlr sponsored public key
           const response = await fetch(`${networkConfig.apiUrlBase}/bundlr/publicKey`);
           const { publicKey } = await response.json();
           await sarco.initBundlr(publicKey);
-
-          console.log('sarco re-initialized with bundlr public key');
         }
 
         const uploadPromise = sarco.api.uploadFileToArweave({
