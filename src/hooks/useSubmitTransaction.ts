@@ -33,7 +33,7 @@ export function useSubmitTransaction(
   const addRecentTransaction = useAddRecentTransaction();
 
   const { config, error } = usePrepareContractWrite({
-    address: (address ?? networkConfig.diamondDeployAddress)  as `0x${string}`,
+    address: (address ?? networkConfig.diamondDeployAddress) as `0x${string}`,
     ...contractConfig.contractConfigParams,
   });
 
