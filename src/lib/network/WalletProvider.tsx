@@ -17,7 +17,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   const { connectors } = getDefaultWallets({
     appName: 'Sarcophagus v2',
-    projectId: 'update-me', // TODO: Update this
+    projectId: '82c7fb000145342f2d1b57dc2d83d001', // TODO: Update this
     chains,
   });
 
