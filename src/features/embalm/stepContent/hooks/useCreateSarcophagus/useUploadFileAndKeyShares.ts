@@ -36,12 +36,7 @@ export function useUploadFileAndKeyShares() {
           // Re-initialize sarco with bundlr sponsored public key
           const response = await fetch(`${networkConfig.apiUrlBase}/bundlr/publicKey`);
           const { publicKey } = await response.json();
-          await sarco.init({
-            bundlrPublicKey: publicKey,
-            chainId: chain.id,
-            etherscanApiKey: networkConfig.etherscanApiKey,
-            zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
-          });
+          await sarco.initBundlr(publicKey);
 
           console.log('sarco re-initialized with bundlr public key');
         }
@@ -93,7 +88,6 @@ export function useUploadFileAndKeyShares() {
       payloadPrivateKey,
       payloadPublicKey,
       networkConfig.apiUrlBase,
-      networkConfig.etherscanApiKey,
       setSarcophagusPayloadTxId,
     ]
   );
