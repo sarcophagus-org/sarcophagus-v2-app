@@ -11,7 +11,7 @@ export function useGetSarcophagusArchaeologists(
 
   const { data } = useContractReads({
     contracts: archaeologistAddresses.map(address => ({
-      address: networkConfig.diamondDeployAddress,
+      address: networkConfig.diamondDeployAddress as `0x${string}`,
       abi: ViewStateFacet__factory.abi,
       functionName: 'getSarcophagusArchaeologist',
       args: [sarcoId, address],

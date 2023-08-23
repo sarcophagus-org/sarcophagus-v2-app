@@ -3,13 +3,12 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { formatToastMessage } from 'lib/utils/helpers';
 import { useNetworkConfig } from 'lib/config';
-import { Abi } from 'abitype';
 import { ethers } from 'ethers';
 import { useState } from 'react';
 
 interface ContractConfigParams {
-  address?: string;
-  abi: Abi;
+  address?: `0x${string}`;
+  abi: any;
   functionName: string;
   args: (string | ethers.BigNumber)[];
   mode: string;
@@ -34,7 +33,7 @@ export function useSubmitTransaction(
   const addRecentTransaction = useAddRecentTransaction();
 
   const { config, error } = usePrepareContractWrite({
-    address: address ?? networkConfig.diamondDeployAddress,
+    address: (address ?? networkConfig.diamondDeployAddress)  as `0x${string}`,
     ...contractConfig.contractConfigParams,
   });
 
@@ -63,6 +62,7 @@ export function useSubmitTransaction(
       });
     },
     ...config,
+    mode: 'prepared',
   });
 
   useWaitForTransaction({

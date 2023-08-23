@@ -1,6 +1,5 @@
 import { useToast } from '@chakra-ui/react';
 import { ThirdPartyFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { Abi } from 'abitype';
 import { useNetworkConfig } from 'lib/config';
 import { cleanFailure, cleanSuccess } from 'lib/utils/toast';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
@@ -10,8 +9,8 @@ export function useCleanSarcophagus(sarcoId: string, canEmbalmerClean: boolean) 
   const toast = useToast();
 
   const { config, isError: mayFail } = usePrepareContractWrite({
-    address: networkConfig.diamondDeployAddress,
-    abi: ThirdPartyFacet__factory.abi as Abi,
+    address: networkConfig.diamondDeployAddress as `0x${string}`,
+    abi: ThirdPartyFacet__factory.abi,
     enabled: canEmbalmerClean,
     functionName: 'clean',
     args: [sarcoId],

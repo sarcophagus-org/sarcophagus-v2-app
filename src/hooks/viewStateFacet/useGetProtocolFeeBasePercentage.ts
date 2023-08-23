@@ -6,7 +6,7 @@ export function useGetProtocolFeeBasePercentage(): number {
   const networkConfig = useNetworkConfig();
 
   const { data } = useContractRead({
-    address: networkConfig.diamondDeployAddress,
+    address: networkConfig.diamondDeployAddress as `0x${string}`,
     abi: ViewStateFacet__factory.abi,
     functionName: 'getProtocolFeeBasePercentage',
   });

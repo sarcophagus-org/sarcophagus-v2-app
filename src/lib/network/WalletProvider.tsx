@@ -4,7 +4,7 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
-import { sepolia, mainnet, goerli, hardhat } from '@wagmi/chains';
+import { sepolia, mainnet, goerli, hardhat } from '@wagmi/core/chains';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
@@ -17,6 +17,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   const { connectors } = getDefaultWallets({
     appName: 'Sarcophagus v2',
+    projectId: 'update-me', // TODO: Update this
     chains,
   });
 
