@@ -110,9 +110,9 @@ export const useSarcophagusParameters = () => {
       value: ethers.utils.formatUnits(balance),
       step: Step.FundBundlr,
       error:
-        !isHardhatNetwork && (balance.eq(ethers.constants.Zero) || !balance)
-          ? 'You do not have enough balance on Bundlr'
-          : null,
+        getStatus(Step.FundBundlr) === StepStatus.Complete
+          ? null
+          : 'You do not have enough balance on Bundlr',
     },
     {
       name: 'SELECTED ARCHAEOLOGISTS',

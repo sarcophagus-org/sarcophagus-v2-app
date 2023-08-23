@@ -1,4 +1,4 @@
-import { Input, Link, Text, Tooltip, VStack } from '@chakra-ui/react';
+import { Checkbox, HStack, Input, Link, Text, Tooltip, VStack } from '@chakra-ui/react';
 import { SarcoAlert } from 'components/SarcoAlert';
 import { useUploadPrice } from 'features/embalm/stepNavigator/hooks/useUploadPrice';
 import { maxSarcophagusNameLength } from 'lib/constants';
@@ -6,12 +6,18 @@ import prettyBytes from 'pretty-bytes';
 import { FileDragAndDrop } from '../components/FileDragAndDrop';
 import { useUploadPayload } from '../hooks/useUploadPayload';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { useDispatch, useSelector } from 'store/index';
+import { toggleSponsorBundlr } from 'store/embalm/actions';
 
 export function UploadPayload() {
   const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
   const { formattedUploadPrice } = useUploadPrice();
 
+  const dispatch = useDispatch();
+
   const { isBundlrConnected } = useSupportedNetwork();
+
+  const sponsorBundlr = useSelector(select => select.embalmState.sponsorBundlr);
 
   function handleClickFilePicker() {
     if (fileInputRef.current) {
@@ -77,10 +83,28 @@ export function UploadPayload() {
               </Text>
             </Tooltip>
             <Text>Size: {prettyBytes(file.size)}</Text>
-            <Text>
-              {"Bundlr's upload price: "}
-              {isBundlrConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
-            </Text>
+            <HStack
+              cursor={'pointer'}
+              onClick={e => {
+                e.stopPropagation();
+                dispatch(toggleSponsorBundlr());
+              }}
+            >
+              <Checkbox
+                mr={1}
+                isChecked={sponsorBundlr}
+                onChange={() => dispatch(toggleSponsorBundlr())}
+              />
+              <Text>Use sponsored upload</Text>
+            </HStack>
+            {!sponsorBundlr ? (
+              <Text>
+                {"Bundlr's upload price: "}
+                {isBundlrConnected ? formattedUploadPrice : 'Not connected to Bundlr'}
+              </Text>
+            ) : (
+              <Text>The Sarcophagus DAO will sponsor your payload upload</Text>
+            )}
             <Link textDecor="underline">Upload a different file</Link>
           </VStack>
         ) : (

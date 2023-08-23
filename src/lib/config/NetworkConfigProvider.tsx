@@ -22,10 +22,11 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       explorerUrl: '',
       etherscanApiUrl: '',
       etherscanApiKey: '',
+      providerUrl: '',
+      apiUrlBase: '',
       bundlr: {
         currencyName: '',
         nodeUrl: '',
-        providerUrl: '',
       },
       arweaveConfig: {
         host: '',
@@ -45,6 +46,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
         .init({
           chainId: chain.id,
           etherscanApiKey: config.etherscanApiKey,
+          zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
         })
         .then(() => setSarcoInitialised(true));
     }

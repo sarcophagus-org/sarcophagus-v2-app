@@ -36,10 +36,11 @@ export function useBundlrBalance() {
   // Effect that loads the balance when the component mounts and if the bundlr is instantiated
   useEffect(() => {
     (async () => {
+      if (!isBundlrConnected) return;
       const newBalance = await getBalance();
       dispatch(setBalance(newBalance));
     })();
-  }, [dispatch, getBalance]);
+  }, [dispatch, getBalance, isBundlrConnected]);
 
   // Effect that runs an interval which queries the bundlr balance if the balanceOffset is not 0. If
   // the balance coming from the bundlr turns out to match the current balance plus the

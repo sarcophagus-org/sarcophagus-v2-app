@@ -4,11 +4,17 @@ import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext
 import { setIsUploading, setUploadProgress } from 'store/bundlr/actions';
 import { CancelCreateToken } from './useCreateSarcophagus';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { useNetworkConfig } from 'lib/config';
+import { useNetwork } from 'wagmi';
 
 export function useUploadFileAndKeyShares() {
   const { setSarcophagusPayloadTxId } = useContext(CreateSarcophagusContext);
-  const { file, recipientState } = useSelector(x => x.embalmState);
-  const { selectedArchaeologists, requiredArchaeologists } = useSelector(x => x.embalmState);
+  const { file, recipientState, selectedArchaeologists, requiredArchaeologists, sponsorBundlr } =
+    useSelector(x => x.embalmState);
+
+  const networkConfig = useNetworkConfig();
+  const { chain } = useNetwork();
+
   const { payloadPrivateKey, payloadPublicKey, archaeologistPublicKeys } =
     useContext(CreateSarcophagusContext);
 
@@ -25,6 +31,15 @@ export function useUploadFileAndKeyShares() {
     async (isRetry: boolean, cancelToken: CancelCreateToken) => {
       try {
         dispatch(setIsUploading(true));
+
+        if (sponsorBundlr && chain) {
+          // Re-initialize sarco with bundlr sponsored public key
+          const response = await fetch(`${networkConfig.apiUrlBase}/bundlr/publicKey`);
+          const { publicKey } = await response.json();
+          await sarco.initBundlr(publicKey);
+
+          console.log('sarco re-initialized with bundlr public key');
+        }
 
         const uploadPromise = sarco.api.uploadFileToArweave({
           file: file!,
@@ -63,13 +78,16 @@ export function useUploadFileAndKeyShares() {
     },
     [
       dispatch,
+      sponsorBundlr,
+      chain,
       file,
-      payloadPublicKey,
-      payloadPrivateKey,
+      archaeologistPublicKeys,
+      recipientState.publicKey,
       selectedArchaeologists.length,
       requiredArchaeologists,
-      recipientState.publicKey,
-      archaeologistPublicKeys,
+      payloadPrivateKey,
+      payloadPublicKey,
+      networkConfig.apiUrlBase,
       setSarcophagusPayloadTxId,
     ]
   );

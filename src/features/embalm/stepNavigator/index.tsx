@@ -29,7 +29,7 @@ export function StepNavigator() {
 
       <StepElement
         step={Step.FundBundlr}
-        title="Fund Arweave Bundlr"
+        title="Fund Payload Upload"
         isLoading={isFunding || !balanceOffset.eq(ethers.constants.Zero)}
       />
 
