@@ -33,17 +33,9 @@ export function useUploadFileAndKeyShares() {
         dispatch(setIsUploading(true));
 
         if (sponsorBundlr && chain) {
-          // Re-initialize sarco with bundlr sponsored public key
           const response = await fetch(`${networkConfig.apiUrlBase}/bundlr/publicKey`);
           const { publicKey } = await response.json();
-          await sarco.init({
-            bundlrPublicKey: publicKey,
-            chainId: chain.id,
-            etherscanApiKey: networkConfig.etherscanApiKey,
-            zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
-          });
-
-          console.log('sarco re-initialized with bundlr public key');
+          await sarco.initBundlr(publicKey);
         }
 
         const uploadPromise = sarco.api.uploadFileToArweave({
@@ -93,7 +85,6 @@ export function useUploadFileAndKeyShares() {
       payloadPrivateKey,
       payloadPublicKey,
       networkConfig.apiUrlBase,
-      networkConfig.etherscanApiKey,
       setSarcophagusPayloadTxId,
     ]
   );
