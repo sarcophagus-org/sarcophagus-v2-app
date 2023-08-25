@@ -57,11 +57,8 @@ export function useBundlrSession() {
 
     toast(connectStart());
     try {
-      const publicKey = await sarco.bundlr.connect();
+      await sarco.connectBundlr();
       setIsBundlrConnected(true);
-      console.log('injectPublicKey', publicKey);
-      // sarco.bundlr.injectPublicKey(publicKey);
-      console.log('done');
 
       toast(connectSuccess());
     } catch (_error) {
