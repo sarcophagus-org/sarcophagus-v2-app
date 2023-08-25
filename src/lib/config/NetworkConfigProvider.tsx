@@ -13,7 +13,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const [isBundlrConnected, setIsBundlrConnected] = useState(false);
   const [networkConfig, setNetworkConfig] = useState<NetworkConfig>(emptyConfig);
 
-  const initializeSdk = useCallback( async () => {
+  const initializeSdk = useCallback(async () => {
     const validChain = !!chain && !!networkConfigs[chain.id];
     const config = validChain ? networkConfigs[chain.id] : emptyConfig;
 
