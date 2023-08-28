@@ -20,17 +20,18 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
 
     if (isInitialisingSarcoSdk) return config;
 
-    const initSarcoSdk = (chainId: number) => sarco
-            .init({
-              chainId: chainId,
-              etherscanApiKey: config.etherscanApiKey,
-              zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
-            })
-            .then(() => {
-              setCurrentChainId(chain?.id);
-              setIsInitialisingSarcoSdk(false);
-              setIsSdkInitialized(true);
-            });
+    const initSarcoSdk = (chainId: number) =>
+      sarco
+        .init({
+          chainId: chainId,
+          etherscanApiKey: config.etherscanApiKey,
+          zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
+        })
+        .then(() => {
+          setCurrentChainId(chain?.id);
+          setIsInitialisingSarcoSdk(false);
+          setIsSdkInitialized(true);
+        });
 
     const chainChanged = chain?.id !== currentChainId;
     if (chainChanged) {
@@ -58,7 +59,6 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
 
-  // todo: verify this actually updates
   const isSupportedChain = supportedChainIds.includes(networkConfig.chainId);
 
   const supportedNetworkNames = Object.values(networkConfigs)
