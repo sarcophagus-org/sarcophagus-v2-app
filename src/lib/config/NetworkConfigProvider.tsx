@@ -53,7 +53,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       initSarcoSdk(chain.id);
     }
 
-    return sarco.isInitialised ? config : emptyConfig;
+    return sarco.isInitialised && validChain ? config : emptyConfig;
   }, [chain, currentChainId, isSdkInitialized, isInitialisingSarcoSdk]);
 
   const supportedChainIds =
