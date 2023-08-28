@@ -32,6 +32,31 @@ const hardhatNetworkConfig: NetworkConfig = {
   subgraphUrl: '',
 };
 
+export const emptyConfig: NetworkConfig = {
+  chainId: 0,
+  networkName: '',
+  networkShortName: '',
+  sarcoTokenAddress: '',
+  diamondDeployAddress: '',
+  explorerUrl: '',
+  etherscanApiUrl: '',
+  etherscanApiKey: '',
+  providerUrl: '',
+  apiUrlBase: '',
+  bundlr: {
+    currencyName: '',
+    nodeUrl: '',
+  },
+  arweaveConfig: {
+    host: '',
+    port: 0,
+    protocol: 'https',
+    timeout: 0,
+    logging: false,
+  },
+  subgraphUrl: '',
+};
+
 export const networkConfigs: { [chainId: number]: NetworkConfig } = {
   1: mainnetNetworkConfig(process.env.REACT_APP_BUNDLR_MAINNET_PROVIDER!, {
     zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
