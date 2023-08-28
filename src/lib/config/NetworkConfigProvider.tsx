@@ -32,7 +32,7 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
 
-  const isSupportedChain = supportedChainIds.includes(networkConfig.chainId ?? 0);
+  const isSupportedChain = supportedChainIds.includes(networkConfig.chainId);
 
   const supportedNetworkNames = Object.values(networkConfigs)
     .filter(config => supportedChainIds.includes(config.chainId))
