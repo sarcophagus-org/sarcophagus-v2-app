@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 
 interface SupportedNetwork {
   isSupportedChain: boolean;
+  isInitialisingSarcoSdk: boolean;
   isSarcoInitialized: boolean;
   isBundlrConnected: boolean;
   setIsBundlrConnected: Function;

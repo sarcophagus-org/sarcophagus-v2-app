@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Link, Spinner, Text, Tooltip } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
@@ -142,7 +142,7 @@ export function Pages() {
   // Globally stores the timestamp from the latest block
   useTimestampMs();
 
-  const { isSupportedChain, isSarcoInitialized } = useSupportedNetwork();
+  const { isSupportedChain, isSarcoInitialized, isInitialisingSarcoSdk } = useSupportedNetwork();
   const currentCommitHash = process.env.REACT_APP_COMMIT_REF;
 
   return (
@@ -232,7 +232,16 @@ export function Pages() {
             </Routes>
           ) : (
             <CreateSarcophagusContextProvider>
-              <WalletDisconnectPage />
+              {isInitialisingSarcoSdk ? (
+                <Center
+                  height="100%"
+                  width="100%"
+                >
+                  <Spinner size="xl" />
+                </Center>
+              ) : (
+                <WalletDisconnectPage />
+              )}
             </CreateSarcophagusContextProvider>
           )}
         </Flex>
