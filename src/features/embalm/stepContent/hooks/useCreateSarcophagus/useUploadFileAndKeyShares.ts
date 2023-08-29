@@ -37,7 +37,7 @@ export function useUploadFileAndKeyShares() {
           const { publicKey } = await response.json();
           await sarco.setSponsoredBundlr(publicKey, `${networkConfig.apiUrlBase}/bundlr/signData`);
         }
-        
+
         const uploadPromise = sarco.api.uploadFileToArweave({
           file: file!,
           archaeologistPublicKeys: Array.from(archaeologistPublicKeys.values()),

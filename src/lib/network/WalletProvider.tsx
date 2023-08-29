@@ -4,7 +4,7 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
-import { sepolia, mainnet, goerli, hardhat } from '@wagmi/chains';
+import { sepolia, mainnet, goerli, hardhat } from '@wagmi/core/chains';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
@@ -15,14 +15,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     ]
   );
 
-  const { connectors: allConnectors } = getDefaultWallets({
+  const { connectors } = getDefaultWallets({
     appName: 'Sarcophagus v2',
+    projectId: '82c7fb000145342f2d1b57dc2d83d001', // TODO: Update this
     chains,
   });
-
-  // Temporarily filter out WalletConnect connectors
-  // https://github.com/wagmi-dev/wagmi/discussions/2827
-  const connectors = allConnectors().filter(connector => connector.id !== 'walletConnect');
 
   const wagmiClient = createClient({
     autoConnect: true,
