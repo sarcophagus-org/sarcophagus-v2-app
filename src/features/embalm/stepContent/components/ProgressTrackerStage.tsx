@@ -12,6 +12,7 @@ export enum StageStatus {
 export interface ProgressTrackerStageProps {
   stageStatus?: StageStatus;
   index?: number;
+  stageIndex: number;
   stageError?: string | undefined;
   retryStage?: () => void;
   children: React.ReactNode;

@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -26,7 +26,6 @@ export class CancelCreateToken {
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
-  embalmerFacet: ethers.Contract,
   approveAmount: BigNumber
 ) {
   const dispatch = useDispatch();
@@ -69,8 +68,8 @@ export function useCreateSarcophagus(
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
-      [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetArweavePayload],
       [CreateSarcophagusStage.BUY_SARCO, buySarco],
+      [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetArweavePayload],
       [CreateSarcophagusStage.APPROVE, approveSarcoToken],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, submitSarcophagus],
       [CreateSarcophagusStage.CLEAR_STATE, clearSarcophagusState],
