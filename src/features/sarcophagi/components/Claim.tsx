@@ -35,7 +35,9 @@ export function Claim() {
   };
 
   const handleChangePrivateKey = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrivateKey(!e.target.value.trim() ? '' : privateKeyPad(e.target.value.trim()));
+    const inputString = e.target.value.replace(/\s+/g, '');
+    const privateKeyValue = !inputString ? '' : privateKeyPad(inputString);
+    setPrivateKey(privateKeyValue);
   };
 
   // linkRef is used to automatically trigger a download

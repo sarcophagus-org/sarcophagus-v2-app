@@ -8,7 +8,6 @@ import { DashboardPage } from './DashboardPage';
 import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
-import { TempResurrectionPage } from './TempResurrectionPage';
 import { RecipientsPage } from './RecipientsPage';
 import { ThemeTestPage } from './ThemeTestPage';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
@@ -28,7 +27,6 @@ export enum RouteKey {
   DASHBOARD_PAGE,
   EMBALM_PAGE,
   RECIPIENTS,
-  TEMP_RESURRECTION_PAGE,
   SARCOPHAGUS_CREATED,
   THEME_TEST_PAGE,
   ACCUSE_PAGE,
@@ -42,7 +40,6 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.DASHBOARD_PAGE]: '/dashboard',
   [RouteKey.EMBALM_PAGE]: '/embalm',
   [RouteKey.RECIPIENTS]: '/recipients',
-  [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
   [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
   [RouteKey.THEME_TEST_PAGE]: '/theme-test',
   [RouteKey.ACCUSE_PAGE]: '/accuse',
@@ -101,12 +98,6 @@ export function Pages() {
       element: <BundlrPage />,
       label: 'Bundlr',
       tooltip: 'Fund or withdraw from your Bundlr account',
-    },
-    {
-      path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
-      element: <TempResurrectionPage />,
-      label: 'TempResurrectionPage',
-      hidden: true,
     },
     {
       path: RoutesPathMap[RouteKey.RECIPIENTS],
