@@ -44,7 +44,6 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
       alignSelf: 'center',
       marginBottom: 20,
     },
-
     infoSection: {
       flexDirection: 'row',
       marginBottom: 23,
