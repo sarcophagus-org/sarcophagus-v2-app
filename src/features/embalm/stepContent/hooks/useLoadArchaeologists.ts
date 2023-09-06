@@ -33,7 +33,7 @@ export function useLoadArchaeologists() {
       if (addresses.length === 0) return [];
 
       try {
-        return await sarco.archaeologist.getFullArchProfiles(addresses);
+        return await sarco.archaeologist.getFullArchProfiles({ addresses, filterOffline: true });
       } catch (e) {
         console.log('error loading archs', e);
         Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
@@ -49,7 +49,7 @@ export function useLoadArchaeologists() {
     }
 
     try {
-      return await sarco.archaeologist.getFullArchProfiles();
+      return await sarco.archaeologist.getFullArchProfiles({ filterOffline: true });
     } catch (e) {
       console.log('error loading archs', e);
       Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
