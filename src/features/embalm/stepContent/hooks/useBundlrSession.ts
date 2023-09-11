@@ -50,7 +50,7 @@ export function useBundlrSession() {
   const connectToBundlr = useCallback(async (): Promise<void> => {
     if (isHardhatNetwork) {
       console.error(
-        'Bundlr cannot be used with the hardhat local network. Switch to Goerli or Mainnet to interact with bunldr.'
+        'Bundlr cannot be used with the hardhat local network. Switch to Sepolia or Mainnet to interact with bunldr.'
       );
       return;
     }

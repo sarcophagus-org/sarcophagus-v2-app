@@ -1,5 +1,4 @@
 import { Button, Checkbox, Flex, Heading, Text } from '@chakra-ui/react';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
@@ -7,9 +6,7 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
-import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
 import {
   clearSarcoQuoteInterval,
@@ -45,15 +42,6 @@ export function CreateSarcophagus() {
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
   );
-
-  const networkConfig = useNetworkConfig();
-  const { data: signer } = useSigner();
-
-  const embalmerFacet = useContract({
-    address: networkConfig.diamondDeployAddress,
-    abi: EmbalmerFacet__factory.abi,
-    signerOrProvider: signer,
-  });
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
@@ -91,7 +79,7 @@ export function CreateSarcophagus() {
     retryCreateSarcophagus,
     successData,
     clearSarcophagusState,
-  } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, totalFeesWithBuffer);
+  } = useCreateSarcophagus(createSarcophagusStages, totalFeesWithBuffer);
 
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
@@ -235,12 +223,25 @@ export function CreateSarcophagus() {
             retryStage={retryStage}
             isApproved={createSarcophagusStages[CreateSarcophagusStage.APPROVE] === undefined}
           >
-            {Object.values(createSarcophagusStages)
+            {Object.keys(createSarcophagusStages)
+              .map(stageIndexString => Number.parseInt(stageIndexString))
+
               // Necessarily, a couple of these mappings don't have UI importance, thus no titles.
-              .filter(text => !!text)
-              .map(stage => (
-                <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
-              ))}
+              .filter(stageIndex => !!createSarcophagusStages[stageIndex])
+              .map(stageIndex => {
+                const stageName = createSarcophagusStages[stageIndex];
+                const trueStageIndex = Object.values(defaultCreateSarcophagusStages).indexOf(
+                  stageName
+                );
+                return (
+                  <ProgressTrackerStage
+                    stageIndex={trueStageIndex}
+                    key={stageName}
+                  >
+                    {stageName}
+                  </ProgressTrackerStage>
+                );
+              })}
           </ProgressTracker>
           {stageInfo && !stageError && (
             <Flex

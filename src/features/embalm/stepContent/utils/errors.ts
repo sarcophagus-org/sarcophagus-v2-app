@@ -16,6 +16,7 @@ const processArchCommsException = (offendingArchs: ArchaeologistData[]) => {
 export const createSarcophagusErrors: Record<number, string> = {
   [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Failure Connecting to All Selected Archaeologists',
   [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieving Archaeologist Signatures Failed',
+  [CreateSarcophagusStage.BUY_SARCO]: 'Failed to swap ETH for SARCO',
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave Failed',
   [CreateSarcophagusStage.APPROVE]: 'Approval Failed',
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus Failed',

@@ -20,16 +20,16 @@ cp .env.example .env
 
 - after creating a .env file, you’ll need to set `REACT_APP_INFURA_API_KEY` to an Infura API key that you own
 
-## Running on Goerli with MetaMask
+## Running on an Ethereum testnet with MetaMask
 
-You’ll need an address on Goerli funded with ETH and SARCO to run through the full create sarcophagus flow.
+You’ll need an address on the testnet funded with ETH and SARCO to run through the full create sarcophagus flow.
 
 1. Install metamask or other supported wallet
 2. On the network dropdown at the top of the MetaMask popup, select show/hide test networks and toggle on test networks
-3. Change your network to Goerli
-4. Import the private key for an account funded with Goerli Ether and SARCO
+3. Change your network to the testnet
+4. Import the private key for an account funded with Testnet Ether and SARCO
 5. On step 3 within the embalm flow, you’ll be prompted to fund your Bundlr account with Ether. This process can take up
-   to 20 minutes to complete on Goerli.
+   to 20 minutes to complete on testnets.
 
 ## Running on hardhat local network and ArLocal with MetaMask
 
