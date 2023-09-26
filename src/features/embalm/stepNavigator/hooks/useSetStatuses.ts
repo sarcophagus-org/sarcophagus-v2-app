@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
-import { hardhatChainId } from 'lib/config/networkConfigs';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { HARDHAT_CHAIN_ID } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -86,7 +86,7 @@ export function useSetStatuses() {
     if (
       sponsorBundlr ||
       (isBundlrConnected && balance.gt(uploadPrice)) ||
-      chain?.id === hardhatChainId
+      chain?.id === HARDHAT_CHAIN_ID
     ) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {

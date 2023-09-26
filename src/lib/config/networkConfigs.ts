@@ -1,42 +1,25 @@
 import { NetworkConfig } from './networkConfigType';
 import {
   goerliNetworkConfig,
+  hardhatNetworkConfig,
   mainnetNetworkConfig,
   sepoliaNetworkConfig,
+  polygonMumbaiNetworkConfig,
+  baseGoerliNetworkConfig,
+  MAINNET_CHAIN_ID,
+  GOERLI_CHAIN_ID,
+  SEPOLIA_CHAIN_ID,
+  HARDHAT_CHAIN_ID,
+  BASE_GOERLI_CHAIN_ID,
+  POLYGON_MUMBAI_CHAIN_ID,
 } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-
-export const hardhatChainId = 31337;
-
-const hardhatNetworkConfig: NetworkConfig = {
-  chainId: hardhatChainId,
-  networkName: 'Hardhat Local Network',
-  networkShortName: 'HardHat',
-  sarcoTokenAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-  diamondDeployAddress: '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
-  etherscanApiUrl: '',
-  etherscanApiKey: '',
-  explorerUrl: '',
-  providerUrl: '',
-  apiUrlBase: '',
-  bundlr: {
-    currencyName: '',
-    nodeUrl: '',
-  },
-  arweaveConfig: {
-    host: 'localhost',
-    port: 1984,
-    protocol: 'http',
-    timeout: 60000 * 30,
-    logging: false,
-  },
-  subgraphUrl: '',
-};
 
 export const emptyConfig: NetworkConfig = {
   chainId: 0,
   networkName: '',
   networkShortName: '',
   sarcoTokenAddress: '',
+  tokenSymbol: '',
   diamondDeployAddress: '',
   explorerUrl: '',
   etherscanApiUrl: '',
@@ -58,14 +41,23 @@ export const emptyConfig: NetworkConfig = {
 };
 
 export const networkConfigs: { [chainId: number]: NetworkConfig } = {
-  1: mainnetNetworkConfig(process.env.REACT_APP_BUNDLR_MAINNET_PROVIDER!, {
+  [MAINNET_CHAIN_ID]: mainnetNetworkConfig(process.env.REACT_APP_MAINNET_PROVIDER!, {
     zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
   }),
-  5: goerliNetworkConfig(process.env.REACT_APP_BUNDLR_GOERLI_PROVIDER!, {
+  [GOERLI_CHAIN_ID]: goerliNetworkConfig(process.env.REACT_APP_GOERLI_PROVIDER!, {
     zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
   }),
-  11155111: sepoliaNetworkConfig(process.env.REACT_APP_BUNDLR_SEPOLIA_PROVIDER!, {
+  [SEPOLIA_CHAIN_ID]: sepoliaNetworkConfig(process.env.REACT_APP_SEPOLIA_PROVIDER!, {
     zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
   }),
-  31337: hardhatNetworkConfig,
+  [BASE_GOERLI_CHAIN_ID]: baseGoerliNetworkConfig(process.env.REACT_APP_BASE_GOERLI_PROVIDER!, {
+    zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
+  }),
+  [POLYGON_MUMBAI_CHAIN_ID]: polygonMumbaiNetworkConfig(
+    process.env.REACT_APP_POLYGON_MUMBAI_CHAIN_ID!,
+    {
+      zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
+    }
+  ),
+  [HARDHAT_CHAIN_ID]: hardhatNetworkConfig(),
 };

@@ -1,7 +1,6 @@
 import { useToast } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { hardhatChainId } from 'lib/config/networkConfigs';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import {
   connectFailure,
@@ -10,13 +9,13 @@ import {
   disconnect as disconnectToast,
 } from 'lib/utils/toast';
 import { useCallback, useEffect, useMemo } from 'react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { HARDHAT_CHAIN_ID, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useAccount } from 'wagmi';
 
 export function useBundlrSession() {
   const toast = useToast();
   const networkConfig = useNetworkConfig();
-  const isHardhatNetwork = networkConfig.chainId === hardhatChainId;
+  const isHardhatNetwork = networkConfig.chainId === HARDHAT_CHAIN_ID;
 
   const { setIsBundlrConnected } = useSupportedNetwork();
 

@@ -11,12 +11,12 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
     [mainnet, goerli, hardhat, sepolia],
     [
-        jsonRpcProvider({
-            rpc: () => ({
-                http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY!}`,
-            }),
-            priority: 0
+      jsonRpcProvider({
+        rpc: () => ({
+          http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY!}`,
         }),
+        priority: 0,
+      }),
       infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY!, priority: 1 }),
       publicProvider({ priority: 2 }),
     ]
