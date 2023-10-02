@@ -53,11 +53,8 @@ export const networkConfigs: { [chainId: number]: NetworkConfig } = {
   [BASE_GOERLI_CHAIN_ID]: baseGoerliNetworkConfig(process.env.REACT_APP_BASE_GOERLI_PROVIDER!, {
     zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
   }),
-  [POLYGON_MUMBAI_CHAIN_ID]: polygonMumbaiNetworkConfig(
-    process.env.REACT_APP_POLYGON_MUMBAI_CHAIN_ID!,
-    {
-      zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
-    }
-  ),
+  [POLYGON_MUMBAI_CHAIN_ID]: polygonMumbaiNetworkConfig(process.env.REACT_APP_POLYGON_MUMBAI_PROVIDER!, {
+    zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
+  }),
   [HARDHAT_CHAIN_ID]: hardhatNetworkConfig(),
 };
