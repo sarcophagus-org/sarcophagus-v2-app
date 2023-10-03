@@ -1,11 +1,10 @@
 import { ethers } from 'ethers';
 import { useNetworkConfig } from 'lib/config';
-import { hardhatChainId } from 'lib/config/networkConfigs';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { minimumResurrection } from 'lib/constants';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { HARDHAT_CHAIN_ID, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { Step, StepStatus } from 'store/embalm/reducer';
 import { formatAddress, humanizeUnixTimestamp } from '../../../../lib/utils/helpers';
 import { useSelector } from '../../../../store';
@@ -39,7 +38,7 @@ export const useSarcophagusParameters = () => {
   const { getStatus } = useStepNavigator();
   const { chainId } = useNetworkConfig();
 
-  const isHardhatNetwork = chainId === hardhatChainId;
+  const isHardhatNetwork = chainId === HARDHAT_CHAIN_ID;
 
   const [maxRewrapIntervalMs, setMaxRewrapIntervalMs] = useState(0);
   const [maxResurrectionTimeMs, setMaxResurrectionTimeMs] = useState(0);
