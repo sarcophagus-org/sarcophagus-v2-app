@@ -56,7 +56,7 @@ export function CreateSarcophagus() {
 
   const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
 
-  const { sarcoQuoteETHAmount, sarcoQuoteInterval } = useSarcoQuote(sarcoDeficit);
+  const { sarcoQuoteETHAmount, sarcoQuoteInterval, sarcoQuoteError } = useSarcoQuote(sarcoDeficit);
 
   useEffect(() => {
     if (sarcoQuoteETHAmount === '0') {
@@ -182,12 +182,14 @@ export function CreateSarcophagus() {
                   variant="secondary"
                 >
                   {isBuyingSarco
-                    ? `${sarco.utils.formatSarco(
-                        sarcoQuoteETHAmount,
-                        18
-                      )} ETH will be swapped for ${sarco.utils.formatSarco(
-                        sarcoDeficit.toString()
-                      )} SARCO before the sarcophagus is created.`
+                    ? sarcoQuoteError
+                      ? `There was a problem getting a SARCO quote: ${sarcoQuoteError}`
+                      : `${sarco.utils.formatSarco(
+                          sarcoQuoteETHAmount,
+                          18
+                        )} ETH will be swapped for ${sarco.utils.formatSarco(
+                          sarcoDeficit.toString()
+                        )} SARCO before the sarcophagus is created.`
                     : `Your current SARCO balance is ${sarco.utils.formatSarco(
                         balance ? balance.toString() : '0'
                       )} SARCO, but required balance is ${sarco.utils.formatSarco(
