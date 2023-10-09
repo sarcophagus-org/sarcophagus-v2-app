@@ -5,6 +5,7 @@ import { useSelector } from 'store/index';
 
 export function useSarcoQuote(amount: BigNumber) {
   const [sarcoQuoteETHAmount, setSarcoQuoteETHAmount] = useState('0');
+  const [sarcoQuoteError, setSarcoQuoteError] = useState('');
   const [isPolling, setIsPolling] = useState(false);
   const [quoteIntervalState, setSarcoQuoteInterval] = useState<NodeJS.Timer>();
 
@@ -17,8 +18,12 @@ export function useSarcoQuote(amount: BigNumber) {
       setIsPolling(true);
 
       const runGetQuote = async () => {
-        const quote = await sarco.utils.getSarcoQuote(amount);
-        setSarcoQuoteETHAmount(quote.sellAmount);
+        try {
+          const quote = await sarco.utils.getSarcoQuote(amount);
+          setSarcoQuoteETHAmount(quote.sellAmount);
+        } catch (e: any) {
+          setSarcoQuoteError(e.message);
+        }
       };
 
       runGetQuote();
@@ -29,5 +34,5 @@ export function useSarcoQuote(amount: BigNumber) {
     getQuote();
   }, [amount, isPolling, sarcoQuoteInterval]);
 
-  return { sarcoQuoteETHAmount, sarcoQuoteInterval: quoteIntervalState };
+  return { sarcoQuoteETHAmount, sarcoQuoteError, sarcoQuoteInterval: quoteIntervalState };
 }
