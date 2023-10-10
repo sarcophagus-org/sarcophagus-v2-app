@@ -12,6 +12,8 @@ import {
   HARDHAT_CHAIN_ID,
   BASE_GOERLI_CHAIN_ID,
   POLYGON_MUMBAI_CHAIN_ID,
+  POLYGON_MAINNET_CHAIN_ID,
+  polygonMainnetNetworkConfig,
 } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export const emptyConfig: NetworkConfig = {
@@ -38,6 +40,7 @@ export const emptyConfig: NetworkConfig = {
     logging: false,
   },
   subgraphUrl: '',
+  zeroExApiUrl: '',
 };
 
 export const networkConfigs: { [chainId: number]: NetworkConfig } = {
@@ -55,6 +58,12 @@ export const networkConfigs: { [chainId: number]: NetworkConfig } = {
   }),
   [POLYGON_MUMBAI_CHAIN_ID]: polygonMumbaiNetworkConfig(
     process.env.REACT_APP_POLYGON_MUMBAI_PROVIDER!,
+    {
+      zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
+    }
+  ),
+  [POLYGON_MAINNET_CHAIN_ID]: polygonMainnetNetworkConfig(
+    process.env.REACT_APP_POLYGON_MAINNET_PROVIDER!,
     {
       zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY!,
     }
