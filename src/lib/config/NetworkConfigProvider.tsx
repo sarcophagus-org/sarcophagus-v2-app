@@ -1,10 +1,13 @@
 import { NetworkConfigContext } from '.';
 import { SupportedNetworkContext } from './useSupportedNetwork';
 import { useNetwork } from 'wagmi';
-import { emptyConfig, networkConfigs } from './networkConfigs';
-import { NetworkConfig } from './networkConfigType';
-import { useMemo, useState } from 'react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { emptyConfig } from './networkConfigs';
+import { useEffect, useState } from 'react';
+import {
+  sarco,
+  SARCO_SUPPORTED_NETWORKS,
+  SarcoNetworkConfig,
+} from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
@@ -13,22 +16,24 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
   const [isInitialisingSarcoSdk, setIsInitialisingSarcoSdk] = useState(false);
   const [isSdkInitialized, setIsSdkInitialized] = useState(false);
   const [isBundlrConnected, setIsBundlrConnected] = useState(false);
+  const [networkConfig, setNetworkConfig] = useState<SarcoNetworkConfig>(emptyConfig);
 
-  const networkConfig: NetworkConfig = useMemo(() => {
-    const validChain = !!chain && !!networkConfigs[chain.id];
-    const config = validChain ? networkConfigs[chain.id] : emptyConfig;
+  const sdkSupportedChainIds = Array.from(SARCO_SUPPORTED_NETWORKS.keys());
 
-    if (isInitialisingSarcoSdk) return config;
+  useEffect(() => {
+    const validChain = !!chain && sdkSupportedChainIds.includes(chain.id);
+
+    if (isInitialisingSarcoSdk) return;
 
     const initSarcoSdk = (chainId: number) =>
       sarco
         .init({
           chainId: chainId,
-          etherscanApiKey: config.etherscanApiKey,
           zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
         })
-        .then(() => {
+        .then(config => {
           setCurrentChainId(chain?.id);
+          setNetworkConfig(config);
           setIsInitialisingSarcoSdk(false);
           setIsSdkInitialized(true);
         });
@@ -52,18 +57,16 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       setIsInitialisingSarcoSdk(true);
       initSarcoSdk(chain.id);
     }
-
-    return sarco.isInitialised && validChain ? config : emptyConfig;
-  }, [chain, currentChainId, isSdkInitialized, isInitialisingSarcoSdk]);
+  }, [chain, currentChainId, isSdkInitialized, isInitialisingSarcoSdk, sdkSupportedChainIds]);
 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
 
   const isSupportedChain = supportedChainIds.includes(networkConfig.chainId);
 
-  const supportedNetworkNames = Object.values(networkConfigs)
-    .filter(config => supportedChainIds.includes(config.chainId))
-    .map(config => config.networkShortName);
+  const supportedNetworkNames = sdkSupportedChainIds
+    .filter(chainId => supportedChainIds.includes(chainId))
+    .map(chainId => SARCO_SUPPORTED_NETWORKS.get(chainId)!);
 
   return (
     <NetworkConfigContext.Provider value={networkConfig}>
