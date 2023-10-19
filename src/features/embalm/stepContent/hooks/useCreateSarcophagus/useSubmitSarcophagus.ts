@@ -30,7 +30,7 @@ export function useSubmitSarcophagus() {
 
     const { submitSarcophagusArgs } = sarco.utils.formatSubmitSarcophagusArgs({
       name,
-      recipientPublicKey: recipientState.publicKey,
+      recipientState,
       resurrection,
       selectedArchaeologists,
       requiredArchaeologists,
