@@ -17,7 +17,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       //   }),
       //   priority: 0,
       // }),
-      infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY!, priority: 1 }),
+      infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY!, priority: 0 }),
       publicProvider({ priority: 2 }),
     ]
   );
