@@ -56,7 +56,7 @@ export const defaultCreateSarcophagusStages: Record<number, string> = {
   [CreateSarcophagusStage.NOT_STARTED]: '',
   [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS]: 'Connect to Archaeologists',
   [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION]: 'Retrieve Archaeologist Signatures',
-  [CreateSarcophagusStage.BUY_SARCO]: 'Swap ETH for SARCO Token',
+  [CreateSarcophagusStage.BUY_SARCO]: 'Swap for SARCO Token',
   [CreateSarcophagusStage.UPLOAD_PAYLOAD]: 'Upload File Data to Arweave',
   [CreateSarcophagusStage.APPROVE]: 'Approve',
   [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS]: 'Create Sarcophagus',
