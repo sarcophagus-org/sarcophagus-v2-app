@@ -1,9 +1,12 @@
-import { QuestionIcon } from '@chakra-ui/icons';
-import { Box, Flex, Link, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, VStack } from '@chakra-ui/react';
 import { Bundlr } from '../components/Bundlr';
 import { BundlrAlertMessage } from '../components/BundlrAlertMessage';
+import { useNetwork } from 'wagmi';
+import { QuestionIcon } from '@chakra-ui/icons';
 
 export function FundBundlr() {
+  const { chain } = useNetwork();
+
   return (
     <VStack
       align="left"
@@ -20,17 +23,21 @@ export function FundBundlr() {
             variant="secondary"
           >
             Bundlr will package your payload and send to Arweave. Upload fees are paid from your
-            Bundlr balance which is funded with ETH.
+            Bundlr balance which is funded with {chain?.nativeCurrency?.name || 'ETH'}.
           </Text>
-          <Link
+          <Box
             ml={1}
             as="span"
-            color="brand.950"
-            href="https://bundlr.network/"
-            isExternal
           >
-            <QuestionIcon />
-          </Link>
+            <a
+              color="brand.950"
+              href="https://irys.xyz/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <QuestionIcon />
+            </a>
+          </Box>
         </Box>
       </Flex>
 

@@ -9,6 +9,7 @@ import { useNetwork } from 'wagmi';
 import { useBundlrSession } from '../hooks/useBundlrSession';
 import { useBundlrBalance } from '../hooks/useBundlrBalance';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { WalletBalance } from 'features/bundlr/WalletBalance';
 
 export function Bundlr({ children }: { children?: React.ReactNode }) {
   const { fund, isFunding } = useBundlr();
@@ -95,6 +96,7 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
                 Disconnect
               </Button>
             </HStack>
+            <WalletBalance />
             <Text>Bundlr balance: {formattedBalance}</Text>
             {!balanceOffset.eq(ethers.constants.Zero) && (
               <Text
