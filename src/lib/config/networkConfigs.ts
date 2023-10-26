@@ -24,5 +24,5 @@ export const emptyConfig: SarcoNetworkConfig = {
   },
   subgraphUrl: '',
   zeroExApiUrl: '',
-  zeroExSellToken: ''
+  zeroExSellToken: '',
 };
