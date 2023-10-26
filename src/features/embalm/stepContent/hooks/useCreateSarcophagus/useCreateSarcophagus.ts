@@ -122,6 +122,34 @@ export function useCreateSarcophagus(
             });
         });
 
+      const didConnectionDrop = (error: any): boolean => {
+        return (
+          currentStage === CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION &&
+          error.message &&
+          error.message.includes('connection is closed')
+        );
+      };
+      const retryDialStage = async () => {
+        console.log('dial dropped during negotiation, retrying dial stage');
+        setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
+        setStageError(undefined);
+        setIsStageRetry(true);
+      };
+      const handleStageError = async (error: any) => {
+        // If archaeologist connection drops during negotiation step,
+        // Re-try dialing step
+        if (didConnectionDrop(error)) {
+          await retryDialStage();
+        } else {
+          const stageErrorMessage = formatCreateSarcophagusError(
+            currentStage,
+            error,
+            selectedArchaeologists
+          );
+          setStageError(stageErrorMessage);
+        }
+      };
+
       if (!stageExecuting && !stageError && currentStage !== CreateSarcophagusStage.COMPLETED) {
         try {
           const currentStageFunction = stagesMap.get(currentStage);
@@ -129,13 +157,7 @@ export function useCreateSarcophagus(
             await executeStage(currentStageFunction, isStageRetry, cancelCreateToken);
           }
         } catch (error: any) {
-          console.log(error);
-          const stageErrorMessage = formatCreateSarcophagusError(
-            currentStage,
-            error,
-            selectedArchaeologists
-          );
-          setStageError(stageErrorMessage);
+          await handleStageError(error);
         }
       }
     })();
