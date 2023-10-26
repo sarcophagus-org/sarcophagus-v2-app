@@ -1,7 +1,5 @@
 import { BigNumber } from 'ethers';
-import {
-  useArchaeologistSignatureNegotiation
-} from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
+import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
@@ -133,18 +131,21 @@ export function useCreateSarcophagus(
         } catch (error: any) {
           // If archaeologist connection drops during negotiation step,
           // Re-try dialing step
-          if (currentStage !== CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION && error.includes('connection is closed')) {
+          if (
+            currentStage !== CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION &&
+            error.includes('connection is closed')
+          ) {
             await executeStage(
-                stagesMap.get(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS)!,
-                true,
-                cancelCreateToken
+              stagesMap.get(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS)!,
+              true,
+              cancelCreateToken
             );
           } else {
             console.log(error);
             const stageErrorMessage = formatCreateSarcophagusError(
-                currentStage,
-                error,
-                selectedArchaeologists
+              currentStage,
+              error,
+              selectedArchaeologists
             );
             setStageError(stageErrorMessage);
           }
