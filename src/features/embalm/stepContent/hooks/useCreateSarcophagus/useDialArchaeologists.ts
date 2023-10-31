@@ -20,7 +20,7 @@ export function useDialArchaeologists() {
   const { selectedArchaeologists } = useSelector(s => s.embalmState);
 
   const dialArchaeologist = useCallback(
-    async (arch: ArchaeologistData) => {
+    async (arch: ArchaeologistData): Promise<Connection | undefined> => {
       const peerIdString = arch.profile.peerId;
       try {
         const connection = await sarco.archaeologist.dialArchaeologist(arch);
@@ -33,6 +33,7 @@ export function useDialArchaeologists() {
             message: 'Could not establish a connection',
           })
         );
+        return undefined;
       }
     },
     [dispatch]

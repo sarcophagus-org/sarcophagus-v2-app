@@ -1,71 +1,79 @@
 import { NetworkConfigContext } from '.';
 import { SupportedNetworkContext } from './useSupportedNetwork';
 import { useNetwork } from 'wagmi';
-import { networkConfigs } from './networkConfigs';
-import { NetworkConfig } from './networkConfigType';
-import { useMemo, useState } from 'react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { emptyConfig } from './networkConfigs';
+import { useEffect, useState } from 'react';
+import {
+  sarco,
+  SARCO_SUPPORTED_NETWORKS,
+  SarcoNetworkConfig,
+} from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function NetworkConfigProvider({ children }: { children: React.ReactNode }) {
   const { chain } = useNetwork();
 
-  const [isSarcoInitialized, setSarcoInitialised] = useState(false);
+  const [currentChainId, setCurrentChainId] = useState<number | undefined>();
+  const [isInitialisingSarcoSdk, setIsInitialisingSarcoSdk] = useState(false);
+  const [isSdkInitialized, setIsSdkInitialized] = useState(false);
   const [isBundlrConnected, setIsBundlrConnected] = useState(false);
+  const [networkConfig, setNetworkConfig] = useState<SarcoNetworkConfig>(emptyConfig);
 
-  const networkConfig: NetworkConfig | null = useMemo(() => {
-    const emptyConfig: NetworkConfig = {
-      chainId: 0,
-      networkName: '',
-      networkShortName: '',
-      sarcoTokenAddress: '',
-      diamondDeployAddress: '',
-      explorerUrl: '',
-      etherscanApiUrl: '',
-      etherscanApiKey: '',
-      bundlr: {
-        currencyName: '',
-        nodeUrl: '',
-        providerUrl: '',
-      },
-      arweaveConfig: {
-        host: '',
-        port: 0,
-        protocol: 'https',
-        timeout: 0,
-        logging: false,
-      },
-      subgraphUrl: '',
-    };
+  const sdkSupportedChainIds = Array.from(SARCO_SUPPORTED_NETWORKS.keys());
 
-    const validChain = !!chain && !!networkConfigs[chain.id];
-    const config = validChain ? networkConfigs[chain.id] : emptyConfig;
+  useEffect(() => {
+    const validChain = !!chain && sdkSupportedChainIds.includes(chain.id);
 
-    if (validChain && !isSarcoInitialized) {
+    if (isInitialisingSarcoSdk) return;
+
+    const initSarcoSdk = (chainId: number) =>
       sarco
         .init({
-          chainId: chain.id,
-          etherscanApiKey: config.etherscanApiKey,
+          chainId: chainId,
+          zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
         })
-        .then(() => setSarcoInitialised(true));
+        .then(config => {
+          setCurrentChainId(chain?.id);
+          setNetworkConfig(config);
+          setIsInitialisingSarcoSdk(false);
+          setIsSdkInitialized(true);
+        });
+
+    const chainChanged = chain?.id !== currentChainId;
+    if (chainChanged) {
+      setIsInitialisingSarcoSdk(true);
+      setIsSdkInitialized(false);
+
+      new Promise<void>(res => setTimeout(() => res(), 10)).then(() => {
+        if (validChain) {
+          initSarcoSdk(chain.id);
+        } else {
+          setCurrentChainId(chain?.id);
+          setIsInitialisingSarcoSdk(false);
+        }
+      });
     }
 
-    return sarco.isInitialised ? config : emptyConfig;
-  }, [chain, isSarcoInitialized]);
+    if (validChain && !isSdkInitialized) {
+      setIsInitialisingSarcoSdk(true);
+      initSarcoSdk(chain.id);
+    }
+  }, [chain, currentChainId, isSdkInitialized, isInitialisingSarcoSdk, sdkSupportedChainIds]);
 
   const supportedChainIds =
     process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
 
-  const isSupportedChain = supportedChainIds.includes(networkConfig?.chainId ?? 0);
+  const isSupportedChain = supportedChainIds.includes(networkConfig.chainId);
 
-  const supportedNetworkNames = Object.values(networkConfigs)
-    .filter(config => supportedChainIds.includes(config.chainId))
-    .map(config => config.networkShortName);
+  const supportedNetworkNames = sdkSupportedChainIds
+    .filter(chainId => supportedChainIds.includes(chainId))
+    .map(chainId => SARCO_SUPPORTED_NETWORKS.get(chainId)!);
 
   return (
     <NetworkConfigContext.Provider value={networkConfig}>
       <SupportedNetworkContext.Provider
         value={{
-          isSarcoInitialized,
+          isInitialisingSarcoSdk: isInitialisingSarcoSdk,
+          isSarcoInitialized: isSdkInitialized,
           isBundlrConnected,
           setIsBundlrConnected,
           isSupportedChain: isSupportedChain,

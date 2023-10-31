@@ -76,9 +76,16 @@ export const fundStart = (): UseToastOptions => ({
 });
 
 export const fundSuccess = (): UseToastOptions => ({
-  title: 'Successful Bundlr fund transaction!',
+  title: 'Confirming Bundlr fund transaction',
   description:
-    'Bundlr transaction is confirmed. It may take a few minutes for your Bundlr balance to update.',
+    'Your Bundlr fund transaction has been submitted and is being confirmed. It may take a few minutes for your Bundlr balance to update.',
+  status: 'info',
+  ...defaultOptions,
+});
+
+export const fundsUpdated = (): UseToastOptions => ({
+  title: 'Bundlr balance updated!',
+  description: 'Your Bundlr balance has been updated.',
   status: 'success',
   ...defaultOptions,
 });

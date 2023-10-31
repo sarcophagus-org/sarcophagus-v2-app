@@ -1,4 +1,3 @@
-import { sleep } from '@bundlr-network/client/build/common/utils';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Button, Collapse, Flex, IconButton, Text, useDisclosure } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
@@ -26,6 +25,8 @@ const file = new File(['Hello'], 'hello.txt', { type: 'text/plain' });
 const recipientPublicKey =
   '0x048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5';
 const recipientAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
+
+const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 /**
  * Component that provides a button that automatically fills out the sarcophagus form.
@@ -127,7 +128,7 @@ export function MagicFormFiller() {
           float="right"
           aria-label="Close dev panel"
           variant="unstyled"
-          icon={isOpen ? <ChevronDownIcon fontSize="xs" /> : <ChevronUpIcon fontSize="xs" />}
+          icon={isOpen ? <ChevronUpIcon fontSize="xs" /> : <ChevronDownIcon fontSize="xs" />}
           onClick={onToggle}
         />
       </Flex>

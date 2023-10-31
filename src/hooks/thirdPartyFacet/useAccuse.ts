@@ -1,6 +1,5 @@
 import { useToast } from '@chakra-ui/react';
 import { ThirdPartyFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
-import { Abi } from 'abitype';
 import { Signature } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { useNetworkConfig } from 'lib/config';
@@ -26,8 +25,8 @@ export function useAccuse(
   const signaturesVrs = signatures.map(sig => ({ v: sig.v, r: sig.r, s: sig.s }));
 
   const { config, isError: mayFail } = usePrepareContractWrite({
-    address: networkConfig.diamondDeployAddress,
-    abi: ThirdPartyFacet__factory.abi as Abi,
+    address: networkConfig.diamondDeployAddress as `0x${string}`,
+    abi: ThirdPartyFacet__factory.abi,
     functionName: 'accuse',
     enabled,
     args: [sarcoId, publicKeys, signaturesVrs, paymentAddress],
@@ -41,6 +40,7 @@ export function useAccuse(
     onError() {
       setIsAccusing(false);
     },
+    mode: 'prepared',
   });
 
   function accuse() {

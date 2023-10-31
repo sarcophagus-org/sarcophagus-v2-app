@@ -2,12 +2,13 @@ import { Button, Flex, Text } from '@chakra-ui/react';
 import { EthereumIcon } from 'components/icons/EthereumIcon';
 import { BigNumber, ethers } from 'ethers';
 import { useBundlrBalance } from 'features/embalm/stepContent/hooks/useBundlrBalance';
-import { useEthBalance } from 'hooks/useEthBalance';
 import { useEthPrice } from 'hooks/useEthPrice';
 import { useSelector } from 'store/index';
 import { BundlrInput } from './BundlrInput';
 import { formatEther } from 'ethers/lib/utils';
 import { useState } from 'react';
+import { useNetwork } from 'wagmi';
+import { WalletBalance } from './WalletBalance';
 
 export enum BundlrAction {
   Deposit,
@@ -37,10 +38,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
     ? Math.round(parseFloat(bundlrBalanceInEth) * parseFloat(ethPrice))
     : undefined;
 
-  const { balance: ethBalance } = useEthBalance();
-  const formattedEthBalance = Number(ethBalance).toFixed(4);
-
-  const ethUsdValue = Math.round(parseFloat(ethBalance) * parseFloat(ethPrice));
+  const { chain } = useNetwork();
 
   const buttonText = {
     [BundlrAction.Deposit]: 'Add Funds to Bundlr',
@@ -68,7 +66,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
 
   return (
     <Flex direction="column">
-      <Text>Bundlr ETH</Text>
+      <Text>Bundlr {chain?.nativeCurrency?.name || 'ETH'}</Text>
       <Flex
         mt={1}
         align="center"
@@ -96,10 +94,7 @@ export function BundlrProfile({ action, onDeposit, onWithdraw, onConnect }: Bund
           setBundlrAmountBN(input);
         }}
       />
-      <Text mt={3}>
-        Wallet Balance: {formattedEthBalance} ETH{' '}
-        {!isNaN(ethUsdValue) && `($${ethers.utils.commify(ethUsdValue)})`}
-      </Text>
+      <WalletBalance />
       <Button
         mt={6}
         onClick={handleClickButton}

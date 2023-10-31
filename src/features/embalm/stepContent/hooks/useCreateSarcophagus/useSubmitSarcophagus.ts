@@ -1,6 +1,5 @@
 import { useSelector } from '../../../../../store';
 import { useCallback, useContext } from 'react';
-import { formatSubmitSarcophagusArgs } from '../../utils/formatSubmitSarcophagusArgs';
 import { CreateSarcophagusContext } from '../../context/CreateSarcophagusContext';
 import { handleRpcError } from 'lib/utils/rpc-error-handler';
 import * as Sentry from '@sentry/react';
@@ -29,7 +28,7 @@ export function useSubmitSarcophagus() {
       throw new Error('Retrying...');
     }
 
-    const { submitSarcophagusArgs } = formatSubmitSarcophagusArgs({
+    const { submitSarcophagusArgs } = sarco.utils.formatSubmitSarcophagusArgs({
       name,
       recipientState,
       resurrection,

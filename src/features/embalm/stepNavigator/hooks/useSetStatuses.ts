@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from 'store/index';
 import { useUploadPrice } from './useUploadPrice';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork } from 'wagmi';
-import { hardhatChainId } from 'lib/config/networkConfigs';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { HARDHAT_CHAIN_ID } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function validateRecipient(recipient: RecipientState) {
   try {
@@ -51,6 +51,7 @@ export function useSetStatuses() {
     requiredArchaeologists,
     resurrection,
     stepStatuses,
+    sponsorBundlr,
   } = useSelector(x => x.embalmState);
   const { timestampMs } = useSelector(x => x.appState);
   const { uploadPrice } = useUploadPrice();
@@ -82,7 +83,11 @@ export function useSetStatuses() {
   }
 
   function fundBundlrEffect() {
-    if ((isBundlrConnected && balance.gt(uploadPrice)) || chain?.id === hardhatChainId) {
+    if (
+      sponsorBundlr ||
+      (isBundlrConnected && balance.gt(uploadPrice)) ||
+      chain?.id === HARDHAT_CHAIN_ID
+    ) {
       dispatch(updateStepStatus(Step.FundBundlr, StepStatus.Complete));
     } else {
       if (fundBundlrStatus !== StepStatus.NotStarted) {
@@ -139,6 +144,7 @@ export function useSetStatuses() {
     uploadPrice,
     chain?.id,
     isBundlrConnected,
+    sponsorBundlr,
   ]);
   useEffect(setRecipientEffect, [dispatch, recipientState]);
   useEffect(selectedArchaeologistsEffect, [

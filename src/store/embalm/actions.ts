@@ -12,37 +12,42 @@ import {
 // NOTE: Prefix each action with this namespace. Duplicate action names in other reducers will cause
 // unexpected behavior.
 export enum ActionType {
+  ToggleSponsorBundlr = 'EMBALM_TOGGLE_SPONSOR_BUNDLR',
+  SetSarcoQuoteInterval = 'EMBALM_SET_SARCO_QUOTE_INTERVAL',
+  ClearSarcoQuoteInterval = 'EMBALM_CLEAR_SARCO_QUOTE_INTERVAL',
   DeselectArchaeologist = 'EMBALM_DESELECT_ARCHAEOLOGIST',
   DisableSteps = 'EMBALM_DISABLE_STEPS',
   EnableSteps = 'EMBALM_ENABLE_STEPS',
-  ToggleRetryingCreate = 'EMBALM_TOGGLE_RETRYING_CREATE',
-  SetCancelToken = 'EMBALM_SET_CANCEL_TOKEN',
   GoToStep = 'EMBALM_GO_TO_STEP',
+  ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
   SelectArchaeologist = 'EMBALM_SELECT_ARCHAEOLOGIST',
-  SetArchaeologistEnsName = 'EMBALM_SET_ARCHAEOLOGIST_ENS_NAME',
   SetArchaeologistConnection = 'EMBALM_SET_ARCHAEOLOGIST_CONNECTION',
-  SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
+  SetArchaeologistEnsName = 'EMBALM_SET_ARCHAEOLOGIST_ENS_NAME',
+  SetArchaeologistException = 'EMBALM_SET_ARCHAEOLOGIST_EXCEPTION',
   SetArchaeologistFullPeerId = 'EMBALM_SET_ARCHAEOLOGIST_FULL_PEER_ID',
+  SetArchaeologistOnlineStatus = 'EMBALM_SET_ARCHAEOLOGIST_ONLINE_STATUS',
   SetArchaeologistPublicKey = 'EMBALM_SET_ARCHAEOLOGIST_PUBLIC_KEY',
-  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
   SetArchaeologists = 'EMBALM_SET_ARCHAEOLOGISTS',
+  SetArchaeologistSignature = 'EMBALM_SET_ARCHAEOLOGIST_SIGNATURE',
+  SetCancelToken = 'EMBALM_SET_CANCEL_TOKEN',
+  SetCurrentChainId = 'EMBALM_SET_CURRENT_CHAIN_ID',
+  SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
   SetExpandedStepIndices = 'EMBALM_SET_EXPANDED_STEP_INDICES',
   SetFile = 'EMBALM_SET_FILE',
-  SetSarcophagusName = 'EMBALM_SET_SARCOPHAGUS_NAME',
   SetNegotiationTimestamp = 'EMBALM_SET_NEGOTIATION_TIMESTAMP',
   SetOuterLayerKeys = 'EMBALM_SET_OUTER_LAYER_KEYS',
   SetRecipientState = 'EMBALM_SET_RECIPIENT_STATE',
   SetRequiredArchaeologists = 'EMBALM_SET_REQUIRED_ARCHAEOLOGISTS',
   SetResurrection = 'EMBALM_SET_RESURRECTION',
   SetResurrectionRadioValue = 'EMBALM_SET_RESURRECTION_RADIO_VALUE',
-  SetCustomResurrectionDate = 'EMBALM_SET_CUSTOM_RESURRECTION_DATE',
+  SetSarcophagusName = 'EMBALM_SET_SARCOPHAGUS_NAME',
   SetSelectedArchaeologists = 'EMBALM_SET_SELECTED_ARCHAEOLOGISTS',
+  SetTotalFees = 'EMBALM_SET_TOTAL_FEES',
   SetUploadPrice = 'EMBALM_SET_UPLOAD_PRICE',
+  ToggleIsBuyingSarco = 'EMBALM_TOGGLE_IS_BUYING_SARCO',
+  ToggleRetryingCreate = 'EMBALM_TOGGLE_RETRYING_CREATE',
   ToggleStep = 'EMBALM_TOGGLE_STEP',
   UpdateStepStatus = 'EMBALM_UPDATE_STEP_STATUS',
-  SetArchaeologistException = 'EMBALM_SET_ARCHAEOLOGIST_EXCEPTION',
-  ResetEmbalmState = 'EMBALM_RESET_EMBALM_STATE',
-  SetCurrentChainId = 'EMBALM_SET_CURRENT_CHAIN_ID',
 }
 
 export enum RecipientSetByOption {
@@ -73,40 +78,42 @@ export interface RecipientState {
 
 type EmbalmPayload = {
   [ActionType.DeselectArchaeologist]: { address: string };
+  [ActionType.SetSarcoQuoteInterval]: { interval: NodeJS.Timer };
+  [ActionType.ClearSarcoQuoteInterval]: {};
   [ActionType.DisableSteps]: {};
   [ActionType.EnableSteps]: {};
-  [ActionType.ToggleRetryingCreate]: {};
-  [ActionType.SetCancelToken]: { token: CancelCreateToken };
+  [ActionType.ToggleSponsorBundlr]: {};
   [ActionType.GoToStep]: { step: Step };
+  [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.ResetEmbalmState]: { step: Step };
   [ActionType.SelectArchaeologist]: { archaeologist: ArchaeologistData };
   [ActionType.SetArchaeologistConnection]: { peerId: string; connection: Connection | undefined };
   [ActionType.SetArchaeologistEnsName]: { peerId: string; ensName: string };
-  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
-  [ActionType.SetArchaeologistOnlineStatus]: {
-    peerId: string;
-    isOnline: boolean;
-  };
-  [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
-  [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
   [ActionType.SetArchaeologistException]: { peerId: string; exception: ArchaeologistException };
+  [ActionType.SetArchaeologistFullPeerId]: { peerId: PeerId };
+  [ActionType.SetArchaeologistOnlineStatus]: { peerId: string; isOnline: boolean };
+  [ActionType.SetArchaeologistPublicKey]: { peerId: string; publicKey: string };
   [ActionType.SetArchaeologists]: { archaeologists: ArchaeologistData[] };
+  [ActionType.SetArchaeologistSignature]: { peerId: string; signature: string };
+  [ActionType.SetCancelToken]: { token: CancelCreateToken };
+  [ActionType.SetCurrentChainId]: { chainId: number | undefined };
   [ActionType.SetCustomResurrectionDate]: { date: Date | null };
   [ActionType.SetExpandedStepIndices]: { indices: number[] };
   [ActionType.SetFile]: { file: File };
-  [ActionType.SetSarcophagusName]: { name: string };
   [ActionType.SetNegotiationTimestamp]: { negotiationTimestamp: number };
   [ActionType.SetOuterLayerKeys]: { privateKey: string; publicKey: string };
   [ActionType.SetRecipientState]: RecipientState;
   [ActionType.SetRequiredArchaeologists]: { count: number };
   [ActionType.SetResurrection]: { resurrection: number };
   [ActionType.SetResurrectionRadioValue]: { value: string };
+  [ActionType.SetSarcophagusName]: { name: string };
   [ActionType.SetSelectedArchaeologists]: { selectedArchaeologists: ArchaeologistData[] };
+  [ActionType.SetTotalFees]: { amount: BigNumber };
   [ActionType.SetUploadPrice]: { price: BigNumber };
+  [ActionType.ToggleRetryingCreate]: {};
   [ActionType.ToggleStep]: { step: Step };
   [ActionType.UpdateStepStatus]: { step: Step; status: StepStatus };
-  [ActionType.ResetEmbalmState]: { step: Step };
-  [ActionType.SetCurrentChainId]: { chainId: number | undefined };
+  [ActionType.ToggleIsBuyingSarco]: {};
 };
 
 export function goToStep(step: Step): EmbalmActions {
@@ -143,6 +150,13 @@ export function toggleStep(step: Step): EmbalmActions {
     payload: {
       step,
     },
+  };
+}
+
+export function toggleSponsorBundlr(): EmbalmActions {
+  return {
+    type: ActionType.ToggleSponsorBundlr,
+    payload: {},
   };
 }
 
@@ -250,6 +264,22 @@ export function deselectArchaeologist(address: string): EmbalmActions {
     payload: {
       address,
     },
+  };
+}
+
+export function setSarcoQuoteInterval(interval: NodeJS.Timer): EmbalmActions {
+  return {
+    type: ActionType.SetSarcoQuoteInterval,
+    payload: {
+      interval,
+    },
+  };
+}
+
+export function clearSarcoQuoteInterval(): EmbalmActions {
+  return {
+    type: ActionType.ClearSarcoQuoteInterval,
+    payload: {},
   };
 }
 
@@ -378,6 +408,22 @@ export function setCurrentChainId(chainId: number | undefined): EmbalmActions {
     payload: {
       chainId,
     },
+  };
+}
+
+export function setTotalFees(amount: BigNumber): EmbalmActions {
+  return {
+    type: ActionType.SetTotalFees,
+    payload: {
+      amount,
+    },
+  };
+}
+
+export function toggleIsBuyingSarco(): EmbalmActions {
+  return {
+    type: ActionType.ToggleIsBuyingSarco,
+    payload: {},
   };
 }
 

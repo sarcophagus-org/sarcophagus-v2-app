@@ -1,16 +1,21 @@
-import { Button, Flex, Heading, Text } from '@chakra-ui/react';
-import { EmbalmerFacet__factory } from '@sarcophagus-org/sarcophagus-v2-contracts';
+import { Button, Checkbox, Flex, Heading, Text } from '@chakra-ui/react';
+import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { RetryCreateModal } from 'components/RetryCreateModal';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { RouteKey, RoutesPathMap } from 'pages';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContract, useSigner } from 'wagmi';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
-import { useNetworkConfig } from '../../../../lib/config';
 import { useDispatch, useSelector } from '../../../../store';
-import { goToStep, setArchaeologists, setCancelToken } from '../../../../store/embalm/actions';
+import {
+  clearSarcoQuoteInterval,
+  goToStep,
+  setArchaeologists,
+  setCancelToken,
+  setSarcoQuoteInterval,
+  toggleIsBuyingSarco,
+} from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
 import { ProgressTracker } from '../components/ProgressTracker';
@@ -23,14 +28,14 @@ import {
   useCreateSarcophagus,
 } from '../hooks/useCreateSarcophagus/useCreateSarcophagus';
 import { useLoadArchaeologists } from '../hooks/useLoadArchaeologists';
+import { useSarcoFees } from '../hooks/useSarcoFees';
+import { useSarcoQuote } from '../hooks/useSarcoQuote';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
-  const { cancelCreateToken, retryingCreate } = useSelector(s => s.embalmState);
-  const { timestampMs } = useSelector(x => x.appState);
+  const { cancelCreateToken, retryingCreate, isBuyingSarco } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { allowance } = useAllowance();
@@ -38,55 +43,32 @@ export function CreateSarcophagus() {
     defaultCreateSarcophagusStages
   );
 
-  const networkConfig = useNetworkConfig();
-  const { data: signer } = useSigner();
+  const { archaeologists } = useSelector(x => x.embalmState);
 
-  const embalmerFacet = useContract({
-    address: networkConfig.diamondDeployAddress,
-    abi: EmbalmerFacet__factory.abi,
-    signerOrProvider: signer,
-  });
+  const { totalFees, totalDiggingFees, protocolFee } = useSarcoFees();
 
-  const {
-    archaeologists,
-    selectedArchaeologists,
-    resurrection: resurrectionTimeMs,
-  } = useSelector(x => x.embalmState);
+  // TODO -- buffer is temporarily removed. Determine if we need a buffer.
+  // When testing, it was confusing that swap amount was more than required fees.
+  const totalFeesWithBuffer = totalFees;
 
   const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
-  const [totalDiggingFees, setTotalDiggingFees] = useState<BigNumber>();
-  const [protocolFee, setProtocolFee] = useState<BigNumber>();
-  const [totalFeesWithApproveBuffer, setTotalFeesWithApproveBuffer] = useState(
-    ethers.constants.Zero
-  );
+  const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
+
+  const { sarcoQuoteETHAmount, sarcoQuoteInterval, sarcoQuoteError } = useSarcoQuote(sarcoDeficit);
 
   useEffect(() => {
-    const fetchFees = async () => {
-      const { totalDiggingFees: diggingFees, protocolFee: protocolFeeVal } =
-        await sarco.archaeologist.getTotalFeesInSarco(
-          selectedArchaeologists,
-          resurrectionTimeMs,
-          timestampMs
-        );
+    if (sarcoQuoteETHAmount === '0') {
+      dispatch(clearSarcoQuoteInterval());
+    }
+  }, [dispatch, sarcoQuoteETHAmount]);
 
-      setTotalDiggingFees(diggingFees);
-      setProtocolFee(protocolFeeVal);
-
-      const totalCurseFees = selectedArchaeologists.reduce(
-        (acc, archaeologist) => acc.add(archaeologist.profile.curseFee),
-        BigNumber.from(0)
-      );
-
-      const diggingFeesAndCurseFees = diggingFees.add(totalCurseFees);
-      const totalFees = diggingFeesAndCurseFees.add(protocolFeeVal);
-
-      setTotalFeesWithApproveBuffer(totalFees.add(totalFees.div(10)));
-    };
-
-    fetchFees();
-  }, [resurrectionTimeMs, selectedArchaeologists, timestampMs]);
+  useEffect(() => {
+    if (!!sarcoQuoteInterval) {
+      dispatch(setSarcoQuoteInterval(sarcoQuoteInterval));
+    }
+  }, [dispatch, sarcoQuoteInterval]);
 
   const {
     currentStage,
@@ -97,7 +79,7 @@ export function CreateSarcophagus() {
     retryCreateSarcophagus,
     successData,
     clearSarcophagusState,
-  } = useCreateSarcophagus(createSarcophagusStages, embalmerFacet!, totalFeesWithApproveBuffer);
+  } = useCreateSarcophagus(createSarcophagusStages, totalFeesWithBuffer);
 
   const isCreateProcessStarted = (): boolean => currentStage !== CreateSarcophagusStage.NOT_STARTED;
 
@@ -115,17 +97,26 @@ export function CreateSarcophagus() {
   }, [cancelCreateToken, clearSarcophagusState, dispatch, navigate]);
 
   useEffect(() => {
+    let stepsCopy = { ...defaultCreateSarcophagusStages };
+
     // remove approval step if user has enough allowance on sarco token
-    if (
-      !!createSarcophagusStages[CreateSarcophagusStage.APPROVE] &&
-      allowance &&
-      BigNumber.from(allowance).gte(totalFeesWithApproveBuffer)
-    ) {
-      const stepsCopy = { ...defaultCreateSarcophagusStages };
-      delete stepsCopy[CreateSarcophagusStage.APPROVE];
+    if (allowance && BigNumber.from(allowance).gte(totalFeesWithBuffer)) {
+      const { [CreateSarcophagusStage.APPROVE]: removedApproval, ...rest } = stepsCopy;
+      stepsCopy = rest;
+    }
+
+    // remove buy sarco step if the user has enough sarco
+    if (sarcoDeficit.lte(0) || !isBuyingSarco) {
+      const { [CreateSarcophagusStage.BUY_SARCO]: removedBuySarco, ...rest } = stepsCopy;
+      stepsCopy = rest;
+    }
+
+    // Only update state if there's a change
+    if (JSON.stringify(stepsCopy) !== JSON.stringify(createSarcophagusStages)) {
       setCreateSarcophagusStages(stepsCopy);
     }
-  }, [allowance, createSarcophagusStages, totalFeesWithApproveBuffer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowance, isBuyingSarco, sarcoDeficit, totalFeesWithBuffer]); // Removed createSarcophagusStages from the dependency array
 
   // Reload the archaeologist list when create is completed. This is so that free bonds from the
   // arch profiles will be updated.
@@ -156,6 +147,10 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
+  function handleChangeBuySarcoChecked() {
+    dispatch(toggleIsBuyingSarco());
+  }
+
   return (
     <Flex
       direction="column"
@@ -166,16 +161,53 @@ export function CreateSarcophagus() {
       {!isCreateProcessStarted() ? (
         <>
           <ReviewSarcophagus />
-          <Flex justifyContent="center">
+          <Flex
+            alignSelf="center"
+            display="flex"
+            flexDirection="column"
+            w={350}
+            pt={6}
+          >
+            {sarcoDeficit.gt(0) && (
+              <Flex flexDirection="column">
+                <Checkbox
+                  defaultChecked
+                  isChecked={isBuyingSarco}
+                  onChange={handleChangeBuySarcoChecked}
+                >
+                  <Text>Swap ETH for SARCO</Text>
+                </Checkbox>
+                <Text
+                  mt={3}
+                  variant="secondary"
+                >
+                  {isBuyingSarco
+                    ? sarcoQuoteError
+                      ? `There was a problem getting a SARCO quote: ${sarcoQuoteError}`
+                      : `${sarco.utils.formatSarco(
+                          sarcoQuoteETHAmount,
+                          18
+                        )} ETH will be swapped for ${sarco.utils.formatSarco(
+                          sarcoDeficit.toString()
+                        )} SARCO before the sarcophagus is created.`
+                    : `Your current SARCO balance is ${sarco.utils.formatSarco(
+                        balance ? balance.toString() : '0'
+                      )} SARCO, but required balance is ${sarco.utils.formatSarco(
+                        totalFeesWithBuffer.toString()
+                      )} SARCO. 
+                    You can check the box to automatically swap ETH to purchase the required balance during the creation process.`}
+                </Text>
+              </Flex>
+            )}
             <Button
-              w={250}
+              w="full"
               p={6}
-              mt={9}
+              mt={6}
               onClick={handleCreate}
-              disabled={
+              isDisabled={
                 !totalDiggingFees ||
                 !protocolFee ||
-                balance?.lte(totalDiggingFees.add(protocolFee)) ||
+                (sarcoDeficit.gt(0) && !isBuyingSarco) ||
                 !isSarcophagusFormDataComplete() ||
                 isError
               }
@@ -193,12 +225,25 @@ export function CreateSarcophagus() {
             retryStage={retryStage}
             isApproved={createSarcophagusStages[CreateSarcophagusStage.APPROVE] === undefined}
           >
-            {Object.values(createSarcophagusStages)
+            {Object.keys(createSarcophagusStages)
+              .map(stageIndexString => Number.parseInt(stageIndexString))
+
               // Necessarily, a couple of these mappings don't have UI importance, thus no titles.
-              .filter(text => !!text)
-              .map(stage => (
-                <ProgressTrackerStage key={stage}>{stage}</ProgressTrackerStage>
-              ))}
+              .filter(stageIndex => !!createSarcophagusStages[stageIndex])
+              .map(stageIndex => {
+                const stageName = createSarcophagusStages[stageIndex];
+                const trueStageIndex = Object.values(defaultCreateSarcophagusStages).indexOf(
+                  stageName
+                );
+                return (
+                  <ProgressTrackerStage
+                    stageIndex={trueStageIndex}
+                    key={stageName}
+                  >
+                    {stageName}
+                  </ProgressTrackerStage>
+                );
+              })}
           </ProgressTracker>
           {stageInfo && !stageError && (
             <Flex

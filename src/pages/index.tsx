@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Link, Spinner, Text, Tooltip } from '@chakra-ui/react';
 import { ConnectWalletButton } from 'components/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { Navigate, NavLink, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
@@ -8,7 +8,6 @@ import { DashboardPage } from './DashboardPage';
 import { DetailsPage } from './DetailsPage';
 import { EmbalmPage } from './EmbalmPage';
 import { BundlrPage } from './BundlrPage';
-import { TempResurrectionPage } from './TempResurrectionPage';
 import { RecipientsPage } from './RecipientsPage';
 import { ThemeTestPage } from './ThemeTestPage';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
@@ -28,7 +27,6 @@ export enum RouteKey {
   DASHBOARD_PAGE,
   EMBALM_PAGE,
   RECIPIENTS,
-  TEMP_RESURRECTION_PAGE,
   SARCOPHAGUS_CREATED,
   THEME_TEST_PAGE,
   ACCUSE_PAGE,
@@ -42,7 +40,6 @@ export const RoutesPathMap: { [key: number]: string } = {
   [RouteKey.DASHBOARD_PAGE]: '/dashboard',
   [RouteKey.EMBALM_PAGE]: '/embalm',
   [RouteKey.RECIPIENTS]: '/recipients',
-  [RouteKey.TEMP_RESURRECTION_PAGE]: '/temp-resurrection',
   [RouteKey.SARCOPHAGUS_CREATED]: '/sarcophagus-created',
   [RouteKey.THEME_TEST_PAGE]: '/theme-test',
   [RouteKey.ACCUSE_PAGE]: '/accuse',
@@ -103,12 +100,6 @@ export function Pages() {
       tooltip: 'Fund or withdraw from your Bundlr account',
     },
     {
-      path: RoutesPathMap[RouteKey.TEMP_RESURRECTION_PAGE],
-      element: <TempResurrectionPage />,
-      label: 'TempResurrectionPage',
-      hidden: true,
-    },
-    {
       path: RoutesPathMap[RouteKey.RECIPIENTS],
       element: <RecipientsPage />,
       label: 'Recipients',
@@ -142,7 +133,7 @@ export function Pages() {
   // Globally stores the timestamp from the latest block
   useTimestampMs();
 
-  const { isSupportedChain, isSarcoInitialized } = useSupportedNetwork();
+  const { isSupportedChain, isSarcoInitialized, isInitialisingSarcoSdk } = useSupportedNetwork();
   const currentCommitHash = process.env.REACT_APP_COMMIT_REF;
 
   return (
@@ -212,9 +203,7 @@ export function Pages() {
           height="100%"
           pt={50}
         >
-          {!isSarcoInitialized ? (
-            <Flex></Flex>
-          ) : isConnected && isSupportedChain ? (
+          {isSarcoInitialized && isConnected && isSupportedChain ? (
             <Routes>
               <Route
                 path="/"
@@ -234,7 +223,16 @@ export function Pages() {
             </Routes>
           ) : (
             <CreateSarcophagusContextProvider>
-              <WalletDisconnectPage />
+              {isInitialisingSarcoSdk ? (
+                <Center
+                  height="100%"
+                  width="100%"
+                >
+                  <Spinner size="xl" />
+                </Center>
+              ) : (
+                <WalletDisconnectPage />
+              )}
             </CreateSarcophagusContextProvider>
           )}
         </Flex>

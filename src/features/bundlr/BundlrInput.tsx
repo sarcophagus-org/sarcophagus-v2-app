@@ -10,6 +10,7 @@ import {
 import { BigNumber, ethers } from 'ethers';
 import { uploadPriceDecimals } from 'lib/constants';
 import { useEffect, useState } from 'react';
+import { useNetwork } from 'wagmi';
 
 const inputLimit = 46;
 
@@ -31,6 +32,8 @@ export const BundlrInput = ({
   }`;
   const [inputAmount, setInputAmount] = useState(initialInputStr);
   const [initialised, setInitialised] = useState(false);
+
+  const { chain } = useNetwork();
 
   useEffect(() => {
     if (!initialised && !!initialInputStr) {
@@ -86,7 +89,7 @@ export const BundlrInput = ({
           mr="30px"
           fontWeight={700}
         >
-          ETH
+          {chain?.nativeCurrency?.name || 'ETH'}
         </InputRightElement>
 
         <NumberInputStepper>

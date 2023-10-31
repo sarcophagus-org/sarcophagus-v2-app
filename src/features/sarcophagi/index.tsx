@@ -11,7 +11,6 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 import { NoSarcpohagi } from './components/NoSarcophagi';
 import { SarcoTab } from './components/SarcoTab';
@@ -38,14 +37,16 @@ export function Sarcophagi() {
     if (isSarcoInitialized) {
       // EMBALMER SARCO
       setIsLoadingEmbalmerSarcophagi(true);
-      sarco.api.getEmbalmerSarcophagi(address || ethers.constants.AddressZero).then(res => {
+      if (!address) return;
+      sarco.api.getEmbalmerSarcophagi(address).then(res => {
         setEmbalmerSarcophagi(res);
         setIsLoadingEmbalmerSarcophagi(false);
       });
 
       // RECIPIENT SARCO
       setIsLoadingRecipientSarcophagi(true);
-      sarco.api.getRecipientSarcophagi(address || ethers.constants.AddressZero).then(res => {
+      if (!address) return;
+      sarco.api.getRecipientSarcophagi(address).then(res => {
         setRecipientSarcophagi(res);
         setIsLoadingRecipientSarcophagi(false);
       });

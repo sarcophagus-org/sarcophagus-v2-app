@@ -1,15 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from '../../../../../store';
-import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
+import { BigNumber } from 'ethers';
 import { useArchaeologistSignatureNegotiation } from 'features/embalm/stepContent/hooks/useCreateSarcophagus/useArchaeologistSignatureNegotiation';
-import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
-import { BigNumber, ethers } from 'ethers';
-import { formatCreateSarcophagusError } from '../../utils/errors';
-import { useDialArchaeologists } from './useDialArchaeologists';
-import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
-import { useSubmitSarcophagus } from './useSubmitSarcophagus';
-import { useClearSarcophagusState } from './useClearSarcophagusState';
 import { useApprove } from 'hooks/sarcoToken/useApprove';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { disableSteps, toggleRetryingCreate } from 'store/embalm/actions';
+import { useDispatch, useSelector } from '../../../../../store';
+import { CreateSarcophagusStage } from '../../utils/createSarcophagus';
+import { formatCreateSarcophagusError } from '../../utils/errors';
+import { useBuySarco } from './useBuySarco';
+import { useClearSarcophagusState } from './useClearSarcophagusState';
+import { useDialArchaeologists } from './useDialArchaeologists';
+import { useSubmitSarcophagus } from './useSubmitSarcophagus';
+import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
 
 export class CancelCreateToken {
   cancelled: boolean;
@@ -25,7 +26,6 @@ export class CancelCreateToken {
 
 export function useCreateSarcophagus(
   createSarcophagusStages: Record<number, string>,
-  embalmerFacet: ethers.Contract,
   approveAmount: BigNumber
 ) {
   const dispatch = useDispatch();
@@ -42,6 +42,7 @@ export function useCreateSarcophagus(
   const { dialSelectedArchaeologists } = useDialArchaeologists();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetArweavePayload, uploadStep } = useUploadFileAndKeyShares();
+  const { buySarco } = useBuySarco();
   const { approve: approveSarcoToken } = useApprove({ amount: approveAmount });
   const { submitSarcophagus } = useSubmitSarcophagus();
   const { clearSarcophagusState, successData } = useClearSarcophagusState();
@@ -51,6 +52,7 @@ export function useCreateSarcophagus(
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, ''],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, ''],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadStep],
+      [CreateSarcophagusStage.BUY_SARCO, 'Waiting for transaction'],
       [CreateSarcophagusStage.APPROVE, 'Waiting for transaction'],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, 'Waiting for transaction'],
       [CreateSarcophagusStage.CLEAR_STATE, ''],
@@ -66,6 +68,7 @@ export function useCreateSarcophagus(
     return new Map<CreateSarcophagusStage, (...args: any[]) => Promise<any>>([
       [CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS, dialSelectedArchaeologists],
       [CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION, initiateSarcophagusNegotiation],
+      [CreateSarcophagusStage.BUY_SARCO, buySarco],
       [CreateSarcophagusStage.UPLOAD_PAYLOAD, uploadAndSetArweavePayload],
       [CreateSarcophagusStage.APPROVE, approveSarcoToken],
       [CreateSarcophagusStage.SUBMIT_SARCOPHAGUS, submitSarcophagus],
@@ -76,6 +79,7 @@ export function useCreateSarcophagus(
     dialSelectedArchaeologists,
     initiateSarcophagusNegotiation,
     uploadAndSetArweavePayload,
+    buySarco,
     approveSarcoToken,
     submitSarcophagus,
     clearSarcophagusState,
@@ -118,6 +122,34 @@ export function useCreateSarcophagus(
             });
         });
 
+      const didConnectionDrop = (error: any): boolean => {
+        return (
+          currentStage === CreateSarcophagusStage.ARCHAEOLOGIST_NEGOTIATION &&
+          error.message &&
+          error.message.includes('connection is closed')
+        );
+      };
+      const retryDialStage = async () => {
+        console.log('dial dropped during negotiation, retrying dial stage');
+        setCurrentStage(CreateSarcophagusStage.DIAL_ARCHAEOLOGISTS);
+        setStageError(undefined);
+        setIsStageRetry(true);
+      };
+      const handleStageError = async (error: any) => {
+        // If archaeologist connection drops during negotiation step,
+        // Re-try dialing step
+        if (didConnectionDrop(error)) {
+          await retryDialStage();
+        } else {
+          const stageErrorMessage = formatCreateSarcophagusError(
+            currentStage,
+            error,
+            selectedArchaeologists
+          );
+          setStageError(stageErrorMessage);
+        }
+      };
+
       if (!stageExecuting && !stageError && currentStage !== CreateSarcophagusStage.COMPLETED) {
         try {
           const currentStageFunction = stagesMap.get(currentStage);
@@ -125,13 +157,7 @@ export function useCreateSarcophagus(
             await executeStage(currentStageFunction, isStageRetry, cancelCreateToken);
           }
         } catch (error: any) {
-          console.log(error);
-          const stageErrorMessage = formatCreateSarcophagusError(
-            currentStage,
-            error,
-            selectedArchaeologists
-          );
-          setStageError(stageErrorMessage);
+          await handleStageError(error);
         }
       }
     })();

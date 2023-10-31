@@ -1,8 +1,8 @@
+import { SarcoNetworkConfig } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { createContext, useContext } from 'react';
-import { NetworkConfig } from './networkConfigType';
 
-export const NetworkConfigContext = createContext<NetworkConfig>({} as NetworkConfig);
+export const NetworkConfigContext = createContext<SarcoNetworkConfig>({} as SarcoNetworkConfig);
 
-export function useNetworkConfig(): NetworkConfig {
+export function useNetworkConfig(): SarcoNetworkConfig {
   return useContext(NetworkConfigContext);
 }

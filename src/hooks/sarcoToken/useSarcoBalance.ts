@@ -8,7 +8,7 @@ export function useSarcoBalance() {
   const { address } = useAccount();
   const networkConfig = useNetworkConfig();
   const { data, isError, isLoading } = useContractRead({
-    address: networkConfig.sarcoTokenAddress,
+    address: networkConfig.sarcoTokenAddress as `0x${string}`,
     abi: SarcoTokenMock__factory.abi,
     functionName: 'balanceOf',
     args: [address],

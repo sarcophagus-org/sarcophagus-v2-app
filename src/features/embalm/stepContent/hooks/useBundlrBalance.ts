@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
+import { useToast } from '@chakra-ui/react';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { bundlrBalanceDecimals } from 'lib/constants';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -6,10 +7,12 @@ import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { resetBalanceOffset, setBalance } from 'store/bundlr/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { useNetwork } from 'wagmi';
+import { fundsUpdated } from 'lib/utils/toast';
 
 const fetchBalanceTimeout = 5_000;
 
 export function useBundlrBalance() {
+  const toast = useToast();
   const dispatch = useDispatch();
   const { balance, balanceOffset } = useSelector(x => x.bundlrState);
   const { chain } = useNetwork();
@@ -36,10 +39,11 @@ export function useBundlrBalance() {
   // Effect that loads the balance when the component mounts and if the bundlr is instantiated
   useEffect(() => {
     (async () => {
+      if (!isBundlrConnected) return;
       const newBalance = await getBalance();
       dispatch(setBalance(newBalance));
     })();
-  }, [dispatch, getBalance]);
+  }, [dispatch, getBalance, isBundlrConnected]);
 
   // Effect that runs an interval which queries the bundlr balance if the balanceOffset is not 0. If
   // the balance coming from the bundlr turns out to match the current balance plus the
@@ -56,6 +60,7 @@ export function useBundlrBalance() {
         // amount.
         if (balance.add(balanceOffset).eq(newBalance)) {
           dispatch(resetBalanceOffset());
+          toast(fundsUpdated());
         }
 
         // Set the balance to the retreived balance on each interval
@@ -66,7 +71,7 @@ export function useBundlrBalance() {
     return () => {
       clearInterval(timeoutId);
     };
-  }, [balance, balanceOffset, dispatch, getBalance]);
+  }, [balance, balanceOffset, dispatch, getBalance, toast]);
 
   return { balance, getBalance, formattedBalance };
 }
