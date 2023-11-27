@@ -7,16 +7,15 @@ import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 import {
   sepolia,
   mainnet,
-  goerli,
   hardhat,
   polygonMumbai,
-  baseGoerli,
+  arbitrum,
   polygon,
 } from '@wagmi/core/chains';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
-    [mainnet, goerli, hardhat, sepolia, polygonMumbai, baseGoerli, polygon],
+    [mainnet, hardhat, sepolia, polygonMumbai, arbitrum, polygon],
     [
       // jsonRpcProvider({
       //   rpc: () => ({
