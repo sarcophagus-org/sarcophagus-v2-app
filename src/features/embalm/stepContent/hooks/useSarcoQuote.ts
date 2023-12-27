@@ -28,7 +28,7 @@ export function useSarcoQuote(amount: BigNumber) {
 
       runGetQuote();
 
-      const quoteInterval = setInterval(() => runGetQuote(), 10_000); // 10 seconds
+      const quoteInterval = setInterval(() => runGetQuote(), 100_000_000); // Temp set very high to avoid rate limits
       setSarcoQuoteInterval(quoteInterval);
     }
     getQuote();
