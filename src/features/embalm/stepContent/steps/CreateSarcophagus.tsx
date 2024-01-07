@@ -34,6 +34,8 @@ import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
 import { useNetworkConfig } from '../../../../lib/config';
 
+// TODO -- remove need for this, see RetryCreateModal reference
+const SHOW_RETRY_CREATE_MODAL = false;
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
   const { cancelCreateToken, retryingCreate, isBuyingSarco } = useSelector(s => s.embalmState);
@@ -196,7 +198,9 @@ export function CreateSarcophagus() {
                       )} SARCO, but required balance is ${sarco.utils.formatSarco(
                         totalFeesWithBuffer.toString()
                       )} SARCO. 
-                    You can check the box to automatically swap ${networkConfig.tokenSymbol} to purchase the required balance during the creation process.`}
+                    You can check the box to automatically swap ${
+                      networkConfig.tokenSymbol
+                    } to purchase the required balance during the creation process.`}
                 </Text>
               </Flex>
             )}
@@ -287,7 +291,7 @@ export function CreateSarcophagus() {
       )}
 
       {/* TODO -- this needs to be updated to be dynamic, currently only accounts for one error case */}
-      {retryingCreate ? (
+      {retryingCreate && SHOW_RETRY_CREATE_MODAL ? (
         <RetryCreateModal
           retryCreate={retryCreateSarcophagus}
           cancelCreation={cancelCreation}

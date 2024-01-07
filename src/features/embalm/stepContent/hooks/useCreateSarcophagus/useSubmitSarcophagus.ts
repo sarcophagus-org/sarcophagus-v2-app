@@ -24,10 +24,6 @@ export function useSubmitSarcophagus() {
   } = useContext(CreateSarcophagusContext);
 
   const submitSarcophagus = useCallback(async () => {
-    if (retryingCreate) {
-      throw new Error('Retrying...');
-    }
-
     const { submitSarcophagusArgs } = sarco.utils.formatSubmitSarcophagusArgs({
       name,
       recipientState,
