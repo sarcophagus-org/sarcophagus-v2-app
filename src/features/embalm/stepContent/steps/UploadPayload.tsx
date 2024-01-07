@@ -98,22 +98,29 @@ export function UploadPayload() {
               </Text>
             </Tooltip>
             <Text>Size: {prettyBytes(file.size)}</Text>
-            {canBeSponsored ? (<HStack
-              cursor={'pointer'}
-              onClick={e => {
-                e.stopPropagation();
-                dispatch(toggleSponsorBundlr());
-              }}
-            >
-              <Checkbox
-                mr={1}
-                isChecked={sponsorBundlr}
-                onChange={() => dispatch(toggleSponsorBundlr())}
-              />
-              <Text>Use sponsored upload</Text>
-            </HStack>
+            {canBeSponsored ? (
+              <HStack
+                cursor={'pointer'}
+                onClick={e => {
+                  e.stopPropagation();
+                  dispatch(toggleSponsorBundlr());
+                }}
+              >
+                <Checkbox
+                  mr={1}
+                  isChecked={sponsorBundlr}
+                  onChange={() => dispatch(toggleSponsorBundlr())}
+                />
+                <Text>Use sponsored upload</Text>
+              </HStack>
             ) : (
-              <Text fontSize='xs' as='i' variant="secondary">Max size for sponsored Bundlr file is 5MB</Text>
+              <Text
+                fontSize="xs"
+                as="i"
+                variant="secondary"
+              >
+                Max size for sponsored Bundlr file is 5MB
+              </Text>
             )}
             {!sponsorBundlr ? (
               <Text>

@@ -196,7 +196,7 @@ export function CreateSarcophagus() {
                       )} SARCO, but required balance is ${sarco.utils.formatSarco(
                         totalFeesWithBuffer.toString()
                       )} SARCO. 
-                    You can check the box to automatically swap ETH to purchase the required balance during the creation process.`}
+                    You can check the box to automatically swap ${networkConfig.tokenSymbol} to purchase the required balance during the creation process.`}
                 </Text>
               </Flex>
             )}
@@ -286,6 +286,7 @@ export function CreateSarcophagus() {
         </>
       )}
 
+      {/* TODO -- this needs to be updated to be dynamic, currently only accounts for one error case */}
       {retryingCreate ? (
         <RetryCreateModal
           retryCreate={retryCreateSarcophagus}
