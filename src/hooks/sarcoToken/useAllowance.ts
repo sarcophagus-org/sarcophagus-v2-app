@@ -20,6 +20,7 @@ export function useAllowance() {
         setError(null);
         setIsError(false);
       } catch (e) {
+        console.error(`error fetching allowance ${e}`);
         const err = e as Error;
         setError(err.message);
         setIsError(true);

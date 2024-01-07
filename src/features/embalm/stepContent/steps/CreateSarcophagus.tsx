@@ -32,6 +32,7 @@ import { useSarcoFees } from '../hooks/useSarcoFees';
 import { useSarcoQuote } from '../hooks/useSarcoQuote';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
+import { useNetworkConfig } from '../../../../lib/config';
 
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
@@ -42,6 +43,7 @@ export function CreateSarcophagus() {
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
   );
+  const networkConfig = useNetworkConfig();
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
@@ -175,7 +177,7 @@ export function CreateSarcophagus() {
                   isChecked={isBuyingSarco}
                   onChange={handleChangeBuySarcoChecked}
                 >
-                  <Text>Swap ETH for SARCO</Text>
+                  <Text>Swap {networkConfig.tokenSymbol} for SARCO</Text>
                 </Checkbox>
                 <Text
                   mt={3}
@@ -187,7 +189,7 @@ export function CreateSarcophagus() {
                       : `${sarco.utils.formatSarco(
                           sarcoQuoteETHAmount,
                           18
-                        )} ETH will be swapped for ${sarco.utils.formatSarco(
+                        )} ${networkConfig.tokenSymbol} will be swapped for ${sarco.utils.formatSarco(
                           sarcoDeficit.toString()
                         )} SARCO before the sarcophagus is created.`
                     : `Your current SARCO balance is ${sarco.utils.formatSarco(
