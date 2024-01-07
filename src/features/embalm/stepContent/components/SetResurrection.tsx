@@ -10,9 +10,12 @@ export enum ResurrectionRadioValue {
   NinetyDays = '90 days',
 }
 
+const MIN_RESURRECTION_DELAY = 30 * 60 * 1000;
+
 export function SetResurrection({ ...rest }: FlexProps) {
   const options = Object.values(ResurrectionRadioValue);
   const { timestampMs } = useSelector(x => x.appState);
+  const minResurrectionTime = timestampMs + MIN_RESURRECTION_DELAY;
 
   const {
     error,
@@ -67,14 +70,14 @@ export function SetResurrection({ ...rest }: FlexProps) {
               onChange={handleCustomDateChange}
               onInputClick={handleCustomDateClick}
               showTimeSelect
-              minDate={new Date(timestampMs)}
+              minDate={new Date(minResurrectionTime)}
               showPopperArrow={false}
               timeIntervals={30}
               timeCaption="Time"
               timeFormat="hh:mma"
               dateFormat="MM.dd.yyyy hh:mma"
               fixedHeight
-              filterTime={date => timestampMs < date.getTime()}
+              filterTime={date => date.getTime() >= minResurrectionTime}
               customInput={<CustomResurrectionButton />}
             />
           </Radio>

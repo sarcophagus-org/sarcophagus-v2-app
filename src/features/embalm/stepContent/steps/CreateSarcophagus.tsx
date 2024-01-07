@@ -186,10 +186,9 @@ export function CreateSarcophagus() {
                   {isBuyingSarco
                     ? sarcoQuoteError
                       ? `There was a problem getting a SARCO quote: ${sarcoQuoteError}`
-                      : `${sarco.utils.formatSarco(
-                          sarcoQuoteETHAmount,
-                          18
-                        )} ${networkConfig.tokenSymbol} will be swapped for ${sarco.utils.formatSarco(
+                      : `${sarco.utils.formatSarco(sarcoQuoteETHAmount, 18)} ${
+                          networkConfig.tokenSymbol
+                        } will be swapped for ${sarco.utils.formatSarco(
                           sarcoDeficit.toString()
                         )} SARCO before the sarcophagus is created.`
                     : `Your current SARCO balance is ${sarco.utils.formatSarco(
