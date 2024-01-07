@@ -8,10 +8,13 @@ import { useUploadPayload } from '../hooks/useUploadPayload';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useDispatch, useSelector } from 'store/index';
 import { toggleSponsorBundlr } from 'store/embalm/actions';
+import { useState, useEffect } from 'react';
 
+const MAX_SPONSORED_FILE_SIZE = 5000000; // 5 MB
 export function UploadPayload() {
   const { error, file, handleSetFile, fileInputRef } = useUploadPayload();
   const { formattedUploadPrice } = useUploadPrice();
+  const [canBeSponsored, setCanBeSponsored] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -46,6 +49,18 @@ export function UploadPayload() {
 
   const filenameTooltip =
     !!file && file.name.length > maxSarcophagusNameLength * 2 ? file.name : '';
+
+  useEffect(() => {
+    if (file && file.size <= MAX_SPONSORED_FILE_SIZE) {
+      setCanBeSponsored(true);
+    } else {
+      setCanBeSponsored(false);
+      // If sponsored upload is true, set to false.
+      if (sponsorBundlr) {
+        dispatch(toggleSponsorBundlr());
+      }
+    }
+  }, [file]);
 
   return (
     <VStack
@@ -83,7 +98,7 @@ export function UploadPayload() {
               </Text>
             </Tooltip>
             <Text>Size: {prettyBytes(file.size)}</Text>
-            <HStack
+            {canBeSponsored ? (<HStack
               cursor={'pointer'}
               onClick={e => {
                 e.stopPropagation();
@@ -97,6 +112,9 @@ export function UploadPayload() {
               />
               <Text>Use sponsored upload</Text>
             </HStack>
+            ) : (
+              <Text fontSize='xs' as='i' variant="secondary">Max size for sponsored Bundlr file is 5MB</Text>
+            )}
             {!sponsorBundlr ? (
               <Text>
                 {"Bundlr's upload price: "}
