@@ -1,10 +1,10 @@
-import { Button, Checkbox, Flex, Heading, Text } from '@chakra-ui/react';
+import { Button, Center, Checkbox, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { RouteKey, RoutesPathMap } from 'pages';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useDispatch, useSelector } from '../../../../store';
@@ -38,10 +38,10 @@ import { useNetworkConfig } from '../../../../lib/config';
 const SHOW_RETRY_CREATE_MODAL = false;
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
+  const { allowance } = useAllowance();
   const { cancelCreateToken, retryingCreate, isBuyingSarco } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { allowance } = useAllowance();
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
   );
@@ -49,7 +49,7 @@ export function CreateSarcophagus() {
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
-  const { totalFees, totalDiggingFees, protocolFee, feesError } = useSarcoFees();
+  const { areFeesLoading, totalFees, formattedTotalDiggingFees, totalCurseFees, protocolFeeBasePercentage, totalDiggingFees, protocolFee, feesError } = useSarcoFees();
 
   // TODO -- buffer is temporarily removed. Determine if we need a buffer.
   // When testing, it was confusing that swap amount was more than required fees.
@@ -155,6 +155,17 @@ export function CreateSarcophagus() {
     dispatch(toggleIsBuyingSarco());
   }
 
+  if (areFeesLoading || feesError) {
+    return (
+      <Center
+        height="100%"
+        width="100%"
+      >
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
   return (
     <Flex
       direction="column"
@@ -164,7 +175,13 @@ export function CreateSarcophagus() {
 
       {!isCreateProcessStarted() ? (
         <>
-          <ReviewSarcophagus />
+          <ReviewSarcophagus
+            totalFees={totalFees}
+            formattedTotalDiggingFees={formattedTotalDiggingFees}
+            protocolFee={protocolFee}
+            totalCurseFees={totalCurseFees}
+            protocolFeeBasePercentage={protocolFeeBasePercentage}
+          />
           <Flex
             alignSelf="center"
             display="flex"
@@ -210,6 +227,7 @@ export function CreateSarcophagus() {
               mt={6}
               onClick={handleCreate}
               isDisabled={
+                areFeesLoading ||
                 feesError ||
                 parametersError ||
                 !totalDiggingFees ||

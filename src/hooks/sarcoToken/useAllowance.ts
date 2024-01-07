@@ -10,27 +10,33 @@ export function useAllowance() {
   const [allowanceError, setAllowanceError] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchAllowance() {
-      if (!address) return;
-      setIsLoading(true);
-      try {
-        const fetchedAllowance = await sarco.token.allowance(address);
-        setAllowance(fetchedAllowance);
-        setError(null);
-        setAllowanceError(false);
-      } catch (e) {
-        console.error(`error fetching allowance ${e}`);
-        const err = e as Error;
+  const retryInterval = 3000; // Time in milliseconds to wait before retrying
+  const maxRetries = 4; // Maximum number of retries
+
+  const fetchAllowanceWithRetry = async (retryCount: number = 0) => {
+    if (!address) return;
+    setIsLoading(true);
+    try {
+      const fetchedAllowance = await sarco.token.allowance(address);
+      setAllowance(fetchedAllowance);
+      setError(null);
+      setAllowanceError(false);
+    } catch (e) {
+      const err = e as Error;
+      if (retryCount < maxRetries) {
+        setTimeout(() => fetchAllowanceWithRetry(retryCount + 1), retryInterval);
+      } else {
         setError(err.message);
         setAllowanceError(true);
-      } finally {
-        setIsLoading(false);
       }
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    fetchAllowance();
+  useEffect(() => {
+    fetchAllowanceWithRetry();
   }, [address]);
 
-  return { allowance, isLoading, allowanceError, error };
+  return { allowance, isAllowanceLoading: isLoading, allowanceError, error };
 }

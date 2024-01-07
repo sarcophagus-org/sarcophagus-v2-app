@@ -16,10 +16,11 @@ export function useSarcoFees() {
   const [totalCurseFees, setTotalCurseFees] = useState(ethers.constants.Zero);
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('');
   const [feesError, setFeesError] = useState(false);
+  const [areFeesLoading, setAreFeesLoading] = useState(true);
 
-  useEffect(() => {
-    async function setFees() {
-      setFeesError(false);
+  const retryInterval = 3000; // Time in milliseconds to wait before retrying
+  const maxRetries = 5; // Maximum number of retries
+    const setFeesWithRetry = async (retryCount: number = 0) => {
       try {
         // Get the fees
         const {
@@ -63,15 +64,24 @@ export function useSarcoFees() {
         const diggingFeesAndCurseFees = newTotalDiggingFees.add(totalCurseFeesCalc);
         dispatch(setTotalFees(diggingFeesAndCurseFees.add(totalProtocolFees)));
       } catch (error) {
-        console.error(`error in setFees: ${error}`);
-        setFeesError(true);
+        console.error(`error in fetchFeesWithRetry: ${error}`);
+        if (retryCount < maxRetries) {
+          setTimeout(() => setFeesWithRetry(retryCount + 1), retryInterval);
+        } else {
+          setFeesError(true);
+        }
+      } finally {
+        setAreFeesLoading(false);
       }
-    }
+    };
 
-    setFees();
+  useEffect(() => {
+    setAreFeesLoading(true);
+    setFeesWithRetry();
   }, [dispatch, protocolFeeBasePercentage, resurrection, selectedArchaeologists, timestampMs]);
 
   return {
+    areFeesLoading,
     feesError,
     totalFees,
     totalDiggingFees,
