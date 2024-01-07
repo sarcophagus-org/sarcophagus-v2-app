@@ -49,13 +49,13 @@ export function CreateSarcophagus() {
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
-  const { totalFees, totalDiggingFees, protocolFee } = useSarcoFees();
+  const { totalFees, totalDiggingFees, protocolFee, feesError } = useSarcoFees();
 
   // TODO -- buffer is temporarily removed. Determine if we need a buffer.
   // When testing, it was confusing that swap amount was more than required fees.
   const totalFeesWithBuffer = totalFees;
 
-  const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
+  const { isSarcophagusFormDataComplete, parametersError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
   const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
@@ -210,11 +210,12 @@ export function CreateSarcophagus() {
               mt={6}
               onClick={handleCreate}
               isDisabled={
+                feesError ||
+                parametersError ||
                 !totalDiggingFees ||
                 !protocolFee ||
                 (sarcoDeficit.gt(0) && !isBuyingSarco) ||
-                !isSarcophagusFormDataComplete() ||
-                isError
+                !isSarcophagusFormDataComplete()
               }
             >
               Create Sarcophagus

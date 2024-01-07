@@ -15,9 +15,11 @@ export function useSarcoFees() {
   const [protocolFee, setProtocolFee] = useState(ethers.constants.Zero);
   const [totalCurseFees, setTotalCurseFees] = useState(ethers.constants.Zero);
   const [protocolFeeBasePercentage, setProtocolFeeBasePercentage] = useState('');
+  const [feesError, setFeesError] = useState(false);
 
   useEffect(() => {
     async function setFees() {
+      setFeesError(false);
       try {
         // Get the fees
         const {
@@ -62,6 +64,7 @@ export function useSarcoFees() {
         dispatch(setTotalFees(diggingFeesAndCurseFees.add(totalProtocolFees)));
       } catch (error) {
         console.error(`error in setFees: ${error}`);
+        setFeesError(true);
       }
     }
 
@@ -69,6 +72,7 @@ export function useSarcoFees() {
   }, [dispatch, protocolFeeBasePercentage, resurrection, selectedArchaeologists, timestampMs]);
 
   return {
+    feesError,
     totalFees,
     totalDiggingFees,
     formattedTotalDiggingFees,

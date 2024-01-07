@@ -7,7 +7,7 @@ export function useAllowance() {
   const { address } = useAccount();
   const [allowance, setAllowance] = useState<BigNumber | undefined>();
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [allowanceError, setAllowanceError] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,12 +18,12 @@ export function useAllowance() {
         const fetchedAllowance = await sarco.token.allowance(address);
         setAllowance(fetchedAllowance);
         setError(null);
-        setIsError(false);
+        setAllowanceError(false);
       } catch (e) {
         console.error(`error fetching allowance ${e}`);
         const err = e as Error;
         setError(err.message);
-        setIsError(true);
+        setAllowanceError(true);
       } finally {
         setIsLoading(false);
       }
@@ -32,5 +32,5 @@ export function useAllowance() {
     fetchAllowance();
   }, [address]);
 
-  return { allowance, isLoading, isError, error };
+  return { allowance, isLoading, allowanceError, error };
 }

@@ -27,7 +27,7 @@ export function useSarcoBalance() {
   return {
     balance: data as BigNumber | undefined,
     formattedBalance,
-    isError,
+    balanceError: isError,
     isLoading,
   };
 }
