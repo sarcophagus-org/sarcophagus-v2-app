@@ -239,6 +239,7 @@ export function CreateSarcophagus() {
                 areFeesLoading ||
                 feesError ||
                 parametersError ||
+                !formattedTotalDiggingFees || 
                 !totalDiggingFees ||
                 !protocolFee ||
                 (sarcoDeficit.gt(0) && !isBuyingSarco) ||
