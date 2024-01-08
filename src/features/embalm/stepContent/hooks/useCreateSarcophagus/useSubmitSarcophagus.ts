@@ -6,13 +6,8 @@ import * as Sentry from '@sentry/react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function useSubmitSarcophagus() {
-  const {
-    name,
-    recipientState,
-    resurrection,
-    selectedArchaeologists,
-    requiredArchaeologists,
-  } = useSelector(x => x.embalmState);
+  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
+    useSelector(x => x.embalmState);
 
   const {
     negotiationTimestamp,

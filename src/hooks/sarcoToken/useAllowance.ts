@@ -13,26 +13,29 @@ export function useAllowance() {
   const retryInterval = 3000; // Time in milliseconds to wait before retrying
   const maxRetries = 4; // Maximum number of retries
 
-  const fetchAllowanceWithRetry = useCallback(async (retryCount: number = 0) => {
-    if (!address) return;
-    setIsLoading(true);
-    try {
-      const fetchedAllowance = await sarco.token.allowance(address);
-      setAllowance(fetchedAllowance);
-      setError(null);
-      setAllowanceError(false);
-    } catch (e) {
-      const err = e as Error;
-      if (retryCount < maxRetries) {
-        setTimeout(() => fetchAllowanceWithRetry(retryCount + 1), retryInterval);
-      } else {
-        setError(err.message);
-        setAllowanceError(true);
+  const fetchAllowanceWithRetry = useCallback(
+    async (retryCount: number = 0) => {
+      if (!address) return;
+      setIsLoading(true);
+      try {
+        const fetchedAllowance = await sarco.token.allowance(address);
+        setAllowance(fetchedAllowance);
+        setError(null);
+        setAllowanceError(false);
+      } catch (e) {
+        const err = e as Error;
+        if (retryCount < maxRetries) {
+          setTimeout(() => fetchAllowanceWithRetry(retryCount + 1), retryInterval);
+        } else {
+          setError(err.message);
+          setAllowanceError(true);
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [address]);
+    },
+    [address]
+  );
 
   useEffect(() => {
     fetchAllowanceWithRetry();
