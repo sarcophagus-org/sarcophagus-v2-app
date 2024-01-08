@@ -1,16 +1,22 @@
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-import { useSarcoFees } from '../hooks/useSarcoFees';
+import { BigNumber } from 'ethers';
 
-export function SarcophagusSummaryFees() {
-  const {
-    totalFees,
-    formattedTotalDiggingFees,
-    protocolFee,
-    totalCurseFees,
-    protocolFeeBasePercentage,
-  } = useSarcoFees();
+export interface SummaryFeesProps {
+  totalFees: BigNumber;
+  formattedTotalDiggingFees: string;
+  protocolFee: BigNumber;
+  totalCurseFees: BigNumber;
+  protocolFeeBasePercentage: string;
+}
 
+export function SarcophagusSummaryFees({
+  totalFees,
+  formattedTotalDiggingFees,
+  protocolFee,
+  totalCurseFees,
+  protocolFeeBasePercentage,
+}: SummaryFeesProps) {
   return (
     <Box
       py={4}
