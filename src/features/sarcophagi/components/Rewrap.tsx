@@ -1,6 +1,6 @@
 import {
   Alert,
-  AlertIcon,
+  AlertIcon, Box,
   Button,
   Flex,
   Grid,
@@ -20,10 +20,12 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useSelector } from 'store/index';
+import { useSarcoQuote } from '../../embalm/stepContent/hooks/useSarcoQuote';
+import { SwapInfo } from '../../../components/SwapUX/SwapInfo';
 
 export function Rewrap() {
   const { id } = useParams();
@@ -116,10 +118,13 @@ export function Rewrap() {
   const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
   const maxResurrectionDateMs = maxResurrectionDate.getTime();
 
-  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
+  // TODO -- buffer is temporarily removed. Determine if we need a buffer.
+  const totalFeesWithBuffer = totalDiggingFees.add(protocolFee);
+  const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
+  const { sarcoQuoteETHAmount, sarcoQuoteInterval, sarcoQuoteError } = useSarcoQuote(sarcoDeficit);
 
   const { approve, isApproving } = useApprove({
-    amount: diggingPlusProtocolFees,
+    amount: totalFeesWithBuffer,
     onApprove: () =>
       setResurrectionTime(!resurrectionTime ? null : new Date(resurrectionTime.getTime() - 1)),
   });
@@ -161,15 +166,16 @@ export function Rewrap() {
     !resurrectionTime ||
     !rewrap ||
     isRewrapping ||
-    (balance && balance.lt(diggingPlusProtocolFees));
+    (balance && balance.lt(totalFeesWithBuffer));
 
-  const needsApproval = allowance?.lte(diggingPlusProtocolFees);
+  const needsApproval = allowance?.lte(totalFeesWithBuffer);
 
   return (
     <VStack
       align="left"
       spacing={10}
       pointerEvents={isRewrapping ? 'none' : 'all'}
+      pb={'30px'}
     >
       <VStack
         align="left"
@@ -286,13 +292,16 @@ export function Rewrap() {
           </Text>
         </HStack>
       </VStack>
-      {balance && balance.lt(diggingPlusProtocolFees) ? (
-        <Alert status="error">
-          <AlertIcon color="red" />
-          <Text>Insufficient SARCO balance</Text>
-        </Alert>
-      ) : (
-        <></>
+      {sarcoDeficit.gt(0) && (
+        <Box width="500px" maxWidth="90%">
+          <SwapInfo
+            isRewrap={true}
+            sarcoQuoteError={sarcoQuoteError}
+            sarcoQuoteETHAmount={sarcoQuoteETHAmount}
+            sarcoDeficit={sarcoDeficit}
+            balance={balance}
+            totalFeesWithBuffer={totalFeesWithBuffer} />
+        </Box>
       )}
       <HStack>
         <Button
