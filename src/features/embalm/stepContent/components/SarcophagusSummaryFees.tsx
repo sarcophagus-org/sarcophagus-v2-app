@@ -10,16 +10,13 @@ export interface SummaryFeesProps {
   protocolFeeBasePercentage: string;
 }
 
-export function SarcophagusSummaryFees(
-  {
-    totalFees,
-    formattedTotalDiggingFees,
-    protocolFee,
-    totalCurseFees,
-    protocolFeeBasePercentage,
-  }: SummaryFeesProps
-) {
-
+export function SarcophagusSummaryFees({
+  totalFees,
+  formattedTotalDiggingFees,
+  protocolFee,
+  totalCurseFees,
+  protocolFeeBasePercentage,
+}: SummaryFeesProps) {
   return (
     <Box
       py={4}

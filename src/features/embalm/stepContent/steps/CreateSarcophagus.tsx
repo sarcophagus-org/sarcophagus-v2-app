@@ -49,7 +49,16 @@ export function CreateSarcophagus() {
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
-  const { areFeesLoading, totalFees, formattedTotalDiggingFees, totalCurseFees, protocolFeeBasePercentage, totalDiggingFees, protocolFee, feesError } = useSarcoFees();
+  const {
+    areFeesLoading,
+    totalFees,
+    formattedTotalDiggingFees,
+    totalCurseFees,
+    protocolFeeBasePercentage,
+    totalDiggingFees,
+    protocolFee,
+    feesError,
+  } = useSarcoFees();
 
   // TODO -- buffer is temporarily removed. Determine if we need a buffer.
   // When testing, it was confusing that swap amount was more than required fees.
@@ -293,7 +302,7 @@ export function CreateSarcophagus() {
                 ml={2}
                 variant="secondary"
               >
-                = {stageError}
+                = See console for error details
               </Text>
             </Flex>
           )}

@@ -4,15 +4,13 @@ import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
 import { SarcophagusSummaryFees, SummaryFeesProps } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
-export function ReviewSarcophagus(
-  {
-    totalFees,
-    formattedTotalDiggingFees,
-    protocolFee,
-    totalCurseFees,
-    protocolFeeBasePercentage,
-  }: SummaryFeesProps
-) {
+export function ReviewSarcophagus({
+  totalFees,
+  formattedTotalDiggingFees,
+  protocolFee,
+  totalCurseFees,
+  protocolFeeBasePercentage,
+}: SummaryFeesProps) {
   const { sarcophagusParameters } = useSarcophagusParameters();
 
   return (
