@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useAccount } from 'wagmi';
 
@@ -13,7 +13,7 @@ export function useAllowance() {
   const retryInterval = 3000; // Time in milliseconds to wait before retrying
   const maxRetries = 4; // Maximum number of retries
 
-  const fetchAllowanceWithRetry = async (retryCount: number = 0) => {
+  const fetchAllowanceWithRetry = useCallback(async (retryCount: number = 0) => {
     if (!address) return;
     setIsLoading(true);
     try {
@@ -32,7 +32,7 @@ export function useAllowance() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [address]);
 
   useEffect(() => {
     fetchAllowanceWithRetry();

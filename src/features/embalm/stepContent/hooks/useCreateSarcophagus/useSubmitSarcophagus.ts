@@ -12,7 +12,6 @@ export function useSubmitSarcophagus() {
     resurrection,
     selectedArchaeologists,
     requiredArchaeologists,
-    retryingCreate,
   } = useSelector(x => x.embalmState);
 
   const {

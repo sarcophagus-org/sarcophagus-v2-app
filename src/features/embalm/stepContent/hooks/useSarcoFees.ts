@@ -1,6 +1,6 @@
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { BigNumber, ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { setTotalFees } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 
@@ -20,7 +20,8 @@ export function useSarcoFees() {
 
   const retryInterval = 3000; // Time in milliseconds to wait before retrying
   const maxRetries = 5; // Maximum number of retries
-  const setFeesWithRetry = async (retryCount: number = 0) => {
+
+  const setFeesWithRetry = useCallback(async (retryCount: number = 0) => {
     try {
       // Get the fees
       const {
@@ -73,12 +74,19 @@ export function useSarcoFees() {
     } finally {
       setAreFeesLoading(false);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     setAreFeesLoading(true);
     setFeesWithRetry();
-  }, [dispatch, protocolFeeBasePercentage, resurrection, selectedArchaeologists, timestampMs, setFeesWithRetry]);
+  }, [
+    dispatch,
+    protocolFeeBasePercentage,
+    resurrection,
+    selectedArchaeologists,
+    timestampMs,
+    setFeesWithRetry,
+  ]);
 
   return {
     areFeesLoading,
