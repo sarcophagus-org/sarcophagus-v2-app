@@ -53,7 +53,6 @@ export function useSubmitSarcophagus() {
     recipientState,
     requiredArchaeologists,
     resurrection,
-    retryingCreate,
     sarcophagusPayloadTxId,
     selectedArchaeologists,
     setSarcophagusTxId,

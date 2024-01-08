@@ -36,7 +36,7 @@ export function useAllowance() {
 
   useEffect(() => {
     fetchAllowanceWithRetry();
-  }, [address]);
+  }, [address, fetchAllowanceWithRetry]);
 
   return { allowance, isAllowanceLoading: isLoading, allowanceError, error };
 }

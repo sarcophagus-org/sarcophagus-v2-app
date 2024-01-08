@@ -78,7 +78,7 @@ export function useSarcoFees() {
   useEffect(() => {
     setAreFeesLoading(true);
     setFeesWithRetry();
-  }, [dispatch, protocolFeeBasePercentage, resurrection, selectedArchaeologists, timestampMs]);
+  }, [dispatch, protocolFeeBasePercentage, resurrection, selectedArchaeologists, timestampMs, setFeesWithRetry]);
 
   return {
     areFeesLoading,

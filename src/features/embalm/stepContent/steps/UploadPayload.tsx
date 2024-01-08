@@ -60,7 +60,7 @@ export function UploadPayload() {
         dispatch(toggleSponsorBundlr());
       }
     }
-  }, [file]);
+  }, [file, dispatch, toggleSponsorBundlr]);
 
   return (
     <VStack
