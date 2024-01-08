@@ -8,7 +8,6 @@ import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 import { sepolia, mainnet, hardhat, polygonMumbai, arbitrum, polygon } from '@wagmi/core/chains';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-
   const createAlchemyProvider = (chainId: number) => {
     switch (chainId) {
       case mainnet.id:
@@ -29,7 +28,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { chains, provider } = configureChains(
     [mainnet, hardhat, sepolia, polygonMumbai, arbitrum, polygon],
     [
-      (chain) => ({
+      chain => ({
         chain,
         provider: () => createAlchemyProvider(chain.id),
       }),
