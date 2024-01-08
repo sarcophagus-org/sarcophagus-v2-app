@@ -68,7 +68,7 @@ export const useSarcophagusParameters = () => {
       name: 'NAME',
       value: name,
       step: Step.NameSarcophagus,
-      error: !name ? 'Your Sarchophagus needs a name' : null,
+      error: !name ? 'Your Sarcophagus needs a name' : null,
     },
     {
       name: 'RESURRECTION',
@@ -150,11 +150,11 @@ export const useSarcophagusParameters = () => {
       .every(step => getStatus(step) === StepStatus.Complete);
   };
 
-  const isError = Object.values(sarcophagusParameters).some(p => p.error);
+  const parametersError = Object.values(sarcophagusParameters).some(p => p.error);
 
   return {
     sarcophagusParameters,
     isSarcophagusFormDataComplete,
-    isError,
+    parametersError,
   };
 };

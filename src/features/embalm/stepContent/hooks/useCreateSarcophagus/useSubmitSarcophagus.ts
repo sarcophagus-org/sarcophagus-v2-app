@@ -6,14 +6,8 @@ import * as Sentry from '@sentry/react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 
 export function useSubmitSarcophagus() {
-  const {
-    name,
-    recipientState,
-    resurrection,
-    selectedArchaeologists,
-    requiredArchaeologists,
-    retryingCreate,
-  } = useSelector(x => x.embalmState);
+  const { name, recipientState, resurrection, selectedArchaeologists, requiredArchaeologists } =
+    useSelector(x => x.embalmState);
 
   const {
     negotiationTimestamp,
@@ -24,10 +18,6 @@ export function useSubmitSarcophagus() {
   } = useContext(CreateSarcophagusContext);
 
   const submitSarcophagus = useCallback(async () => {
-    if (retryingCreate) {
-      throw new Error('Retrying...');
-    }
-
     const { submitSarcophagusArgs } = sarco.utils.formatSubmitSarcophagusArgs({
       name,
       recipientState,
@@ -57,7 +47,6 @@ export function useSubmitSarcophagus() {
     recipientState,
     requiredArchaeologists,
     resurrection,
-    retryingCreate,
     sarcophagusPayloadTxId,
     selectedArchaeologists,
     setSarcophagusTxId,

@@ -21,6 +21,7 @@ export function useApprove(args: { onApprove?: Function; amount: BigNumber }) {
       console.error(err);
       setError(err.message);
       toast(approveFailure());
+      throw new Error(err.message || 'Error Approving SARCO token');
     } finally {
       setIsApproving(false);
     }

@@ -1,10 +1,16 @@
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { ReviewSarcophagusTable } from './ReviewSarcophagusTable';
-import { SarcophagusSummaryFees } from './SarcophagusSummaryFees';
+import { SarcophagusSummaryFees, SummaryFeesProps } from './SarcophagusSummaryFees';
 import { SummaryErrorIcon } from './SummaryErrorIcon';
 
-export function ReviewSarcophagus() {
+export function ReviewSarcophagus({
+  totalFees,
+  formattedTotalDiggingFees,
+  protocolFee,
+  totalCurseFees,
+  protocolFeeBasePercentage,
+}: SummaryFeesProps) {
   const { sarcophagusParameters } = useSarcophagusParameters();
 
   return (
@@ -35,7 +41,13 @@ export function ReviewSarcophagus() {
           </Text>
         </Box>
         <ReviewSarcophagusTable sarcophagusParameters={sarcophagusParameters} />
-        <SarcophagusSummaryFees />
+        <SarcophagusSummaryFees
+          totalFees={totalFees}
+          formattedTotalDiggingFees={formattedTotalDiggingFees}
+          protocolFee={protocolFee}
+          totalCurseFees={totalCurseFees}
+          protocolFeeBasePercentage={protocolFeeBasePercentage}
+        />
         {sarcophagusParameters.some(p => p.error) && (
           <Flex
             mt={3}

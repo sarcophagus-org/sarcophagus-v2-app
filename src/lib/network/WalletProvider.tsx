@@ -3,27 +3,37 @@ import { NetworkConfigProvider } from 'lib/config/NetworkConfigProvider';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
+import { AlchemyProvider, InfuraProvider } from '@ethersproject/providers';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
-import {
-  sepolia,
-  mainnet,
-  hardhat,
-  polygonMumbai,
-  arbitrum,
-  polygon,
-} from '@wagmi/core/chains';
+import { sepolia, mainnet, hardhat, polygonMumbai, arbitrum, polygon } from '@wagmi/core/chains';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
+  const createAlchemyProvider = (chainId: number) => {
+    switch (chainId) {
+      case mainnet.id:
+        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY!);
+      // TODO -- upgrade wagmi to get Alchemy's Sepolia support
+      case sepolia.id:
+        return new InfuraProvider(chainId, process.env.REACT_APP_INFURA_API_KEY!);
+      case polygon.id:
+        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_POLYGON_API_KEY!);
+      case polygonMumbai.id:
+        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_POLYGON_MUMBAI_API_KEY!);
+      case arbitrum.id:
+        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_ARBITRUM_API_KEY!);
+      default:
+        return new AlchemyProvider(chainId);
+    }
+  };
+
   const { chains, provider } = configureChains(
     [mainnet, hardhat, sepolia, polygonMumbai, arbitrum, polygon],
     [
-      // jsonRpcProvider({
-      //   rpc: () => ({
-      //     http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY!}`,
-      //   }),
-      //   priority: 0,
-      // }),
-      infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY!, priority: 0 }),
+      chain => ({
+        chain,
+        provider: () => createAlchemyProvider(chain.id),
+      }),
+      infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY!, priority: 1 }),
       publicProvider({ priority: 2 }),
     ]
   );

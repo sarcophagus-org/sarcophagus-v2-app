@@ -1,10 +1,10 @@
-import { Button, Checkbox, Flex, Heading, Text } from '@chakra-ui/react';
+import { Button, Center, Checkbox, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { RouteKey, RoutesPathMap } from 'pages';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAllowance } from '../../../../hooks/sarcoToken/useAllowance';
 import { useDispatch, useSelector } from '../../../../store';
@@ -32,26 +32,39 @@ import { useSarcoFees } from '../hooks/useSarcoFees';
 import { useSarcoQuote } from '../hooks/useSarcoQuote';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
+import { useNetworkConfig } from '../../../../lib/config';
 
+// TODO -- remove need for this, see RetryCreateModal reference
+const SHOW_RETRY_CREATE_MODAL = false;
 export function CreateSarcophagus() {
   const { refreshProfiles } = useLoadArchaeologists();
+  const { allowance } = useAllowance();
   const { cancelCreateToken, retryingCreate, isBuyingSarco } = useSelector(s => s.embalmState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { allowance } = useAllowance();
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
   );
+  const networkConfig = useNetworkConfig();
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
-  const { totalFees, totalDiggingFees, protocolFee } = useSarcoFees();
+  const {
+    areFeesLoading,
+    totalFees,
+    formattedTotalDiggingFees,
+    totalCurseFees,
+    protocolFeeBasePercentage,
+    totalDiggingFees,
+    protocolFee,
+    feesError,
+  } = useSarcoFees();
 
   // TODO -- buffer is temporarily removed. Determine if we need a buffer.
   // When testing, it was confusing that swap amount was more than required fees.
   const totalFeesWithBuffer = totalFees;
 
-  const { isSarcophagusFormDataComplete, isError } = useSarcophagusParameters();
+  const { isSarcophagusFormDataComplete, parametersError } = useSarcophagusParameters();
   const { balance } = useSarcoBalance();
 
   const sarcoDeficit = totalFeesWithBuffer.sub(BigNumber.from(balance));
@@ -151,6 +164,17 @@ export function CreateSarcophagus() {
     dispatch(toggleIsBuyingSarco());
   }
 
+  if (areFeesLoading || feesError) {
+    return (
+      <Center
+        height="100%"
+        width="100%"
+      >
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
   return (
     <Flex
       direction="column"
@@ -160,7 +184,13 @@ export function CreateSarcophagus() {
 
       {!isCreateProcessStarted() ? (
         <>
-          <ReviewSarcophagus />
+          <ReviewSarcophagus
+            totalFees={totalFees}
+            formattedTotalDiggingFees={formattedTotalDiggingFees}
+            protocolFee={protocolFee}
+            totalCurseFees={totalCurseFees}
+            protocolFeeBasePercentage={protocolFeeBasePercentage}
+          />
           <Flex
             alignSelf="center"
             display="flex"
@@ -175,7 +205,7 @@ export function CreateSarcophagus() {
                   isChecked={isBuyingSarco}
                   onChange={handleChangeBuySarcoChecked}
                 >
-                  <Text>Swap ETH for SARCO</Text>
+                  <Text>Swap {networkConfig.tokenSymbol} for SARCO</Text>
                 </Checkbox>
                 <Text
                   mt={3}
@@ -184,10 +214,9 @@ export function CreateSarcophagus() {
                   {isBuyingSarco
                     ? sarcoQuoteError
                       ? `There was a problem getting a SARCO quote: ${sarcoQuoteError}`
-                      : `${sarco.utils.formatSarco(
-                          sarcoQuoteETHAmount,
-                          18
-                        )} ETH will be swapped for ${sarco.utils.formatSarco(
+                      : `${sarco.utils.formatSarco(sarcoQuoteETHAmount, 18)} ${
+                          networkConfig.tokenSymbol
+                        } will be swapped for ${sarco.utils.formatSarco(
                           sarcoDeficit.toString()
                         )} SARCO before the sarcophagus is created.`
                     : `Your current SARCO balance is ${sarco.utils.formatSarco(
@@ -195,7 +224,9 @@ export function CreateSarcophagus() {
                       )} SARCO, but required balance is ${sarco.utils.formatSarco(
                         totalFeesWithBuffer.toString()
                       )} SARCO. 
-                    You can check the box to automatically swap ETH to purchase the required balance during the creation process.`}
+                    You can check the box to automatically swap ${
+                      networkConfig.tokenSymbol
+                    } to purchase the required balance during the creation process.`}
                 </Text>
               </Flex>
             )}
@@ -205,11 +236,14 @@ export function CreateSarcophagus() {
               mt={6}
               onClick={handleCreate}
               isDisabled={
+                areFeesLoading ||
+                feesError ||
+                parametersError ||
+                !formattedTotalDiggingFees ||
                 !totalDiggingFees ||
                 !protocolFee ||
                 (sarcoDeficit.gt(0) && !isBuyingSarco) ||
-                !isSarcophagusFormDataComplete() ||
-                isError
+                !isSarcophagusFormDataComplete()
               }
             >
               Create Sarcophagus
@@ -269,7 +303,7 @@ export function CreateSarcophagus() {
                 ml={2}
                 variant="secondary"
               >
-                = {stageError}
+                = See console for error details
               </Text>
             </Flex>
           )}
@@ -285,7 +319,8 @@ export function CreateSarcophagus() {
         </>
       )}
 
-      {retryingCreate ? (
+      {/* TODO -- this needs to be updated to be dynamic, currently only accounts for one error case */}
+      {retryingCreate && SHOW_RETRY_CREATE_MODAL ? (
         <RetryCreateModal
           retryCreate={retryCreateSarcophagus}
           cancelCreation={cancelCreation}

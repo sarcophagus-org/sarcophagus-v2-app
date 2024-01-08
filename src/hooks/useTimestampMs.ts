@@ -15,5 +15,11 @@ export function useTimestampMs() {
 
   useEffect(() => {
     getTimestampMs();
+
+    const interval = setInterval(() => {
+      getTimestampMs();
+    }, 10 * 60 * 1000); // refetch every 10 minutes
+
+    return () => clearInterval(interval);
   }, [getTimestampMs]);
 }
