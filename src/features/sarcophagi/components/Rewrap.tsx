@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
@@ -43,10 +33,7 @@ export function Rewrap() {
   );
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
   const { allowance } = useAllowance();
-  const { rewrap, error } = useRewrapSarcophagus(
-    id || ethers.constants.HashZero,
-    resurrectionTime
-  );
+  const { rewrap, error } = useRewrapSarcophagus(id || ethers.constants.HashZero, resurrectionTime);
   const { balance } = useSarcoBalance();
   const { timestampMs } = useSelector(x => x.appState);
   const { isBuyingSarco } = useSelector(s => s.embalmState);
@@ -171,7 +158,10 @@ export function Rewrap() {
   );
 
   const isRewrapButtonDisabled =
-    !resurrectionTime || !rewrap || isRewrapping || (sarcoDeficit.gt(BigNumber.from(0)) && !isBuyingSarco);
+    !resurrectionTime ||
+    !rewrap ||
+    isRewrapping ||
+    (sarcoDeficit.gt(BigNumber.from(0)) && !isBuyingSarco);
 
   const needsApproval = allowance?.lte(totalFees);
 
@@ -304,7 +294,9 @@ export function Rewrap() {
             ml={1}
             variant="secondary"
           >
-            {totalDiggingFees.eq(BigNumber.from(0)) ? '(Select Rewrap Time to See Fees)' : '(estimated)'}
+            {totalDiggingFees.eq(BigNumber.from(0))
+              ? '(Select Rewrap Time to See Fees)'
+              : '(estimated)'}
           </Text>
         </Flex>
         <HStack spacing={3}>
