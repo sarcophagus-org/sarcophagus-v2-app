@@ -1,5 +1,4 @@
-import { Button, Center, Checkbox, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { Button, Center, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
@@ -14,7 +13,6 @@ import {
   setArchaeologists,
   setCancelToken,
   setSarcoQuoteInterval,
-  toggleIsBuyingSarco,
 } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
@@ -159,10 +157,6 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
-  function handleChangeBuySarcoChecked() {
-    dispatch(toggleIsBuyingSarco());
-  }
-
   if (areFeesLoading || feesError) {
     return (
       <Center
@@ -201,9 +195,10 @@ export function CreateSarcophagus() {
               <SwapInfo
                 sarcoQuoteError={sarcoQuoteError}
                 sarcoQuoteETHAmount={sarcoQuoteETHAmount}
-                sarcoDeficit={sarcoDeficit} 
+                sarcoDeficit={sarcoDeficit}
                 balance={balance}
-                totalFeesWithBuffer={totalFeesWithBuffer} />
+                totalFeesWithBuffer={totalFeesWithBuffer}
+              />
             )}
             <Button
               w="full"

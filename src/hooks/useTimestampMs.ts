@@ -18,7 +18,7 @@ export function useTimestampMs() {
 
     const interval = setInterval(() => {
       getTimestampMs();
-    }, 10 * 60 * 1000); // refetch every 10 minutes
+    }, 20 * 60 * 1000); // refetch every 20 minutes
 
     return () => clearInterval(interval);
   }, [getTimestampMs]);

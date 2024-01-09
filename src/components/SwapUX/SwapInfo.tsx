@@ -16,12 +16,12 @@ interface SwapInfoProps {
 }
 
 export const SwapInfo = ({
- sarcoQuoteError,
- sarcoQuoteETHAmount,
- sarcoDeficit,
- balance,
- totalFeesWithBuffer,
- isRewrap
+  sarcoQuoteError,
+  sarcoQuoteETHAmount,
+  sarcoDeficit,
+  balance,
+  totalFeesWithBuffer,
+  isRewrap,
 }: SwapInfoProps) => {
   const { isBuyingSarco } = useSelector(s => s.embalmState);
   const dispatch = useDispatch();
@@ -47,17 +47,19 @@ export const SwapInfo = ({
           ? sarcoQuoteError
             ? `There was a problem getting a SARCO quote: ${sarcoQuoteError}`
             : `${sarco.utils.formatSarco(sarcoQuoteETHAmount, 18)} ${
-              networkConfig.tokenSymbol
-            } will be swapped for ${sarco.utils.formatSarco(
-              sarcoDeficit.toString()
-            )} SARCO before the sarcophagus is ${isRewrap ? 'rewrapped' : 'created'}.`
+                networkConfig.tokenSymbol
+              } will be swapped for ${sarco.utils.formatSarco(
+                sarcoDeficit.toString()
+              )} SARCO before the sarcophagus is ${isRewrap ? 'rewrapped' : 'created'}.`
           : `Your current SARCO balance is ${sarco.utils.formatSarco(
-            balance ? balance.toString() : '0'
-          )} SARCO, but required balance is ${sarco.utils.formatSarco(
-            totalFeesWithBuffer.toString()
-          )} SARCO. You can check the box to automatically swap ${
-            networkConfig.tokenSymbol
-          } to purchase the required balance during the ${isRewrap ? 'rewrapp' : 'creation'} process.`}
+              balance ? balance.toString() : '0'
+            )} SARCO, but required balance is ${sarco.utils.formatSarco(
+              totalFeesWithBuffer.toString()
+            )} SARCO. You can check the box to automatically swap ${
+              networkConfig.tokenSymbol
+            } to purchase the required balance during the ${
+              isRewrap ? 'rewrapp' : 'creation'
+            } process.`}
       </Text>
     </Flex>
   );

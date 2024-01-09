@@ -13,7 +13,7 @@ export function useSarcoQuote(amount: BigNumber) {
 
   useEffect(() => {
     async function getQuote() {
-      if (sarcoQuoteInterval || isPolling || amount.lte(0)) return;
+      if (isPolling || amount.lte(0)) return;
 
       setIsPolling(true);
 
@@ -23,6 +23,8 @@ export function useSarcoQuote(amount: BigNumber) {
           setSarcoQuoteETHAmount(quote.sellAmount);
         } catch (e: any) {
           setSarcoQuoteError(e.message);
+        } finally {
+          setIsPolling(false);
         }
       };
 
@@ -32,7 +34,7 @@ export function useSarcoQuote(amount: BigNumber) {
       setSarcoQuoteInterval(quoteInterval);
     }
     getQuote();
-  }, [amount, isPolling, sarcoQuoteInterval]);
+  }, [amount, sarcoQuoteInterval]);
 
   return { sarcoQuoteETHAmount, sarcoQuoteError, sarcoQuoteInterval: quoteIntervalState };
 }
