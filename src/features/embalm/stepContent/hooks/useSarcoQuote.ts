@@ -1,21 +1,21 @@
 import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'store/index';
 
 export function useSarcoQuote(amount: BigNumber) {
   const [sarcoQuoteETHAmount, setSarcoQuoteETHAmount] = useState('0');
   const [sarcoQuoteError, setSarcoQuoteError] = useState('');
-  const [isPolling, setIsPolling] = useState(false);
+  const isPollingRef = useRef(false);
   const [quoteIntervalState, setSarcoQuoteInterval] = useState<NodeJS.Timer>();
 
   const { sarcoQuoteInterval } = useSelector(x => x.embalmState);
 
   useEffect(() => {
     async function getQuote() {
-      if (isPolling || amount.lte(0)) return;
+      if (isPollingRef.current || amount.lte(0)) return;
 
-      setIsPolling(true);
+      isPollingRef.current = true;
 
       const runGetQuote = async () => {
         try {
@@ -24,7 +24,7 @@ export function useSarcoQuote(amount: BigNumber) {
         } catch (e: any) {
           setSarcoQuoteError(e.message);
         } finally {
-          setIsPolling(false);
+          isPollingRef.current = false;
         }
       };
 
@@ -32,6 +32,8 @@ export function useSarcoQuote(amount: BigNumber) {
 
       const quoteInterval = setInterval(() => runGetQuote(), 100_000_000); // Temp set very high to avoid rate limits
       setSarcoQuoteInterval(quoteInterval);
+
+      return () => clearInterval(quoteInterval);
     }
     getQuote();
   }, [amount, sarcoQuoteInterval]);
