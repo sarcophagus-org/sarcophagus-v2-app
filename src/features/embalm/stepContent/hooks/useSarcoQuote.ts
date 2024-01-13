@@ -1,28 +1,30 @@
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { BigNumber } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'store/index';
+import { useNetwork } from 'wagmi';
+import { getZeroExQuote } from '../../../../lib/utils/zeroEx';
 
 export function useSarcoQuote(amount: BigNumber) {
   const [sarcoQuoteETHAmount, setSarcoQuoteETHAmount] = useState('0');
   const [sarcoQuoteError, setSarcoQuoteError] = useState('');
   const isPollingRef = useRef(false);
   const [quoteIntervalState, setSarcoQuoteInterval] = useState<NodeJS.Timer>();
+  const { chain } = useNetwork();
 
   const { sarcoQuoteInterval } = useSelector(x => x.embalmState);
 
   useEffect(() => {
     async function getQuote() {
-      if (isPollingRef.current || amount.lte(0)) return;
+      if (!chain || isPollingRef.current || amount.lte(0)) return;
 
       isPollingRef.current = true;
 
       const runGetQuote = async () => {
         try {
-          const quote = await sarco.utils.getSarcoQuote(amount);
+          const quote = await getZeroExQuote(chain.id, amount);
           setSarcoQuoteETHAmount(quote.sellAmount);
         } catch (e: any) {
-          setSarcoQuoteError(e.message);
+          setSarcoQuoteError(e);
         } finally {
           isPollingRef.current = false;
         }
@@ -36,7 +38,7 @@ export function useSarcoQuote(amount: BigNumber) {
       return () => clearInterval(quoteInterval);
     }
     getQuote();
-  }, [amount, sarcoQuoteInterval]);
+  }, [amount, sarcoQuoteInterval, chain]);
 
   return { sarcoQuoteETHAmount, sarcoQuoteError, sarcoQuoteInterval: quoteIntervalState };
 }
