@@ -1,15 +1,4 @@
-import {
-  Alert,
-  AlertIcon,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import { DatePicker } from 'components/DatePicker';
 import { DatePickerButton } from 'components/DatePicker/DatePickerButton';
 import { BigNumber, ethers } from 'ethers';
@@ -20,35 +9,38 @@ import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
 import { useGetSarcophagusDetails } from 'hooks/useGetSarcophagusDetails';
 import { useGetSarcophagusArchaeologists } from 'hooks/viewStateFacet/useGetSarcophagusArchaeologists';
 import { buildResurrectionDateString } from 'lib/utils/helpers';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
-import { useSelector } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
+import { useSarcoQuote } from '../../embalm/stepContent/hooks/useSarcoQuote';
+import { SwapInfo } from '../../../components/SwapUX/SwapInfo';
+import { setTotalFees } from '../../../store/embalm/actions';
+import { useBuySarco } from '../../embalm/stepContent/hooks/useCreateSarcophagus/useBuySarco';
+import { useNetwork } from 'wagmi';
 
 export function Rewrap() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { chain } = useNetwork();
+  const { totalFees } = useSelector(x => x.embalmState);
+  const [rewrapButtonText, setRewrapButtonText] = useState('');
+  const [isRewrapping, setIsRewrapping] = useState(false);
+  const [sarcoDeficit, setSarcoDeficit] = useState(BigNumber.from(0));
+  const { buySarco } = useBuySarco(chain?.id);
   const { sarcophagus } = useGetSarcophagusDetails(id);
-
   const archaeologists = useGetSarcophagusArchaeologists(
     id || ethers.constants.HashZero,
     sarcophagus?.archaeologistAddresses ?? []
   );
-
   const [resurrectionTime, setResurrectionTime] = useState<Date | null>(null);
-
   const { allowance } = useAllowance();
-
-  const { rewrap, isRewrapping, error } = useRewrapSarcophagus(
-    id || ethers.constants.HashZero,
-    resurrectionTime
-  );
+  const { rewrap, error } = useRewrapSarcophagus(id || ethers.constants.HashZero, resurrectionTime);
   const { balance } = useSarcoBalance();
-
   const { timestampMs } = useSelector(x => x.appState);
-
+  const { isBuyingSarco } = useSelector(s => s.embalmState);
   const maxRewrapIntervalFromSarcophagusSec = sarcophagus?.maximumRewrapInterval?.toNumber() ?? 0;
+  const dispatch = useDispatch();
 
   // The calculated max rewrap interval is
   // ( new resurrection time - previous resurrection time ) * (2_000_000 / cursed bond percentage)
@@ -74,7 +66,7 @@ export function Rewrap() {
 
     if (!date) return;
 
-    async function setTotalFees() {
+    async function setFees() {
       const archaeologistsProfiles: ArchaeologistData[] = archaeologists.map(a => ({
         profile: {
           accusals: BigNumber.from(0),
@@ -103,8 +95,19 @@ export function Rewrap() {
       setProtocolFee(newProtocolFee);
       setProtocolFeeBasePercentage(newProtocolFeeBasePercentage);
     }
-    setTotalFees();
+    setFees();
   };
+
+  // Set global total fees for 0x swap usage in useBuySarco
+  useEffect(() => {
+    dispatch(setTotalFees(totalDiggingFees.add(protocolFee)));
+  }, [totalDiggingFees, protocolFee, dispatch]);
+
+  useEffect(() => {
+    if (totalFees && balance) {
+      setSarcoDeficit(totalFees.sub(balance) || BigNumber.from(0));
+    }
+  }, [totalFees, balance]);
 
   function handleCustomDateChange(date: Date | null): void {
     // Ensure that selected date is in the future
@@ -115,11 +118,10 @@ export function Rewrap() {
 
   const maxResurrectionDate = new Date(timestampMs + Number(maxRewrapIntervalMs));
   const maxResurrectionDateMs = maxResurrectionDate.getTime();
+  const { sarcoQuoteETHAmount, sarcoQuoteError } = useSarcoQuote(sarcoDeficit);
 
-  const diggingPlusProtocolFees = totalDiggingFees.add(protocolFee);
-
-  const { approve, isApproving } = useApprove({
-    amount: diggingPlusProtocolFees,
+  const { approve } = useApprove({
+    amount: totalFees,
     onApprove: () =>
       setResurrectionTime(!resurrectionTime ? null : new Date(resurrectionTime.getTime() - 1)),
   });
@@ -161,15 +163,38 @@ export function Rewrap() {
     !resurrectionTime ||
     !rewrap ||
     isRewrapping ||
-    (balance && balance.lt(diggingPlusProtocolFees));
+    (sarcoDeficit.gt(BigNumber.from(0)) && !isBuyingSarco);
 
-  const needsApproval = allowance?.lte(diggingPlusProtocolFees);
+  const needsApproval = allowance?.lte(totalFees);
+
+  const handleRewrapButtonClick = async () => {
+    setIsRewrapping(true);
+    try {
+      if (isBuyingSarco) {
+        setRewrapButtonText('Swapping for SARCO');
+        await buySarco();
+      }
+
+      if (needsApproval) {
+        setRewrapButtonText('Approving');
+        await approve?.();
+      }
+
+      setRewrapButtonText('Rewrapping');
+      await rewrap?.();
+    } catch (err) {
+      console.log(`error rewrapping: ${err}`);
+    } finally {
+      setIsRewrapping(false);
+    }
+  };
 
   return (
     <VStack
       align="left"
       spacing={10}
       pointerEvents={isRewrapping ? 'none' : 'all'}
+      pb={'30px'}
     >
       <VStack
         align="left"
@@ -271,7 +296,9 @@ export function Rewrap() {
             ml={1}
             variant="secondary"
           >
-            (estimated)
+            {totalDiggingFees.eq(BigNumber.from(0))
+              ? '(Select Rewrap Time to See Fees)'
+              : '(estimated)'}
           </Text>
         </Flex>
         <HStack spacing={3}>
@@ -286,13 +313,20 @@ export function Rewrap() {
           </Text>
         </HStack>
       </VStack>
-      {balance && balance.lt(diggingPlusProtocolFees) ? (
-        <Alert status="error">
-          <AlertIcon color="red" />
-          <Text>Insufficient SARCO balance</Text>
-        </Alert>
-      ) : (
-        <></>
+      {sarcoDeficit.gt(0) && (
+        <Box
+          width="500px"
+          maxWidth="90%"
+        >
+          <SwapInfo
+            isRewrap={true}
+            sarcoQuoteError={sarcoQuoteError}
+            sarcoQuoteETHAmount={sarcoQuoteETHAmount}
+            sarcoDeficit={sarcoDeficit}
+            balance={balance}
+            totalFeesWithBuffer={totalFees}
+          />
+        </Box>
       )}
       <HStack>
         <Button
@@ -304,18 +338,12 @@ export function Rewrap() {
         <Tooltip label={!resurrectionTime ? 'Please set a new resurrection time' : ''}>
           <div>
             <Button
-              onClick={() => {
-                if (needsApproval) {
-                  approve?.();
-                } else {
-                  rewrap?.();
-                }
-              }}
+              onClick={handleRewrapButtonClick}
               isDisabled={!isApproveError && isRewrapButtonDisabled}
-              isLoading={isApproving || isRewrapping}
-              loadingText={isApproving ? 'Approving' : 'Rewrapping...'}
+              isLoading={isRewrapping}
+              loadingText={rewrapButtonText}
             >
-              {needsApproval ? 'Approve' : 'Rewrap'}
+              Rewrap
             </Button>
           </div>
         </Tooltip>

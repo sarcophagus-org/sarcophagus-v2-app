@@ -33,23 +33,44 @@ export function Sarcophagi() {
 
   const { isSarcoInitialized } = useSupportedNetwork();
 
+  // Embalmer Sarcophagi
   useEffect(() => {
-    if (isSarcoInitialized) {
-      // EMBALMER SARCO
-      setIsLoadingEmbalmerSarcophagi(true);
-      if (!address) return;
-      sarco.api.getEmbalmerSarcophagi(address).then(res => {
-        setEmbalmerSarcophagi(res);
-        setIsLoadingEmbalmerSarcophagi(false);
-      });
+    if (!address) return;
 
-      // RECIPIENT SARCO
+    const fetchEmbalmerSarcophagi = async () => {
+      setIsLoadingEmbalmerSarcophagi(true);
+      try {
+        const sarcophagi = await sarco.api.getEmbalmerSarcophagi(address);
+        setEmbalmerSarcophagi(sarcophagi);
+      } catch (error) {
+        console.error(`error fetching embalmer sarcophagi: ${error}`);
+      } finally {
+        setIsLoadingEmbalmerSarcophagi(false);
+      }
+    };
+
+    if (isSarcoInitialized) {
+      fetchEmbalmerSarcophagi();
+    }
+  }, [address, isSarcoInitialized]);
+
+  // Recipient Sarcophagi
+  useEffect(() => {
+    if (!address) return;
+    const fetchRecipientSarcophagi = async () => {
       setIsLoadingRecipientSarcophagi(true);
-      if (!address) return;
-      sarco.api.getRecipientSarcophagi(address).then(res => {
-        setRecipientSarcophagi(res);
+      try {
+        const sarcophagi = await sarco.api.getRecipientSarcophagi(address);
+        setRecipientSarcophagi(sarcophagi);
+      } catch (error) {
+        console.error(`error fetching recipient sarcophagi: ${error}`);
+      } finally {
         setIsLoadingRecipientSarcophagi(false);
-      });
+      }
+    };
+
+    if (isSarcoInitialized) {
+      fetchRecipientSarcophagi();
     }
   }, [address, isSarcoInitialized]);
 

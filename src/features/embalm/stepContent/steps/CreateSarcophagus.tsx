@@ -1,5 +1,4 @@
-import { Button, Center, Checkbox, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
-import { sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
+import { Button, Center, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import { RetryCreateModal } from 'components/RetryCreateModal';
 import { BigNumber } from 'ethers';
 import { useSarcoBalance } from 'hooks/sarcoToken/useSarcoBalance';
@@ -14,7 +13,6 @@ import {
   setArchaeologists,
   setCancelToken,
   setSarcoQuoteInterval,
-  toggleIsBuyingSarco,
 } from '../../../../store/embalm/actions';
 import { Step } from '../../../../store/embalm/reducer';
 import { PageBlockModal } from '../components/PageBlockModal';
@@ -32,7 +30,7 @@ import { useSarcoFees } from '../hooks/useSarcoFees';
 import { useSarcoQuote } from '../hooks/useSarcoQuote';
 import { useSarcophagusParameters } from '../hooks/useSarcophagusParameters';
 import { CreateSarcophagusStage, defaultCreateSarcophagusStages } from '../utils/createSarcophagus';
-import { useNetworkConfig } from '../../../../lib/config';
+import { SwapInfo } from '../../../../components/SwapUX/SwapInfo';
 
 // TODO -- remove need for this, see RetryCreateModal reference
 const SHOW_RETRY_CREATE_MODAL = false;
@@ -45,7 +43,6 @@ export function CreateSarcophagus() {
   const [createSarcophagusStages, setCreateSarcophagusStages] = useState<Record<number, string>>(
     defaultCreateSarcophagusStages
   );
-  const networkConfig = useNetworkConfig();
 
   const { archaeologists } = useSelector(x => x.embalmState);
 
@@ -160,10 +157,6 @@ export function CreateSarcophagus() {
     }, 10);
   }
 
-  function handleChangeBuySarcoChecked() {
-    dispatch(toggleIsBuyingSarco());
-  }
-
   if (areFeesLoading || feesError) {
     return (
       <Center
@@ -199,36 +192,13 @@ export function CreateSarcophagus() {
             pt={6}
           >
             {sarcoDeficit.gt(0) && (
-              <Flex flexDirection="column">
-                <Checkbox
-                  defaultChecked
-                  isChecked={isBuyingSarco}
-                  onChange={handleChangeBuySarcoChecked}
-                >
-                  <Text>Swap {networkConfig.tokenSymbol} for SARCO</Text>
-                </Checkbox>
-                <Text
-                  mt={3}
-                  variant="secondary"
-                >
-                  {isBuyingSarco
-                    ? sarcoQuoteError
-                      ? `There was a problem getting a SARCO quote: ${sarcoQuoteError}`
-                      : `${sarco.utils.formatSarco(sarcoQuoteETHAmount, 18)} ${
-                          networkConfig.tokenSymbol
-                        } will be swapped for ${sarco.utils.formatSarco(
-                          sarcoDeficit.toString()
-                        )} SARCO before the sarcophagus is created.`
-                    : `Your current SARCO balance is ${sarco.utils.formatSarco(
-                        balance ? balance.toString() : '0'
-                      )} SARCO, but required balance is ${sarco.utils.formatSarco(
-                        totalFeesWithBuffer.toString()
-                      )} SARCO. 
-                    You can check the box to automatically swap ${
-                      networkConfig.tokenSymbol
-                    } to purchase the required balance during the creation process.`}
-                </Text>
-              </Flex>
+              <SwapInfo
+                sarcoQuoteError={sarcoQuoteError}
+                sarcoQuoteETHAmount={sarcoQuoteETHAmount}
+                sarcoDeficit={sarcoDeficit}
+                balance={balance}
+                totalFeesWithBuffer={totalFeesWithBuffer}
+              />
             )}
             <Button
               w="full"

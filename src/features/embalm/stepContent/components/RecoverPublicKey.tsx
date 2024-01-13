@@ -15,11 +15,11 @@ export function RecoverPublicKey() {
   const ErrorStatusMap: { [key: number]: IErrorStatusMap } = {
     [RecoverPublicKeyErrorStatus.INVALID_ADDRESS]: {
       alertStatus: 'warning',
-      alertMessage: 'Address is not a value Etherum address.',
+      alertMessage: 'Address is not a value Ethereum address.',
     },
     [RecoverPublicKeyErrorStatus.CANNOT_RECOVER]: {
       alertStatus: 'warning',
-      alertMessage: 'This address has no transactions in which to recover the pubilc key.',
+      alertMessage: 'This address has no transactions in which to recover the public key.',
     },
     [RecoverPublicKeyErrorStatus.ERROR]: {
       alertStatus: 'error',
