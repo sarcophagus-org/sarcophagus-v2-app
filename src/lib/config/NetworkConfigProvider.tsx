@@ -31,7 +31,6 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
       setNetworkConfig(sarcoNetworkConfig);
       setIsInitialisingSarcoSdk(false);
       setIsSdkInitialized(true);
-      console.log('finished initting');
     };
 
     const chainChanged = chain?.id !== currentChainId;
