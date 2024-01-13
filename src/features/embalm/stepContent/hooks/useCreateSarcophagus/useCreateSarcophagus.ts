@@ -11,6 +11,7 @@ import { useClearSarcophagusState } from './useClearSarcophagusState';
 import { useDialArchaeologists } from './useDialArchaeologists';
 import { useSubmitSarcophagus } from './useSubmitSarcophagus';
 import { useUploadFileAndKeyShares } from './useUploadFileAndKeyShares';
+import { useNetwork } from 'wagmi';
 
 export class CancelCreateToken {
   cancelled: boolean;
@@ -29,6 +30,7 @@ export function useCreateSarcophagus(
   approveAmount: BigNumber
 ) {
   const dispatch = useDispatch();
+  const { chain } = useNetwork();
   const { selectedArchaeologists, cancelCreateToken } = useSelector(x => x.embalmState);
 
   // State variables to track sarcophagus creation flow across all stages
@@ -42,7 +44,7 @@ export function useCreateSarcophagus(
   const { dialSelectedArchaeologists } = useDialArchaeologists();
   const { initiateSarcophagusNegotiation } = useArchaeologistSignatureNegotiation();
   const { uploadAndSetArweavePayload, uploadStep } = useUploadFileAndKeyShares();
-  const { buySarco } = useBuySarco();
+  const { buySarco } = useBuySarco(chain?.id);
   const { approve: approveSarcoToken } = useApprove({ amount: approveAmount });
   const { submitSarcophagus } = useSubmitSarcophagus();
   const { clearSarcophagusState, successData } = useClearSarcophagusState();

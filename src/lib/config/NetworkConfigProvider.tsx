@@ -25,18 +25,14 @@ export function NetworkConfigProvider({ children }: { children: React.ReactNode 
 
     if (isInitialisingSarcoSdk) return;
 
-    const initSarcoSdk = (chainId: number) =>
-      sarco
-        .init({
-          chainId: chainId,
-          zeroExApiKey: process.env.REACT_APP_ZERO_EX_API_KEY,
-        })
-        .then(config => {
-          setCurrentChainId(chain?.id);
-          setNetworkConfig(config);
-          setIsInitialisingSarcoSdk(false);
-          setIsSdkInitialized(true);
-        });
+    const initSarcoSdk = async (chainId: number) => {
+      const sarcoNetworkConfig = await sarco.init({ chainId });
+      setCurrentChainId(chain?.id);
+      setNetworkConfig(sarcoNetworkConfig);
+      setIsInitialisingSarcoSdk(false);
+      setIsSdkInitialized(true);
+      console.log('finished initting');
+    };
 
     const chainChanged = chain?.id !== currentChainId;
     if (chainChanged) {

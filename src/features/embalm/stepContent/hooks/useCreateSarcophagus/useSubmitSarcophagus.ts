@@ -20,7 +20,7 @@ export function useSubmitSarcophagus() {
   const submitSarcophagus = useCallback(async () => {
     const { submitSarcophagusArgs } = sarco.utils.formatSubmitSarcophagusArgs({
       name,
-      recipientState,
+      recipientPublicKey: recipientState.publicKey,
       resurrection,
       selectedArchaeologists,
       requiredArchaeologists,
