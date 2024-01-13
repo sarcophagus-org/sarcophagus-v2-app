@@ -17,15 +17,17 @@ import { useSarcoQuote } from '../../embalm/stepContent/hooks/useSarcoQuote';
 import { SwapInfo } from '../../../components/SwapUX/SwapInfo';
 import { setTotalFees } from '../../../store/embalm/actions';
 import { useBuySarco } from '../../embalm/stepContent/hooks/useCreateSarcophagus/useBuySarco';
+import { useNetwork } from 'wagmi';
 
 export function Rewrap() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { chain } = useNetwork();
   const { totalFees } = useSelector(x => x.embalmState);
   const [rewrapButtonText, setRewrapButtonText] = useState('');
   const [isRewrapping, setIsRewrapping] = useState(false);
   const [sarcoDeficit, setSarcoDeficit] = useState(BigNumber.from(0));
-  const { buySarco } = useBuySarco();
+  const { buySarco } = useBuySarco(chain?.id);
   const { sarcophagus } = useGetSarcophagusDetails(id);
   const archaeologists = useGetSarcophagusArchaeologists(
     id || ethers.constants.HashZero,
