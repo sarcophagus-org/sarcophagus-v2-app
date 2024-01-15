@@ -15,7 +15,7 @@ const MIN_RESURRECTION_DELAY = 30 * 60 * 1000;
 export function SetResurrection({ ...rest }: FlexProps) {
   const options = Object.values(ResurrectionRadioValue);
   const { timestampMs } = useSelector(x => x.appState);
-  const minResurrectionTime = timestampMs;
+  const minResurrectionTime = timestampMs + MIN_RESURRECTION_DELAY;
 
   const {
     error,
