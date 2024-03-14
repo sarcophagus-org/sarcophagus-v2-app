@@ -158,6 +158,8 @@ export function CreateSarcophagus() {
   }
 
   if (areFeesLoading || feesError) {
+    console.log('areFeesLoading', areFeesLoading);
+    console.log('feesError', feesError);
     return (
       <Center
         height="100%"

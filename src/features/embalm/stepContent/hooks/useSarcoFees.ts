@@ -18,8 +18,8 @@ export function useSarcoFees() {
   const [feesError, setFeesError] = useState(false);
   const [areFeesLoading, setAreFeesLoading] = useState(true);
 
-  const retryInterval = 3000; // Time in milliseconds to wait before retrying
-  const maxRetries = 5; // Maximum number of retries
+  const retryInterval = 1000; // Time in milliseconds to wait before retrying
+  const maxRetries = 10; // Maximum number of retries
 
   const setFeesWithRetry = useCallback(
     async (retryCount: number = 0) => {
@@ -66,11 +66,12 @@ export function useSarcoFees() {
         const diggingFeesAndCurseFees = newTotalDiggingFees.add(totalCurseFeesCalc);
         dispatch(setTotalFees(diggingFeesAndCurseFees.add(totalProtocolFees)));
       } catch (error) {
-        console.error(`error in fetchFeesWithRetry: ${error}`);
         if (retryCount < maxRetries) {
+          console.log(`retrying setFeesWithRetry... #${retryCount}`);
           setTimeout(() => setFeesWithRetry(retryCount + 1), retryInterval);
         } else {
           setFeesError(true);
+          console.error(`error in fetchFeesWithRetry: ${error}`);
         }
       } finally {
         setAreFeesLoading(false);
