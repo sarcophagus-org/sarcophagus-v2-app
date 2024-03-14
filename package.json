@@ -2,6 +2,7 @@
   "name": "sarco-webapp",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "cross-env-shell GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=$(git rev-parse HEAD) react-app-rewired start",
     "build": "react-app-rewired build",
