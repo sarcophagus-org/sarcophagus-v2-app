@@ -138,6 +138,36 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
     </View>
   );
 
+  const address = `${addressFirstHalf}${addressSecondHalf}`;
+  const publicKey = `${pubKeyFirstHalf}${pubKeySecondHalf}${pubKeyThirdHalf}`;
+  const privateKey = `${privateKeyFirstHalf}${privateKeySecondHalf}`;
+
+  // Helper function to split text into chunks for wrapping
+  const splitText = (text: string, maxLength: number) => {
+    const chunks = [];
+    for (let i = 0; i < text.length; i += maxLength) {
+      chunks.push(text.slice(i, i + maxLength));
+    }
+    return chunks;
+  };
+
+// Split keys into chunks for wrapping
+  const addressChunks = splitText(address, 90);
+  const publicKeyChunks = splitText(publicKey, 60);
+  const privateKeyChunks = splitText(privateKey, 90);
+
+// Render each chunk separately for text wrapping
+  const addressText = addressChunks.map((chunk, index) => (
+    <Text key={index} style={{ letterSpacing: 0 }}>{chunk}</Text> // Remove letter spacing
+  ));
+  const publicKeyText = publicKeyChunks.map((chunk, index) => (
+    <Text key={index} style={{ letterSpacing: 0 }}>{chunk}</Text> // Remove letter spacing
+  ));
+  const privateKeyText = privateKeyChunks.map((chunk, index) => (
+    <Text key={index} style={{ letterSpacing: 0 }}>{chunk}</Text> // Remove letter spacing
+  ));
+
+
   return (
     <Document>
       <Page
@@ -178,8 +208,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
               </View>
 
               <View style={styles.infoBoxContent}>
-                <Text>{addressFirstHalf}</Text>
-                <Text>{addressSecondHalf}</Text>
+                {addressText}
               </View>
             </View>
             <View style={styles.imageView}>
@@ -197,9 +226,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
               </View>
 
               <View style={styles.infoBoxContent}>
-                <Text>{pubKeyFirstHalf}</Text>
-                <Text>{pubKeySecondHalf}</Text>
-                <Text>{pubKeyThirdHalf}</Text>
+                {publicKeyText}
               </View>
             </View>
             <View style={styles.imageView}>
@@ -214,7 +241,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
         {bgStripes}
         <View style={styles.privateKeyBorder}>
           <Text>
-            ANYONE WITH ACCESS TO PRIVATE KEY CAN ACCESS THE CONTENTS OF THIS SARCOPHAGUS.
+            ANYONE WITH ACCESSZ TO PRIVATE KEY CAN ACCESS THE CONTENTS OF THIS SARCOPHAGUS.
           </Text>
         </View>
 
@@ -225,8 +252,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
                 <Text>PRIVATE KEY</Text>
               </View>
               <View style={styles.infoBoxContent}>
-                <Text>{privateKeyFirstHalf}</Text>
-                <Text>{privateKeySecondHalf}</Text>
+                {privateKeyText}
               </View>
             </View>
 
