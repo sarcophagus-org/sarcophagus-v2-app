@@ -2,38 +2,37 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { NetworkConfigProvider } from 'lib/config/NetworkConfigProvider';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { AlchemyProvider, InfuraProvider } from '@ethersproject/providers';
 import { walletConnectionTheme } from '../../theme/walletConnectionTheme';
 import { sepolia, mainnet, hardhat, polygonMumbai, arbitrum, polygon } from '@wagmi/core/chains';
+import { base } from '@wagmi/chains';
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const createAlchemyProvider = (chainId: number) => {
+  const createRpcProvider = (chainId: number) => {
     switch (chainId) {
       case mainnet.id:
-        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY!);
-      // TODO -- upgrade wagmi to get Alchemy's Sepolia support
+        return { http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY!}` };
       case sepolia.id:
-        return new InfuraProvider(chainId, process.env.REACT_APP_INFURA_API_KEY!);
+        return { http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_SEPOLIA_API_KEY!}` };
       case polygon.id:
-        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_POLYGON_API_KEY!);
+        return { http: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_POLYGON_API_KEY!}` };
       case polygonMumbai.id:
-        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_POLYGON_MUMBAI_API_KEY!);
+        return { http: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_POLYGON_MUMBAI_API_KEY!}` };
       case arbitrum.id:
-        return new AlchemyProvider(chainId, process.env.REACT_APP_ALCHEMY_ARBITRUM_API_KEY!);
+        return { http: `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_ARBITRUM_API_KEY!}` };
+      case base.id:
+        return { http: `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_BASE_MAINNET_API_KEY!}` };
       default:
-        return new AlchemyProvider(chainId);
+        return { http: `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_BASE_MAINNET_API_KEY!}` };
     }
   };
 
   const { chains, provider } = configureChains(
-    [mainnet, hardhat, sepolia, polygonMumbai, arbitrum, polygon],
+    [mainnet, hardhat, sepolia, polygonMumbai, arbitrum, polygon, base],
     [
-      chain => ({
-        chain,
-        provider: () => createAlchemyProvider(chain.id),
+      jsonRpcProvider({
+        rpc: (chain) => createRpcProvider(chain.id),
       }),
-      infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY!, priority: 1 }),
       publicProvider({ priority: 2 }),
     ]
   );
