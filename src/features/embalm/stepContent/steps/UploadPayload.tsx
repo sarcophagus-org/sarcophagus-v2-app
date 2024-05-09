@@ -9,6 +9,7 @@ import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
 import { useDispatch, useSelector } from 'store/index';
 import { toggleSponsorBundlr } from 'store/embalm/actions';
 import { useState, useEffect } from 'react';
+import { useNetwork } from 'wagmi';
 
 const MAX_SPONSORED_FILE_SIZE = 5000000; // 5 MB
 export function UploadPayload() {
@@ -18,6 +19,7 @@ export function UploadPayload() {
 
   const dispatch = useDispatch();
 
+  const { chain } = useNetwork();
   const { isBundlrConnected } = useSupportedNetwork();
 
   const sponsorBundlr = useSelector(select => select.embalmState.sponsorBundlr);
@@ -61,6 +63,13 @@ export function UploadPayload() {
       }
     }
   }, [file, dispatch, sponsorBundlr]);
+  
+  // Special case to force bundlr sponsorship for base
+  useEffect(() => {
+    if (chain?.id === 8453 && !sponsorBundlr) {
+      dispatch(toggleSponsorBundlr());
+    }
+  }, [sponsorBundlr, chain, dispatch]);
 
   return (
     <VStack

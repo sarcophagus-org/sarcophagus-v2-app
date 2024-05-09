@@ -34,6 +34,17 @@ export function Bundlr({ children }: { children?: React.ReactNode }) {
     await fund(inputAmountBN);
   }, [fund, inputAmountBN]);
 
+  if (chain?.id === 8453) {
+    return (
+      <VStack
+        py={8}
+        spacing={6}
+      >
+        <Text variant="secondary">Base Sarcophagi must currently use sponsored uploads</Text>
+      </VStack>
+    );
+  }
+
   return (
     <VStack
       align="left"
