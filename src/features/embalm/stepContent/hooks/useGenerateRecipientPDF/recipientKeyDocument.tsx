@@ -151,22 +151,36 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
     return chunks;
   };
 
-// Split keys into chunks for wrapping
+  // Split keys into chunks for wrapping
   const addressChunks = splitText(address, 90);
   const publicKeyChunks = splitText(publicKey, 60);
   const privateKeyChunks = splitText(privateKey, 90);
 
-// Render each chunk separately for text wrapping
+  // Render each chunk separately for text wrapping
   const addressText = addressChunks.map((chunk, index) => (
-    <Text key={index} style={{ letterSpacing: 0 }}>{chunk}</Text> // Remove letter spacing
+    <Text
+      key={index}
+      style={{ letterSpacing: 0 }}
+    >
+      {chunk}
+    </Text> // Remove letter spacing
   ));
   const publicKeyText = publicKeyChunks.map((chunk, index) => (
-    <Text key={index} style={{ letterSpacing: 0 }}>{chunk}</Text> // Remove letter spacing
+    <Text
+      key={index}
+      style={{ letterSpacing: 0 }}
+    >
+      {chunk}
+    </Text> // Remove letter spacing
   ));
   const privateKeyText = privateKeyChunks.map((chunk, index) => (
-    <Text key={index} style={{ letterSpacing: 0 }}>{chunk}</Text> // Remove letter spacing
+    <Text
+      key={index}
+      style={{ letterSpacing: 0 }}
+    >
+      {chunk}
+    </Text> // Remove letter spacing
   ));
-
 
   return (
     <Document>
@@ -207,9 +221,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
                 <Text>WALLET ADDRESS</Text>
               </View>
 
-              <View style={styles.infoBoxContent}>
-                {addressText}
-              </View>
+              <View style={styles.infoBoxContent}>{addressText}</View>
             </View>
             <View style={styles.imageView}>
               <Image
@@ -225,9 +237,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
                 <Text>PUBLIC KEY</Text>
               </View>
 
-              <View style={styles.infoBoxContent}>
-                {publicKeyText}
-              </View>
+              <View style={styles.infoBoxContent}>{publicKeyText}</View>
             </View>
             <View style={styles.imageView}>
               <Image
@@ -251,9 +261,7 @@ export const createRecipientKeyDocument = async (name: string, recipient: Recipi
               <View style={styles.infoBoxTitle}>
                 <Text>PRIVATE KEY</Text>
               </View>
-              <View style={styles.infoBoxContent}>
-                {privateKeyText}
-              </View>
+              <View style={styles.infoBoxContent}>{privateKeyText}</View>
             </View>
 
             <View style={styles.imageView}>
