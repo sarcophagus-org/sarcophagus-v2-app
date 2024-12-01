@@ -8,6 +8,7 @@ import * as Sentry from '@sentry/react';
 
 import { ArchaeologistData, sarco } from '@sarcophagus-org/sarcophagus-v2-sdk-client';
 import { useSupportedNetwork } from 'lib/config/useSupportedNetwork';
+import { archWhitelist } from '../../../../config/whitelist';
 
 /**
  * Loads archaeologist profiles from the sarcophagus contract
@@ -33,7 +34,8 @@ export function useLoadArchaeologists() {
       if (addresses.length === 0) return [];
 
       try {
-        return await sarco.archaeologist.getFullArchProfiles({ addresses });
+        const archs = await sarco.archaeologist.getFullArchProfiles({ addresses });
+        return archs.filter((arch) => archWhitelist.includes(arch.profile.archAddress.toLowerCase()));
       } catch (e) {
         console.log('error loading archs', e);
         Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
@@ -49,7 +51,8 @@ export function useLoadArchaeologists() {
     }
 
     try {
-      return await sarco.archaeologist.getFullArchProfiles({});
+      const archs = await sarco.archaeologist.getFullArchProfiles({});
+      return archs.filter((arch) => archWhitelist.includes(arch.profile.archAddress.toLowerCase()));
     } catch (e) {
       console.log('error loading archs', e);
       Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });

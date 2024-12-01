@@ -136,6 +136,7 @@ export function SelectArchaeologists({
               paginatedArchaeologists={paginatedArchaeologists}
               totalCount={visibleArchaeologists.length}
               showDial={isArchaeologistsDashboard}
+              isArchaeologistDashboard={isArchaeologistsDashboard}
             />
             <Box w={'100%'}>
               <Flex justifyContent={'space-between'}>

@@ -29,10 +29,12 @@ export function ArchaeologistList({
   showDial,
   paginatedArchaeologists,
   totalCount,
+  isArchaeologistDashboard,
 }: {
   totalCount: number;
   showDial?: boolean;
   paginatedArchaeologists: ArchaeologistData[];
+  isArchaeologistDashboard: boolean;
 }) {
   const {
     handleCheckArchaeologist,
@@ -255,6 +257,7 @@ export function ArchaeologistList({
                       isDialing={isDialing}
                       setIsDialing={setIsDialing}
                       isSelected={isSelected}
+                      isArchaeologistDashboard={isArchaeologistDashboard}
                     />
                   );
                 })}
