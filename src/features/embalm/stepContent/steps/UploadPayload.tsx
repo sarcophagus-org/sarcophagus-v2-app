@@ -63,7 +63,7 @@ export function UploadPayload() {
       }
     }
   }, [file, dispatch, sponsorBundlr]);
-  
+
   // Special case to force bundlr sponsorship for base
   useEffect(() => {
     if (chain?.id === 8453 && !sponsorBundlr) {

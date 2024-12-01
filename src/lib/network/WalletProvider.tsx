@@ -11,19 +11,40 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const createRpcProvider = (chainId: number) => {
     switch (chainId) {
       case mainnet.id:
-        return { http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY!}` };
+        return {
+          http: `https://eth-mainnet.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_MAINNET_API_KEY!}`,
+        };
       case sepolia.id:
-        return { http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_SEPOLIA_API_KEY!}` };
+        return {
+          http: `https://eth-sepolia.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_SEPOLIA_API_KEY!}`,
+        };
       case polygon.id:
-        return { http: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_POLYGON_API_KEY!}` };
+        return {
+          http: `https://polygon-mainnet.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_POLYGON_API_KEY!}`,
+        };
       case polygonMumbai.id:
-        return { http: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_POLYGON_MUMBAI_API_KEY!}` };
+        return {
+          http: `https://polygon-mumbai.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_POLYGON_MUMBAI_API_KEY!}`,
+        };
       case arbitrum.id:
-        return { http: `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_ARBITRUM_API_KEY!}` };
+        return {
+          http: `https://arb-mainnet.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_ARBITRUM_API_KEY!}`,
+        };
       case base.id:
-        return { http: `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_BASE_MAINNET_API_KEY!}` };
+        return {
+          http: `https://base-mainnet.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_BASE_MAINNET_API_KEY!}`,
+        };
       default:
-        return { http: `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_BASE_MAINNET_API_KEY!}` };
+        return {
+          http: `https://base-mainnet.g.alchemy.com/v2/${process.env
+            .REACT_APP_ALCHEMY_BASE_MAINNET_API_KEY!}`,
+        };
     }
   };
 
@@ -31,7 +52,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     [mainnet, hardhat, sepolia, polygonMumbai, arbitrum, polygon, base],
     [
       jsonRpcProvider({
-        rpc: (chain) => createRpcProvider(chain.id),
+        rpc: chain => createRpcProvider(chain.id),
       }),
       publicProvider({ priority: 2 }),
     ]
