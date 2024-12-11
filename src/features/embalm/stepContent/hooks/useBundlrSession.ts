@@ -24,11 +24,17 @@ export function useBundlrSession() {
    */
   const disconnectFromBundlr = useCallback(() => {
     localStorage.removeItem('publicKey');
-    sarco.bundlr.disconnect();
-    setIsBundlrConnected(false);
-    const id = 'disconnectFromBundlr';
-    if (!toast.isActive(id)) {
-      toast({ ...disconnectToast(), id });
+    try {
+      if (!!sarco && !!sarco.bundlr) {
+        sarco.bundlr.disconnect();
+        setIsBundlrConnected(false);
+        const id = 'disconnectFromBundlr';
+        if (!toast.isActive(id)) {
+          toast({ ...disconnectToast(), id });
+        }
+      }
+    } catch (error) {
+      console.log('error disconnecting from bundlr', error);
     }
   }, [setIsBundlrConnected, toast]);
 
