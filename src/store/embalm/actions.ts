@@ -53,6 +53,7 @@ export enum ActionType {
 export enum RecipientSetByOption {
   ADDRESS = 1,
   PUBLIC_KEY,
+  PUBLIC_DISCLOSURE,
   GENERATE,
 }
 

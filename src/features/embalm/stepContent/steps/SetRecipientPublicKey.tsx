@@ -1,10 +1,10 @@
-import { Text, VStack, Textarea, Box } from '@chakra-ui/react';
-import { setRecipientState, RecipientSetByOption } from 'store/embalm/actions';
+import { Box, Link, Text, Textarea, VStack } from '@chakra-ui/react';
+import { RecipientSetByOption, setRecipientState } from 'store/embalm/actions';
 import { useDispatch, useSelector } from 'store/index';
 import { RecoverPublicKey } from '../components/RecoverPublicKey';
 import { GenerateRecipientPDF } from '../components/GenerateRecipientPDF';
 
-import { Select, OptionBase, GroupBase } from 'chakra-react-select';
+import { GroupBase, OptionBase, Select } from 'chakra-react-select';
 import { validateRecipient } from 'features/embalm/stepNavigator/hooks/useSetStatuses';
 import { SarcoAlert } from 'components/SarcoAlert';
 
@@ -13,24 +13,39 @@ interface IRecipientSetByOption extends OptionBase {
   value: RecipientSetByOption;
 }
 
+const PUBLIC_DISCLOSURE_PUBLIC_KEY = '0x02d1ed64129053907e87bf904e693a846432f8b9743c66cb703216f633a22b8d3d';
+
 export function SetRecipientPublicKey() {
   const dispatch = useDispatch();
   const { recipientState } = useSelector(x => x.embalmState);
 
   function handleOnChange(newValue: IRecipientSetByOption | null) {
-    dispatch(
-      setRecipientState({
-        publicKey: '',
-        address: '',
-        privateKey: undefined,
-        setByOption: newValue ? newValue.value : null,
-      })
-    );
+    // If public disclosure is selected, use hardcoded public key
+    if (newValue?.value === RecipientSetByOption.PUBLIC_DISCLOSURE) {
+      dispatch(
+        setRecipientState({
+          publicKey: PUBLIC_DISCLOSURE_PUBLIC_KEY.replaceAll(/\s+/g, ''),
+          address: '',
+          privateKey: undefined,
+          setByOption: newValue ? newValue.value : null,
+        })
+      );
+    } else {
+      dispatch(
+        setRecipientState({
+          publicKey: '',
+          address: '',
+          privateKey: undefined,
+          setByOption: newValue ? newValue.value : null,
+        })
+      );
+    }
   }
 
   const selectOptionsMap: IRecipientSetByOption[] = [
     { value: RecipientSetByOption.ADDRESS, label: 'Wallet address' },
     { value: RecipientSetByOption.PUBLIC_KEY, label: 'I have a public key' },
+    { value: RecipientSetByOption.PUBLIC_DISCLOSURE, label: 'Public Disclosure (beta)' },
     { value: RecipientSetByOption.GENERATE, label: 'Create new' },
   ];
 
@@ -43,9 +58,9 @@ export function SetRecipientPublicKey() {
         variant="secondary"
         mb={6}
       >
-        Sarco can lookup a public key by recipient wallet address if the address has made a
+        Sarcophagus can lookup a public key by recipient wallet address if the address has made a
         transaction. Otherwise you will need the public key, or choose ‘Create New’ to generate a
-        new key.
+        new key, or select Public Disclosure.
       </Text>
       <VStack
         align="left"
@@ -98,6 +113,22 @@ export function SetRecipientPublicKey() {
               }}
             />
           </Box>
+          {recipientState.setByOption === RecipientSetByOption.PUBLIC_DISCLOSURE && (
+            <VStack align="left">
+              <Text>
+                Disclose to the public via {' '}
+                <Link
+                  href='https://twitter.com/Thoth_Discloser'
+                  target='_blank'
+                  textDecor='underline'
+                >
+                  @Thoth_Discloser
+                </Link>
+                {' '}on Twitter. This will generate a
+                public key and disclose it to the public.
+              </Text>
+            </VStack>
+          )}
           {recipientState.setByOption === RecipientSetByOption.ADDRESS && <RecoverPublicKey />}
           {recipientState.setByOption === RecipientSetByOption.PUBLIC_KEY && (
             <VStack align="left">
