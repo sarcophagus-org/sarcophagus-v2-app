@@ -13,7 +13,8 @@ interface IRecipientSetByOption extends OptionBase {
   value: RecipientSetByOption;
 }
 
-const PUBLIC_DISCLOSURE_PUBLIC_KEY = '0x02d1ed64129053907e87bf904e693a846432f8b9743c66cb703216f633a22b8d3d';
+const PUBLIC_DISCLOSURE_PUBLIC_KEY =
+  '0x04d1ed64129053907e87bf904e693a846432f8b9743c66cb703216f633a22b8d3d9860302182399eb2b55b9cccd6462b1ef90b4be4f6a9b07519623d274caa0000';
 
 export function SetRecipientPublicKey() {
   const dispatch = useDispatch();
@@ -116,16 +117,15 @@ export function SetRecipientPublicKey() {
           {recipientState.setByOption === RecipientSetByOption.PUBLIC_DISCLOSURE && (
             <VStack align="left">
               <Text>
-                Disclose to the public via {' '}
+                Disclose to the public via{' '}
                 <Link
-                  href='https://twitter.com/Thoth_Discloser'
-                  target='_blank'
-                  textDecor='underline'
+                  href="https://twitter.com/Thoth_Discloser"
+                  target="_blank"
+                  textDecor="underline"
                 >
                   @Thoth_Discloser
-                </Link>
-                {' '}on Twitter. This will generate a
-                public key and disclose it to the public.
+                </Link>{' '}
+                on Twitter. This will generate a public key and disclose it to the public.
               </Text>
             </VStack>
           )}
