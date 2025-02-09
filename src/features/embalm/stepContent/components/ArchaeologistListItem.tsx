@@ -22,7 +22,7 @@ interface ArchaeologistListItemProps {
   isDialing: boolean;
   setIsDialing: Dispatch<SetStateAction<boolean>>;
   onClick: () => void;
-  isArchaeologistDashboard?: boolean
+  isArchaeologistDashboard?: boolean;
 }
 
 interface TableContentProps {
@@ -67,7 +67,9 @@ export function ArchaeologistListItem({
   }, [archaeologist.profile.peerId, dispatch, ensName]);
 
   const formattedArchAddress = () => {
-    return ensName ?? isArchaeologistDashboard ? archaeologist.profile.archAddress : formatAddress(archaeologist.profile.archAddress);
+    return ensName ?? isArchaeologistDashboard
+      ? archaeologist.profile.archAddress
+      : formatAddress(archaeologist.profile.archAddress);
   };
 
   function TableContent({

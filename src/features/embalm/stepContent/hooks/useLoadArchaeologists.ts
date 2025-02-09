@@ -35,7 +35,7 @@ export function useLoadArchaeologists() {
 
       try {
         const archs = await sarco.archaeologist.getFullArchProfiles({ addresses });
-        return archs.filter((arch) => archWhitelist.includes(arch.profile.archAddress.toLowerCase()));
+        return archs.filter(arch => archWhitelist.includes(arch.profile.archAddress.toLowerCase()));
       } catch (e) {
         console.log('error loading archs', e);
         Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
@@ -52,7 +52,7 @@ export function useLoadArchaeologists() {
 
     try {
       const archs = await sarco.archaeologist.getFullArchProfiles({});
-      return archs.filter((arch) => archWhitelist.includes(arch.profile.archAddress.toLowerCase()));
+      return archs.filter(arch => archWhitelist.includes(arch.profile.archAddress.toLowerCase()));
     } catch (e) {
       console.log('error loading archs', e);
       Sentry.captureException(e, { fingerprint: ['LOAD_ARCHAEOLOGISTS_FAILURE'] });
